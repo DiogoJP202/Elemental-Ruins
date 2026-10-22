@@ -33,7 +33,7 @@ func _ready() -> void:
 	add_child(root)
 
 	_status = _make_label(root, Vector2(16, 12), 15)
-	_last_edit = _make_label(root, Vector2(16, 170), 17)
+	_last_edit = _make_label(root, Vector2(16, 200), 17)
 
 	var legend := _make_label(root, Vector2.ZERO, 14)
 	legend.text = LEGEND

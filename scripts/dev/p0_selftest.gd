@@ -66,6 +66,8 @@ func _ready() -> void:
 		var base := "res://docs/evidence/" if OS.has_feature("editor") else "user://"
 		_report_path = base + "p0_selftest_%s.json" % _mode
 	player.input_enabled = false
+	# Não prende o mouse do usuário enquanto o roteiro roda em janela.
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_logger = LOGGER_SCRIPT.new()
 	OS.add_logger(_logger)
 	get_tree().create_timer(WATCHDOG_S, true).timeout.connect(_on_watchdog)
@@ -84,6 +86,7 @@ func _run() -> void:
 		return
 	await _capture_baseline()
 	if _should_run("T0"): await _t0_generator_data()
+	if _should_run("T1b"): await _t1b_hill_top()
 	if _should_run("T2"): await _t2_crater()
 	if _should_run("T3"): await _t3_tunnel()
 	if _should_run("T4"): await _t4_column()
@@ -117,7 +120,7 @@ func _t1_ground() -> void:
 	_record("T1", "Terreno pronto; jogador para no chão voxel e não atravessa", ok,
 		{"pronto_ms": svc.get_last_ready_ms(), "y_apos_2s": y1, "y_apos_3_5s": y2, "on_floor": floor1})
 	_baseline_nodes = get_tree().get_node_count()
-	await _shot("01_spawn_vista_colina", SPAWN, 0.0, -8.0)
+	await _shot("spawn_vista_colina", SPAWN, 0.0, -8.0)
 
 
 func _capture_baseline() -> void:
@@ -145,6 +148,21 @@ func _t0_generator_data() -> void:
 		"topo_colina_colisao_y": top_y, "topo_esperado_y": LabTerrainFactory.HILL_TOP_Y})
 
 
+func _t1b_hill_top() -> void:
+	var top := Vector3(0, LabTerrainFactory.HILL_TOP_Y + 1.5, LabTerrainFactory.HILL_CENTER.z)
+	player.teleport_to(top)
+	await _seconds(2.0)
+	var y1 := player.global_position.y
+	await _seconds(1.0)
+	var y2 := player.global_position.y
+	var ok := player.is_on_floor() and absf(y1 - LabTerrainFactory.HILL_TOP_Y) < 0.3 and absf(y2 - y1) < 0.05
+	_record("T1b", "Jogador fica sobre o topo da colina voxel sem atravessar", ok, {
+		"y_apos_2s": y1, "y_apos_3s": y2, "topo_esperado_y": LabTerrainFactory.HILL_TOP_Y,
+		"on_floor": player.is_on_floor()})
+	player.teleport_to(SPAWN)
+	await _seconds(0.5)
+
+
 func _t2_crater() -> void:
 	var from := CRATER_POINT + Vector3.UP * 30.0
 	var to := CRATER_POINT + Vector3.DOWN * 30.0
@@ -153,7 +171,7 @@ func _t2_crater() -> void:
 	var sdf_now := svc.sample_sdf(CRATER_POINT + Vector3.DOWN * 1.5)
 	var w := await _wait_ray(from, to, func(h): return not h.is_empty() and h.position.y < -2.0, 5.0)
 	_metrics["crater_collider_latency_ms"] = w.ms
-	await _shot("02_cratera", CRATER_POINT + Vector3(0, 0.2, 9), 0.0, -32.0)
+	await _shot("cratera", CRATER_POINT + Vector3(0, 0.2, 9), 0.0, -32.0)
 	player.teleport_to(CRATER_POINT + Vector3.UP * 1.0)
 	await _seconds(2.0)
 	var py := player.global_position.y
@@ -162,7 +180,7 @@ func _t2_crater() -> void:
 		"edicao": str(r), "chao_antes_y": before, "chao_depois_y": _hit_y(w.hit),
 		"sdf_dados_logo_apos_edicao": sdf_now, "latencia_collider_ms": w.ms, "quadros_fisica": w.frames,
 		"jogador_y_apos_2s": py, "on_floor": player.is_on_floor()})
-	await _shot("03_jogador_na_cratera", player.global_position, 0.0, -20.0, false)
+	await _shot("jogador_na_cratera", player.global_position, 0.0, -20.0, false)
 	player.teleport_to(SPAWN)
 	await _seconds(0.5)
 
@@ -195,7 +213,7 @@ func _t3_tunnel() -> void:
 	player.teleport_to(Vector3(0, 0.5, 19))
 	player.camera_rig.set_view(0.0, deg_to_rad(-6.0))
 	await _seconds(0.6)
-	await _shot("04_boca_do_tunel", player.global_position, 0.0, -6.0, false)
+	await _shot("boca_do_tunel", player.global_position, 0.0, -6.0, false)
 	var min_y := INF
 	var max_y := -INF
 	var ceiling_samples := 0
@@ -217,7 +235,7 @@ func _t3_tunnel() -> void:
 		if not inside_shot_done and p.z < TUNNEL_Z_MID and _screens:
 			inside_shot_done = true
 			player.clear_scripted_move()
-			await _shot("05_dentro_do_tunel", p, 0.0, -2.0, false)
+			await _shot("dentro_do_tunel", p, 0.0, -2.0, false)
 			player.set_scripted_move(Vector3.FORWARD)
 		if p.z < TUNNEL_Z_END - 1.0:
 			reached = true
@@ -229,7 +247,7 @@ func _t3_tunnel() -> void:
 		"chegou_na_saida": reached, "tempo_s": elapsed, "z_final": player.global_position.z,
 		"y_min_dentro": min_y, "y_max_dentro": max_y,
 		"amostras_teto": ceiling_samples, "amostras_com_teto": ceiling_hits})
-	await _shot("06_saida_olhando_para_tras", player.global_position, PI, -6.0, false)
+	await _shot("saida_olhando_para_tras", player.global_position, PI, -6.0, false)
 	player.teleport_to(SPAWN)
 	await _seconds(0.5)
 
@@ -260,7 +278,7 @@ func _t4_column() -> void:
 		"on_floor": player.is_on_floor()})
 	player.teleport_to(SPAWN)
 	await _seconds(0.3)
-	await _shot("07_coluna_com_caixa", COLUMN_POINT + Vector3(0, 0.2, 10), 0.0, -14.0)
+	await _shot("coluna_com_caixa", COLUMN_POINT + Vector3(0, 0.2, 10), 0.0, -14.0)
 
 
 func _t5_repeated_edits() -> void:
@@ -359,8 +377,8 @@ func _t7_reset() -> void:
 		"reset_ok": ok_reset, "duracao_ms": svc.get_last_ready_ms(), "probes_diferentes": mismatches,
 		"props_antes": props_before, "props_depois": props.get_child_count(),
 		"nos_baseline": _baseline_nodes, "nos_depois": nodes_after})
-	await _shot("08_pos_reset_colina", SPAWN, 0.0, -8.0)
-	await _shot("09_pos_reset_tunel_fechado", Vector3(0, 0.5, 19), 0.0, -6.0)
+	await _shot("pos_reset_colina", SPAWN, 0.0, -8.0)
+	await _shot("pos_reset_tunel_fechado", Vector3(0, 0.5, 19), 0.0, -6.0)
 	player.teleport_to(SPAWN)
 	await _seconds(0.3)
 

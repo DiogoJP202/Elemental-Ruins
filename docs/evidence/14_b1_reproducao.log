@@ -1,0 +1,21 @@
+B1 - reproducao de importacao limpa (2026-10-22T18:21:12-03:00)
+Godot: 4.7.2.stable.official.ed1daf0bf
+Copia: project.godot + addons + scripts + scenes + materials (sem .godot/)
+
+cache vazio, tentativa 1: exit=0
+/usr/bin/bash: line 1:   865 Segmentation fault         "$G" --headless --path "$D" --import > /dev/null 2>&1
+cache vazio, tentativa 2: exit=139
+/usr/bin/bash: line 1:   867 Segmentation fault         "$G" --headless --path "$D" --import > /dev/null 2>&1
+cache vazio, tentativa 3: exit=139
+/usr/bin/bash: line 1:   869 Segmentation fault         "$G" --headless --path "$D" --import > /dev/null 2>&1
+cache vazio, tentativa 4: exit=139
+/usr/bin/bash: line 1:   871 Segmentation fault         "$G" --headless --path "$D" --import > /dev/null 2>&1
+cache vazio, tentativa 5: exit=139
+cache vazio, tentativa 6: exit=0
+
+extension_list.cfg pre-criado, tentativa 1: exit=0
+extension_list.cfg pre-criado, tentativa 2: exit=0
+extension_list.cfg pre-criado, tentativa 3: exit=0
+
+reimportacao com cache existente: exit=0
+(exit 139 = segmentation fault)

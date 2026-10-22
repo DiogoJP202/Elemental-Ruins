@@ -1,0 +1,79 @@
+# Decisões e trade-offs — P0
+
+Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decisão → motivo → consequência.
+
+## D1. Voxel Tools GDExtension 1.7 na Godot oficial (não a build custom)
+- **Motivo:** CLAUDE.md manda testar primeiro a GDExtension. Ela carregou na Godot 4.7.2 oficial
+  (`compatibility_minimum = "4.4.1"`) com todas as classes necessárias, e o selftest passou 12/12.
+- **Consequência:** export com os templates **oficiais** (sem template custom). Plano B (build custom
+  `v1.7` 4.7.2 + módulo) **não foi necessário nem testado**.
+- **Risco conhecido:** a primeira importação com cache vazio fecha a Godot com segfault, de forma intermitente
+  (10/17; ver `voxel_spike_results.md`, B1). Mitigação: pré-registrar a extensão em `.godot/extension_list.cfg`
+  (0/11 crashes), feito por `tools/run_p0_tests.ps1`; no editor, reabrir. Se isso piorar, o plano B é testar a
+  build custom `v1.7`.
+
+## D2. Gerador nativo `VoxelGeneratorGraph` montado em código
+- **Motivo:** a GDExtension tem limitações conhecidas com métodos virtuais de script (godot_voxel#442), o que
+  ameaça o `VoxelGeneratorScript`. O grafo roda em C++ nas threads do motor voxel, sem loop por voxel em GDScript.
+- **Como:** `LabTerrainFactory.create_generator()` cria `InputX/Y/Z → Add(−centro) → SdfSphere(r=24)` e
+  `SdfPlane(y=0)`, unidos por `SdfSmoothUnion(smoothness=4)`. Os nomes de portas e parâmetros foram conferidos no binário
+  (`tools/probe_voxel_api.gd`; `SdfSphere` não tem centro, daí os nós `Add`).
+- **Consequência:** o mundo-base é um SDF determinístico (não é heightmap; os dados são voxels 3D e o túnel é
+  matéria removida de verdade).
+
+## D3. Terreno criado em código, cenas só com tipos nativos (exceto `VoxelViewer`)
+- **Motivo:** o reset precisa recriar o nó; uma factory única garante configuração idêntica na carga e no reset.
+  Evita também `.tscn` escritos à mão com sub-recursos do Voxel Tools.
+- **Consequência:** a colina não aparece na viewport do editor, só ao rodar. O `VoxelViewer` fica em
+  `player.tscn` (pertence ao jogador).
+
+## D4. Reset = liberar o `VoxelLodTerrain` e criar outro do mesmo gerador
+- **Motivo:** a API não documenta `restart_stream`/`reset` para `VoxelLodTerrain` (conferido na doc e no dump).
+  Sem stream, todas as edições vivem nos dados do nó; liberá-lo descarta dados, malhas e colliders juntos.
+- **Consequência:** reset real em ~0,2 s (headless) a ~0,3–0,5 s (janela), medido. O jogador é congelado e
+  teleportado para o spawn; caixas de teste são removidas. Não há persistência ainda (VoxelStreamSQLite fica para P1).
+
+## D5. Folga de 0,05 m no raio de **remoção**
+- **Motivo (diagnóstico real):** remover exatamente a esfera que acabou de ser adicionada deixava voxels com
+  SDF == 0 na fronteira coincidente (`max(atual, −esfera) = 0`). O Transvoxel trata isso como superfície e
+  gerava uma película sólida de espessura zero, com colisão. Detectado pelo teste T5.
+- **Consequência:** escavações ficam 5 cm maiores que o raio nominal (≈ 3 passos de quantização de 16 bits).
+  T5 (20 ciclos no mesmo ponto) passou a ser PASS. Exposto como `TerrainService.remove_radius_padding`.
+
+## D6. Validação antes de editar
+- Ordem: entrada finita → raio 0,5–6 m → `voxel_bounds` (AABB de 512×192×512 em torno da origem) →
+  `VoxelTool.is_area_editable` (LOD0 carregado) → sobreposição com a cápsula do jogador (só para ADD) →
+  orçamento de 4 edições por quadro de física. Falhas retornam `TerrainEditResult` com motivo, sem tocar nos dados.
+- A taxa de repetição de G/H (0,15 s) fica no controlador de input, não no serviço, para que testes e futuros
+  sistemas possam emitir edições controladas sem esperar cooldown de input.
+
+## D7. Mira por raycast **físico**
+- **Motivo:** o jogador colide com o collider, não com os dados. Usar a física para mirar mostra a verdade do
+  que é sólido agora; o atraso de collider (medido em ~10–35 ms) é imperceptível na mira.
+
+## D8. Input: ações registradas em código (`InputActions`, autoload) com `physical_keycode`
+- **Motivo:** uma fonte única e explícita, que funciona igual em teclados US e ABNT2 e não depende de serializar
+  `InputEvent` à mão no `project.godot`.
+- **Correção após teste interativo:** a primeira edição de G/H passou a sair do **evento** de tecla. Um toque
+  rapidíssimo (tecla desce e sobe no mesmo quadro) se perdia quando só se consultava `Input.is_action_pressed`.
+  A repetição segurando continua no `_physics_process`. Atalhos funcionam com Shift pressionado.
+
+## D9. Versionamento
+- `.gitattributes` com LF para os arquivos Godot.
+- Do Voxel Tools versionamos `.gdextension`, LICENSE, ícones e **apenas** os binários Windows x86_64 (~21 MB);
+  as libs de outras plataformas ficam ignoradas (o zip completo tem ~134 MB descompactado).
+- `export_presets.cfg` **passou a ser versionado** (o `.gitignore` original o ignorava): ele não contém segredos
+  (a Godot 4 guarda credenciais em `.godot/export_credentials.cfg`) e é necessário para reproduzir o export.
+- `build/` é ignorado; logs de evidência em `docs/evidence/*.log` são versionados (exceção ao `*.log`).
+- `docs/.gdignore`: a Godot não importa a pasta de documentação. As capturas PNG de evidência não viram
+  texturas nem entram no `.pck` (3 MB → 190 KB). O selftest continua gravando nela via `FileAccess`.
+
+## D10. Material de laboratório simples
+- Shader próprio com cor por orientação da normal (piso areia / parede terracota / teto verde mineral) e grade
+  de 1 m e 4 m em espaço do mundo, para ler escala e movimento, mais o trecho **oficial** de costura de LOD do
+  Transvoxel (doc do Voxel Tools v1.7). Não é a direção de arte (toon/retro ficam para P4).
+
+## D11. Parâmetros do terreno
+- `mesh_block_size=16` (rebuild menor por edição), `lod_count=4`, `lod_distance=48`, `view_distance=256`,
+  `collision_lod_count=2`, `collision_update_delay=0`, sem `full_load_mode`. São escolhas para o laboratório
+  compacto; não foram otimizadas por benchmark.

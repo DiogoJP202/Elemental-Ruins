@@ -67,17 +67,25 @@ func get_aim() -> Dictionary:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if terrain_service == null:
+	if terrain_service == null or player == null or not player.input_enabled:
 		return
 	if event.is_action_pressed(&"brush_radius_up"):
 		_change_radius(radius_step)
 	elif event.is_action_pressed(&"brush_radius_down"):
 		_change_radius(-radius_step)
-	elif event.is_action_pressed(&"world_reset", false, true):
+	elif event.is_action_pressed(&"terrain_dig"):
+		# Primeira edição vem do evento: um toque rápido (tecla desce e sobe no
+		# mesmo quadro) não pode se perder. A repetição segurando fica no _physics_process.
+		_do_sphere(false)
+		_repeat_timer = hold_repeat_interval
+	elif event.is_action_pressed(&"terrain_add"):
+		_do_sphere(true)
+		_repeat_timer = hold_repeat_interval
+	elif event.is_action_pressed(&"world_reset"):
 		reset_requested.emit()
-	elif event.is_action_pressed(&"terrain_tunnel", false, true):
+	elif event.is_action_pressed(&"terrain_tunnel"):
 		_do_tunnel()
-	elif event.is_action_pressed(&"debug_spawn_crate", false, true):
+	elif event.is_action_pressed(&"debug_spawn_crate"):
 		_spawn_crate()
 
 
@@ -88,16 +96,11 @@ func _physics_process(delta: float) -> void:
 	_update_aim()
 	var dig := Input.is_action_pressed(&"terrain_dig")
 	var add := Input.is_action_pressed(&"terrain_add")
-	if Input.is_action_just_pressed(&"terrain_dig") or Input.is_action_just_pressed(&"terrain_add"):
-		_repeat_timer = 0.0
 	if dig or add:
 		_repeat_timer -= delta
 		if _repeat_timer <= 0.0:
 			_repeat_timer = hold_repeat_interval
-			if dig:
-				_do_sphere(false)
-			else:
-				_do_sphere(true)
+			_do_sphere(add and not dig)
 
 
 func _update_aim() -> void:
