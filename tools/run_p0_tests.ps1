@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Executa a bateria de verificação do P0 e grava logs em docs/evidence/.
 
@@ -56,6 +56,22 @@ function Invoke-Step([string]$Name, [string]$LogFile, [string]$Exe, [string[]]$A
     [System.IO.File]::WriteAllText($log, $text, (New-Object System.Text.UTF8Encoding $false))
     $results[$Name] = $proc.ExitCode
     Write-Host ("    exit={0}  log={1}" -f $proc.ExitCode, $log)
+}
+
+# Bug B4 (docs/voxel_spike_results.md): com outra Godot aberta neste projeto (editor ou jogo via F5),
+# a cópia temporária ~libvoxel…dll que a Godot carrega fica travada; a extensão não carrega e o import
+# termina em crash (0xC0000005). Se a cópia estiver travada, aborta antes de tocar nas evidências.
+$tempDll = Join-Path $root 'addons\zylann.voxel\bin\~libvoxel.windows.editor.x86_64.dll'
+if (Test-Path $tempDll) {
+    try {
+        $fs = [System.IO.File]::Open($tempDll, 'Open', 'ReadWrite', 'None')
+        $fs.Close()
+    }
+    catch {
+        Write-Host 'ERRO: outra instância da Godot está usando este projeto (a DLL temporária do Voxel Tools está travada).'
+        Write-Host '      Feche o editor e o jogo deste projeto e rode de novo. Ver bug B4 em docs/voxel_spike_results.md.'
+        exit 2
+    }
 }
 
 Push-Location $root

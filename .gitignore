@@ -43,3 +43,6 @@ build/
 
 # Preset de export é versionado (sem segredos; credenciais ficam em .godot/export_credentials.cfg)
 !export_presets.cfg
+
+# Cópias temporárias que a Godot faz da DLL da extensão ao carregá-la no editor
+addons/zylann.voxel/bin/~*

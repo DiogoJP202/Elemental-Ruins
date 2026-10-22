@@ -1,0 +1,28 @@
+ERROR: Failed to open 'C:/Users/dsoares/Documents/Projetos/game/addons/zylann.voxel/./bin/~libvoxel.windows.editor.x86_64.dll'.
+   at: copy (core/io/dir_access.cpp:429)
+ERROR: Error copying library: C:/Users/dsoares/Documents/Projetos/game/addons/zylann.voxel/./bin/libvoxel.windows.editor.x86_64.dll
+   at: open_dynamic_library (platform/windows/os_windows.cpp:502)
+ERROR: Can't open GDExtension dynamic library: 'res://addons/zylann.voxel/voxel.gdextension'.
+   at: open_library (core/extension/gdextension.cpp:811)
+ERROR: Error loading extension: 'res://addons/zylann.voxel/voxel.gdextension'.
+   at: load_extensions (core/extension/gdextension_manager.cpp:333)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Inicialização do Projeto (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Escaneando estrutura de arquivos...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Carregando nomes de classe globais...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verificando GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Criando scripts autoload...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Inicializando plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Iniciando escaneamento de arquivos...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Carregando editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Carregando layout do editor...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Carregando abas...[39m[0m
+[  33% ] [90m[1mloading_editor_layout[22m | Reabrindo cenas...[39m[0m
+[  50% ] [90m[1mloading_editor_layout[22m | Carregando layout do editor central...[39m[0m
+[  66% ] [90m[1mloading_editor_layout[22m | Carregando layout da janela de plugins...[39m[0m
+[  83% ] [90m[1mloading_editor_layout[22m | Layout do editor pronto.[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m

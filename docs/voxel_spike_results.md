@@ -187,3 +187,23 @@ coluna, edição repetida, reset real, export e controles com input sintético.
 (B1). Por isso o critério "sem erros fatais de importação" está como FALHOU no `P0_CHECKLIST.md`, apesar de
 o parser estar limpo e a mitigação ter funcionado 11/11.
 **Ainda depende de pessoa:** a sensação de mouse e câmera e o túnel aberto à mão com J.
+
+## 10. Atualização (22/10/2026, ~18:30) — validação manual e bug B4
+
+**Validação manual pelo usuário:** seguiu o roteiro do README no editor (túnel com J na encosta e travessia a pé,
+cratera, coluna, reset, câmera e mouse) e relatou que tudo funcionou bem. Isso cobre os itens da §7.1 e §7.2.
+
+### B4 — Import em crash quando outra Godot está aberta no mesmo projeto (mitigado)
+- **Ocorrência real:** o usuário rodou `run_p0_tests.ps1` com o editor aberto. O passo `import` saiu com
+  `-1073741819` (0xC0000005); o Visualizador de Eventos registrou a falha às 18:27:07. O log (preservado em
+  `run_usuario_2026-10-22_1827/01_import.log`) mostra `Failed to open …/bin/~libvoxel.windows.editor.x86_64.dll`
+  → `Can't open GDExtension dynamic library`. Os demais passos dessa execução saíram com 0.
+- **Causa:** o editor da Godot carrega uma cópia `~libvoxel…dll`. Com outra instância segurando essa cópia, a nova
+  não consegue recriá-la, a extensão não carrega e o processo cai no encerramento.
+- **Reprodução controlada:** editor headless em segundo plano + `--import` → mesmos erros e segfault (1 de 2;
+  `15_b4_import_concorrente_reproducao.log`). Sozinho: exit 0, sem erros.
+- **Mitigação:** `run_p0_tests.ps1` testa se a cópia está travada e aborta com exit 2 e mensagem clara, sem tocar
+  nas evidências (testado). Script salvo em UTF-8 com BOM (acentos corretos no Windows PowerShell 5.1).
+  `addons/zylann.voxel/bin/~*` ignorado no Git.
+- **Nota:** o editor regravou `project.godot` e removeu duas chaves iguais ao padrão (`physics_ticks_per_second=60`,
+  `rendering_method="forward_plus"`). Inofensivo; mantido.

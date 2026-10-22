@@ -1,0 +1,262 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-22T18:29:21",
+  "duracao_s": 34.007,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (official)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "column_collider_latency_ms": 20.731,
+    "crater_collider_latency_ms": 12.965,
+    "initial_terrain_ready_ms": 267.0,
+    "repeat_latency_ms": {
+      "max": 20.6,
+      "media": 16.56,
+      "min": 13.5,
+      "n": 40,
+      "p95": 20.59
+    },
+    "reset_ms": {
+      "max": 171.0,
+      "media": 166.9,
+      "min": 161.0,
+      "n": 10,
+      "p95": 171.0
+    },
+    "stress100_collider_latency_ms": {
+      "max": 20.62,
+      "media": 16.47,
+      "min": 12.98,
+      "n": 100,
+      "p95": 20.58
+    },
+    "stress100_edit_call_ms": {
+      "max": 0.12,
+      "media": 0.06,
+      "min": 0.05,
+      "n": 100,
+      "p95": 0.09
+    },
+    "tunnel_collider_latency_ms": 12.645
+  },
+  "modo": "headless-export",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 267.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "sdf_abaixo_solo": -2.0,
+        "sdf_acima_colina": 8.0,
+        "sdf_acima_solo": 2.0,
+        "sdf_dentro_colina": -7.0,
+        "topo_colina_colisao_y": 12.019998550415,
+        "topo_esperado_y": 12.0
+      },
+      "id": "T0",
+      "status": "PASS",
+      "titulo": "Dados SDF volumétricos coerentes com o gerador (colina sólida, ar acima)"
+    },
+    {
+      "detalhes": {
+        "on_floor": true,
+        "topo_esperado_y": 12.0,
+        "y_apos_2s": 12.0205574035645,
+        "y_apos_3s": 12.0205574035645
+      },
+      "id": "T1b",
+      "status": "PASS",
+      "titulo": "Jogador fica sobre o topo da colina voxel sem atravessar"
+    },
+    {
+      "detalhes": {
+        "chao_antes_y": 0.0200023651123047,
+        "chao_depois_y": -3.04615783691406,
+        "edicao": "dig_sphere OK rev=1 0.55ms",
+        "jogador_y_apos_2s": -3.03762030601501,
+        "latencia_collider_ms": 12.965,
+        "on_floor": true,
+        "quadros_fisica": 1,
+        "sdf_dados_logo_apos_edicao": 1.03762924671173
+      },
+      "id": "T2",
+      "status": "PASS",
+      "titulo": "Escavar remove matéria E colisão; jogador cai na cratera"
+    },
+    {
+      "detalhes": {
+        "edicoes": [
+          "dig_path OK rev=2 0.58ms",
+          "dig_path OK rev=3 0.33ms"
+        ],
+        "eixo_livre_apos_ms": 12.645,
+        "face_antes_z": 10.5977001190186,
+        "piso_interno_y": -0.349205732345581,
+        "teto_interno_y": 3.34920597076416,
+        "topo_antes_y": 12.019998550415,
+        "topo_depois_y": 12.019998550415
+      },
+      "id": "T3a",
+      "status": "PASS",
+      "titulo": "Túnel escavado: eixo livre, teto e piso sólidos (raycasts físicos)"
+    },
+    {
+      "detalhes": {
+        "amostras_com_teto": 360,
+        "amostras_teto": 360,
+        "chegou_na_saida": true,
+        "tempo_s": 11.309,
+        "y_max_dentro": -0.328295469284058,
+        "y_min_dentro": -0.3337641954422,
+        "z_final": -37.0682601928711
+      },
+      "id": "T3b",
+      "status": "PASS",
+      "titulo": "Jogador atravessa o túnel de boca a boca com teto sólido acima"
+    },
+    {
+      "detalhes": {
+        "caixa_vel": 0.0,
+        "caixa_y_apos_3s": 7.0,
+        "edicoes": [
+          "add_sphere OK rev=4 0.17ms",
+          "add_sphere OK rev=5 0.10ms",
+          "add_sphere OK rev=6 0.11ms"
+        ],
+        "jogador_y_no_topo": 6.22515630722046,
+        "latencia_collider_ms": 20.731,
+        "on_floor": true,
+        "topo_coluna_y": 6.49999809265137
+      },
+      "id": "T4",
+      "status": "PASS",
+      "titulo": "Adicionar matéria forma coluna sólida (caixa e jogador apoiados)"
+    },
+    {
+      "detalhes": {
+        "falhas": [],
+        "latencia_collider_ms": {
+          "max": 20.6,
+          "media": 16.56,
+          "min": 13.5,
+          "n": 40,
+          "p95": 20.59
+        },
+        "nos_antes": 34,
+        "nos_depois": 34
+      },
+      "id": "T5",
+      "status": "PASS",
+      "titulo": "20 ciclos escavar+adicionar no mesmo ponto (40 edições)"
+    },
+    {
+      "detalhes": {
+        "executadas": 100,
+        "latencia_collider_ms": {
+          "max": 20.62,
+          "media": 16.47,
+          "min": 12.98,
+          "n": 100,
+          "p95": 20.58
+        },
+        "recusadas": 0,
+        "tempo_chamada_ms": {
+          "max": 0.12,
+          "media": 0.06,
+          "min": 0.05,
+          "n": 100,
+          "p95": 0.09
+        },
+        "timeouts_collider": 0
+      },
+      "id": "T5b",
+      "status": "PASS",
+      "titulo": "100 escavações em sequência (latência edição→collider)"
+    },
+    {
+      "detalhes": {
+        "casos": [
+          {
+            "caso": "fora dos voxel_bounds",
+            "esperado": "outside_bounds",
+            "ms": 0.046,
+            "ok": true,
+            "resultado": "dig_sphere RECUSADO (outside_bounds)"
+          },
+          {
+            "caso": "dentro dos bounds, fora do LOD0 carregado",
+            "esperado": "area_not_loaded",
+            "ms": 0.023,
+            "ok": true,
+            "resultado": "dig_sphere RECUSADO (area_not_loaded)"
+          },
+          {
+            "caso": "raio gigante",
+            "esperado": "radius_out_of_range",
+            "ms": 0.011,
+            "ok": true,
+            "resultado": "dig_sphere RECUSADO (radius_out_of_range)"
+          },
+          {
+            "caso": "adicionar sobre o jogador",
+            "esperado": "overlaps_player",
+            "ms": 0.037,
+            "ok": true,
+            "resultado": "add_sphere RECUSADO (overlaps_player)"
+          }
+        ]
+      },
+      "id": "T6",
+      "status": "PASS",
+      "titulo": "Edições inválidas/fora da área falham rápido e com motivo"
+    },
+    {
+      "detalhes": {
+        "duracao_ms": 177.0,
+        "nos_baseline": 31,
+        "nos_depois": 31,
+        "probes_diferentes": [],
+        "props_antes": 1,
+        "props_depois": 0,
+        "reset_ok": true
+      },
+      "id": "T7",
+      "status": "PASS",
+      "titulo": "Reset restaura geometria E colisão originais (cratera, túnel e coluna somem)"
+    },
+    {
+      "detalhes": {
+        "duracao_reset_ms": {
+          "max": 171.0,
+          "media": 166.9,
+          "min": 161.0,
+          "n": 10,
+          "p95": 171.0
+        },
+        "falhas": [],
+        "nos_baseline": 31,
+        "nos_depois": 31
+      },
+      "id": "T7b",
+      "status": "PASS",
+      "titulo": "10 ciclos escavar→reset retornam ao baseline"
+    }
+  ],
+  "testes_pass": 12,
+  "testes_total": 12,
+  "video_adapter": ""
+}
