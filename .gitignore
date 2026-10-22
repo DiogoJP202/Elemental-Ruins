@@ -25,3 +25,18 @@ Thumbs.db
 .claude/worktrees/
 
 # Native addon libraries are deliberately NOT ignored. Pin plugin version and license.
+
+# --- ELEMENTAL // RUINS P0 (adicionado na sessão de implementação) ---
+# Voxel Tools GDExtension 1.7: versionamos só .gdextension, LICENSE, ícones e
+# binários Windows x86_64 (alvo atual). Demais plataformas ficam no disco local;
+# para restaurar, reextraia GodotVoxelExtension.zip (v1.7x). Ver docs/decisions.md.
+addons/zylann.voxel/bin/*android*
+addons/zylann.voxel/bin/*ios*
+addons/zylann.voxel/bin/*linux*
+addons/zylann.voxel/bin/*macos*
+
+# Saída de export
+build/
+
+# Logs de evidência dos testes são versionados de propósito
+!docs/evidence/*.log

@@ -1,0 +1,83 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Inicialização do Projeto (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Escaneando estrutura de arquivos...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Carregando nomes de classe globais...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verificando GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Criando scripts autoload...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Inicializando plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Iniciando escaneamento de arquivos...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registrando classes globais... (3 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Escaneando ações... (15 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | FastNoise2.svg[39m[0m
+[   6% ] [90m[1m_update_scan_actions[22m | VoxelBlockyLibrary.svg[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | VoxelBlockyModel.svg[39m[0m
+[  18% ] [90m[1m_update_scan_actions[22m | VoxelInstanceLibrary.svg[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | VoxelInstanceLibraryItem.svg[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | VoxelInstanceLibraryMultiMeshItem.svg[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | VoxelInstanceLibrarySceneItem.svg[39m[0m
+[  43% ] [90m[1m_update_scan_actions[22m | VoxelInstancer.svg[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | VoxelLodTerrain.svg[39m[0m
+[  56% ] [90m[1m_update_scan_actions[22m | VoxelMesher.svg[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | VoxelNode.svg[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | VoxelTerrain.svg[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | VoxelTerrainLarge.svg[39m[0m
+[  81% ] [90m[1m_update_scan_actions[22m | VoxelViewer.svg[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | ZN_FastNoiseLite.svg[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importando Recursos (15 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[   6% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  12% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  18% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  25% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  31% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  37% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  43% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  56% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  62% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  68% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  75% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  81% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[  87% ] [90m[1mreimport[22m | Preparando arquivos para reimportação...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executando operações pré-reimportação...[39m[0m
+[   0% ] [90m[1mreimport[22m | FastNoise2.svg[39m[0m
+[   6% ] [90m[1mreimport[22m | VoxelBlockyLibrary.svg[39m[0m
+[  12% ] [90m[1mreimport[22m | VoxelBlockyModel.svg[39m[0m
+[  18% ] [90m[1mreimport[22m | VoxelInstanceLibrary.svg[39m[0m
+[  25% ] [90m[1mreimport[22m | VoxelInstanceLibraryItem.svg[39m[0m
+[  31% ] [90m[1mreimport[22m | VoxelInstanceLibraryMultiMeshItem.svg[39m[0m
+[  37% ] [90m[1mreimport[22m | VoxelInstanceLibrarySceneItem.svg[39m[0m
+[  43% ] [90m[1mreimport[22m | VoxelInstancer.svg[39m[0m
+[  50% ] [90m[1mreimport[22m | VoxelLodTerrain.svg[39m[0m
+[  56% ] [90m[1mreimport[22m | VoxelMesher.svg[39m[0m
+[  62% ] [90m[1mreimport[22m | VoxelNode.svg[39m[0m
+[  68% ] [90m[1mreimport[22m | VoxelTerrain.svg[39m[0m
+[  75% ] [90m[1mreimport[22m | VoxelTerrainLarge.svg[39m[0m
+[  81% ] [90m[1mreimport[22m | VoxelViewer.svg[39m[0m
+[  87% ] [90m[1mreimport[22m | ZN_FastNoiseLite.svg[39m[0m
+[  93% ] [90m[1mreimport[22m | Finalizando Importação de Recursos...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importando Recursos (15 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executando operações pós-reimportação...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Carregando editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Carregando layout do editor...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Carregando abas...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+ERROR: Cannot open file 'res://scenes/main.tscn'.
+   at: load (scene/resources/resource_format_text.cpp:1442)
+ERROR: Failed loading resource: res://scenes/main.tscn.
+   at: _load (core/io/resource_loader.cpp:317)

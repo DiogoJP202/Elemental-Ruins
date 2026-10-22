@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/terrain_service.gd" id="1_terrain_service"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lab"]
+sky_top_color = Color(0.45, 0.62, 0.78, 1)
+sky_horizon_color = Color(0.86, 0.78, 0.66, 1)
+ground_bottom_color = Color(0.2, 0.17, 0.15, 1)
+ground_horizon_color = Color(0.86, 0.78, 0.66, 1)
+
+[sub_resource type="Sky" id="Sky_lab"]
+sky_material = SubResource("ProceduralSkyMaterial_lab")
+
+[sub_resource type="Environment" id="Environment_lab"]
+background_mode = 2
+sky = SubResource("Sky_lab")
+ambient_light_source = 3
+ambient_light_energy = 0.8
+tonemap_mode = 2
+
+[node name="VoxelLab" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_lab")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.9, -0.6, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="TerrainService" type="Node" parent="."]
+script = ExtResource("1_terrain_service")
+terrain_parent_path = NodePath("../TerrainRoot")
+protected_body_path = NodePath("../../Player")
+ready_probe_point = Vector3(0, 0, 28)
+
+[node name="TerrainRoot" type="Node3D" parent="."]
+
+[node name="SpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 28)
+
+[node name="Props" type="Node3D" parent="."]

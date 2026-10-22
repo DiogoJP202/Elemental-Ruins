@@ -1,0 +1,12 @@
+# Godot e scripts com LF para evitar diffs falsos no Windows
+* text=auto eol=lf
+
+*.dll binary
+*.so binary
+*.dylib binary
+*.a binary
+*.png binary
+*.jpg binary
+*.tpz binary
+*.zip binary
+*.ps1 text eol=crlf
