@@ -1,0 +1,27 @@
+# Godot generated state
+.godot/
+.import/
+.export/
+export.cfg
+export_presets.cfg
+*.tmp
+*.log
+
+# binaries, secrets and tools
+*.pck
+*.exe
+.env
+.env.*
+!.env.example
+.vscode/settings.json
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Don't commit local Claude session state
+.claude/settings.local.json
+.claude/worktrees/
+
+# Native addon libraries are deliberately NOT ignored. Pin plugin version and license.

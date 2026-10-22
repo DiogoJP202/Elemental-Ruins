@@ -1,0 +1,3545 @@
+{
+  "date": "2026-10-22",
+  "usage": "Reference only; not implementation prompt",
+  "entries": [
+    {
+      "id": "ag-001",
+      "element": "ÁGUA",
+      "technique": "Movimentação e levitação",
+      "classification": "fundamento",
+      "sandbox_mechanic": "Extrai, suspende e guia volumes líquidos; conserva uma reserva que pode respingar e voltar ao solo.",
+      "documented_example": "Katara e Aang",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-002",
+      "element": "ÁGUA",
+      "technique": "Projétil compacto de água",
+      "classification": "básica",
+      "sandbox_mechanic": "Bolha de água de impulso curto que empurra objetos leves ou parte de estruturas.",
+      "documented_example": "Hama",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-003",
+      "element": "ÁGUA",
+      "technique": "Jato contínuo pressurizado",
+      "classification": "básica",
+      "sandbox_mechanic": "Fluxo sustentado cuja pressão pode deslocar e cortar materiais vulneráveis.",
+      "documented_example": "Kya e Unalaq",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-004",
+      "element": "ÁGUA",
+      "technique": "Chicote líquido",
+      "classification": "básica",
+      "sandbox_mechanic": "Tentáculo único flexível para impacto, alcance e captura.",
+      "documented_example": "Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-005",
+      "element": "ÁGUA",
+      "technique": "Chicotes múltiplos",
+      "classification": "avançada",
+      "sandbox_mechanic": "Vários tentáculos autônomos com ataque simultâneo e alcance variável.",
+      "documented_example": "Katara e Unalaq",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-006",
+      "element": "ÁGUA",
+      "technique": "Lâmina ou faca de água",
+      "classification": "básica",
+      "sandbox_mechanic": "Cria borda estreita cortante por curta duração.",
+      "documented_example": "Aang, Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-007",
+      "element": "ÁGUA",
+      "technique": "Lashing / fio hidráulico cortante",
+      "classification": "avançada",
+      "sandbox_mechanic": "Concentra a pressão num corte linear; prejudica peças rígidas do cenário.",
+      "documented_example": "Aang e Katara no grande perfurador",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-008",
+      "element": "ÁGUA",
+      "technique": "Aro aquático cortante",
+      "classification": "avançada",
+      "sandbox_mechanic": "Projeta anel ou arco de água afiado e giratório.",
+      "documented_example": "Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-009",
+      "element": "ÁGUA",
+      "technique": "Rings of water / órbitas",
+      "classification": "avançada",
+      "sandbox_mechanic": "Mantém um a três anéis em torno do corpo; servem de defesa e munição.",
+      "documented_example": "Kya",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-010",
+      "element": "ÁGUA",
+      "technique": "Water bracket / arco transversal",
+      "classification": "básica",
+      "sandbox_mechanic": "Lança golpe em arco cortante que acompanha um gesto amplo.",
+      "documented_example": "Pakku, Tarrlok",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-011",
+      "element": "ÁGUA",
+      "technique": "Escudo ou parede de água",
+      "classification": "básica",
+      "sandbox_mechanic": "Intercepta projéteis e fogo; consumo depende de espessura e compressão.",
+      "documented_example": "Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-012",
+      "element": "ÁGUA",
+      "technique": "Esfera de captura líquida",
+      "classification": "básica",
+      "sandbox_mechanic": "Prende pequenos objetos ou alvos em um volume d'água suspenso.",
+      "documented_example": "Korra, Ming-Hua",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-013",
+      "element": "ÁGUA",
+      "technique": "Corda e garra hidráulica",
+      "classification": "avançada",
+      "sandbox_mechanic": "Usa água como cabo para puxar, agarrar ou imobilizar.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-014",
+      "element": "ÁGUA",
+      "technique": "Manto líquido / water cloak",
+      "classification": "avançada",
+      "sandbox_mechanic": "Armadura flexível com extensões multifuncionais de água.",
+      "documented_example": "Katara, Ming-Hua",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-015",
+      "element": "ÁGUA",
+      "technique": "Forma do polvo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Distribui tentáculos radialmente ao redor do corpo.",
+      "documented_example": "Aang, Katara, Ming-Hua",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-016",
+      "element": "ÁGUA",
+      "technique": "Braços de água sem membros",
+      "classification": "rara",
+      "sandbox_mechanic": "Conduz extensões líquidas pelo tronco, sem depender de braços físicos.",
+      "documented_example": "Ming-Hua",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-017",
+      "element": "ÁGUA",
+      "technique": "Onda e surfe",
+      "classification": "básica",
+      "sandbox_mechanic": "Ergue frente d'água para arrastar objetos ou transportar o usuário.",
+      "documented_example": "Pakku e Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-018",
+      "element": "ÁGUA",
+      "technique": "Rajada volumosa de água",
+      "classification": "avançada",
+      "sandbox_mechanic": "Uma frente de impacto mais larga que o tiro normal.",
+      "documented_example": "Korra e Unalaq",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-019",
+      "element": "ÁGUA",
+      "technique": "Redemoinho / maelstrom",
+      "classification": "avançada",
+      "sandbox_mechanic": "Gira água em escala de lago/rio, puxando objetos ao centro.",
+      "documented_example": "Aang e Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-020",
+      "element": "ÁGUA",
+      "technique": "Torre ou coluna d'água",
+      "classification": "avançada",
+      "sandbox_mechanic": "Eleva o jogador sobre vórtice controlado com limite de altura por volume.",
+      "documented_example": "Pakku, Amon, Korra",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-021",
+      "element": "ÁGUA",
+      "technique": "Locomoção sobre água",
+      "classification": "avançada",
+      "sandbox_mechanic": "Usa placa de gelo, corrente ou coluna fluida como meio de transporte.",
+      "documented_example": "Katara, Amon",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-022",
+      "element": "ÁGUA",
+      "technique": "Bolha respirável submersa",
+      "classification": "avançada",
+      "sandbox_mechanic": "Abre casulo de ar dentro d'água para passagem submersa.",
+      "documented_example": "Katara e Aang",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-023",
+      "element": "ÁGUA",
+      "technique": "Separação / abertura da água",
+      "classification": "avançada",
+      "sandbox_mechanic": "Afasta líquido para expor fundo, liberar passagem ou bloquear corrente.",
+      "documented_example": "Aang e Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-024",
+      "element": "ÁGUA",
+      "technique": "Fase: água para gelo",
+      "classification": "fundamento",
+      "sandbox_mechanic": "Solidifica estruturas e projéteis em tempo real.",
+      "documented_example": "Pakku e Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-025",
+      "element": "ÁGUA",
+      "technique": "Fase: gelo para água",
+      "classification": "fundamento",
+      "sandbox_mechanic": "Desfaz prisões e recompõe reserva de líquido.",
+      "documented_example": "Pakku e Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-026",
+      "element": "ÁGUA",
+      "technique": "Fase: vapor e névoa",
+      "classification": "avançada",
+      "sandbox_mechanic": "Converte água em neblina para encobrimento e mudança de forma.",
+      "documented_example": "Katara e Korra",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-027",
+      "element": "ÁGUA",
+      "technique": "Projéteis de gelo",
+      "classification": "básica",
+      "sandbox_mechanic": "Espinhos, lanças e fragmentos rígidos que prendem ou quebram.",
+      "documented_example": "Pakku, Korra",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-028",
+      "element": "ÁGUA",
+      "technique": "Barreira ou domo de gelo",
+      "classification": "básica",
+      "sandbox_mechanic": "Constrói placas duras ou cúpula contra golpes e fluxos.",
+      "documented_example": "Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-029",
+      "element": "ÁGUA",
+      "technique": "Prisão de gelo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Envolve e imobiliza alvo; pode travar membros.",
+      "documented_example": "Katara vence Azula",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-030",
+      "element": "ÁGUA",
+      "technique": "Congelamento dos pés",
+      "classification": "básica",
+      "sandbox_mechanic": "Enraíza um alvo no chão com pequenas quantidades de água.",
+      "documented_example": "Pakku; quiet grip of ice",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-031",
+      "element": "ÁGUA",
+      "technique": "Piso congelado deslizante",
+      "classification": "básica",
+      "sandbox_mechanic": "Transforma chão molhado em superfície lisa escorregadia.",
+      "documented_example": "Noatak e Tarrlok",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-032",
+      "element": "ÁGUA",
+      "technique": "Sopro congelante",
+      "classification": "avançada",
+      "sandbox_mechanic": "Condensa e congela o vapor do próprio hálito.",
+      "documented_example": "Katara e Aang",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-033",
+      "element": "ÁGUA",
+      "technique": "Cunha / iceberg sob alvo",
+      "classification": "básica",
+      "sandbox_mechanic": "Faz gelo subir agressivamente de superfícies aquáticas.",
+      "documented_example": "Defesas do Polo Norte",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-034",
+      "element": "ÁGUA",
+      "technique": "Broca de água",
+      "classification": "avançada",
+      "sandbox_mechanic": "Coluna líquida helicoidal com penetração sustentada.",
+      "documented_example": "Kya",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-035",
+      "element": "ÁGUA",
+      "technique": "Broca de gelo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Acumula água giratória com ponta congelada sólida.",
+      "documented_example": "Unalaq e Ming-Hua",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-036",
+      "element": "ÁGUA",
+      "technique": "Escada / rampa de gelo",
+      "classification": "básica",
+      "sandbox_mechanic": "Cria vias de escalada, pontes e trilhas temporárias.",
+      "documented_example": "Katara",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-037",
+      "element": "ÁGUA",
+      "technique": "Trenó ou patins de gelo",
+      "classification": "básica",
+      "sandbox_mechanic": "Converte água em locomoção veloz sobre neve e gelo.",
+      "documented_example": "Katara, Tonraq",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-038",
+      "element": "ÁGUA",
+      "technique": "Nadar pelo gelo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Abre ou movimenta o gelo ao redor do corpo como se fosse líquido.",
+      "documented_example": "Korra",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-039",
+      "element": "ÁGUA",
+      "technique": "Pilares finos de gelo / mist-step",
+      "classification": "avançada",
+      "sandbox_mechanic": "Cria apoios sucessivos para caminhar em altura.",
+      "documented_example": "Técnica da Companhia de Ópera Voadora",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-040",
+      "element": "ÁGUA",
+      "technique": "Manipulação da chuva",
+      "classification": "avançada",
+      "sandbox_mechanic": "Suspende gotas e pode reutilizá-las em ataque concentrado.",
+      "documented_example": "Katara diante de Yon Rha",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-041",
+      "element": "ÁGUA",
+      "technique": "Extração de umidade do ar",
+      "classification": "avançada",
+      "sandbox_mechanic": "Condensa água do vapor ambiental; rendimento limitado por umidade.",
+      "documented_example": "Hama",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-042",
+      "element": "ÁGUA",
+      "technique": "Extração de água vegetal",
+      "classification": "avançada",
+      "sandbox_mechanic": "Retira água das plantas e deixa vegetação ressecada.",
+      "documented_example": "Hama",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-043",
+      "element": "ÁGUA",
+      "technique": "Manipulação de plantas e vinhas",
+      "classification": "especializada",
+      "sandbox_mechanic": "Move caule e raízes por seu teor de água; pode formar grande armadura vegetal.",
+      "documented_example": "Huu e tribo do pântano",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-044",
+      "element": "ÁGUA",
+      "technique": "Manipulação de lama (fração líquida)",
+      "classification": "aplicação",
+      "sandbox_mechanic": "Move a água do lodo; o componente mineral pode responder à terra.",
+      "documented_example": "Katara",
+      "source_keys": [
+        "AG",
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "ag-045",
+      "element": "ÁGUA",
+      "technique": "Filtragem hídrica (em dupla)",
+      "classification": "combinação confirmada",
+      "sandbox_mechanic": "Água suspende solução; terra separa detritos minerais.",
+      "documented_example": "Katara e Toph",
+      "source_keys": [
+        "AG",
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "ag-046",
+      "element": "ÁGUA",
+      "technique": "Tratamento e cura com água",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Estimula recuperação tecidual via chi usando água como catalisador.",
+      "documented_example": "Katara, Kya, Yagoda",
+      "source_keys": [
+        "HE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Healing"
+      ]
+    },
+    {
+      "id": "ag-047",
+      "element": "ÁGUA",
+      "technique": "Cura com água espiritual",
+      "classification": "rara",
+      "sandbox_mechanic": "Potencializa cicatrização fora do alcance de água comum; recurso excepcional.",
+      "documented_example": "Katara salva Aang",
+      "source_keys": [
+        "HE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Healing"
+      ]
+    },
+    {
+      "id": "ag-048",
+      "element": "ÁGUA",
+      "technique": "Purificação de espíritos",
+      "classification": "subtécnica espiritual",
+      "sandbox_mechanic": "Água e conhecimento espiritual acalmam espíritos hostis.",
+      "documented_example": "Makittuq, Unalaq, Korra",
+      "source_keys": [
+        "HE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Healing"
+      ]
+    },
+    {
+      "id": "ag-049",
+      "element": "ÁGUA",
+      "technique": "Corrupção espiritual por água",
+      "classification": "rara",
+      "sandbox_mechanic": "Inverte o processo de equilíbrio de espírito, com efeitos negativos.",
+      "documented_example": "Unalaq",
+      "source_keys": [
+        "HE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Healing"
+      ]
+    },
+    {
+      "id": "ag-050",
+      "element": "ÁGUA",
+      "technique": "Dobra de sangue comum",
+      "classification": "subdobra restrita",
+      "sandbox_mechanic": "Controla líquidos orgânicos de terceiros e, normalmente, depende de lua cheia.",
+      "documented_example": "Hama, Katara",
+      "source_keys": [
+        "BL"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Bloodbending"
+      ]
+    },
+    {
+      "id": "ag-051",
+      "element": "ÁGUA",
+      "technique": "Dobra de sangue sem lua cheia",
+      "classification": "rara",
+      "sandbox_mechanic": "Variação da linhagem de Yakone, sem condição astronômica normal.",
+      "documented_example": "Yakone, Tarrlok e Amon",
+      "source_keys": [
+        "BL"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Bloodbending"
+      ]
+    },
+    {
+      "id": "ag-052",
+      "element": "ÁGUA",
+      "technique": "Dobra de sangue psíquica",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Controle por movimentos mínimos sem gestos amplos.",
+      "documented_example": "Yakone e Amon",
+      "source_keys": [
+        "BL"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Bloodbending"
+      ]
+    },
+    {
+      "id": "ag-053",
+      "element": "ÁGUA",
+      "technique": "Supressão de dobra via chi / sangue",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Interrompe caminhos de chi por aplicação altamente especializada.",
+      "documented_example": "Amon",
+      "source_keys": [
+        "BL"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Bloodbending"
+      ]
+    },
+    {
+      "id": "ag-054",
+      "element": "ÁGUA",
+      "technique": "Manipulação térmica interna",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Reduz temperatura de órgãos; técnica de contato e enorme precisão.",
+      "documented_example": "Atuat e Kyoshi",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-055",
+      "element": "ÁGUA",
+      "technique": "Compressão extrema de água",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Mantém grande massa em volume artificialmente reduzido.",
+      "documented_example": "Aang contra Ozai",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-056",
+      "element": "ÁGUA",
+      "technique": "Tsunami / maremoto",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Ergue frentes d'água gigantes capazes de mover embarcações.",
+      "documented_example": "Kuruk, Aang, Korra",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ag-057",
+      "element": "ÁGUA",
+      "technique": "Fissura em gelo continental",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Abre e fecha massas de terreno congelado usando sua água.",
+      "documented_example": "Unalaq-Vaatu",
+      "source_keys": [
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "te-001",
+      "element": "TERRA",
+      "technique": "Levitação e arremesso de rochas",
+      "classification": "fundamento",
+      "sandbox_mechanic": "Arranca e atira material mineral em diferentes tamanhos.",
+      "documented_example": "Haru, Aang",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-002",
+      "element": "TERRA",
+      "technique": "Bloco de terra",
+      "classification": "básica",
+      "sandbox_mechanic": "Extrai cubo ou placa e lança a curta distância.",
+      "documented_example": "Dai Li",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-003",
+      "element": "TERRA",
+      "technique": "Compressão de rochas",
+      "classification": "avançada",
+      "sandbox_mechanic": "Une ou compacta detritos em massa mais densa e dura.",
+      "documented_example": "Haru e Tyro",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-004",
+      "element": "TERRA",
+      "technique": "Quebra de rochas",
+      "classification": "básica",
+      "sandbox_mechanic": "Fragmenta pedras e intercepta projéteis minerais.",
+      "documented_example": "Toph e Aang",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-005",
+      "element": "TERRA",
+      "technique": "Muro e barreira de terra",
+      "classification": "básica",
+      "sandbox_mechanic": "Ergue paredão que também pode ser disparado lateralmente.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-006",
+      "element": "TERRA",
+      "technique": "Escudo de laje",
+      "classification": "básica",
+      "sandbox_mechanic": "Levanta rocha portátil ou projeta placa do chão.",
+      "documented_example": "Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-007",
+      "element": "TERRA",
+      "technique": "Coluna / pilar rochoso",
+      "classification": "básica",
+      "sandbox_mechanic": "Surge vertical ou lateralmente do terreno e empurra obstáculos.",
+      "documented_example": "Bumi",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-008",
+      "element": "TERRA",
+      "technique": "Salto lançado por pilar",
+      "classification": "básica",
+      "sandbox_mechanic": "Ejeta bloco sob os pés como plataforma elevatória rápida.",
+      "documented_example": "Bumi e Bolin",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-009",
+      "element": "TERRA",
+      "technique": "Elevador e plataforma móvel",
+      "classification": "básica",
+      "sandbox_mechanic": "Move degrau ou laje com usuário em cima.",
+      "documented_example": "Aang e Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-010",
+      "element": "TERRA",
+      "technique": "Fissura ou terremoto localizado",
+      "classification": "básica",
+      "sandbox_mechanic": "Fende piso e desestabiliza estruturas apoiadas.",
+      "documented_example": "Gow e earthbenders",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-011",
+      "element": "TERRA",
+      "technique": "Manipulação topográfica",
+      "classification": "avançada",
+      "sandbox_mechanic": "Ergue, abaixa, dobra e redesenha o relevo sem simplesmente explodir.",
+      "documented_example": "Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-012",
+      "element": "TERRA",
+      "technique": "Deslizamento de encosta",
+      "classification": "básica",
+      "sandbox_mechanic": "Desprende segmentos de falésia e gera chuva de fragmentos.",
+      "documented_example": "Guia do cânion",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-013",
+      "element": "TERRA",
+      "technique": "Onda de terra / earth surfing",
+      "classification": "avançada",
+      "sandbox_mechanic": "Propulsão do corpo sobre faixa de chão em movimento.",
+      "documented_example": "Aang e Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-014",
+      "element": "TERRA",
+      "technique": "Afundamento do alvo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Move terra em torno de um alvo e o aprisiona verticalmente.",
+      "documented_example": "General Fong",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-015",
+      "element": "TERRA",
+      "technique": "Arenoso movediço / quicksand",
+      "classification": "básica",
+      "sandbox_mechanic": "Reduz sustentação de piso de areia/solo para deter movimento.",
+      "documented_example": "Dobradores de terra",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-016",
+      "element": "TERRA",
+      "technique": "Lama espessa",
+      "classification": "básica",
+      "sandbox_mechanic": "Torna terreno pegajoso, arrastando objetos e dificultando locomoção.",
+      "documented_example": "Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-017",
+      "element": "TERRA",
+      "technique": "Túnel por terra",
+      "classification": "avançada",
+      "sandbox_mechanic": "Abre galeria ou desloca solo ao redor do usuário.",
+      "documented_example": "Aang e Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-018",
+      "element": "TERRA",
+      "technique": "Armadura de rocha / cristal",
+      "classification": "avançada",
+      "sandbox_mechanic": "Reveste corpo com placas e deixa dano localizado no traje.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-019",
+      "element": "TERRA",
+      "technique": "Manoplas de pedra",
+      "classification": "básica",
+      "sandbox_mechanic": "Protege punhos e amplifica socos físicos.",
+      "documented_example": "Aang e Sun",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-020",
+      "element": "TERRA",
+      "technique": "Mão ou braço gigante de pedra",
+      "classification": "básica",
+      "sandbox_mechanic": "Modela apêndice mineral que agarra e lança.",
+      "documented_example": "Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-021",
+      "element": "TERRA",
+      "technique": "Algemas, prisão e grilhões de rocha",
+      "classification": "básica",
+      "sandbox_mechanic": "Forma contenção mineral em pulsos, pernas e torso.",
+      "documented_example": "Aang, Lin",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-022",
+      "element": "TERRA",
+      "technique": "Luvas projetáveis dos Dai Li",
+      "classification": "especializada",
+      "sandbox_mechanic": "Puños minerais remotos se soltam e agarram inimigos.",
+      "documented_example": "Dai Li",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-023",
+      "element": "TERRA",
+      "technique": "Calçados pétreos aderentes",
+      "classification": "especializada",
+      "sandbox_mechanic": "Usa rocha sob os pés para andar e prender-se em paredes.",
+      "documented_example": "Dai Li",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-024",
+      "element": "TERRA",
+      "technique": "Aderência à parede de pedra",
+      "classification": "avançada",
+      "sandbox_mechanic": "Mantém contato de membros/pedra aderida em plano íngreme.",
+      "documented_example": "Dai Li",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-025",
+      "element": "TERRA",
+      "technique": "Múltiplos projéteis ou metralha",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Projeta partículas minerais compactadas em sequência muito rápida.",
+      "documented_example": "Aang contra Ozai",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-026",
+      "element": "TERRA",
+      "technique": "Golem / corpo gigante de rocha",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Constrói carapaça humanoide enorme comandada pelo dobrador.",
+      "documented_example": "Aang vs General Old Iron",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-027",
+      "element": "TERRA",
+      "technique": "Deslocamento de grandes massas",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Arrasta formações imensas e estátuas de escala de colina.",
+      "documented_example": "Kyoshi, Aang, Korra",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-028",
+      "element": "TERRA",
+      "technique": "Tectônica / separação de ilha",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Modifica a continuidade geológica em escala de península.",
+      "documented_example": "Kyoshi cria sua ilha",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-029",
+      "element": "TERRA",
+      "technique": "Dobra de carvão, cristais e sal",
+      "classification": "aplicação mineral",
+      "sandbox_mechanic": "Manipula minerais além de solo comum; cada um tem dureza distinta.",
+      "documented_example": "Haru, Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-030",
+      "element": "TERRA",
+      "technique": "Dobra de meteorito",
+      "classification": "aplicação mineral",
+      "sandbox_mechanic": "Modela material meteórico flexível adequado a ferramentas.",
+      "documented_example": "Toph",
+      "source_keys": [
+        "TE",
+        "TO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending",
+        "https://avatar.fandom.com/wiki/Toph_Beifong"
+      ]
+    },
+    {
+      "id": "te-031",
+      "element": "TERRA",
+      "technique": "Dobra de areia",
+      "classification": "estilo especializado",
+      "sandbox_mechanic": "Fluxos de grãos, nuvens abrasivas e compactação de areia.",
+      "documented_example": "Dobradores do deserto, Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-032",
+      "element": "TERRA",
+      "technique": "Ventilador de areia para sailers",
+      "classification": "estilo especializado",
+      "sandbox_mechanic": "Movimenta embarcações com coluna de areia giratória.",
+      "documented_example": "Dobradores do Si Wong",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-033",
+      "element": "TERRA",
+      "technique": "Tempestade de areia e poeira",
+      "classification": "avançada",
+      "sandbox_mechanic": "Suspende detritos minerais que reduzem visibilidade e desgastam superfícies.",
+      "documented_example": "Dobradores de areia",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-034",
+      "element": "TERRA",
+      "technique": "Degraus de pó / dust-stepping",
+      "classification": "avançada",
+      "sandbox_mechanic": "Cria apoios mínimos sólidos para aparente caminhada no ar.",
+      "documented_example": "Flying Opera Company, Kyoshi",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-035",
+      "element": "TERRA",
+      "technique": "Detecção sísmica",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Lê movimento e volumes por vibrações do solo conectado.",
+      "documented_example": "Toph, Aang, Lin",
+      "source_keys": [
+        "SE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Seismic_sense"
+      ]
+    },
+    {
+      "id": "te-036",
+      "element": "TERRA",
+      "technique": "Detecção de cavidades subterrâneas",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Revela túneis e vazios por vibrações, sem linha de visão.",
+      "documented_example": "Lin Beifong",
+      "source_keys": [
+        "SE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Seismic_sense"
+      ]
+    },
+    {
+      "id": "te-037",
+      "element": "TERRA",
+      "technique": "Leitura fisiológica de mentiras",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Identifica mudanças em batimento/respiração por vibrações do chão.",
+      "documented_example": "Toph",
+      "source_keys": [
+        "SE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Seismic_sense"
+      ]
+    },
+    {
+      "id": "te-038",
+      "element": "TERRA",
+      "technique": "Dobra de metal impuro",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Manipula metal por inclusões minerais que permanecem na liga.",
+      "documented_example": "Toph e Lin",
+      "source_keys": [
+        "SP",
+        "TO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Specialized_bending_techniques",
+        "https://avatar.fandom.com/wiki/Toph_Beifong"
+      ]
+    },
+    {
+      "id": "te-039",
+      "element": "TERRA",
+      "technique": "Tiras metálicas de contenção",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Lança fitas/placas de metal para algemar e golpear vários alvos.",
+      "documented_example": "Kuvira",
+      "source_keys": [
+        "KV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Kuvira"
+      ]
+    },
+    {
+      "id": "te-040",
+      "element": "TERRA",
+      "technique": "Cabo metálico de tração",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Prende cabo a edifícios, balança e puxa objetos pesados.",
+      "documented_example": "Polícia metalbender",
+      "source_keys": [
+        "SP",
+        "KV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Specialized_bending_techniques",
+        "https://avatar.fandom.com/wiki/Kuvira"
+      ]
+    },
+    {
+      "id": "te-041",
+      "element": "TERRA",
+      "technique": "Armadura e molde metálico",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Deforma metal em proteção ou altera formato de objetos existentes.",
+      "documented_example": "Toph",
+      "source_keys": [
+        "TO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Toph_Beifong"
+      ]
+    },
+    {
+      "id": "te-042",
+      "element": "TERRA",
+      "technique": "Lâmina, espada e chicote metálicos",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Arma efêmera com geometria controlada.",
+      "documented_example": "Kuvira",
+      "source_keys": [
+        "KV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Kuvira"
+      ]
+    },
+    {
+      "id": "te-043",
+      "element": "TERRA",
+      "technique": "Parafusos e engrenagens",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Reorganiza fixadores e peças internas de mecanismos bendáveis.",
+      "documented_example": "Toph e Suyin",
+      "source_keys": [
+        "TO",
+        "SP"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Toph_Beifong",
+        "https://avatar.fandom.com/wiki/Specialized_bending_techniques"
+      ]
+    },
+    {
+      "id": "te-044",
+      "element": "TERRA",
+      "technique": "Mercúrio metálico",
+      "classification": "aplicação metálica perigosa",
+      "sandbox_mechanic": "Controla pequenas quantidades de metal líquido; demonstrado em Korra.",
+      "documented_example": "Korra / Lótus Vermelho",
+      "source_keys": [
+        "MR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Mercury"
+      ]
+    },
+    {
+      "id": "te-045",
+      "element": "TERRA",
+      "technique": "Limitação: platina refinada",
+      "classification": "regra de mundo",
+      "sandbox_mechanic": "Metal extremamente puro não apresenta impurezas necessárias à dobra.",
+      "documented_example": "Hiroshi, Toph, Kuvira",
+      "source_keys": [
+        "SP",
+        "TO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Specialized_bending_techniques",
+        "https://avatar.fandom.com/wiki/Toph_Beifong"
+      ]
+    },
+    {
+      "id": "te-046",
+      "element": "TERRA",
+      "technique": "Dobra de lava",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Derrete rocha ou solidifica lava; mobilidade e dano ambiental persistente.",
+      "documented_example": "Ghazan e Bolin",
+      "source_keys": [
+        "LV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "id": "te-047",
+      "element": "TERRA",
+      "technique": "Shuriken / disco de lava",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Projétil rotativo superaquecido que corta partes e inicia incêndios.",
+      "documented_example": "Ghazan e Bolin",
+      "source_keys": [
+        "LV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "id": "te-048",
+      "element": "TERRA",
+      "technique": "Fosso / muro de lava",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Cria barreira térmica que impede trânsito ao redor.",
+      "documented_example": "Ghazan",
+      "source_keys": [
+        "LV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "id": "te-049",
+      "element": "TERRA",
+      "technique": "Onda e rios de lava",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Espalha material fundido e degrada fundações com o tempo.",
+      "documented_example": "Ghazan no muro de Ba Sing Se",
+      "source_keys": [
+        "LV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "id": "te-050",
+      "element": "TERRA",
+      "technique": "Re-solidificação da lava",
+      "classification": "subtécnica",
+      "sandbox_mechanic": "Transforma rocha derretida em superfície resistente.",
+      "documented_example": "Bolin salva grupo no Templo do Ar",
+      "source_keys": [
+        "LV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "id": "te-051",
+      "element": "TERRA",
+      "technique": "Dobra de vidro mineral",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Manipula fragmentos de vidro pela composição mineral.",
+      "documented_example": "Kyoshi",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-052",
+      "element": "TERRA",
+      "technique": "Liquefação mineral sem calor",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Torna rocha fluida sem magma; mais tarde volta a solidificar.",
+      "documented_example": "Yun",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-053",
+      "element": "TERRA",
+      "technique": "Dobra de pigmentos minerais",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Controla tinta mineral seca e pontiaguda.",
+      "documented_example": "Yun",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-054",
+      "element": "TERRA",
+      "technique": "Traços e escrita no solo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Desenha marcas e comunica por movimentação de pó/terra.",
+      "documented_example": "Yun e Toph",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "te-055",
+      "element": "TERRA",
+      "technique": "Preservação e leitura de pegadas",
+      "classification": "avançada",
+      "sandbox_mechanic": "Estabiliza marcas tênues do terreno para rastreamento.",
+      "documented_example": "Jianzhu",
+      "source_keys": [
+        "TE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "id": "fo-001",
+      "element": "FOGO",
+      "technique": "Geração de chama",
+      "classification": "fundamento",
+      "sandbox_mechanic": "Produz fogo a partir do chi sem combustível elemental externo.",
+      "documented_example": "Zuko e quase todos os dobradores de fogo",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-002",
+      "element": "FOGO",
+      "technique": "Rajada e punho flamejante",
+      "classification": "básica",
+      "sandbox_mechanic": "Dispara chama curta com soco, chute ou palma.",
+      "documented_example": "Zuko e Azula",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-003",
+      "element": "FOGO",
+      "technique": "Lança-chamas sustentado",
+      "classification": "básica",
+      "sandbox_mechanic": "Emite faixa contínua de fogo de alcance variável.",
+      "documented_example": "Soldados da Nação do Fogo",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-004",
+      "element": "FOGO",
+      "technique": "Explosão de fogo carregado",
+      "classification": "avançada",
+      "sandbox_mechanic": "Acumula energia, aumenta volume e dano de liberação.",
+      "documented_example": "Iroh e Ozai",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-005",
+      "element": "FOGO",
+      "technique": "Salva de projéteis",
+      "classification": "básica",
+      "sandbox_mechanic": "Múltiplas bolas pequenas em sequência de alta cadência.",
+      "documented_example": "Zuko",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-006",
+      "element": "FOGO",
+      "technique": "Chama em arco e anéis",
+      "classification": "básica",
+      "sandbox_mechanic": "Golpe varrido que atinge largura ou área circular.",
+      "documented_example": "Zuko contra Azula",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-007",
+      "element": "FOGO",
+      "technique": "Lâmina de fogo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Condensa frente térmica estreita para cortar objetos sem destruir tudo.",
+      "documented_example": "Azula e Zuko",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-008",
+      "element": "FOGO",
+      "technique": "Adaga e lança térmica",
+      "classification": "básica",
+      "sandbox_mechanic": "Modela chama tipo maçarico em combate próximo.",
+      "documented_example": "Zuko, Azula, Mako",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-009",
+      "element": "FOGO",
+      "technique": "Microjato de dedo / maçarico",
+      "classification": "avançada",
+      "sandbox_mechanic": "Chama concentrada para cortar correntes, barras e fechaduras.",
+      "documented_example": "Korra e Mako",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-010",
+      "element": "FOGO",
+      "technique": "Chicote / laço de fogo",
+      "classification": "básica",
+      "sandbox_mechanic": "Cria trajetória flamejante flexível para varrer linhas ou alvos.",
+      "documented_example": "Zuko",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-011",
+      "element": "FOGO",
+      "technique": "Lashes múltiplos de fogo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Golpeia com vários tentáculos ardentes.",
+      "documented_example": "Zuko",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-012",
+      "element": "FOGO",
+      "technique": "Cintas ou fitas de chamas",
+      "classification": "básica",
+      "sandbox_mechanic": "Fluxos longos e menos destrutivos com trajetória fluida.",
+      "documented_example": "Torneio de Karr Lok",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-013",
+      "element": "FOGO",
+      "technique": "Disco flamejante",
+      "classification": "avançada",
+      "sandbox_mechanic": "Cria roda de fogo lançada em trajetória curva.",
+      "documented_example": "Azula e Korra",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-014",
+      "element": "FOGO",
+      "technique": "Círculo de chama sustentado",
+      "classification": "básica",
+      "sandbox_mechanic": "Mantém aro suspenso para delimitação de área.",
+      "documented_example": "Guerreiros do Sol",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-015",
+      "element": "FOGO",
+      "technique": "Escudo flamejante",
+      "classification": "básica",
+      "sandbox_mechanic": "Cancela ou desvia fogo e ataques próximos; deixa risco de queima.",
+      "documented_example": "Zuko e Azula",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-016",
+      "element": "FOGO",
+      "technique": "Parede de chamas",
+      "classification": "avançada",
+      "sandbox_mechanic": "Ergue barreira longa e persistente, interditando passagens.",
+      "documented_example": "Jeong Jeong",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-017",
+      "element": "FOGO",
+      "technique": "Esfera de proteção/ocultação",
+      "classification": "avançada",
+      "sandbox_mechanic": "Explosão esférica de defesa e reposicionamento.",
+      "documented_example": "Jeong Jeong",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-018",
+      "element": "FOGO",
+      "technique": "Desvio de chamas inimigas",
+      "classification": "avançada",
+      "sandbox_mechanic": "Reorienta fogo recebido para outro vetor.",
+      "documented_example": "Wan",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-019",
+      "element": "FOGO",
+      "technique": "Extinção ou interrupção de chamas",
+      "classification": "básica",
+      "sandbox_mechanic": "Neutraliza uma rajada adversária com gesto de dobra.",
+      "documented_example": "Zuko",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-020",
+      "element": "FOGO",
+      "technique": "Aumento de chama existente",
+      "classification": "básica",
+      "sandbox_mechanic": "Amplifica fogueiras, velas, incêndios e fontes prévias.",
+      "documented_example": "Zuko e Jeong Jeong",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-021",
+      "element": "FOGO",
+      "technique": "Modelagem animal de fogo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Converte corrente de chama em dragões e outras silhuetas.",
+      "documented_example": "Roku e Ta Min",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-022",
+      "element": "FOGO",
+      "technique": "Fogo de hálito / sopro de dragão",
+      "classification": "especializada",
+      "sandbox_mechanic": "Projeta incêndio da boca, sem depender dos braços.",
+      "documented_example": "Iroh",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-023",
+      "element": "FOGO",
+      "technique": "Aquecimento corporal pelo sopro",
+      "classification": "especializada",
+      "sandbox_mechanic": "Regula o próprio calor em ambiente gelado.",
+      "documented_example": "Zuko",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-024",
+      "element": "FOGO",
+      "technique": "Transferência de calor",
+      "classification": "avançada",
+      "sandbox_mechanic": "Retira calor de uma área e lança em outra.",
+      "documented_example": "Sozin resfria lava vulcânica",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-025",
+      "element": "FOGO",
+      "technique": "Aquecimento de metal pelo contato",
+      "classification": "avançada",
+      "sandbox_mechanic": "Concentra calor em grades, algemas ou ferragens.",
+      "documented_example": "Iroh",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-026",
+      "element": "FOGO",
+      "technique": "Pulso térmico sem chama",
+      "classification": "avançada",
+      "sandbox_mechanic": "Onda de pressão quente capaz de repelir/romper objetos.",
+      "documented_example": "Sozin e Rangi",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-027",
+      "element": "FOGO",
+      "technique": "Cortina de fumaça térmica",
+      "classification": "avançada",
+      "sandbox_mechanic": "Gera fumaça e baixa visibilidade pelo calor/combustão.",
+      "documented_example": "Zuko e Ningka",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-028",
+      "element": "FOGO",
+      "technique": "Jato de propulsão",
+      "classification": "avançada",
+      "sandbox_mechanic": "Move jogador com escape de fogo pelos pés e mãos.",
+      "documented_example": "Azula e Ozai",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-029",
+      "element": "FOGO",
+      "technique": "Corrida vertical por jatos",
+      "classification": "avançada",
+      "sandbox_mechanic": "Usa impulso flamejante contra parede vertical.",
+      "documented_example": "Mako e Korra",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-030",
+      "element": "FOGO",
+      "technique": "Jet-stepping",
+      "classification": "rara",
+      "sandbox_mechanic": "Explosões dos pés criam passos breves no ar sem piso sólido.",
+      "documented_example": "Rangi",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-031",
+      "element": "FOGO",
+      "technique": "Bomba de fogo explosiva",
+      "classification": "avançada",
+      "sandbox_mechanic": "Golpe curto que detona numa área em vez de queimar só na linha.",
+      "documented_example": "Zuko e Ozai",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-032",
+      "element": "FOGO",
+      "technique": "Cometa / míssil flamejante",
+      "classification": "avançada",
+      "sandbox_mechanic": "Munição pressurizada ou corrente rastreadora de fogo.",
+      "documented_example": "Iroh e Ozai",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-033",
+      "element": "FOGO",
+      "technique": "Chama branca",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Chama muito intensa associada a Rangi.",
+      "documented_example": "Rangi",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-034",
+      "element": "FOGO",
+      "technique": "Chama azul",
+      "classification": "rara",
+      "sandbox_mechanic": "Chama com potência térmica maior que fogo comum; não é elemento distinto.",
+      "documented_example": "Azula",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-035",
+      "element": "FOGO",
+      "technique": "Chama iridescente",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Chama multicolorida de intensidade excepcional.",
+      "documented_example": "Roku",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-036",
+      "element": "FOGO",
+      "technique": "Blazing sun",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Concentra esfera ardente consumindo vigor do praticante.",
+      "documented_example": "Hei-Ran",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-037",
+      "element": "FOGO",
+      "technique": "Combustão de terceiro olho",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Feixe concentrado detona ao atingir alvo distante.",
+      "documented_example": "Combustion Man e P'Li",
+      "source_keys": [
+        "FO",
+        "PL"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending",
+        "https://avatar.fandom.com/wiki/P%27Li"
+      ]
+    },
+    {
+      "id": "fo-038",
+      "element": "FOGO",
+      "technique": "Curvatura do raio de combustão",
+      "classification": "subtécnica rara",
+      "sandbox_mechanic": "Altera levemente trajetória da explosão direcionada.",
+      "documented_example": "P'Li",
+      "source_keys": [
+        "PL"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/P%27Li"
+      ]
+    },
+    {
+      "id": "fo-039",
+      "element": "FOGO",
+      "technique": "Falha de combustão por interrupção de chi",
+      "classification": "limitação",
+      "sandbox_mechanic": "Impacto na testa desestabiliza e faz o raio detonar de modo perigoso.",
+      "documented_example": "Combustion Man e P'Li",
+      "source_keys": [
+        "CH",
+        "PL"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Chi-blocking",
+        "https://avatar.fandom.com/wiki/P%27Li"
+      ]
+    },
+    {
+      "id": "fo-040",
+      "element": "FOGO",
+      "technique": "Geração de relâmpago",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Cria descarga elétrica com canalização específica de chi.",
+      "documented_example": "Iroh, Ozai, Azula, Mako",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-041",
+      "element": "FOGO",
+      "technique": "Relâmpago de disparo rápido",
+      "classification": "avançada",
+      "sandbox_mechanic": "Reduz preparação para surpresa ou defesa curta.",
+      "documented_example": "Mako e Xu Ping An",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-042",
+      "element": "FOGO",
+      "technique": "Relâmpago sustentado",
+      "classification": "avançada",
+      "sandbox_mechanic": "Mantém arco elétrico por segundos, com desgaste ao usuário.",
+      "documented_example": "Mako, Lightning Bolt Zolt",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-043",
+      "element": "FOGO",
+      "technique": "Relâmpagos duplos",
+      "classification": "avançada",
+      "sandbox_mechanic": "Dispara pelas duas mãos para alvos independentes.",
+      "documented_example": "Ozai e Xu Ping An",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-044",
+      "element": "FOGO",
+      "technique": "Relâmpago esférico",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Bola elétrica que percorre distância antes de atingir alvo.",
+      "documented_example": "Azula",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-045",
+      "element": "FOGO",
+      "technique": "Explosão elétrica multidirecional",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Distribui descarga em múltiplos caminhos a partir do corpo.",
+      "documented_example": "Azula",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-046",
+      "element": "FOGO",
+      "technique": "Faísca disruptiva",
+      "classification": "avançada",
+      "sandbox_mechanic": "Choque mínimo para atordoar ou danificar aparelho.",
+      "documented_example": "Azula",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-047",
+      "element": "FOGO",
+      "technique": "Relâmpago pelo hálito",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Descarga elétrica emitida pela boca.",
+      "documented_example": "Técnica citada na Wiki",
+      "source_keys": [
+        "LG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "id": "fo-048",
+      "element": "FOGO",
+      "technique": "Redirecionamento de relâmpago",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Recebe descarga e a expulsa por caminho interno controlado.",
+      "documented_example": "Iroh, Zuko, Aang, Mako",
+      "source_keys": [
+        "LR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_redirection"
+      ]
+    },
+    {
+      "id": "fo-049",
+      "element": "FOGO",
+      "technique": "Superalimentação pelo Cometa de Sozin",
+      "classification": "condição astronômica",
+      "sandbox_mechanic": "Eleva brutalmente intensidade/alcance dos golpes de fogo e permite voo extenso.",
+      "documented_example": "Ozai, Azula, Zuko, Iroh",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "fo-050",
+      "element": "FOGO",
+      "technique": "Amplificação solar / diurna",
+      "classification": "condição ambiental",
+      "sandbox_mechanic": "Fogo tende a fortalecer com luz solar e calor ambiente.",
+      "documented_example": "Dobradores da Nação do Fogo",
+      "source_keys": [
+        "FO"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "id": "ar-001",
+      "element": "AR",
+      "technique": "Rajada de vento",
+      "classification": "fundamento",
+      "sandbox_mechanic": "Empurra, desloca e desvia corpos e objetos à distância.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-002",
+      "element": "AR",
+      "technique": "Bola de ar comprimido",
+      "classification": "básica",
+      "sandbox_mechanic": "Projétil compacto invisível com anel de distorção.",
+      "documented_example": "Ikki e Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-003",
+      "element": "AR",
+      "technique": "Soco ou chute de ar",
+      "classification": "básica",
+      "sandbox_mechanic": "Pulsos rápidos de pressão que se espalham em impacto.",
+      "documented_example": "Korra",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-004",
+      "element": "AR",
+      "technique": "Onda de choque circular",
+      "classification": "básica",
+      "sandbox_mechanic": "Impacto radial do jogador, deslocando fragmentos leves.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-005",
+      "element": "AR",
+      "technique": "Lâmina crescente de vento",
+      "classification": "básica",
+      "sandbox_mechanic": "Corta materiais em linha curva.",
+      "documented_example": "Aang e Jinora",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-006",
+      "element": "AR",
+      "technique": "Lâminas finas de ar",
+      "classification": "avançada",
+      "sandbox_mechanic": "Fio de pressão que corta pedra e madeira.",
+      "documented_example": "Mestres dobradores de ar",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-007",
+      "element": "AR",
+      "technique": "Escudo desviador",
+      "classification": "básica",
+      "sandbox_mechanic": "Desloca projéteis lateralmente em vez de bloqueio sólido.",
+      "documented_example": "Kai e Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-008",
+      "element": "AR",
+      "technique": "Casulo rotatório defensivo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Redemoinho próximo do corpo reduz impacto de projéteis.",
+      "documented_example": "Tenzin",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-009",
+      "element": "AR",
+      "technique": "Cushion / amortecedor de queda",
+      "classification": "básica",
+      "sandbox_mechanic": "Bolsa de ar absorve velocidade de aterrissagem.",
+      "documented_example": "Tenzin e Opal",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-010",
+      "element": "AR",
+      "technique": "Sustentação do pulo",
+      "classification": "básica",
+      "sandbox_mechanic": "Aumenta altura, alcance e frenagem de salto.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-011",
+      "element": "AR",
+      "technique": "Corrida assistida por vento",
+      "classification": "básica",
+      "sandbox_mechanic": "Reduz resistência ao ar, move usuário rapidamente.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-012",
+      "element": "AR",
+      "technique": "Corrida por paredes",
+      "classification": "avançada",
+      "sandbox_mechanic": "Vento propulsor permite trajetória curta em superfícies verticais.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-013",
+      "element": "AR",
+      "technique": "Puxão por sucção",
+      "classification": "básica",
+      "sandbox_mechanic": "Atrai pessoa ou objeto leve em direção ao usuário.",
+      "documented_example": "Aang e Tenzin",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-014",
+      "element": "AR",
+      "technique": "Canhão de ar e carvão",
+      "classification": "avançada",
+      "sandbox_mechanic": "Funil controlado acelera pequenos detritos como balas.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-015",
+      "element": "AR",
+      "technique": "Vórtice móvel",
+      "classification": "avançada",
+      "sandbox_mechanic": "Mantém coluna circular que ergue ou confunde objetos.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-016",
+      "element": "AR",
+      "technique": "Tornado ofensivo",
+      "classification": "avançada",
+      "sandbox_mechanic": "Funil de vento desloca alvos e detritos em espiral.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-017",
+      "element": "AR",
+      "technique": "Tornado coletivo",
+      "classification": "especializada cooperativa",
+      "sandbox_mechanic": "Vários dobradores amplificam funil até escala muito maior.",
+      "documented_example": "Jinora e Nação do Ar",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-018",
+      "element": "AR",
+      "technique": "Furacão de larga escala",
+      "classification": "nível mestre excepcional",
+      "sandbox_mechanic": "Vento devastador usado contra embarcações e grandes áreas.",
+      "documented_example": "Kelsang e Yangchen",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-019",
+      "element": "AR",
+      "technique": "Tromba / air spout",
+      "classification": "avançada",
+      "sandbox_mechanic": "Coluna vertical que suspende o usuário em posição.",
+      "documented_example": "Tenzin e Roku",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-020",
+      "element": "AR",
+      "technique": "Esfera aérea protetora",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Casulo esférico que levita, acelera e repele impactos.",
+      "documented_example": "Aang e Roku",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-021",
+      "element": "AR",
+      "technique": "Air scooter",
+      "classification": "especializada",
+      "sandbox_mechanic": "Bola de ar giratória em que se pode rolar e saltar.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-022",
+      "element": "AR",
+      "technique": "Air wheel",
+      "classification": "especializada",
+      "sandbox_mechanic": "Roda de vento ao redor do corpo para deslocamento e colisão.",
+      "documented_example": "Tenzin",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-023",
+      "element": "AR",
+      "technique": "Asa-delta com dobra",
+      "classification": "equipamento+técnica",
+      "sandbox_mechanic": "Controla corrente para planar por tempos longos usando planador.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-024",
+      "element": "AR",
+      "technique": "Wingsuit dos novos nômades",
+      "classification": "equipamento+técnica",
+      "sandbox_mechanic": "Voo planado assistido por dobras e superfície aerodinâmica.",
+      "documented_example": "Nova Nação do Ar",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-025",
+      "element": "AR",
+      "technique": "Levitação por nuvem/plataforma",
+      "classification": "avançada",
+      "sandbox_mechanic": "Vento sustentado sob os pés em deslocamentos controlados.",
+      "documented_example": "Kyoshi",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-026",
+      "element": "AR",
+      "technique": "Voo livre sem equipamento",
+      "classification": "subdobra raríssima",
+      "sandbox_mechanic": "Levitação independente de aparato após desapego espiritual extremo.",
+      "documented_example": "Laghima e Zaheer",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-027",
+      "element": "AR",
+      "technique": "Percepção das correntes de ar",
+      "classification": "especializada sensorial",
+      "sandbox_mechanic": "Identifica mudanças de pressão no entorno para evitar ameaças.",
+      "documented_example": "Tenzin e Daw",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-028",
+      "element": "AR",
+      "technique": "Regulação térmica por respiração",
+      "classification": "técnica",
+      "sandbox_mechanic": "Suporta frio controlando aquecimento corporal.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-029",
+      "element": "AR",
+      "technique": "Amplificação de voz / grito",
+      "classification": "técnica sonora",
+      "sandbox_mechanic": "Propaga som mais longe e pode provocar vibrações agressivas.",
+      "documented_example": "Yangchen",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-030",
+      "element": "AR",
+      "technique": "Lançamento de voz e acústica",
+      "classification": "técnica sonora",
+      "sandbox_mechanic": "Desloca origem percebida do som e mascara conversas.",
+      "documented_example": "Dobradores de ar",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-031",
+      "element": "AR",
+      "technique": "Vórtice de privacidade acústica",
+      "classification": "avançada",
+      "sandbox_mechanic": "Cria zona de ruído controlado contra escutas externas.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-032",
+      "element": "AR",
+      "technique": "Sufocamento controlado",
+      "classification": "sombria avançada",
+      "sandbox_mechanic": "Remove ar respirável perto da cabeça/alvo; extremamente perigosa.",
+      "documented_example": "Zaheer; Yangchen usou privação não letal",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-033",
+      "element": "AR",
+      "technique": "Vácuo súbito / airless void",
+      "classification": "raríssima",
+      "sandbox_mechanic": "Extrai ar de região por instantes; ondas resultantes têm impacto brutal.",
+      "documented_example": "Yangchen contra combustionbenders",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-034",
+      "element": "AR",
+      "technique": "Corte de pressão / gale slice",
+      "classification": "avançada",
+      "sandbox_mechanic": "Empurra lâmina altamente focalizada e perfura pedra ou madeira.",
+      "documented_example": "Técnica citada na Wiki",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-035",
+      "element": "AR",
+      "technique": "Propulsão concentrada",
+      "classification": "avançada",
+      "sandbox_mechanic": "Lança usuário para frente reduzindo resistência aerodinâmica.",
+      "documented_example": "Korra",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-036",
+      "element": "AR",
+      "technique": "Sensação de ameaça / wake sense",
+      "classification": "avançada",
+      "sandbox_mechanic": "Percebe perturbações na corrente de ar como radar próximo.",
+      "documented_example": "Tenzin",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-037",
+      "element": "AR",
+      "technique": "Concussive wake",
+      "classification": "avançada",
+      "sandbox_mechanic": "Corpo faz corrida circular e projeta silhueta pressurizada.",
+      "documented_example": "Aang",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "ar-038",
+      "element": "AR",
+      "technique": "Projeção espiritual",
+      "classification": "subdobra",
+      "sandbox_mechanic": "Espírito sai do corpo, atravessa paredes e reconhece locais remotos.",
+      "documented_example": "Jinora",
+      "source_keys": [
+        "PR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Spiritual_projection"
+      ]
+    },
+    {
+      "id": "ar-039",
+      "element": "AR",
+      "technique": "Rastreamento espiritual por vínculo",
+      "classification": "subtécnica espiritual",
+      "sandbox_mechanic": "Localiza pessoa com forte ligação ao emissor da projeção.",
+      "documented_example": "Jinora",
+      "source_keys": [
+        "PR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Spiritual_projection"
+      ]
+    },
+    {
+      "id": "ar-040",
+      "element": "AR",
+      "technique": "Deslocamento de nuvens",
+      "classification": "aplicação",
+      "sandbox_mechanic": "Manipula massa de nuvens, especialmente junto a usuário de água.",
+      "documented_example": "Aang e Katara",
+      "source_keys": [
+        "AR",
+        "AG"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending",
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "id": "ar-041",
+      "element": "AR",
+      "technique": "Rajada extrema do Estado Avatar",
+      "classification": "nível Avatar",
+      "sandbox_mechanic": "Destroça formações pétreas enormes por vento concentrado.",
+      "documented_example": "Aang contra Ozai",
+      "source_keys": [
+        "AR"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "id": "en-001",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Estado Avatar",
+      "classification": "exclusivo do Avatar",
+      "sandbox_mechanic": "Aumento enorme de potência, alcance e repertório; risco de dano colateral.",
+      "documented_example": "Aang, Korra, Kyoshi",
+      "source_keys": [
+        "AV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Avatar"
+      ]
+    },
+    {
+      "id": "en-002",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Dobra simultânea de elementos",
+      "classification": "exclusivo do Avatar",
+      "sandbox_mechanic": "Lança e mantém dois ou mais elementos ao mesmo tempo.",
+      "documented_example": "Roku e Aang",
+      "source_keys": [
+        "AV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Avatar"
+      ]
+    },
+    {
+      "id": "en-003",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Esfera elemental multielemento",
+      "classification": "exclusivo do Avatar",
+      "sandbox_mechanic": "Quatro camadas orbitais ofensivas e defensivas ao redor do usuário.",
+      "documented_example": "Aang contra Ozai",
+      "source_keys": [
+        "AV"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Avatar"
+      ]
+    },
+    {
+      "id": "en-004",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Concessão original de dobra",
+      "classification": "energia (tartarugas-leão)",
+      "sandbox_mechanic": "Desperta aptidão elemental de pessoas originalmente não dobradoras.",
+      "documented_example": "Tartarugas-leão",
+      "source_keys": [
+        "EN"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Energybending"
+      ]
+    },
+    {
+      "id": "en-005",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Remoção de dobra",
+      "classification": "dobra de energia",
+      "sandbox_mechanic": "Desativa poderes elementais de outro usuário.",
+      "documented_example": "Aang contra Ozai e Yakone",
+      "source_keys": [
+        "EN"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Energybending"
+      ]
+    },
+    {
+      "id": "en-006",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Restauração de dobra",
+      "classification": "dobra de energia",
+      "sandbox_mechanic": "Recupera acesso elemental perdido por bloqueio de chi especializado.",
+      "documented_example": "Aang, Korra",
+      "source_keys": [
+        "EN"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Energybending"
+      ]
+    },
+    {
+      "id": "en-007",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Manipulação de energia espiritual",
+      "classification": "dobra de energia",
+      "sandbox_mechanic": "Interage com energia de vinhas e desvia disparos espirituais.",
+      "documented_example": "Korra",
+      "source_keys": [
+        "EN",
+        "SVE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Energybending",
+        "https://avatar.fandom.com/wiki/Spirit_vine_energy"
+      ]
+    },
+    {
+      "id": "en-008",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Projeção astral gigante",
+      "classification": "dobra de energia",
+      "sandbox_mechanic": "Amplia manifestação espiritual de Korra até escala colossal.",
+      "documented_example": "Korra e Árvore do Tempo",
+      "source_keys": [
+        "EN"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Energybending"
+      ]
+    },
+    {
+      "id": "en-009",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Portais espirituais",
+      "classification": "interação especial",
+      "sandbox_mechanic": "Portais existentes são abertos/fechados pelo Avatar; grande descarga criou o terceiro.",
+      "documented_example": "Korra",
+      "source_keys": [
+        "PV",
+        "SVE"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Spirit_portal",
+        "https://avatar.fandom.com/wiki/Spirit_vine_energy"
+      ]
+    },
+    {
+      "id": "en-010",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Dobra de sangue vs dobra de energia",
+      "classification": "distinção",
+      "sandbox_mechanic": "Supressão de Amon usa água e chi; Aang usa energia diretamente.",
+      "documented_example": "Amon, Aang",
+      "source_keys": [
+        "BL",
+        "EN"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Bloodbending",
+        "https://avatar.fandom.com/wiki/Energybending"
+      ]
+    },
+    {
+      "id": "en-011",
+      "element": "ENERGIA / AVATAR",
+      "technique": "Bloqueio de chi físico",
+      "classification": "não é dobra",
+      "sandbox_mechanic": "Golpes precisos nos pontos de chi interrompem dobra temporariamente.",
+      "documented_example": "Ty Lee e igualitários",
+      "source_keys": [
+        "CH"
+      ],
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Chi-blocking"
+      ]
+    }
+  ],
+  "combinations": [
+    {
+      "elements": "Água + Terra",
+      "interaction": "Lama, polpa e remoção de impurezas",
+      "canon_status": "CONFIRMADA",
+      "evidence": "Katara e Toph manipulam a polpa do perfurador; técnica de filtragem une separação mineral e suspensão de água.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Earthbending",
+        "https://avatar.fandom.com/wiki/The_Drill"
+      ]
+    },
+    {
+      "elements": "Água + Ar",
+      "interaction": "Manipulação de nuvens e mensagens no céu",
+      "canon_status": "CONFIRMADA",
+      "evidence": "Aang e Katara moldam nuvens; também usam nuvens para camuflar deslocamentos.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "elements": "Avatar: quatro elementos",
+      "interaction": "Esfera elemental de defesa e ataque",
+      "canon_status": "CONFIRMADA",
+      "evidence": "Aang mantém as quatro matérias em órbita enquanto enfrenta Ozai.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Avatar"
+      ]
+    },
+    {
+      "elements": "Ar + Fogo",
+      "interaction": "Vácuo anula explosão de combustão",
+      "canon_status": "CONFIRMADA",
+      "evidence": "Yangchen usa retirada súbita de ar para contrariar ataques de combustão.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "elements": "Fogo + Água",
+      "interaction": "Fogo transforma água em vapor",
+      "canon_status": "CONFIRMADA COMO INTERAÇÃO",
+      "evidence": "Combates mostram a evaporação de escudos de água; vapor pode alimentar técnicas de névoa.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Firebending",
+        "https://avatar.fandom.com/wiki/The_Drill"
+      ]
+    },
+    {
+      "elements": "Relâmpago + Água",
+      "interaction": "Choque via volume aquoso controlado",
+      "canon_status": "CONFIRMADA COMO INTERAÇÃO",
+      "evidence": "Mako aproveita água de Ming-Hua contra a própria usuária.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Mako"
+      ]
+    },
+    {
+      "elements": "Terra + Lava",
+      "interaction": "Derreter e ressolidificar rocha",
+      "canon_status": "CONFIRMADA; UM ÚNICO ELEMENTO",
+      "evidence": "Ghazan e Bolin transitam entre fases minerais; fogo não é pré-requisito.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "elements": "Metal + Eletricidade",
+      "interaction": "Condução por cabos metálicos",
+      "canon_status": "CONFIRMADA COMO INTERAÇÃO",
+      "evidence": "Polícia de metal tem vulnerabilidade a choque em cabos; Mako redireciona descargas de máquinas.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Mako",
+        "https://avatar.fandom.com/wiki/Metalbending"
+      ]
+    },
+    {
+      "elements": "Água + Gelo",
+      "interaction": "Projétil líquido muda para prisão sólida",
+      "canon_status": "CONFIRMADA; UM ÚNICO ELEMENTO",
+      "evidence": "Pakku alterna fluxo e congelamento em combate.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "elements": "Ar + Areia",
+      "interaction": "Tormenta e transporte de partículas",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Dois agentes distintos poderiam somar força do ar e controle mineral.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Airbending",
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "elements": "Ar + Fogo",
+      "interaction": "Frente de incêndio ventilada",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Rajada fornece fluxo/oxigênio para alterar crescimento e alcance da chama; interação simulada.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Airbending",
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "elements": "Terra + Água",
+      "interaction": "Enfraquecimento de fundações por saturação",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Água satura solo; dobra de terra altera suporte estrutural.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "elements": "Gelo + Lava",
+      "interaction": "Choque térmico e endurecimento",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Propriedades materiais plausíveis; não um golpe nomeado da franquia.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "elements": "Fogo + Metal",
+      "interaction": "Forja, aquecimento e deformação",
+      "canon_status": "EXTRAPOLAÇÃO DE CAPACIDADES CONFIRMADAS",
+      "evidence": "Um aquece metal e outro o molda; as ações separadas são confirmadas.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Firebending",
+        "https://avatar.fandom.com/wiki/Metalbending"
+      ]
+    },
+    {
+      "elements": "Água + Relâmpago + Metal",
+      "interaction": "Circuito eletro-hidráulico",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Condução por superfícies molhadas ou peças expostas; não habilidade híbrida oficial.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Lightning_generation",
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Metalbending"
+      ]
+    },
+    {
+      "elements": "Fogo + Ar + Água",
+      "interaction": "Vapor, pressão e dissipação",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Sequência emergente por aquecimento, deslocamento e resfriamento.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Firebending",
+        "https://avatar.fandom.com/wiki/Airbending",
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "elements": "Terra + Ar",
+      "interaction": "Fragmentação balística por vento",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Ar acelera fragmentos de rocha após ruptura do solo.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Earthbending",
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "elements": "Lava + Água",
+      "interaction": "Vapor + crosta de rocha",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Reação térmica local sem exigir que um indivíduo dobre ambos.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Lavabending",
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "elements": "Ar + Água",
+      "interaction": "Tromba d’água híbrida / tempestade",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "A coexistência de colunas de água e de ar é canônica; o golpe conjunto é criado para o sandbox.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "elements": "Areia + Fogo",
+      "interaction": "Vitrificação de areia",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Pode gerar vidro com calor; não há técnica combinada com este nome estabelecida na Wiki.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Earthbending",
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "elements": "Vidro + Terra",
+      "interaction": "Estilhaços manipulados após vitrificação",
+      "canon_status": "EXTRAPOLAÇÃO PARA JOGO",
+      "evidence": "Controle mineral de vidro é excepcionalmente demonstrado por Kyoshi.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "elements": "Fogo + Energia espiritual",
+      "interaction": "Incêndio ou explosão de vinhas espirituais",
+      "canon_status": "INTERAÇÃO PERIGOSA DOCUMENTADA",
+      "evidence": "Vinhas reagem violentamente a agressões; não equivale a \"dobra de energia\" de um usuário comum.",
+      "sources": [
+        "https://avatar.fandom.com/wiki/Spirit_vine_energy"
+      ]
+    }
+  ],
+  "feats": [
+    {
+      "person": "Katara",
+      "element": "Água",
+      "feat": "Corta partes de grande perfurador com jato/lashing ao lado de Aang e usa prisão de gelo para deter Azula no Agni Kai.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/The_Drill"
+      ]
+    },
+    {
+      "person": "Pakku",
+      "element": "Água",
+      "feat": "Combina desvio, congelamento e deslocamento por gelo com grande fluidez.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "person": "Hama",
+      "element": "Água",
+      "feat": "Retira água de plantas e descobre controle de fluidos do corpo durante lua cheia.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Bloodbending"
+      ]
+    },
+    {
+      "person": "Ming-Hua",
+      "element": "Água",
+      "feat": "Usa tentáculos de água como braços, molda garras e brocas de gelo.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "person": "Amon/Noatak",
+      "element": "Água",
+      "feat": "Usa dobra de sangue sem lua cheia, controle quase imperceptível e bloqueio duradouro do chi.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Bloodbending"
+      ]
+    },
+    {
+      "person": "Yakone",
+      "element": "Água",
+      "feat": "Subjuga uma sala de tribunal quase sem movimento corporal.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Bloodbending"
+      ]
+    },
+    {
+      "person": "Atuat / Kyoshi",
+      "element": "Água",
+      "feat": "Regula frio interno do corpo; Kyoshi apresenta aplicação letal extrema.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Waterbending",
+        "https://avatar.fandom.com/wiki/Healing"
+      ]
+    },
+    {
+      "person": "Unalaq",
+      "element": "Água",
+      "feat": "Usa purificação espiritual e tem ataques hídricos capazes de romper rocha.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Healing",
+        "https://avatar.fandom.com/wiki/Waterbending"
+      ]
+    },
+    {
+      "person": "Toph",
+      "element": "Terra",
+      "feat": "Inventa a dobra de metal ao sentir inclusões minerais e consegue moldar meteoritos.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Toph_Beifong"
+      ]
+    },
+    {
+      "person": "Toph",
+      "element": "Terra",
+      "feat": "Aprende a criar modelo detalhado de Ba Sing Se usando areia.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending",
+        "https://avatar.fandom.com/wiki/Toph_Beifong"
+      ]
+    },
+    {
+      "person": "Ghazan",
+      "element": "Terra",
+      "feat": "Dissolve base do muro interior de Ba Sing Se em lava, provocando colapso.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "person": "Bolin",
+      "element": "Terra",
+      "feat": "Reverte avanço da lava e cria disco incandescente que corta partes metálicas.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    },
+    {
+      "person": "Yun",
+      "element": "Terra",
+      "feat": "Liquefaz pedra sem aquecer e usa pigmentos minerais secos como munição.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "person": "Kuvira",
+      "element": "Terra",
+      "feat": "Imobiliza vários oponentes com fitas metálicas e controla armas finas.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Kuvira"
+      ]
+    },
+    {
+      "person": "Kyoshi",
+      "element": "Terra + Ar",
+      "feat": "Separa território que vira ilha de Kyoshi usando terra e vento em escala colossal.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending",
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "person": "Aang",
+      "element": "Terra",
+      "feat": "Projeta sucessões de fragmentos minerais compactados com velocidade elevada no Estado Avatar.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Earthbending"
+      ]
+    },
+    {
+      "person": "Iroh",
+      "element": "Fogo",
+      "feat": "Usa grande ataque carregado para romper a muralha interior de Ba Sing Se.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "person": "Azula",
+      "element": "Fogo",
+      "feat": "Chama azul, jatos de propulsão, discos de fogo e relâmpagos.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending",
+        "https://avatar.fandom.com/wiki/Lightning_generation"
+      ]
+    },
+    {
+      "person": "P’Li",
+      "element": "Fogo",
+      "feat": "Curva ataques de combustão e atinge alvos distantes.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/P%27Li"
+      ]
+    },
+    {
+      "person": "Mako",
+      "element": "Fogo",
+      "feat": "Produz relâmpago mesmo quando imobilizado e sustenta corrente capaz de sobrecarregar mecha.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lightning_generation",
+        "https://avatar.fandom.com/wiki/Mako"
+      ]
+    },
+    {
+      "person": "Sozin",
+      "element": "Fogo",
+      "feat": "Redireciona calor para resfriar lava ao enfrentar erupção.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "person": "Rangi",
+      "element": "Fogo",
+      "feat": "Utiliza jet-stepping e chama branca excepcional.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "person": "Roku",
+      "element": "Fogo",
+      "feat": "Demonstra chama iridescente excepcional em narrativa dos romances.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Firebending"
+      ]
+    },
+    {
+      "person": "Aang",
+      "element": "Ar",
+      "feat": "Inventa air scooter; usa ataques de pressão, velocidade e defesa.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "person": "Tenzin",
+      "element": "Ar",
+      "feat": "Luta usando tromba de ar e técnicas de roda/casulo.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "person": "Zaheer",
+      "element": "Ar",
+      "feat": "Alcança voo livre sem planador após desapego espiritual e usa retirada de ar.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "person": "Yangchen",
+      "element": "Ar",
+      "feat": "Produz vácuo localizado que pode neutralizar combustão e grandes fenômenos atmosféricos.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "person": "Jinora",
+      "element": "Ar",
+      "feat": "Projeta espírito através de matéria sólida e encontra pessoas distantes.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Spiritual_projection"
+      ]
+    },
+    {
+      "person": "Kelsang",
+      "element": "Ar",
+      "feat": "Usa furacão para afundar frota.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Airbending"
+      ]
+    },
+    {
+      "person": "Aang",
+      "element": "Avatar",
+      "feat": "Usa esfera dos quatro elementos, rocha comprimida e toma a dobra de Ozai.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Avatar",
+        "https://avatar.fandom.com/wiki/Earthbending",
+        "https://avatar.fandom.com/wiki/Energybending"
+      ]
+    },
+    {
+      "person": "Korra",
+      "element": "Avatar",
+      "feat": "Desvia disparo de energia espiritual que resulta em novo portal espiritual.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Energybending",
+        "https://avatar.fandom.com/wiki/Spirit_vine_energy",
+        "https://avatar.fandom.com/wiki/Spirit_portal"
+      ]
+    },
+    {
+      "person": "Szeto",
+      "element": "Avatar",
+      "feat": "Provoca erupções múltiplas e manipula lava em larga escala.",
+      "source_urls": [
+        "https://avatar.fandom.com/wiki/Lavabending"
+      ]
+    }
+  ],
+  "sources": {
+    "AG": "https://avatar.fandom.com/wiki/Waterbending",
+    "TE": "https://avatar.fandom.com/wiki/Earthbending",
+    "FO": "https://avatar.fandom.com/wiki/Firebending",
+    "AR": "https://avatar.fandom.com/wiki/Airbending",
+    "SP": "https://avatar.fandom.com/wiki/Specialized_bending_techniques",
+    "BL": "https://avatar.fandom.com/wiki/Bloodbending",
+    "HE": "https://avatar.fandom.com/wiki/Healing",
+    "LV": "https://avatar.fandom.com/wiki/Lavabending",
+    "SE": "https://avatar.fandom.com/wiki/Seismic_sense",
+    "LG": "https://avatar.fandom.com/wiki/Lightning_generation",
+    "LR": "https://avatar.fandom.com/wiki/Lightning_redirection",
+    "PR": "https://avatar.fandom.com/wiki/Spiritual_projection",
+    "EN": "https://avatar.fandom.com/wiki/Energybending",
+    "AV": "https://avatar.fandom.com/wiki/Avatar",
+    "TO": "https://avatar.fandom.com/wiki/Toph_Beifong",
+    "KV": "https://avatar.fandom.com/wiki/Kuvira",
+    "MR": "https://avatar.fandom.com/wiki/Mercury",
+    "CH": "https://avatar.fandom.com/wiki/Chi-blocking",
+    "PV": "https://avatar.fandom.com/wiki/Spirit_portal",
+    "SVE": "https://avatar.fandom.com/wiki/Spirit_vine_energy",
+    "SM": "https://avatar.fandom.com/wiki/Metalbending",
+    "MK": "https://avatar.fandom.com/wiki/Mako",
+    "PL": "https://avatar.fandom.com/wiki/P%27Li",
+    "SW": "https://avatar.fandom.com/wiki/The_Drill"
+  },
+  "warning": "sandbox_mechanic is derived as game design; classification is analytical and not official"
+}

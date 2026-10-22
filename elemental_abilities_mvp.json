@@ -1,0 +1,275 @@
+{
+  "schema_version": "1.0",
+  "project": "ELEMENTAL // RUINS",
+  "status": "design planning data, not implemented game content",
+  "defaults": {
+    "creative_mode": true,
+    "renderer": "Forward+",
+    "profile": "ILLUSTRATED"
+  },
+  "design_note": "Todas as magnitudes são placeholders de balanceamento em unidades de jogo (não grandezas físicas canônicas).",
+  "abilities": [
+    {
+      "id": "earth_pillar",
+      "display_name": "Pilar de pedra",
+      "element": "earth",
+      "atlas_refs": [
+        "te-007"
+      ],
+      "behavior": "raise_pillar",
+      "input_mode": "tap",
+      "milestone": "M1",
+      "implementation_status": "planned",
+      "params": {
+        "range_m": 18,
+        "diameter_m": 2.2,
+        "height_m": 4.5,
+        "duration_s": 8
+      }
+    },
+    {
+      "id": "earth_extract",
+      "display_name": "Extrair e segurar rocha",
+      "element": "earth",
+      "atlas_refs": [
+        "te-001"
+      ],
+      "behavior": "lift_rock",
+      "input_mode": "hold_precision",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "range_m": 18,
+        "max_mass_kg": 600
+      }
+    },
+    {
+      "id": "earth_throw",
+      "display_name": "Arremesso de rocha",
+      "element": "earth",
+      "atlas_refs": [
+        "te-001"
+      ],
+      "behavior": "throw_rock",
+      "input_mode": "release",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "impulse_ns": 800,
+        "charge_s": 2
+      }
+    },
+    {
+      "id": "earth_fracture",
+      "display_name": "Fissura e compressão",
+      "element": "earth",
+      "atlas_refs": [
+        "te-003",
+        "te-010"
+      ],
+      "behavior": "fracture_rock",
+      "input_mode": "charge",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "radius_m": 3,
+        "max_charge_s": 2
+      }
+    },
+    {
+      "id": "water_orb",
+      "display_name": "Orbe de água",
+      "element": "water",
+      "atlas_refs": [
+        "ag-001"
+      ],
+      "behavior": "water_orb",
+      "input_mode": "hold_precision",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "liters": 150,
+        "range_m": 14
+      }
+    },
+    {
+      "id": "water_jet",
+      "display_name": "Jato de água",
+      "element": "water",
+      "atlas_refs": [
+        "ag-003"
+      ],
+      "behavior": "water_jet",
+      "input_mode": "hold",
+      "milestone": "M1",
+      "implementation_status": "planned",
+      "params": {
+        "range_m": 18,
+        "wetness_per_s": 0.2,
+        "impulse_per_s": 90
+      }
+    },
+    {
+      "id": "ice_wall",
+      "display_name": "Muralha de gelo",
+      "element": "water",
+      "atlas_refs": [
+        "ag-024",
+        "ag-028"
+      ],
+      "behavior": "ice_wall",
+      "input_mode": "tap",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "width_m": 4,
+        "height_m": 3,
+        "liters": 200
+      }
+    },
+    {
+      "id": "water_wave",
+      "display_name": "Onda de água",
+      "element": "water",
+      "atlas_refs": [
+        "ag-017"
+      ],
+      "behavior": "water_wave",
+      "input_mode": "charge",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "range_m": 12,
+        "radius_m": 5
+      }
+    },
+    {
+      "id": "fire_burst",
+      "display_name": "Rajada de fogo",
+      "element": "fire",
+      "atlas_refs": [
+        "fo-002"
+      ],
+      "behavior": "fire_burst",
+      "input_mode": "tap",
+      "milestone": "M1",
+      "implementation_status": "planned",
+      "params": {
+        "range_m": 25,
+        "heat_units": 30
+      }
+    },
+    {
+      "id": "fire_stream",
+      "display_name": "Lança-chamas",
+      "element": "fire",
+      "atlas_refs": [
+        "fo-003"
+      ],
+      "behavior": "fire_stream",
+      "input_mode": "hold",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "range_m": 12,
+        "heat_units_per_s": 25
+      }
+    },
+    {
+      "id": "fire_blast",
+      "display_name": "Explosão carregada",
+      "element": "fire",
+      "atlas_refs": [
+        "fo-004"
+      ],
+      "behavior": "fire_blast",
+      "input_mode": "charge",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "radius_m": 5,
+        "max_charge_s": 2
+      }
+    },
+    {
+      "id": "fire_propulsion",
+      "display_name": "Jato de propulsão",
+      "element": "fire",
+      "atlas_refs": [
+        "fo-028"
+      ],
+      "behavior": "fire_propulsion",
+      "input_mode": "hold",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "max_duration_s": 1.2
+      }
+    },
+    {
+      "id": "air_push",
+      "display_name": "Rajada de ar",
+      "element": "air",
+      "atlas_refs": [
+        "ar-001"
+      ],
+      "behavior": "air_push",
+      "input_mode": "tap",
+      "milestone": "M1",
+      "implementation_status": "planned",
+      "params": {
+        "radius_m": 4,
+        "range_m": 15,
+        "impulse_ns": 240
+      }
+    },
+    {
+      "id": "air_vortex",
+      "display_name": "Vórtice",
+      "element": "air",
+      "atlas_refs": [
+        "ar-015",
+        "ar-016"
+      ],
+      "behavior": "air_vortex",
+      "input_mode": "hold",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "radius_m": 6,
+        "max_duration_s": 8
+      }
+    },
+    {
+      "id": "air_blade",
+      "display_name": "Lâmina de pressão",
+      "element": "air",
+      "atlas_refs": [
+        "ar-005"
+      ],
+      "behavior": "air_blade",
+      "input_mode": "tap",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "range_m": 24,
+        "kinetic_units": 30
+      }
+    },
+    {
+      "id": "air_jump",
+      "display_name": "Impulso aéreo",
+      "element": "air",
+      "atlas_refs": [
+        "ar-010"
+      ],
+      "behavior": "air_jump",
+      "input_mode": "tap",
+      "milestone": "M2",
+      "implementation_status": "planned",
+      "params": {
+        "vertical_impulse_ns": 180
+      }
+    }
+  ]
+}

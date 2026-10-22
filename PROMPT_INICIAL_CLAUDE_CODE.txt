@@ -1,0 +1,14 @@
+Quero iniciar AGORA o desenvolvimento de ELEMENTAL // RUINS em Godot, usando os documentos presentes nesta pasta como fonte de requisitos. Leia integralmente CLAUDE.md, INICIO_AQUI.md, pesquisa_tecnica_elemental_ruins_godot_2026.md, elemental_ruins_gdd_v02.md e P0_CHECKLIST.md. Consulte prompt_claude_spike_voxel_godot.md para a implementação. Os arquivos de Avatar e das habilidades são somente referências futuras.
+
+Sua tarefa nesta primeira sessão é entregar APENAS o protótipo técnico P0, com terreno verdadeiramente volumétrico escavável e colisões corretas. Não comece por menus, shaders, inimigos, água SPH, combate ou os 214 poderes.
+
+Procedimento obrigatório:
+1. Verifique o ambiente e registre versões reais da Godot e do Voxel Tools; informe e trate ausência de dependências. Busque a documentação oficial do Voxel Tools 1.7 e confirme a assinatura das APIs antes de escrever scripts. Pode baixar a dependência oficial depois de me apresentar claramente o que será instalado/alterado e pedir as permissões que seu ambiente exige. Nunca afirmar que instalou sem verificar.
+2. Crie projeto Godot 4 nativo nesta pasta (preservando os documentos), cena de teste, CharacterBody3D, câmera de terceira pessoa e controles básicos de movimento.
+3. Integre Voxel Tools com SDF/Transvoxel, geração de terreno e colisão. Use TerrainService para operações de edição, com validação de região carregada e métodos dig_sphere e add_sphere.
+4. Crie botões de teste para cavar e construir a partir da mira, com uma colina adequada para abrir e atravessar um túnel real, mantendo teto e piso íntegros.
+5. Implemente e verifique reset real das alterações, ou documente exatamente por que não ficou pronto. Evite chamar reset visual de reset de mundo.
+6. Execute tudo que o ambiente permitir: import/headless, cena, logs, colisão/túnel, edição repetida. Se não conseguir executar a GUI, explique precisamente quais partes dependem de teste manual em Windows, com instruções reproduzíveis.
+7. Atualize README.md e docs/voxel_spike_results.md com controles, versão exata, comandos, falhas e evidências. Preencha P0_CHECKLIST.md ao final sem inventar medições ou marcar itens não testados como concluídos.
+
+Quero código modular e REALMENTE executável, não pseudocódigo nem apenas uma arquitetura descrita. Se encontrar incompatibilidade de plugin, resolva com diagnóstico e uma alternativa verificável; não troque o requisito de terreno volumétrico por heightmap. Não avance para P1 sem comprovar P0. Ao final, me dê os passos exatos para rodar o protótipo no Godot e liste o que ainda exige minha validação visual/manual.
