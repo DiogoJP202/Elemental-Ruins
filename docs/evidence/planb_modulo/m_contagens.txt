@@ -1,0 +1,5 @@
+Plano B - contagem de importacoes limpas (--import, sem .godot/) com godot.windows.editor.x86_64.exe 4.7.2.stable.custom_build.ed1daf0bf (Voxel Tools 1.7 modulo)
+copia completa (planb_proj): 1a tentativa exit=139 (log m01), depois 0/10 crashes
+bissecao (minimo, shader, scripts, scenes, tudo: 3 cada; com_presets, com_docs: 4 cada): 0/23 crashes
+total modulo: 1/34
+import concorrente (editor headless aberto em paralelo): 0/3 crashes, 0 erros

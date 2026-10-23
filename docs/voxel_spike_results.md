@@ -207,3 +207,43 @@ cratera, coluna, reset, câmera e mouse) e relatou que tudo funcionou bem. Isso 
   `addons/zylann.voxel/bin/~*` ignorado no Git.
 - **Nota:** o editor regravou `project.godot` e removeu duas chaves iguais ao padrão (`physics_ticks_per_second=60`,
   `rendering_method="forward_plus"`). Inofensivo; mantido.
+
+## 11. Plano B testado (23/10/2026) — Voxel Tools 1.7 como **módulo** (build custom)
+
+**Binários** (release `v1.7`, hashes iguais aos publicados): `godot.windows.editor.x86_64.exe.zip` sha256
+`e2292adb…6f1956b` e `godot.windows.template_release.x86_64.exe.zip` sha256 `86fe371e…2f0775`, extraídos em
+`C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\`. `--version` = `4.7.2.stable.custom_build.ed1daf0bf` (mesmo commit
+da Godot oficial). Os dois `.exe` **não são assinados**.
+
+**Método:** cópia descartável do projeto **sem** `addons/zylann.voxel` (módulo e GDExtension juntos conflitam), com o
+mesmo código. Nenhuma linha de GDScript precisou mudar. Evidências em `docs/evidence/planb_modulo/`.
+
+| Critério | GDExtension 1.7 + Godot oficial (atual) | Módulo 1.7 + Godot custom (plano B) |
+|---|---|---|
+| Classes Voxel disponíveis | 11/11 (via extensão) | 11/11 (embutidas; `GDExtensions carregadas: []`) |
+| 1ª importação limpa (`--import`) | **10/17 crashes** (B1) | **1/34 crashes** |
+| Import com outra Godot aberta (B4) | crash (DLL temporária travada) | **0/3**, 0 erros (não há DLL) |
+| Selftest editor headless / janela | 12/12 / 12/12, 0 erros | 12/12 / 12/12, 0 erros |
+| Selftest no `.exe` exportado headless / janela | 12/12 / 12/12, 0 erros | 12/12 / 12/12, 0 erros |
+| Latência collider p95 (100 escavações, headless / janela) | 20,5 / 36,4 ms | 19,9 / 33,4 ms |
+| Reset médio (headless / janela) | 424 / 518 ms | 226 / 383 ms |
+| Artefatos do export | `.exe` 109 MB + DLL 10 MB + `.pck` 190 KB | `.exe` único 88,5 MB + `.pck` 74 KB |
+| Templates de export | oficiais (todas as plataformas, debug e release) | custom da release: Windows **só release** (sem template debug Windows), Linux e macOS |
+| Assinatura do editor | Authenticode válida | **não assinado** |
+| Maturidade segundo o upstream | "hasn't gone through much testing" | edição principal do projeto |
+
+**Detalhe do único crash com o módulo:** a build custom imprimiu `ERROR: Parameter "singleton" is null. at:
+EditorNode::is_cmdline_mode (editor\editor_node.cpp:6618)` no encerramento do `--import`. Isso indica um bug da Godot
+no shutdown do modo `--import` que também existe sem a GDExtension, mas é bem mais raro. Com a GDExtension, o mesmo
+encerramento cai em mais da metade das vezes.
+
+**Primeira abertura do editor com interface (as duas builds):** inconclusivo. Com `--quit-after 900`, 3/3 sem crash
+em cada build, mas o editor fechou antes de terminar a varredura (aviso "Scan thread aborted"). Com
+`--quit-after 12000`, o `timeout` de 240 s matou o processo e as mensagens de vazamento resultantes são do
+encerramento forçado. **Não conta como teste.**
+
+**Implicações de trocar para o módulo:** o editor do projeto passa a ser o binário custom (não assinado); o export
+precisa de `custom_template/release` apontando para o template custom (caminho absoluto, específico da máquina,
+fora do Git); export **debug** no Windows fica indisponível sem compilar o template; `addons/zylann.voxel/` sai do
+projeto (ou o `.gdextension` precisa ser desativado); atualizar o Voxel Tools passa a significar trocar o editor e o
+template juntos.

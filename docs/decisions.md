@@ -77,3 +77,10 @@ Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decis
 - `mesh_block_size=16` (rebuild menor por edição), `lod_count=4`, `lod_distance=48`, `view_distance=256`,
   `collision_lod_count=2`, `collision_update_delay=0`, sem `full_load_mode`. São escolhas para o laboratório
   compacto; não foram otimizadas por benchmark.
+
+## D12. Plano B (módulo) avaliado — decisão pendente do usuário
+- **Dados (seção 11 do `voxel_spike_results.md`):** o módulo elimina o B4 e reduz o crash de importação limpa de
+  10/17 para 1/34, com resultados funcionais idênticos (12/12 em todos os modos).
+- **Custo:** editor não assinado, template custom só release no Windows, caminho absoluto no preset de export e
+  troca de editor e template a cada atualização.
+- **Estado:** o projeto continua na GDExtension (D1) até o usuário decidir. Nada foi trocado no repositório.
