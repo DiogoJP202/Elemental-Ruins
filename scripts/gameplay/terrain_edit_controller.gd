@@ -124,6 +124,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(_delta: float) -> void:
 	if terrain_service == null or player == null or not player.input_enabled:
 		_marker.visible = false
+		_aim_hit = false
+		_aim_material = null
 		_end_all_strokes()
 		return
 	_update_aim()
