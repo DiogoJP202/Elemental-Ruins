@@ -288,3 +288,10 @@ nem do Voxel Tools. O script repete o import uma vez se isso acontecer.
 **Ainda não validado depois da troca:** abrir e jogar o projeto **no editor custom com interface** por uma pessoa.
 A sessão interativa e o seu roteiro manual de 22/10 foram feitos com a build GDExtension. O código e os testes são
 os mesmos, mas o editor mudou.
+
+## 13. Fechamento do gate P0 (23/10/2026)
+**Gate P0: PASSOU com ressalva aceita pelo usuário.** 10 de 11 critérios do `P0_CHECKLIST.md` passaram. O B1
+residual (crash da Godot no encerramento do `--import` em clone limpo, 1/50 com o módulo, mitigado por repetição
+automática no `run_p0_tests.ps1`) foi aceito explicitamente pelo usuário como risco conhecido.
+Pendência não bloqueante: repetir o roteiro manual do README no editor custom (o teste manual anterior foi com a
+build GDExtension). P1 só começa com nova sessão ou pedido explícito, conforme `CLAUDE.md` e `INICIO_AQUI.md`.

@@ -1,6 +1,9 @@
 # ELEMENTAL // RUINS — protótipo técnico P0
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
+
+**Status: gate P0 PASSOU em 23/10/2026, com ressalva aceita** (crash raro da Godot no fim do `--import`; ver `P0_CHECKLIST.md`).
+
 Escopo deste marco: **somente P0**. Personagem em terceira pessoa, colina voxel com colisão, escavar e
 adicionar matéria pela mira, túnel real sob teto sólido e reset de verdade do mundo. Não há poderes,
 arte final, menus ou água.

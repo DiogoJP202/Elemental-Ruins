@@ -108,3 +108,11 @@ Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decis
   `--import`); import com outra instância aberta 0/3.
 - **Reversão:** reextrair `GodotVoxelExtension.zip` (`v1.7x`) na raiz, limpar `custom_template/release` e usar a
   Godot oficial (o commit `de7514a` é o último com a GDExtension).
+
+## D14. B1 residual aceito como risco conhecido — gate P0 fechado
+- **Decisão do usuário (23/10/2026):** aceitar o crash residual da Godot no encerramento do `--import` em clone
+  limpo (1/50 com o módulo) e fechar o gate do P0.
+- **Mitigação mantida:** `tools/run_p0_tests.ps1` repete o import uma vez. No editor com interface, se a primeira
+  abertura de um clone limpo fechar, basta reabrir.
+- **Reavaliar quando:** sair Godot 4.7.3+ ou Voxel Tools 1.8 (testar de novo a importação limpa), ou se a taxa
+  subir em CI.
