@@ -1,4 +1,4 @@
-# Voxel Tools API probe — 2026-10-23T09:49:07
+# Voxel Tools API probe — 2026-10-23T10:12:39
 # Godot 4.7.2-stable (custom_build)
 
 ## VoxelNode (extends Node3D)
@@ -344,6 +344,101 @@
   func get_position() -> Vector3i
   func get_previous_position() -> Vector3i
 
+## VoxelStream (extends Resource)
+  prop save_generator_output: bool
+  prop compression_mode: int
+  func flush() -> void
+  func get_block_size() -> Vector3
+  func get_compression_mode() -> VoxelBlockSerializer.Compression
+  func get_save_generator_output() -> bool
+  func get_used_channels_mask() -> int
+  func load_voxel_block(out_buffer: VoxelBuffer, block_position: Vector3i, lod_index: int) -> VoxelStream.ResultCode
+  func save_voxel_block(buffer: VoxelBuffer, block_position: Vector3i, lod_index: int) -> void
+  func set_compression_mode(mode: VoxelBlockSerializer.Compression) -> void
+  func set_save_generator_output(enabled: bool) -> void
+
+## VoxelStreamSQLite (extends VoxelStream)
+  prop database_path: String
+  prop preferred_coordinate_format: int
+  func get_database_path() -> String
+  func get_preferred_coordinate_format() -> VoxelStreamSQLite.CoordinateFormat
+  func is_key_cache_enabled() -> bool
+  func set_database_path(path: String) -> void
+  func set_key_cache_enabled(enabled: bool) -> void
+  func set_preferred_coordinate_format(format: VoxelStreamSQLite.CoordinateFormat) -> void
+
+## VoxelStreamMemory (extends VoxelStream)
+  prop artificial_save_latency_usec: int
+  func get_artificial_save_latency_usec() -> int
+  func set_artificial_save_latency_usec(usec: int) -> void
+
+## VoxelSaveCompletionTracker (extends RefCounted)
+  func get_remaining_tasks() -> int
+  func get_total_tasks() -> int
+  func is_aborted() -> bool
+  func is_complete() -> bool
+
+## VoxelFormat (extends Resource)
+  prop _data: Array
+  prop type_depth: int
+  prop sdf_depth: int
+  prop indices_depth: int
+  prop color_depth: int
+  func configure_buffer(buffer: VoxelBuffer) -> void
+  func create_buffer(size: Vector3i) -> VoxelBuffer
+  func get_channel_depth(channel_index: VoxelBuffer.ChannelId) -> VoxelBuffer.Depth
+  func set_channel_depth(channel_index: VoxelBuffer.ChannelId, depth: VoxelBuffer.Depth) -> void
+
+## VoxelBuffer (extends RefCounted)
+  func clear() -> void
+  func clear_voxel_metadata() -> void
+  func clear_voxel_metadata_in_area(min_pos: Vector3i, max_pos: Vector3i) -> void
+  func compress_uniform_channels() -> void
+  func copy_channel_from(other: VoxelBuffer, channel: int) -> void
+  func copy_channel_from_area(other: VoxelBuffer, src_min: Vector3i, src_max: Vector3i, dst_min: Vector3i, channel: int) -> void
+  func copy_voxel_metadata_in_area(src_buffer: VoxelBuffer, src_min_pos: Vector3i, src_max_pos: Vector3i, dst_min_pos: Vector3i) -> void
+  func create(sx: int, sy: int, sz: int) -> void
+  func create_3d_texture_from_sdf_zxy(output_format: Image.Format) -> ImageTexture3D
+  func debug_print_sdf_y_slices(scale: float) -> Array  defaults=[1.0]
+  func decompress_channel(channel: int) -> void
+  func downscale_to(dst: VoxelBuffer, src_min: Vector3i, src_max: Vector3i, dst_min: Vector3i) -> void
+  func fill(value: int, channel: int) -> void  defaults=[0]
+  func fill_area(value: int, min: Vector3i, max: Vector3i, channel: int) -> void  defaults=[0]
+  func fill_area_f(value: float, min: Vector3i, max: Vector3i, channel: int) -> void
+  func fill_f(value: float, channel: int) -> void  defaults=[0]
+  func for_each_voxel_metadata(callback: Callable) -> void
+  func for_each_voxel_metadata_in_area(callback: Callable, min_pos: Vector3i, max_pos: Vector3i) -> void
+  func get_allocator() -> VoxelBuffer.Allocator
+  func get_block_metadata() -> void
+  func get_channel_as_byte_array(channel_index: VoxelBuffer.ChannelId) -> PackedByteArray
+  func get_channel_compression(channel: int) -> VoxelBuffer.Compression
+  func get_channel_depth(channel: int) -> VoxelBuffer.Depth
+  func get_size() -> Vector3i
+  func get_voxel(x: int, y: int, z: int, channel: int) -> int  defaults=[0]
+  func get_voxel_f(x: int, y: int, z: int, channel: int) -> float  defaults=[0]
+  func get_voxel_metadata(pos: Vector3i) -> void
+  func get_voxel_tool() -> VoxelTool
+  func get_voxel_v(pos: Vector3i, channel: int) -> int  defaults=[0]
+  func is_uniform(channel: int) -> bool
+  func mirror(axis: Vector3i.Axis) -> void
+  func op_add_buffer_f(other: VoxelBuffer, channel: VoxelBuffer.ChannelId) -> void
+  func op_max_buffer_f(other: VoxelBuffer, channel: VoxelBuffer.ChannelId) -> void
+  func op_min_buffer_f(other: VoxelBuffer, channel: VoxelBuffer.ChannelId) -> void
+  func op_mul_buffer_f(other: VoxelBuffer, channel: VoxelBuffer.ChannelId) -> void
+  func op_mul_value_f(other: float, channel: VoxelBuffer.ChannelId) -> void
+  func op_select_less_src_f_dst_i_values(src: VoxelBuffer, src_channel: VoxelBuffer.ChannelId, threshold: float, value_if_less: int, value_if_more: int, dst_channel: VoxelBuffer.ChannelId) -> void
+  func op_sub_buffer_f(other: VoxelBuffer, channel: VoxelBuffer.ChannelId) -> void
+  func remap_values(channel: int, map: PackedInt32Array) -> void
+  func rotate_90(axis: Vector3i.Axis, turns: int) -> void
+  func set_block_metadata(meta: Nil) -> void
+  func set_channel_depth(channel: int, depth: VoxelBuffer.Depth) -> void
+  func set_channel_from_byte_array(channel_index: VoxelBuffer.ChannelId, data: PackedByteArray) -> void
+  func set_voxel(value: int, x: int, y: int, z: int, channel: int) -> void  defaults=[0]
+  func set_voxel_f(value: float, x: int, y: int, z: int, channel: int) -> void  defaults=[0]
+  func set_voxel_metadata(pos: Vector3i, value: Nil) -> void
+  func set_voxel_v(value: int, pos: Vector3i, channel: int) -> void  defaults=[0]
+  func update_3d_texture_from_sdf_zxy(existing_texture: ImageTexture3D) -> void
+
 ## VoxelGraphFunction node types (get_node_type_info)
   NODE_CONSTANT (0) name=Constant inputs=[] outputs=[value] params=[value=0.0]
   NODE_INPUT_X (1) name=InputX inputs=[] outputs=[x] params=[]
@@ -359,6 +454,11 @@
   NODE_SDF_BOX (31) name=SdfBox inputs=[x, y, z] outputs=[sdf] params=[size_x=10.0, size_y=10.0, size_z=10.0]
   NODE_SDF_SMOOTH_UNION (36) name=SdfSmoothUnion inputs=[a, b] outputs=[sdf] params=[smoothness=0.0]
   NODE_EXPRESSION (46) name=Expression inputs=[] outputs=[out] params=[expression=0]
+  NODE_SELECT (26) name=Select inputs=[a, b, t] outputs=[out] params=[threshold=0.0]
+  NODE_CLAMP (20) name=Clamp inputs=[x, min, max] outputs=[out] params=[]
+  NODE_OUTPUT_SINGLE_TEXTURE (45) name=OutputSingleTexture inputs=[index] outputs=[_out] params=[]
+  NODE_OUTPUT_WEIGHT (43) name=OutputWeight inputs=[weight] outputs=[_out] params=[layer=0]
+  NODE_OUTPUT_TYPE: AUSENTE
 
 ## enum VoxelTool.Mode
   MODE_ADD = 0
@@ -377,6 +477,29 @@
   CHANNEL_DATA7 = 7
   MAX_CHANNELS = 8
 
+## enum VoxelBuffer.Depth
+  DEPTH_8_BIT = 0
+  DEPTH_16_BIT = 1
+  DEPTH_32_BIT = 2
+  DEPTH_64_BIT = 3
+  DEPTH_COUNT = 4
+
 ## enum VoxelLodTerrain.StreamingSystem
   STREAMING_SYSTEM_LEGACY_OCTREE = 0
   STREAMING_SYSTEM_CLIPBOX = 1
+
+## enum VoxelMesherTransvoxel.TexturingMode
+  TEXTURES_NONE = 0
+  TEXTURES_MIXEL4_S4 = 1
+  TEXTURES_SINGLE_S4 = 2
+
+## enum VoxelGeneratorGraph.TextureMode
+  TEXTURE_MODE_MIXEL4 = 0
+  TEXTURE_MODE_SINGLE = 1
+
+## enum VoxelStreamSQLite.CoordinateFormat
+  COORDINATE_FORMAT_INT64_X16_Y16_Z16_L16 = 0
+  COORDINATE_FORMAT_INT64_X19_Y19_Z19_L7 = 1
+  COORDINATE_FORMAT_STRING_CSD = 2
+  COORDINATE_FORMAT_BLOB80_X25_Y25_Z25_L5 = 3
+  COORDINATE_FORMAT_COUNT = 4

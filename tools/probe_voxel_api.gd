@@ -9,6 +9,9 @@ const CLASSES := [
 	"VoxelNode", "VoxelLodTerrain", "VoxelTool", "VoxelToolLodTerrain",
 	"VoxelViewer", "VoxelMesherTransvoxel", "VoxelGenerator",
 	"VoxelGeneratorGraph", "VoxelGraphFunction", "VoxelRaycastResult",
+	# P1: persistência, formato de canais e buffers.
+	"VoxelStream", "VoxelStreamSQLite", "VoxelStreamMemory",
+	"VoxelSaveCompletionTracker", "VoxelFormat", "VoxelBuffer",
 ]
 
 const GRAPH_NODE_ENUMS := [
@@ -16,6 +19,20 @@ const GRAPH_NODE_ENUMS := [
 	"NODE_OUTPUT_SDF", "NODE_ADD", "NODE_SUBTRACT", "NODE_MULTIPLY", "NODE_MIN",
 	"NODE_SDF_PLANE", "NODE_SDF_SPHERE", "NODE_SDF_BOX", "NODE_SDF_SMOOTH_UNION",
 	"NODE_EXPRESSION",
+	# P1: material por voxel (modo Single).
+	"NODE_SELECT", "NODE_CLAMP", "NODE_OUTPUT_SINGLE_TEXTURE", "NODE_OUTPUT_WEIGHT",
+	"NODE_OUTPUT_TYPE",
+]
+
+## Enums conferidos além das classes (classe, nome do enum).
+const ENUMS := [
+	["VoxelTool", "Mode"],
+	["VoxelBuffer", "ChannelId"],
+	["VoxelBuffer", "Depth"],
+	["VoxelLodTerrain", "StreamingSystem"],
+	["VoxelMesherTransvoxel", "TexturingMode"],
+	["VoxelGeneratorGraph", "TextureMode"],
+	["VoxelStreamSQLite", "CoordinateFormat"],
 ]
 
 var _lines: PackedStringArray = []
@@ -32,9 +49,8 @@ func _initialize() -> void:
 	for cls: String in CLASSES:
 		_dump_class(cls)
 	_dump_graph_nodes()
-	_dump_enum("VoxelTool", "Mode")
-	_dump_enum("VoxelBuffer", "ChannelId")
-	_dump_enum("VoxelLodTerrain", "StreamingSystem")
+	for e: Array in ENUMS:
+		_dump_enum(e[0], e[1])
 
 	var f := FileAccess.open(OUT_PATH, FileAccess.WRITE)
 	if f:
