@@ -295,3 +295,9 @@ residual (crash da Godot no encerramento do `--import` em clone limpo, 1/50 com 
 automática no `run_p0_tests.ps1`) foi aceito explicitamente pelo usuário como risco conhecido.
 Pendência não bloqueante: repetir o roteiro manual do README no editor custom (o teste manual anterior foi com a
 build GDExtension). P1 só começa com nova sessão ou pedido explícito, conforme `CLAUDE.md` e `INICIO_AQUI.md`.
+
+## 14. P1 (23/10/2026)
+O P1 (fila de brushes, materiais no canal `INDICES`, `TerrainChanged`, persistência com `VoxelStreamSQLite`, overlay e
+benchmarks) tem relatório próprio: [`docs/p1_results.md`](p1_results.md), com evidências em `docs/evidence/p1/`.
+Na bateria do P1, os 12 testes do P0 rodam sozinhos (regressão) e dentro do selftest P1, nos 4 modos. O T3a do P0
+ganhou um predicado mais estrito depois de uma corrida observada no P1 (B5, `p1_results.md` §7).

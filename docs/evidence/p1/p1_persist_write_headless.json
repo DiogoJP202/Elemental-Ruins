@@ -1,0 +1,68 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-23T11:13:49",
+  "duracao_s": 5.478,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 383.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 383.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "diferencas_apos_salvar": [],
+        "edicoes": [
+          "OK dig_sphere OK rev=1 1.19ms soil ~169646 kg",
+          "OK dig_path OK rev=2 4.82ms soil ~195432 kg",
+          "OK dig_path OK rev=3 1.73ms soil ~195432 kg",
+          "OK dig_path OK rev=4 0.05ms stone ~201132 kg",
+          "OK dig_path OK rev=5 0.92ms stone ~338749 kg",
+          "OK dig_path OK rev=6 1.15ms stone ~338749 kg",
+          "OK dig_path OK rev=7 0.23ms soil ~116038 kg",
+          "OK add_sphere OK rev=8 0.48ms sand ~53617 kg",
+          "OK add_sphere OK rev=9 0.23ms sand ~53617 kg",
+          "OK add_sphere OK rev=10 0.12ms sand ~53617 kg",
+          "OK add_path OK rev=11 1.28ms stone ~366281 kg"
+        ],
+        "esperado_json": "C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a/docs/evidence/p1/p1_persist_expected.json",
+        "probes_alteradas": 5,
+        "salvar": {
+          "blocks_tasks": 52,
+          "bytes": 143360,
+          "copy": "OK",
+          "flush_ms": 20.0,
+          "ms": 305.0,
+          "ok": true,
+          "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_xproc.sqlite",
+          "save_anterior_em_voo": "nenhum",
+          "slot": "selftest_xproc"
+        }
+      },
+      "id": "T14x-write",
+      "status": "PASS",
+      "titulo": "Fase 1: editar, salvar o slot e gravar o estado esperado"
+    }
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": ""
+}

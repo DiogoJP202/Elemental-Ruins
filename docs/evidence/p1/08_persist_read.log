@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P1TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 392 ms
+[P1TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":392.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P1TEST] baseline: 14 probes, sem chão em []
+[TerrainService] load selftest_xproc: ok=true { "slot": "selftest_xproc", "ok": true, "ms": 311.0, "copy": "OK", "bytes": 143360 }
+[P1TEST] T14x-read PASS — Fase 2: processo novo carrega o slot e reproduz o estado salvo | {"amostras_sdf_material":108,"carregar":{"bytes":143360,"copy":"OK","ms":311.0,"ok":true,"slot":"selftest_xproc"},"diferencas":[],"esperado_de":"2026-10-23T11:13:49","mundo_novo_difere_do_salvo_em_probes":5,"nos":{"esperado":32,"obtido":32},"slot":"selftest_xproc"}
+[P1TEST] relatório: C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a/docs/evidence/p1/p1_persist_read_headless.json
+[P1TEST] erros do motor durante o teste: 0 | avisos: 0
+[P1TEST] RESULTADO GERAL: PASS (2/2) em 4.5 s

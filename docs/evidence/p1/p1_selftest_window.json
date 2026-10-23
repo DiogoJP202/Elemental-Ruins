@@ -1,0 +1,768 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-23T11:15:22",
+  "duracao_s": 86.591,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "column_collider_latency_ms": 14.32,
+    "crater_collider_latency_ms": 31.755,
+    "fps_janela": {
+      "max": 61.0,
+      "media": 57.79,
+      "min": 1.0,
+      "n": 166,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 893.0,
+    "p1_bench100_aplicar_collider_ms": {
+      "max": 34.47,
+      "media": 31.54,
+      "min": 15.53,
+      "n": 100,
+      "p95": 33.37
+    },
+    "p1_bench100_fila_ms": {
+      "max": 1.04,
+      "media": 0.45,
+      "min": 0.34,
+      "n": 100,
+      "p95": 0.68
+    },
+    "p1_bench100_memoria": {
+      "antes": {
+        "blocos": 0,
+        "estatica_mb": 118.97,
+        "voxel_total_mb": 13.4,
+        "voxel_usado_mb": 0.0
+      },
+      "depois": {
+        "blocos": 46,
+        "estatica_mb": 119.38,
+        "voxel_total_mb": 13.4,
+        "voxel_usado_mb": 0.29
+      }
+    },
+    "p1_bench100_quadro_ms": {
+      "max": 19.48,
+      "media": 16.67,
+      "min": 14.71,
+      "n": 299,
+      "p50": 16.58,
+      "p95": 17.96,
+      "p99": 18.83
+    },
+    "p1_bench100_total_ms": {
+      "max": 34.9,
+      "media": 31.99,
+      "min": 15.89,
+      "n": 100,
+      "p95": 33.78
+    },
+    "p1_reset10_memoria": {
+      "antes": {
+        "blocos": 0,
+        "estatica_mb": 115.88,
+        "voxel_total_mb": 13.4,
+        "voxel_usado_mb": 0.0
+      },
+      "depois": {
+        "blocos": 0,
+        "estatica_mb": 115.94,
+        "voxel_total_mb": 13.4,
+        "voxel_usado_mb": 0.0
+      },
+      "por_ciclo_mb": [
+        115.91,
+        115.88,
+        115.92,
+        115.88,
+        115.9,
+        115.89,
+        115.91,
+        115.92,
+        115.91,
+        115.95
+      ]
+    },
+    "p1_reset10_ms": {
+      "max": 449.0,
+      "media": 410.8,
+      "min": 366.0,
+      "n": 10,
+      "p95": 449.0
+    },
+    "repeat_latency_ms": {
+      "max": 34.62,
+      "media": 29.59,
+      "min": 9.13,
+      "n": 40,
+      "p95": 34.38
+    },
+    "reset_ms": {
+      "max": 500.0,
+      "media": 454.8,
+      "min": 366.0,
+      "n": 10,
+      "p95": 500.0
+    },
+    "stress100_collider_latency_ms": {
+      "max": 34.54,
+      "media": 30.57,
+      "min": 15.12,
+      "n": 100,
+      "p95": 34.08
+    },
+    "stress100_edit_call_ms": {
+      "max": 0.43,
+      "media": 0.1,
+      "min": 0.07,
+      "n": 100,
+      "p95": 0.21
+    },
+    "tunnel_collider_latency_ms": 29.401
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 893.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "sdf_abaixo_solo": -2.0,
+        "sdf_acima_colina": 8.0,
+        "sdf_acima_solo": 2.0,
+        "sdf_dentro_colina": -7.0,
+        "topo_colina_colisao_y": 12.019998550415,
+        "topo_esperado_y": 12.0
+      },
+      "id": "T0",
+      "status": "PASS",
+      "titulo": "Dados SDF volumétricos coerentes com o gerador (colina sólida, ar acima)"
+    },
+    {
+      "detalhes": {
+        "on_floor": true,
+        "topo_esperado_y": 12.0,
+        "y_apos_2s": 12.0205574035645,
+        "y_apos_3s": 12.0205574035645
+      },
+      "id": "T1b",
+      "status": "PASS",
+      "titulo": "Jogador fica sobre o topo da colina voxel sem atravessar"
+    },
+    {
+      "detalhes": {
+        "chao_antes_y": 0.0200023651123047,
+        "chao_depois_y": -3.04615783691406,
+        "edicao": "dig_sphere OK rev=1 1.09ms soil ~169646 kg",
+        "jogador_y_apos_2s": -3.03762030601501,
+        "latencia_collider_ms": 31.755,
+        "on_floor": true,
+        "quadros_fisica": 2,
+        "sdf_dados_logo_apos_edicao": 1.03762924671173
+      },
+      "id": "T2",
+      "status": "PASS",
+      "titulo": "Escavar remove matéria E colisão; jogador cai na cratera"
+    },
+    {
+      "detalhes": {
+        "edicoes": [
+          "dig_path OK rev=2 2.51ms soil ~433615 kg",
+          "dig_path OK rev=3 1.04ms stone ~751600 kg"
+        ],
+        "eixo_livre_apos_ms": 29.401,
+        "face_antes_z": 10.5977001190186,
+        "piso_interno_y": -0.349205732345581,
+        "teto_interno_y": 3.34920597076416,
+        "topo_antes_y": 12.019998550415,
+        "topo_depois_y": 12.019998550415
+      },
+      "id": "T3a",
+      "status": "PASS",
+      "titulo": "Túnel escavado: eixo livre, teto e piso sólidos (raycasts físicos)"
+    },
+    {
+      "detalhes": {
+        "amostras_com_teto": 361,
+        "amostras_teto": 361,
+        "chegou_na_saida": true,
+        "tempo_s": 11.89,
+        "y_max_dentro": -0.328317821025848,
+        "y_min_dentro": -0.333590298891068,
+        "z_final": -37.0683097839355
+      },
+      "id": "T3b",
+      "status": "PASS",
+      "titulo": "Jogador atravessa o túnel de boca a boca com teto sólido acima"
+    },
+    {
+      "detalhes": {
+        "caixa_vel": 0.0,
+        "caixa_y_apos_3s": 7.0,
+        "edicoes": [
+          "add_sphere OK rev=4 0.32ms soil ~50265 kg",
+          "add_sphere OK rev=5 0.13ms soil ~50265 kg",
+          "add_sphere OK rev=6 0.12ms soil ~50265 kg"
+        ],
+        "jogador_y_no_topo": 6.22515630722046,
+        "latencia_collider_ms": 14.32,
+        "on_floor": true,
+        "topo_coluna_y": 6.49999809265137
+      },
+      "id": "T4",
+      "status": "PASS",
+      "titulo": "Adicionar matéria forma coluna sólida (caixa e jogador apoiados)"
+    },
+    {
+      "detalhes": {
+        "falhas": [],
+        "latencia_collider_ms": {
+          "max": 34.62,
+          "media": 29.59,
+          "min": 9.13,
+          "n": 40,
+          "p95": 34.38
+        },
+        "nos_antes": 35,
+        "nos_depois": 35
+      },
+      "id": "T5",
+      "status": "PASS",
+      "titulo": "20 ciclos escavar+adicionar no mesmo ponto (40 edições)"
+    },
+    {
+      "detalhes": {
+        "executadas": 100,
+        "latencia_collider_ms": {
+          "max": 34.54,
+          "media": 30.57,
+          "min": 15.12,
+          "n": 100,
+          "p95": 34.08
+        },
+        "recusadas": 0,
+        "tempo_chamada_ms": {
+          "max": 0.43,
+          "media": 0.1,
+          "min": 0.07,
+          "n": 100,
+          "p95": 0.21
+        },
+        "timeouts_collider": 0
+      },
+      "id": "T5b",
+      "status": "PASS",
+      "titulo": "100 escavações em sequência (latência edição→collider)"
+    },
+    {
+      "detalhes": {
+        "casos": [
+          {
+            "caso": "fora dos voxel_bounds",
+            "esperado": "outside_bounds",
+            "ms": 0.112,
+            "ok": true,
+            "resultado": "dig_sphere RECUSADO (outside_bounds)"
+          },
+          {
+            "caso": "dentro dos bounds, fora do LOD0 carregado",
+            "esperado": "area_not_loaded",
+            "ms": 0.061,
+            "ok": true,
+            "resultado": "dig_sphere RECUSADO (area_not_loaded)"
+          },
+          {
+            "caso": "raio gigante",
+            "esperado": "radius_out_of_range",
+            "ms": 0.036,
+            "ok": true,
+            "resultado": "dig_sphere RECUSADO (radius_out_of_range)"
+          },
+          {
+            "caso": "adicionar sobre o jogador",
+            "esperado": "overlaps_player",
+            "ms": 0.063,
+            "ok": true,
+            "resultado": "add_sphere RECUSADO (overlaps_player)"
+          }
+        ]
+      },
+      "id": "T6",
+      "status": "PASS",
+      "titulo": "Edições inválidas/fora da área falham rápido e com motivo"
+    },
+    {
+      "detalhes": {
+        "duracao_ms": 449.0,
+        "nos_baseline": 32,
+        "nos_depois": 32,
+        "probes_diferentes": [],
+        "props_antes": 1,
+        "props_depois": 0,
+        "reset_ok": true
+      },
+      "id": "T7",
+      "status": "PASS",
+      "titulo": "Reset restaura geometria E colisão originais (cratera, túnel e coluna somem)"
+    },
+    {
+      "detalhes": {
+        "duracao_reset_ms": {
+          "max": 500.0,
+          "media": 454.8,
+          "min": 366.0,
+          "n": 10,
+          "p95": 500.0
+        },
+        "falhas": [],
+        "nos_baseline": 32,
+        "nos_depois": 32
+      },
+      "id": "T7b",
+      "status": "PASS",
+      "titulo": "10 ciclos escavar→reset retornam ao baseline"
+    },
+    {
+      "detalhes": {
+        "amostras_de_mira": 120,
+        "carimbos": 13,
+        "carimbos_pulados_por_espaco": 0,
+        "limite_carimbos": 16,
+        "max_ops_num_quadro": 1,
+        "ops_aplicadas": 13,
+        "ops_tubo_por_salto": 12,
+        "pontos_sem_vala": [],
+        "todas_ok": true,
+        "vala_no_collider_ms": 16
+      },
+      "id": "T8",
+      "status": "PASS",
+      "titulo": "Traço contínuo (120 amostras em 2 s) vira vala contínua com carimbos limitados"
+    },
+    {
+      "detalhes": {
+        "aplicadas": 7,
+        "carimbos": 7,
+        "chao_antes_y": 0.0200004577636719,
+        "chao_depois_y": -1.68731498718262,
+        "collider_ms": 15.315,
+        "material_mirado": "soil(dureza 1.0, 1500 kg/m³)",
+        "mira": "(-40.0, 0.02, 22.78281)",
+        "tracos_ativos_depois": 0
+      },
+      "id": "T8b",
+      "status": "PASS",
+      "titulo": "G segurado 1 s (Input → controlador → fila) abre cratera no collider"
+    },
+    {
+      "detalhes": {
+        "divisoes": 2,
+        "limite_extensao_m": 14.0,
+        "maior_extensao_aabb_m": 14.1,
+        "max_ops_num_quadro": 2,
+        "max_volume_aabb_num_quadro_m3": 252.0,
+        "orcamento_volume_m3": 3000.0,
+        "rajada_fundidos": 19,
+        "rajada_ops_aplicadas": 1,
+        "rajada_pedidos": 20,
+        "rajada_pontos_sem_vala": [],
+        "tubo_pontos_sem_vala": [],
+        "tubo_trechos": 3
+      },
+      "id": "T9",
+      "status": "PASS",
+      "titulo": "PATH de 26 m dividido por AABB; rajada de 20 carimbos fundida; orçamento por quadro"
+    },
+    {
+      "detalhes": {
+        "alturas_antes": [
+          3.02,
+          2.789,
+          2.217,
+          0.77,
+          0.02,
+          0.02,
+          0.02
+        ],
+        "alturas_depois": [
+          0.805,
+          0.737,
+          0.595,
+          0.374,
+          0.071,
+          0.033,
+          0.02
+        ],
+        "collider_ms": 16.433,
+        "distancias_m": [
+          0.0,
+          0.75,
+          1.5,
+          2.25,
+          3.0,
+          3.75,
+          4.5
+        ],
+        "inclinacao_max_antes": 1.929,
+        "inclinacao_max_depois": 0.404,
+        "saliencia": "add_sphere OK rev=181 0.46ms soil ~50265 kg",
+        "sdf_topo_antes": 0.0,
+        "sdf_topo_depois": 1.48014760017395,
+        "suavizacoes": [
+          "smooth_area OK rev=182 0.10ms soil ~0 kg",
+          "smooth_area OK rev=183 0.05ms soil ~0 kg"
+        ]
+      },
+      "id": "T10",
+      "status": "PASS",
+      "titulo": "SMOOTH arredonda saliência: topo desce e a maior inclinação cai (collider e dados)"
+    },
+    {
+      "detalhes": {
+        "add_areia": {
+          "dentro": "sand(dureza 0.5, 1600 kg/m³)",
+          "fora_3m": "soil(dureza 1.0, 1500 kg/m³)",
+          "massa_esperada_kg": 22619.4671058465,
+          "massa_kg": 22619.4671058465,
+          "ok": true,
+          "resultado": "add_sphere OK rev=184 0.54ms sand ~22619 kg"
+        },
+        "dureza_ok": true,
+        "dureza_tracos": {
+          "areia": {
+            "carimbos": 17,
+            "material": "sand(dureza 0.5, 1600 kg/m³)"
+          },
+          "pedra": {
+            "carimbos": 4,
+            "material": "stone(dureza 3.0, 2600 kg/m³)"
+          },
+          "solo": {
+            "carimbos": 10,
+            "material": "soil(dureza 1.0, 1500 kg/m³)"
+          }
+        },
+        "layout_gerador": [
+          {
+            "esperado": "soil",
+            "lido": "soil(dureza 1.0, 1500 kg/m³)",
+            "ok": true,
+            "p": "(0.0, -1.0, 28.0)"
+          },
+          {
+            "esperado": "sand",
+            "lido": "sand(dureza 0.5, 1600 kg/m³)",
+            "ok": true,
+            "p": "(30.0, -1.0, 28.0)"
+          },
+          {
+            "esperado": "stone",
+            "lido": "stone(dureza 3.0, 2600 kg/m³)",
+            "ok": true,
+            "p": "(0.0, -8.0, 28.0)"
+          },
+          {
+            "esperado": "stone",
+            "lido": "stone(dureza 3.0, 2600 kg/m³)",
+            "ok": true,
+            "p": "(0.0, 4.0, -10.0)"
+          },
+          {
+            "esperado": "soil",
+            "lido": "soil(dureza 1.0, 1500 kg/m³)",
+            "ok": true,
+            "p": "(0.0, 10.5, -10.0)"
+          },
+          {
+            "esperado": "soil",
+            "lido": "soil(dureza 1.0, 1500 kg/m³)",
+            "ok": true,
+            "p": "(5.0, -3.0, 40.0)"
+          },
+          {
+            "esperado": "stone",
+            "lido": "stone(dureza 3.0, 2600 kg/m³)",
+            "ok": true,
+            "p": "(5.0, -7.0, 40.0)"
+          }
+        ],
+        "politica_bendable": {
+          "nao_dobravel": "material_not_bendable",
+          "ok": true,
+          "solo": ""
+        }
+      },
+      "id": "T11",
+      "status": "PASS",
+      "titulo": "Materiais: layout do gerador, ADD de areia lido nos dados, dureza no ritmo, massa por densidade"
+    },
+    {
+      "detalhes": {
+        "aabb_do_evento_contem_brush": true,
+        "collider_ainda_velho_no_evento": "8/8",
+        "collider_ultimo_ms": 17.699,
+        "dados_ja_mudados_no_evento": true,
+        "edicoes_ok": 8,
+        "eventos": 8,
+        "recusas": [
+          "dig_sphere RECUSADO (outside_bounds)",
+          "add_sphere RECUSADO (unknown_material)"
+        ],
+        "revisoes_consecutivas": true
+      },
+      "id": "T12",
+      "status": "PASS",
+      "titulo": "TerrainChanged {aabb, revision}: 1 evento por edição aplicada, nenhum por recusa"
+    },
+    {
+      "detalhes": {
+        "edicao": "add_path OK rev=224 0.87ms sand ~225404 kg",
+        "jogador_x_final": -21.271764755249,
+        "jogador_y_final": 2.88012409210205,
+        "jogador_y_max": 2.88012409210205,
+        "material_no_meio": "sand(dureza 0.5, 1600 kg/m³)",
+        "on_floor": true,
+        "topo_esperado_y": 3.1,
+        "topo_no_fim_y": 2.91332626342773
+      },
+      "id": "T13",
+      "status": "PASS",
+      "titulo": "Rampa (PATH aditivo de areia): jogador sobe a pé até o topo"
+    },
+    {
+      "detalhes": {
+        "amostras_sdf_material": 108,
+        "arquivos_de_sessao": 1,
+        "carregar_1": {
+          "bytes": 147456,
+          "copy": "OK",
+          "ms": 432.0,
+          "ok": true,
+          "slot": "selftest"
+        },
+        "diferencas_apos_salvar": [],
+        "diferencas_carga_1": [],
+        "diferencas_carga_2": [],
+        "diferencas_reset": [],
+        "edicoes": [
+          "OK dig_sphere OK rev=225 0.87ms soil ~169646 kg",
+          "OK dig_path OK rev=226 1.10ms soil ~195432 kg",
+          "OK dig_path OK rev=227 1.34ms soil ~195432 kg",
+          "OK dig_path OK rev=228 0.06ms stone ~201132 kg",
+          "OK dig_path OK rev=229 0.48ms stone ~338749 kg",
+          "OK dig_path OK rev=230 0.54ms stone ~338749 kg",
+          "OK dig_path OK rev=231 0.08ms soil ~116038 kg",
+          "OK add_sphere OK rev=232 0.22ms sand ~53617 kg",
+          "OK add_sphere OK rev=233 0.13ms sand ~53617 kg",
+          "OK add_sphere OK rev=234 0.07ms sand ~53617 kg",
+          "OK add_path OK rev=235 0.65ms stone ~366281 kg"
+        ],
+        "nos": {
+          "apos_salvar": 32,
+          "carga_1": 32,
+          "carga_2": 32,
+          "editado": 32
+        },
+        "probes_alteradas_pelas_edicoes": 5,
+        "reset_volta_ao_baseline": true,
+        "salvar": {
+          "blocks_tasks": 0,
+          "bytes": 147456,
+          "copy": "OK",
+          "flush_ms": 13.0,
+          "ms": 430.0,
+          "ok": true,
+          "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite",
+          "save_anterior_em_voo": "esperado",
+          "slot": "selftest"
+        },
+        "save_abortado": {
+          "exercitado": true,
+          "resultado": {
+            "blocks_tasks": 58,
+            "flush_ms": 0.0,
+            "ok": false,
+            "reason": "flush_incomplete",
+            "slot": "selftest_abort"
+          },
+          "save_seguinte_imediato": {
+            "blocks_tasks": 0,
+            "bytes": 147456,
+            "copy": "OK",
+            "flush_ms": 13.0,
+            "ms": 430.0,
+            "ok": true,
+            "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite",
+            "save_anterior_em_voo": "esperado",
+            "slot": "selftest"
+          },
+          "terreno_pronto_sem_slot": true
+        },
+        "topo_coluna_carga_2_y": 6.5,
+        "topo_coluna_salvo_y": 6.5
+      },
+      "id": "T14",
+      "status": "PASS",
+      "titulo": "Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar"
+    },
+    {
+      "detalhes": {
+        "aplicadas": 100,
+        "aplicar_ate_collider_ms": {
+          "max": 34.47,
+          "media": 31.54,
+          "min": 15.53,
+          "n": 100,
+          "p95": 33.37
+        },
+        "chamada_ms": {
+          "max": 0.69,
+          "media": 0.09,
+          "min": 0.05,
+          "n": 100,
+          "p95": 0.27
+        },
+        "duracao_s": 5.0,
+        "enfileiradas": 100,
+        "enfileirar_ate_collider_ms": {
+          "max": 34.9,
+          "media": 31.99,
+          "min": 15.89,
+          "n": 100,
+          "p95": 33.78
+        },
+        "espera_fila_ms": {
+          "max": 1.04,
+          "media": 0.45,
+          "min": 0.34,
+          "n": 100,
+          "p95": 0.68
+        },
+        "intervalo_entre_quadros_ms": {
+          "max": 19.48,
+          "media": 16.67,
+          "min": 14.71,
+          "n": 299,
+          "p50": 16.58,
+          "p95": 17.96,
+          "p99": 18.83
+        },
+        "max_ops_num_quadro": 1,
+        "memoria_antes": {
+          "blocos": 0,
+          "estatica_mb": 118.97,
+          "voxel_total_mb": 13.4,
+          "voxel_usado_mb": 0.0
+        },
+        "memoria_depois": {
+          "blocos": 46,
+          "estatica_mb": 119.38,
+          "voxel_total_mb": 13.4,
+          "voxel_usado_mb": 0.29
+        },
+        "modo": "window",
+        "nos_antes": 32,
+        "nos_depois": 32,
+        "vistas_no_collider": 100
+      },
+      "id": "T15",
+      "status": "PASS",
+      "titulo": "Benchmark: 100 alterações pela fila (20/s), latência até o collider e tempo de quadro"
+    },
+    {
+      "detalhes": {
+        "arquivos_de_sessao_por_ciclo": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "criterio_memoria": "depois <= 1,25 × antes + 5 MB",
+        "duracao_reset_ms": {
+          "max": 449.0,
+          "media": 410.8,
+          "min": 366.0,
+          "n": 10,
+          "p95": 449.0
+        },
+        "falhas": [],
+        "memoria_antes": {
+          "blocos": 0,
+          "estatica_mb": 115.88,
+          "voxel_total_mb": 13.4,
+          "voxel_usado_mb": 0.0
+        },
+        "memoria_depois": {
+          "blocos": 0,
+          "estatica_mb": 115.94,
+          "voxel_total_mb": 13.4,
+          "voxel_usado_mb": 0.0
+        },
+        "memoria_estatica_por_ciclo_mb": [
+          115.91,
+          115.88,
+          115.92,
+          115.88,
+          115.9,
+          115.89,
+          115.91,
+          115.92,
+          115.91,
+          115.95
+        ],
+        "nos_antes": 32,
+        "nos_depois": 32
+      },
+      "id": "T16",
+      "status": "PASS",
+      "titulo": "10 ciclos editar (fila) → reset com stream: baseline, nós, arquivos e memória"
+    },
+    {
+      "detalhes": {
+        "amostras_de_quadro_1s": 60,
+        "faltando": [],
+        "linhas": [
+          "ELEMENTAL // RUINS — laboratório P1 (terreno volumétrico)",
+          "FPS 60  |  quadro 16.7 ms (pico 1 s: 16.7 ms)  |  monitores TIME_PROCESS 18.33 ms, TIME_PHYSICS_PROCESS 1.11 ms",
+          "Terreno: PRONTO  geração 28  revisão 355  edições 355  recusas 6  |  sessão session_20784_28.sqlite (1 arquivo[s])",
+          "Fila: pendentes 0  traços 0  |  aplicadas 198  recusadas 2  descartadas 0  |  fundidos 19  divisões 6  |  ops/quadro 0 (pico 2)",
+          "Último brush: ADD r=2.00  AABB 5.0×5.0×5.0 m  pedra ~87127 kg (estimativa)  chamada 1.51 ms  espera na fila 3.5 ms",
+          "Motor voxel: tarefas stream 0 / geração 0 / malha 0  |  voxels 0.0 MB  |  memória estática 116 MB  |  corpos ativos 0",
+          "Jogador: (0.0, 0.0, 28.0)  no chão: sim",
+          "Pincel: raio 2.00 m  |  material do H: solo",
+          "Mira: sem alvo",
+          "Reset: 25  último 382 ms ok  |  Salvar: selftest ok 430 ms 144 KB  |  Carregar: selftest ok 449 ms"
+        ]
+      },
+      "id": "T17",
+      "status": "PASS",
+      "titulo": "Overlay mostra FPS/quadro, fila, último brush, motor voxel, memória, corpos e reset/save/load"
+    }
+  ],
+  "testes_pass": 23,
+  "testes_total": 23,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

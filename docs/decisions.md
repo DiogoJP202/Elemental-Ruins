@@ -1,6 +1,6 @@
-# Decisões e trade-offs — P0
+# Decisões e trade-offs — P0 e P1
 
-Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decisão → motivo → consequência.
+Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15+: P1 (23/10/2026). Formato: decisão → motivo → consequência.
 
 ## D1. Voxel Tools GDExtension 1.7 na Godot oficial (não a build custom) — **SUBSTITUÍDA por D13 em 23/10/2026**
 - **Motivo:** CLAUDE.md manda testar primeiro a GDExtension. Ela carregou na Godot 4.7.2 oficial
@@ -116,3 +116,77 @@ Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decis
   abertura de um clone limpo fechar, basta reabrir.
 - **Reavaliar quando:** sair Godot 4.7.3+ ou Voxel Tools 1.8 (testar de novo a importação limpa), ou se a taxa
   subir em CI.
+
+---
+
+# P1 — ferramentas, materiais e persistência (23/10/2026)
+
+## D15. Material é dado voxel no canal INDICES, não textura
+- **Decisão:** cada voxel guarda o índice do seu material no canal `INDICES` (`VoxelFormat` com índices de 8 bits,
+  mesher `TEXTURES_SINGLE_S4`, grafo com `TEXTURE_MODE_SINGLE` e nó `OutputSingleTexture`). `TerrainMaterial`
+  (`hardness`, `density`, `bendable`, `surface_color`) fica em `TerrainMaterialLibrary`, indexado por esse valor.
+- **Motivo:** uma única fonte de verdade, que muda com as edições e persiste no SQLite junto com o SDF. Regras de
+  jogo leem a **definição** pelo índice; o shader só recebe `surface_color` das definições. Nada lê física de cor ou
+  de peso de pintura.
+- **Verificação:** spike `tools/spike_p1_api.gd` S1–S4b (escrita do gerador, `MODE_SET` em `INDICES` com
+  `do_sphere` e `do_path`, SDF intacto) e T11.
+- **Valores (escolha de laboratório, não medidos):** solo 1,0 / 1500 kg/m³; areia 0,5 / 1600 kg/m³; pedra
+  3,0 / 2600 kg/m³; todos dobráveis. Layout: pedra abaixo de y = −6 e no núcleo da colina (mais de 3 m para dentro),
+  areia em x ≥ 24, solo no resto.
+- **Consequências:** o ADD com material pinta o raio + 0,5 m (`material_paint_margin`) para a superfície nova ler o
+  material por inteiro; matéria que já existia nessa faixa troca de material. A cor nas bordas é a mistura que o
+  Transvoxel faz entre os 4 materiais mais presentes de cada célula.
+
+## D16. Regras de jogo mínimas para as propriedades
+- `hardness` multiplica o intervalo da escavação contínua (REMOVE): base 0,15 s → areia 0,075 s, solo 0,15 s, pedra
+  0,45 s. O material vem dos dados logo abaixo da superfície mirada; se a amostra cai no ar (buraco recém-aberto,
+  collider ainda velho), o traço mantém o último material sólido lido.
+- `density` × volume nominal do brush = massa **estimada** em `TerrainEditResult.est_mass_kg` (rotulada assim no HUD).
+  Não é volume real de matéria alterada.
+- `bendable = false` faz a fila recusar com `material_not_bendable`. Nenhum dos 3 materiais é não dobrável, então a
+  regra foi testada isolada (`TerrainBrushQueue.material_policy`), não no mundo.
+
+## D17. `TerrainBrushQueue` como porta única das edições de gameplay
+- **Traço:** um carimbo sai quando passou o intervalo (× dureza no REMOVE) **e** a mira andou pelo menos 0,35 × raio.
+  O plano dizia "anda **ou** passa o intervalo"; com "ou", segurar G parado cavaria a cada quadro assim que o collider
+  descesse, e a dureza não teria efeito. Se a mira andou mais que 1 × raio desde o último carimbo, o carimbo vira um
+  tubo (PATH) do ponto anterior até a mira, para a vala não ter buracos. SMOOTH só exige o intervalo.
+- **Orçamento:** até 2 operações e 3000 m³ de AABB somada por quadro de física; PATH cuja AABB passaria de 14 m é
+  dividido em trechos de até 14 m − 2 × raio; carimbos acumulados do mesmo traço viram um único `do_path`.
+  Esses limites não foram otimizados por benchmark; os medidos estão em `docs/p1_results.md`.
+- A fila roda com `process_physics_priority = 100`: o carimbo pedido pelo controlador num quadro é aplicado no mesmo
+  quadro. Reset, salvar e carregar esvaziam a fila.
+- `TerrainService` continua aceitando chamadas diretas (os testes do P0 usam), com o seu orçamento de 4 edições por
+  quadro; a fila respeita esse orçamento e tenta de novo no quadro seguinte.
+
+## D18. Persistência: arquivo de sessão por instância + slot copiado
+- **Decisão:** o terreno vivo sempre usa um `VoxelStreamSQLite` num arquivo de sessão `user://world/session_<pid>_<n>.sqlite`,
+  novo a cada recriação. **Salvar (F5):** `save_modified_blocks()` → esperar o `VoxelSaveCompletionTracker` → liberar o
+  nó → fechar o stream (`database_path = ""`) → copiar a sessão para `user://saves/<slot>.sqlite` → reabrir a mesma
+  sessão. **Carregar (F9):** copiar o slot para uma sessão nova e recriar o nó. **Reset (Z):** sessão nova e vazia;
+  o slot não é tocado.
+- **Motivos (medidos no spike):** liberar o nó sem `save_modified_blocks` **não** grava as edições (I1), então a
+  sessão descartada no reset não é contaminada; o Windows não deixa apagar o arquivo com o stream aberto (I2) e deixa
+  depois de fechar (I3); o slot precisa ser uma cópia fechada para "carregar" significar "voltar ao último save",
+  porque blocos descarregados por distância são gravados na sessão a qualquer momento.
+- **Custo:** salvar recria o terreno a partir do disco (jogador e caixas congelados por ~0,3–0,7 s, medido).
+  Copiar com o stream aberto evitaria isso, mas pode copiar um arquivo no meio de uma gravação assíncrona; não testado.
+- `set_key_cache_enabled(true)` no stream: o reset médio com stream caiu de 581 ms para ~260 ms (headless, T7b).
+- **Não persiste:** caixas de teste e qualquer objeto fora do terreno (o `WorldSave` de objetos é P2).
+- `persistence_enabled = false` volta ao comportamento do P0 (sem stream).
+- **Falhas do save (B6/B7, `p1_results.md` §7):** se `save_modified_blocks` não termina em `save_timeout_s` (15 s), o
+  save é abortado **sem** liberar o terreno; o tracker abortado é guardado e o próximo save espera as gravações em voo
+  dele antes de pedir as suas (senão veria "nada a gravar" e fecharia o stream com gravações pendentes).
+
+## D19. Selftest P1 estende o do P0
+- `scripts/dev/p1_selftest.gd` faz `extends "res://scripts/dev/p0_selftest.gd"`, roda os 12 testes P0 e depois
+  T8–T17. Mudança no P0: `_run()` dividido em `_run_tests()` + `_finish()`, e prefixo do relatório, pasta de evidência,
+  pasta de capturas e watchdog viraram métodos sobrescrevíveis. `--p0-selftest` continua igual (12 testes).
+- Persistência entre processos: `--p1-persist=write` e `--p1-persist=read` em execuções separadas.
+- `tools/run_p1_tests.ps1` é a bateria do P1; `Invoke-Native` e o retry do import (B1) foram para
+  `tools/lib_godot_process.ps1`, usado pelos dois runners.
+
+## D20. Controles provisórios do P1
+- G escavar, H adicionar e N suavizar (segurar = traço contínuo); J túnel de 10 m; K rampa de 8 m subindo 3 m com o
+  material do H; M troca o material do H (solo → areia → pedra); F5/F9 salvar/carregar o slot `slot1`; Z reset.
+- Sem seleção 1–4 (reservada para os elementos no P3, CLAUDE.md).
