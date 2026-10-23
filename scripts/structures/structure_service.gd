@@ -90,6 +90,11 @@ func get_pieces() -> Array[StructurePiece]:
 	return _pieces
 
 
+## Peças congeladas por suspend() que resume() vai soltar.
+func get_suspended() -> Array[StructurePiece]:
+	return _suspended
+
+
 func get_anchor_region() -> AABB:
 	return _anchor_region
 

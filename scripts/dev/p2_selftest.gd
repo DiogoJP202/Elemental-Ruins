@@ -52,7 +52,112 @@ func _run_tests() -> bool:
 	if _should_run("T22"): await _t22_body_budget()
 	if _should_run("T23"): await _t23_extract_rock()
 	if _should_run("T24"): await _t24_push_rock()
+	if _should_run("T25"): await _t25_collapse_reset_cycles()
+	if _should_run("T26"): await _t26_save_load_structures()
 	return true
+
+
+# --- T25: 10 ciclos colapso → reset --------------------------------------------------------
+
+func _t25_collapse_reset_cycles() -> void:
+	var failures := []
+	var durations := PackedFloat32Array()
+	var released_per_cycle := []
+	for c in 10:
+		await main.request_world_reset()
+		await _go_to_tower()
+		for corner in [Vector2(-1, -1), Vector2(1, -1)]:
+			await _dig_under(_foot_at(corner))
+		await _wait_structures_idle(5.0)
+		await _seconds(1.5)
+		released_per_cycle.append(structures.released_count())
+		var ok_reset: bool = await main.request_world_reset()
+		durations.append(svc.get_last_ready_ms())
+		await _seconds(0.5)
+		var pieces := structures.get_pieces()
+		var off_home := pieces.filter(func(p): return p.global_position.distance_to(p.home.origin) > 0.001 or not p.freeze or p.released)
+		var debris_left := get_tree().get_nodes_in_group(DebrisBudget.GROUP).size()
+		var nodes := get_tree().get_node_count()
+		if not ok_reset or pieces.size() != 36 or not off_home.is_empty() or debris_left != 0 or nodes != _baseline_nodes \
+				or released_per_cycle[-1] == 0:
+			failures.append({"ciclo": c, "reset": ok_reset, "pecas": pieces.size(), "fora_do_lugar": off_home.size(),
+				"destrocos_restantes": debris_left, "nos": nodes, "nos_baseline": _baseline_nodes,
+				"soltas_antes_do_reset": released_per_cycle[-1]})
+	_metrics["p2_reset10_ms"] = _stats(durations)
+	_record("T25", "10 ciclos meia torre caída → reset: torre idêntica (36 peças no lugar, congeladas), sem destroços, nós = baseline",
+		failures.is_empty(), {"falhas": failures, "soltas_por_ciclo": released_per_cycle,
+		"duracao_reset_ms": _stats(durations), "nos_baseline": _baseline_nodes})
+
+
+# --- T26: salvar/carregar com estruturas ---------------------------------------------------
+
+func _t26_save_load_structures() -> void:
+	const SLOT := "selftest_p2"
+	var details := {}
+	# A) Torre derrubada; salvar congela as peças soltas durante a recarga do terreno e as devolve.
+	await main.request_world_reset()
+	await _go_to_tower()
+	for corner in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
+		await _dig_under(_foot_at(corner))
+	await _wait_structures_idle(5.0)
+	await _seconds(4.0)
+	var pieces := structures.get_pieces()
+	# Só compara posições com a cena parada: 4 s depois do colapso total ainda havia peça
+	# deslizando a 0,56 m/s (medido), e o deslocamento seria do assentamento, não do save.
+	var settled := await _wait_until(func(): return pieces.all(func(p): return p.freeze or p.linear_velocity.length() < 0.05), 15.0)
+	# Controle: quanto as peças ainda andam sozinhas (sem save) num intervalo de 2 s.
+	var ctrl0 := pieces.map(func(p): return p.global_position)
+	await _seconds(2.0)
+	var ctrl_shift := 0.0
+	for i in pieces.size():
+		ctrl_shift = maxf(ctrl_shift, pieces[i].global_position.distance_to(ctrl0[i]))
+	var before := pieces.map(func(p): return p.global_position)
+	var vel_before := pieces.map(func(p): return p.linear_velocity.length())
+	var ok_save: bool = await main.request_world_save(SLOT)
+	var right_after := pieces.map(func(p): return p.global_position)
+	await _seconds(1.5)
+	var max_shift := 0.0
+	var worst := {}
+	for i in pieces.size():
+		var s := pieces[i].global_position.distance_to(before[i])
+		if s > max_shift:
+			max_shift = s
+			worst = {"peca": pieces[i].name, "antes": str(before[i]), "logo_apos_save": str(right_after[i]),
+				"depois_1_5s": str(pieces[i].global_position), "vel_antes": vel_before[i],
+				"mudou_durante_save_m": right_after[i].distance_to(before[i])}
+	var still_frozen := pieces.filter(func(p): return p.freeze and p.get_meta(DebrisBudget.PARKED_META, "") == "").size()
+	var a_ok: bool = settled and ok_save and max_shift < 0.1 and still_frozen == 0 and structures.released_count() == 36
+	details["A_salvar_com_torre_caida"] = {"salvo": ok_save, "cena_parada_antes": settled, "maior_deslocamento_m": max_shift, "pior_peca": worst,
+		"controle_sem_save_2s_m": ctrl_shift, "salvar": svc.get_debug_stats().last_save,
+		"pecas_ainda_congeladas_pelo_save": still_frozen, "soltas": structures.released_count(), "ok": a_ok}
+
+	# B) Reset (torre de pé) → carregar o slot com o apoio escavado → a torre cai de novo.
+	await main.request_world_reset()
+	var intact_after_reset := structures.released_count() == 0
+	var ok_load: bool = await main.request_world_load(SLOT)
+	var t0 := Time.get_ticks_msec()
+	await _wait_until(func(): return structures.released_count() == 36, 10.0)
+	var collapse_ms := Time.get_ticks_msec() - t0
+	await _wait_structures_idle(5.0)
+	var b_ok: bool = intact_after_reset and ok_load and structures.released_count() == 36
+	details["B_carregar_slot_escavado"] = {"intacta_apos_reset": intact_after_reset, "carregado": ok_load,
+		"soltas": structures.released_count(), "ms_ate_36_soltas": collapse_ms, "ok": b_ok}
+	await _shot("t26_torre_cai_apos_carregar", structures.tower_origin + Vector3(0, 0.5, 16), 0.0, -12.0)
+
+	# C) Slot sem escavação perto da torre (o do T14 do P1) → nada cai.
+	var c_ok := false
+	if svc.has_saved_world(PERSIST_SLOT):
+		var ok_load_c: bool = await main.request_world_load(PERSIST_SLOT)
+		await _seconds(3.0)
+		await _wait_structures_idle(5.0)
+		c_ok = ok_load_c and structures.released_count() == 0
+		details["C_carregar_slot_sem_escavacao"] = {"carregado": ok_load_c, "soltas": structures.released_count(),
+			"stats": structures.get_stats(), "ok": c_ok}
+	else:
+		details["C_carregar_slot_sem_escavacao"] = {"erro": "slot %s ausente (o T14 não rodou)" % PERSIST_SLOT}
+	_record("T26", "Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não",
+		a_ok and b_ok and c_ok, details)
+	await main.request_world_reset()
 
 
 # --- T23: extração de rocha ----------------------------------------------------------------

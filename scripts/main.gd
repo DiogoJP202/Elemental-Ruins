@@ -101,6 +101,14 @@ func request_world_save(slot: String) -> bool:
 	var frozen := _freeze_props()
 	structures.suspend()
 	var ok: bool = await terrain_service.save_world(slot)
+	# save_world só espera o terreno em volta do ponto de prontidão; em outros trechos o
+	# collider pode chegar alguns quadros depois, e um corpo descongelado antes cairia.
+	var bodies: Array[Node3D] = []
+	for b in frozen:
+		bodies.append(b)
+	for p in structures.get_suspended():
+		bodies.append(p)
+	await _wait_terrain_under(bodies, 3.0)
 	structures.resume()
 	for body in frozen:
 		if is_instance_valid(body):
@@ -128,6 +136,24 @@ func request_world_load(slot: String) -> bool:
 	player.teleport_to(spawn_point.global_position)
 	player.set_frozen(false)
 	return ok
+
+
+## Espera haver collider de terreno sob cada corpo (raycast vertical), ou o prazo.
+func _wait_terrain_under(bodies: Array[Node3D], timeout_s: float) -> bool:
+	var deadline := Time.get_ticks_msec() + int(timeout_s * 1000.0)
+	while Time.get_ticks_msec() < deadline:
+		var missing := 0
+		for b in bodies:
+			if not is_instance_valid(b):
+				continue
+			var p := b.global_position
+			if terrain_service.raycast_terrain(p + Vector3.UP * 2.0, p + Vector3.DOWN * 30.0).is_empty():
+				missing += 1
+		if missing == 0:
+			return true
+		await get_tree().physics_frame
+	push_warning("[Main] collider do terreno não apareceu sob todos os corpos em %.1f s" % timeout_s)
+	return false
 
 
 ## Congela as caixas/rochas que estão soltas e devolve quais foram (as que já estavam
