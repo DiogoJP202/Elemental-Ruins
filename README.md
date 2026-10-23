@@ -1,17 +1,20 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0 + P1)
+# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
 **Status: gate P0 PASSOU em 23/10/2026, com ressalva aceita** (crash raro da Godot no fim do `--import`; ver `P0_CHECKLIST.md`).
 **P1 (ferramentas, materiais e persistência):** resultado e gate em [`docs/p1_results.md`](docs/p1_results.md).
+**P2 (sustentação, destroços e extração):** resultado e gate em [`docs/p2_results.md`](docs/p2_results.md).
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
 solo/areia/pedra com propriedades físicas gravadas nos voxels, evento `TerrainChanged`, salvar/carregar com
-`VoxelStreamSQLite`, overlay de observabilidade e benchmarks. Não há poderes, arte final, menus ou água.
+`VoxelStreamSQLite`, overlay de observabilidade e benchmarks. P2: torre modular de 36 peças que perde apoio quando
+se escava sob ela e cai em etapas, corpos que acordam quando o chão some, teto de corpos ativos, poeira decorativa e
+extração de rocha real do terreno. Não há poderes, arte final, menus ou água.
 
 > Comece por [`INICIO_AQUI.md`](INICIO_AQUI.md) e [`CLAUDE.md`](CLAUDE.md) (requisitos). Resultados e provas estão em
-> [`docs/voxel_spike_results.md`](docs/voxel_spike_results.md) (P0) e [`docs/p1_results.md`](docs/p1_results.md) (P1),
+> [`docs/voxel_spike_results.md`](docs/voxel_spike_results.md) (P0), [`docs/p1_results.md`](docs/p1_results.md) (P1) e [`docs/p2_results.md`](docs/p2_results.md) (P2),
 > decisões em [`docs/decisions.md`](docs/decisions.md) e o gate do P0 em [`P0_CHECKLIST.md`](P0_CHECKLIST.md).
 
 ## Versões usadas (verificadas nesta máquina)
@@ -68,6 +71,8 @@ solo/areia/pedra com propriedades físicas gravadas nos voxels, evento `TerrainC
 | **F9** | carregar o slot `slot1` (jogador volta ao spawn; caixas somem) |
 | **Z** | **reset do mundo**: recria o terreno do gerador, apaga todas as edições, devolve o jogador ao spawn e remove as caixas (o slot salvo fica intacto) |
 | Roda do mouse ou `[` `]` | raio do pincel (0,5–6 m; padrão 2 m) |
+| **R** | extrair uma rocha logo abaixo da mira (raio do pincel limitado a 1–2 m): o núcleo vira um corpo físico real, com a massa do material, e pousa ao lado do buraco |
+| **T** | impulso de teste (lançamento a 45°) no corpo físico mirado: rocha, caixa ou peça já caída da torre |
 | B | soltar uma caixa `RigidBody3D` de teste no ponto mirado (máx. 10) |
 
 > F5 dentro do **jogo** salva; F5 no **editor** continua sendo "rodar o projeto". As caixas de teste não são salvas
@@ -96,7 +101,25 @@ mira com dureza/densidade, tarefas e memória do motor voxel, corpos físicos at
 4. Aperte **F5** (salvar), depois **Z** (reset: tudo some) e **F9** (carregar): as edições voltam iguais.
 5. Feche o jogo, abra de novo e aperte **F9**: as edições do último F5 voltam.
 
+### Roteiro manual do P2 (≈ 4 min)
+1. A torre fica a ~24 m do spawn, à direita (x = 19, z = 14). Ande até ela.
+2. Escave (**G**) embaixo de um pilar do térreo: só aquele pilar cai; a laje continua.
+3. Escave sob o pilar vizinho do mesmo lado: metade da torre cai em etapas, com poeira; as peças param sobre o terreno.
+4. Mire no chão e aperte **R**: uma rocha sai do buraco e pousa ao lado. Mire nela e aperte **T**: ela é lançada.
+5. Solte uma caixa (**B**), espere ela parar e escave embaixo: ela cai na cratera (não fica flutuando).
+6. **F5**, **Z** (torre de pé de novo) e **F9**: a torre cai de novo, porque o terreno salvo não tem o apoio.
+
 ## Testes automatizados
+
+### P2 (inclui as regressões do P0 e do P1)
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools/run_p2_tests.ps1 -Window -Export
+```
+
+Grava em `docs/evidence/p2/`: import, `check_env`, dump da API, spike da API P2 (`tools/spike_p2_api.gd`), selftest P0
+sozinho, selftest P2 (P0 + P1 + T18–T27) e a persistência entre processos; `-Window` roda o selftest P2 em janela com
+capturas (o critério de FPS do T27 só vale aí) e `-Export` repete tudo no `.exe`. Direto: `... -- --p2-selftest`.
 
 ### P1 (inclui a regressão do P0)
 
@@ -166,7 +189,7 @@ O selftest também roda no executável: `build/elemental_ruins.exe --headless --
 ```
 project.godot, export_presets.cfg (template custom com caminho absoluto desta máquina)
 scenes/main.tscn                  Main → World (voxel_lab) + Player + TerrainEditController + HUD
-scenes/world/voxel_lab.tscn       ambiente, sol, TerrainService, TerrainBrushQueue, TerrainRoot, SpawnPoint, Props
+scenes/world/voxel_lab.tscn       ambiente, sol, TerrainService, TerrainBrushQueue, TerrainRoot, SpawnPoint, Props, Structures, StructureService, ContactWaker, DebrisBudget, DustFx
 scenes/player/player.tscn         CharacterBody3D + VoxelViewer + CameraRig (SpringArm3D + Camera3D)
 scenes/ui/debug_hud.tscn          overlay de engenharia (montado em código)
 scripts/world/terrain_service.gd  ÚNICO ponto que conhece o Voxel Tools (API em coordenadas do mundo; stream SQLite)
@@ -179,8 +202,11 @@ scripts/gameplay/terrain_edit_controller.gd  atalhos, mira e marcador → Terrai
 scripts/player/*.gd               locomoção e câmera
 scripts/dev/p0_selftest.gd        roteiro automatizado de aceite do P0
 scripts/dev/p1_selftest.gd        P0 + testes do P1 (herda o anterior)
+scripts/dev/p2_selftest.gd        P0 + P1 + testes do P2 (herda o anterior)
+scripts/structures/*.gd           peça, fábrica da torre, grafo de apoio e StructureService (âncoras, soltura em etapas)
+scripts/physics/*.gd              TerrainContactWaker, DebrisBudget (teto de corpos, culling) e DustFx
 materials/terrain_lab.gdshader    cor do material (CUSTOM1) + grade 1 m/4 m + costura LOD oficial do Transvoxel
-tools/                            check_env, probe_voxel_api, spike_p1_api, run_p0_tests.ps1, run_p1_tests.ps1
+tools/                            check_env, probe_voxel_api, spike_p1_api, spike_p2_api, run_p0/p1/p2_tests.ps1
 docs/                             decisões, resultados e evidências (logs, JSON, PNG); ignorada pela Godot (.gdignore)
 ```
 
@@ -191,3 +217,4 @@ assíncronos), `has_saved_world(slot)`, `is_ready()`. Sinais: `terrain_ready`, `
 (o evento TerrainChanged: os dados já mudaram, o collider ainda não), `edit_rejected(op, reason, aabb)`,
 `world_reset_started/finished`, `world_save_started/world_saved`, `world_load_started/world_loaded`.
 Gameplay edita pela `TerrainBrushQueue` (`enqueue`, `begin_stroke/update_stroke/end_stroke`, sinal `brush_applied`).
+P2: `TerrainService.extract_rock(p, normal, raio, pai, direção)`; `StructureService.build/check_all/suspend/resume`, sinal `piece_released`.

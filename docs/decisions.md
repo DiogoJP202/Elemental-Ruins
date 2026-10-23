@@ -1,6 +1,6 @@
-# Decisões e trade-offs — P0 e P1
+# Decisões e trade-offs — P0, P1 e P2
 
-Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15+: P1 (23/10/2026). Formato: decisão → motivo → consequência.
+Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. D21+: P2 (23/10/2026). Formato: decisão → motivo → consequência.
 
 ## D1. Voxel Tools GDExtension 1.7 na Godot oficial (não a build custom) — **SUBSTITUÍDA por D13 em 23/10/2026**
 - **Motivo:** CLAUDE.md manda testar primeiro a GDExtension. Ela carregou na Godot 4.7.2 oficial
@@ -193,3 +193,71 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15+: P1 (23/10
 - G escavar, H adicionar e N suavizar (segurar = traço contínuo); J túnel de 10 m; K rampa de 8 m subindo 3 m com o
   material do H; M troca o material do H (solo → areia → pedra); F5/F9 salvar/carregar o slot `slot1`; Z reset.
 - Sem seleção 1–4 (reservada para os elementos no P3, CLAUDE.md).
+
+---
+
+# P2 — sustentação, destroços e extração de rochas (23/10/2026)
+
+## D21. Torre modular de 36 peças e regra de apoio
+- **Decisão:** `TowerFactory` monta, em código, sempre a mesma torre em (19, 0, 14): 4 pilares de 3 blocos,
+  laje em 4 placas (pré-fraturada), 4 pilares de 2 blocos, 2ª laje e 8 blocos de coroa. Peças = `RigidBody3D` com
+  `BoxShape3D` (convexo), camada PROPS, massa = volume × 2600 kg/m³, **congeladas** (freeze estático) até perderem apoio.
+  O plano previa (18, 0, −32); a 63 m do spawn, fora do LOD0, o resolvedor não leria o SDF sob os pés logo depois de
+  uma carga. Em (19, 0, 14) fica a ~24 m do spawn, em chão plano de solo e longe das áreas dos testes P0/P1.
+- **Regra (`SupportGraph`):** ligações pelo contato das caixas de montagem (vertical: topo encosta no fundo com área em
+  comum; lateral: mesma faixa de altura e faces encostadas). Uma peça fica apoiada se é pé com âncora válida, ou tem
+  ≥ 1 peça de baixo apoiada, ou ≥ 2 vizinhas laterais apoiadas (placa como viga). Ponto fixo mínimo a partir dos pés.
+  Peça solta nunca volta a sustentar. Consequência medida: 1 pilar escavado → só ele cai (as duas placas vizinhas
+  seguram a placa de cima); 2 pilares do mesmo lado → metade da torre (17 peças).
+- **Fora do escopo:** fratura em tempo de execução, juntas, dano por impacto e re-ancoragem de peças caídas.
+
+## D22. Âncoras pelos dados SDF, soltura depois do collider
+- `TerrainChanged` perto dos pés marca a torre para checagem; no quadro seguinte, cada pé lê o SDF em 5 pontos (centro
+  e 4 cantos) **1 m** abaixo da face de baixo; pé inválido com < 3 pontos sólidos. Com 0,5 m, `sample_sdf` arredondava
+  para o voxel y = 0, a própria superfície (SDF 0), e todos os pés pareciam sem apoio (bug achado no T20).
+- Pé invalidado só libera peças depois que o raycast de terreno sob ele mostra o buraco (o evento chega antes do
+  collider; B5 do P1). Prazo de 1 s: passou, solta mesmo assim (os dados mandam) e conta `confirm_timeouts`; os testes
+  exigem 0.
+- Soltura por fila, de baixo para cima, até 6 peças por quadro de física.
+
+## D23. Acordar corpos sobre terreno editado (`TerrainContactWaker`)
+- **Motivo (spike P2, I3):** um `RigidBody3D` dormindo **não acorda** quando o collider do terreno embaixo dele some;
+  fica flutuando. Acordado, cai.
+- **Como:** cada `TerrainChanged` gera pulsos 1, 3, 8 e 20 quadros depois (o collider chega alguns quadros após o evento):
+  consulta de forma (caixa = AABB da edição + 1 m) na camada PROPS; acorda os dormindo e solta os estacionados pelo
+  `DebrisBudget`. Peças de estrutura ainda presas não são tocadas.
+
+## D24. Orçamento de corpos e culling (`DebrisBudget`)
+- Grupo `debris`: peças soltas, rochas extraídas e caixas de teste. A cada 0,25 s: corpo a mais de 80 m do jogador é
+  estacionado (freeze estático; também evita cair se o collider daquele trecho sair do alcance de colisão do terreno)
+  e volta a dinâmico a menos de 64 m; acima de 64 corpos dinâmicos, estaciona os mais antigos **já parados**
+  (< 0,05 m/s). Corpo em movimento nunca é congelado no ar, então durante uma queda simultânea o número de corpos
+  ativos pode passar do teto (medido no T22: pico de 150) até eles pararem.
+- Malhas de destroço ganham `visibility_range_end = 120 m`. O orçamento pausa enquanto o terreno é recriado.
+- Poeira: pool de 4 `GPUParticles3D` de disparo único, no máximo 2 disparos por quadro; sem corpo físico.
+
+## D25. Extração de rocha por `separate_floating_chunks` (tecla R) e impulso de teste (tecla T)
+- **Extração:** cavidade em volta de um núcleo de 1–2 m logo abaixo da mira, núcleo recriado com o material que
+  estava ali e `VoxelToolLodTerrain.separate_floating_chunks` numa caixa de ~8 voxels (custo medido 0,5–1,9 ms até 30³).
+  O Voxel Tools cria o corpo na **camada e máscara 1 (as do terreno)**, com massa 1 kg e malha sem material: o serviço
+  muda para PROPS, massa = volume da malha × densidade e cor do material.
+- **Posicionamento:** a boca da cavidade esférica é mais estreita que ela (r = 1,5: boca de ~1,9 m para uma rocha de
+  ~1,3 m de meia-largura), e a rocha ficava presa no fundo (medido no T24). A rocha é posicionada **uma vez**, ainda
+  cinemática (o Voxel Tools a mantém assim por < 0,5 s), sobre o chão ao lado do buraco, do lado oposto ao jogador.
+  Não é teleporte por quadro.
+- **Impulso de teste:** lançamento a 45° (direção horizontal da câmera + a mesma componente vertical), velocidade
+  8 m/s, só em corpos soltos. R e T são ferramentas de laboratório; segurar, mirar e arremessar como habilidade de terra
+  ficam para o P3.
+
+## D26. Estruturas no reset, salvar e carregar
+- **Reset:** a torre é remontada intacta **antes** de recriar o terreno (peças soltas cairiam pelo chão ausente).
+- **Salvar:** caixas e peças soltas são congeladas durante a recarga do terreno e só descongeladas quando há collider
+  de terreno sob cada uma: `save_world` espera o terreno apenas em volta do ponto de prontidão.
+- **Carregar:** torre remontada intacta e `check_all()` depois que o terreno carrega: se o slot tem o apoio escavado, a
+  torre cai de novo. O estado da estrutura é **derivado do terreno**; posições de destroços, rochas e caixas não são salvas.
+
+## D27. Critério de FPS do gate e bateria do P2
+- "Sem destruir o FPS" virou critério medido no T27 (os 4 pés escavados no mesmo quadro), **em janela nesta máquina**:
+  intervalo entre quadros p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms durante 6 s. Em headless o teste só registra os números.
+- `scripts/dev/p2_selftest.gd` estende o do P1 (P0 + P1 + T18–T27); `tools/run_p2_tests.ps1` roda P0 sozinho, o selftest
+  P2 e a persistência entre processos pelo selftest P2 (grava em `docs/evidence/p2/`, sem tocar na evidência do P1).

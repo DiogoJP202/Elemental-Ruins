@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P2TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 370 ms
+[P2TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":370.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P2TEST] baseline: 14 probes, sem chão em []
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=1 2.781ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=2 3.347ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=3 1.822ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=4 0.046ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=5 0.562ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=6 0.506ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=7 0.082ms
+[TerrainService] add_sphere OK c=(-14.0, 0.5, 22.0) r=2.00 mat=sand rev=8 0.243ms
+[TerrainService] add_sphere OK c=(-14.0, 2.5, 22.0) r=2.00 mat=sand rev=9 0.200ms
+[TerrainService] add_sphere OK c=(-14.0, 4.5, 22.0) r=2.00 mat=sand rev=10 0.101ms
+[TerrainService] add_path OK pontos=9 comp=8.5m mat=stone rev=11 1.984ms
+[TerrainService] save selftest_xproc: ok=true { "slot": "selftest_xproc", "ok": true, "ms": 254.0, "flush_ms": 20.0, "blocks_tasks": 58, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 151552, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_xproc.sqlite" }
+[P2TEST] T14x-write PASS — Fase 1: editar, salvar o slot e gravar o estado esperado | {"diferencas_apos_salvar":[],"edicoes":["OK dig_sphere OK rev=1 2.78ms soil ~169646 kg","OK dig_path OK rev=2 3.35ms soil ~195432 kg","OK dig_path OK rev=3 1.82ms soil ~195432 kg","OK dig_path OK rev=4 0.05ms stone ~201132 kg","OK dig_path OK rev=5 0.56ms stone ~338749 kg","OK dig_path OK rev=6 0.51ms stone ~338749 kg","OK dig_path OK rev=7 0.08ms soil ~116038 kg","OK add_sphere OK rev=8 0.24ms sand ~53617 kg","OK add_sphere OK rev=9 0.20ms sand ~53617 kg","OK add_sphere OK rev=10 0.10ms sand ~53617 kg","OK add_path OK rev=11 1.98ms stone ~366281 kg"],"esperado_json":"C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a/docs/evidence/p2/p1_persist_expected.json","probes_alteradas":5,"salvar":{"blocks_tasks":58,"bytes":151552,"copy":"OK","flush_ms":20.0,"ms":254.0,"ok":true,"path":"C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_xproc.sqlite","save_anterior_em_voo":"nenhum","slot":"selftest_xproc"}}
+[P2TEST] relatório: C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a/docs/evidence/p2/persist_write_headless.json
+[P2TEST] erros do motor durante o teste: 0 | avisos: 0
+[P2TEST] RESULTADO GERAL: PASS (2/2) em 5.4 s

@@ -301,3 +301,7 @@ O P1 (fila de brushes, materiais no canal `INDICES`, `TerrainChanged`, persistê
 benchmarks) tem relatório próprio: [`docs/p1_results.md`](p1_results.md), com evidências em `docs/evidence/p1/`.
 Na bateria do P1, os 12 testes do P0 rodam sozinhos (regressão) e dentro do selftest P1, nos 4 modos. O T3a do P0
 ganhou um predicado mais estrito depois de uma corrida observada no P1 (B5, `p1_results.md` §7).
+
+## 15. P2 (23/10/2026)
+Torre modular, apoio pelo terreno, destroços, extração de rocha e o gate do P2: [`docs/p2_results.md`](p2_results.md),
+evidências em `docs/evidence/p2/`. Os 12 testes do P0 continuam rodando sozinhos e dentro do selftest P2, nos 4 modos.

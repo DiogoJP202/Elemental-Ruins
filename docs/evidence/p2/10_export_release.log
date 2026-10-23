@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Inicialização do Projeto (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Escaneando estrutura de arquivos...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Carregando nomes de classe globais...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verificando GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Criando scripts autoload...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Inicializando plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Iniciando escaneamento de arquivos...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1msavepack[22m | Started Empacotando (102 steps)[39m[0m
+[   1% ] [90m[1msavepack[22m | Armazenando Arquivo: res://materials/terrain_lab.gdshader[39m[0m
+[   3% ] [90m[1msavepack[22m | Armazenando Arquivo: res://.godot/exported/133200997/export-c2c62cb8c73458cd122faf659769dc80-player.scn[39m[0m
+[   6% ] [90m[1msavepack[22m | Armazenando Arquivo: res://.godot/exported/133200997/export-1a82cc5a0e41701f85a553f82a311477-debug_hud.scn[39m[0m
+[   9% ] [90m[1msavepack[22m | Armazenando Arquivo: res://.godot/exported/133200997/export-0ec1bc7467378e3f7112a366d878d5d7-voxel_lab.scn[39m[0m
+[  12% ] [90m[1msavepack[22m | Armazenando Arquivo: res://.godot/exported/133200997/export-3ad5c15c4f3250da0cc7c1af1770d85f-main.scn[39m[0m
+[  15% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/core/input_actions.gdc[39m[0m
+[  18% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/core/layers.gdc[39m[0m
+[  21% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/error_counter_logger.gdc[39m[0m
+[  24% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/p0_selftest.gdc[39m[0m
+[  27% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/p1_selftest.gdc[39m[0m
+[  30% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/p2_selftest.gdc[39m[0m
+[  33% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/gameplay/debug_props.gdc[39m[0m
+[  35% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/gameplay/terrain_edit_controller.gdc[39m[0m
+[  38% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/physics/debris_budget.gdc[39m[0m
+[  41% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/physics/dust_fx.gdc[39m[0m
+[  44% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/physics/terrain_contact_waker.gdc[39m[0m
+[  47% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/player/player_controller.gdc[39m[0m
+[  50% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/player/third_person_camera.gdc[39m[0m
+[  52% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/structure_piece.gdc[39m[0m
+[  55% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/structure_service.gdc[39m[0m
+[  58% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/support_graph.gdc[39m[0m
+[  61% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/tower_factory.gdc[39m[0m
+[  64% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/ui/debug_hud.gdc[39m[0m
+[  66% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/lab_terrain_factory.gdc[39m[0m
+[  69% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_brush_queue.gdc[39m[0m
+[  72% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_brush_request.gdc[39m[0m
+[  75% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_edit_result.gdc[39m[0m
+[  78% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_material.gdc[39m[0m
+[  81% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_material_library.gdc[39m[0m
+[  84% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_save_files.gdc[39m[0m
+[  87% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_service.gdc[39m[0m
+[  90% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/main.gdc[39m[0m
+[  93% ] [90m[1msavepack[22m | Armazenando Arquivo: res://elemental_abilities_mvp.json[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://avatar_atlas_poderes_sandbox.json[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scenes/player/player.tscn.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scenes/ui/debug_hud.tscn.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scenes/world/voxel_lab.tscn.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scenes/main.tscn.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/core/input_actions.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/core/layers.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/error_counter_logger.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/p0_selftest.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/p1_selftest.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/dev/p2_selftest.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/gameplay/debug_props.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/gameplay/terrain_edit_controller.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/physics/debris_budget.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/physics/dust_fx.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/physics/terrain_contact_waker.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/player/player_controller.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/player/third_person_camera.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/structure_piece.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/structure_service.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/support_graph.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/structures/tower_factory.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/ui/debug_hud.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/lab_terrain_factory.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_brush_queue.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_brush_request.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_edit_result.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_material.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_material_library.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_save_files.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/world/terrain_service.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://scripts/main.gd.remap[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://.godot/global_script_class_cache.cfg[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://.godot/uid_cache.bin[39m[0m
+[  96% ] [90m[1msavepack[22m | Armazenando Arquivo: res://project.binary[39m[0m
+[92m[ DONE ][39m [1msavepack[22m
+[0m
