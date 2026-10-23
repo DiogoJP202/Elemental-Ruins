@@ -30,6 +30,7 @@ static func spawn_crate(parent: Node3D, world_position: Vector3) -> RigidBody3D:
 	mesh.mesh = box_mesh
 	body.add_child(mesh)
 
+	body.add_to_group(DebrisBudget.GROUP)
 	parent.add_child(body)
 	body.global_position = world_position
 	return body

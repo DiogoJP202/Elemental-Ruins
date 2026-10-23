@@ -187,6 +187,7 @@ func _release_some() -> void:
 		p.released = true
 		p.freeze = false
 		p.sleeping = false
+		p.add_to_group(DebrisBudget.GROUP)
 		n += 1
 		piece_released.emit(p)
 	_stats.released += n

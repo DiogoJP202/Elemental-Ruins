@@ -1,8 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/terrain_service.gd" id="1_terrain_service"]
 [ext_resource type="Script" path="res://scripts/world/terrain_brush_queue.gd" id="2_brush_queue"]
 [ext_resource type="Script" path="res://scripts/structures/structure_service.gd" id="3_structure_service"]
+[ext_resource type="Script" path="res://scripts/physics/terrain_contact_waker.gd" id="4_contact_waker"]
+[ext_resource type="Script" path="res://scripts/physics/debris_budget.gd" id="5_debris_budget"]
+[ext_resource type="Script" path="res://scripts/physics/dust_fx.gd" id="6_dust_fx"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lab"]
 sky_top_color = Color(0.45, 0.62, 0.78, 1)
@@ -53,3 +56,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 28)
 script = ExtResource("3_structure_service")
 terrain_service_path = NodePath("../TerrainService")
 structures_root_path = NodePath("../Structures")
+
+[node name="ContactWaker" type="Node" parent="."]
+script = ExtResource("4_contact_waker")
+terrain_service_path = NodePath("../TerrainService")
+
+[node name="DebrisBudget" type="Node" parent="."]
+script = ExtResource("5_debris_budget")
+terrain_service_path = NodePath("../TerrainService")
+player_path = NodePath("../../Player")
+
+[node name="DustFx" type="Node3D" parent="."]
+script = ExtResource("6_dust_fx")
+structure_service_path = NodePath("../StructureService")

@@ -45,10 +45,38 @@ func _run_tests() -> bool:
 	if not ok or _persist_phase != "":
 		return ok
 	_log("--- testes P2 ---")
+	if _should_run("T18"): await _t18_sleeping_crate()
 	if _should_run("T19"): await _t19_tower_intact()
 	if _should_run("T20"): await _t20_partial_collapse()
 	if _should_run("T21"): await _t21_full_collapse()
+	if _should_run("T22"): await _t22_body_budget()
 	return true
+
+
+# --- T18: corpo dormindo + escavação embaixo ------------------------------------------
+
+func _t18_sleeping_crate() -> void:
+	var waker: TerrainContactWaker = main.contact_waker
+	var p := Vector3(8, 0.6, 44)
+	var ready := await _prepare_area(p + Vector3(0, 0, 10), AABB(p - Vector3(4, 4, 4), Vector3(8, 8, 8)))
+	var crate := DebugProps.spawn_crate(props, p)
+	var slept := await _wait_until(func(): return crate.sleeping, 8.0)
+	var y0 := crate.global_position.y
+	var w0: int = waker.get_stats().woken
+	var t0 := Time.get_ticks_msec()
+	queue.enqueue(TerrainBrushRequest.sphere(TerrainBrushRequest.Op.REMOVE, Vector3(p.x, 0, p.z), 2.5))
+	var started := await _wait_until(func(): return crate.global_position.y < y0 - 0.3, 3.0)
+	var start_ms := Time.get_ticks_msec() - t0
+	await _seconds(2.5)
+	var y1 := crate.global_position.y
+	var floor_y := _hit_y(svc.raycast_terrain(Vector3(p.x, 30, p.z), Vector3(p.x, -30, p.z)))
+	var woken: int = waker.get_stats().woken - w0
+	var ok: bool = ready and slept and started and y1 < -1.0 and y1 > floor_y - 0.1 and woken >= 1
+	_record("T18", "Caixa dormindo sobre o solo cai quando o chão embaixo é escavado (contato atualizado)", ok, {
+		"dormiu": slept, "y_antes": y0, "comecou_a_cair": started, "ms_ate_cair_0_3m": start_ms,
+		"y_depois": y1, "fundo_cratera_y": floor_y, "acordados_pelo_waker": woken, "stats_waker": waker.get_stats()})
+	crate.queue_free()
+	await _seconds(0.2)
 
 
 # --- T19: torre intacta e grafo de apoio ---------------------------------------------
@@ -152,6 +180,42 @@ func _t21_full_collapse() -> void:
 		"abaixo_do_chao": below_ground, "longe_mais_de_15m": far, "ainda_em_movimento_apos_6s": moving,
 		"duracao_s": (Time.get_ticks_msec() - t0) / 1000.0, "stats": structures.get_stats()})
 	await _shot("t21_colapso_total", structures.tower_origin + Vector3(0, 0.5, 16), 0.0, -12.0)
+
+
+# --- T22: teto de corpos ativos ----------------------------------------------------------
+
+## Depois do colapso do T21 (36 peças soltas), solta 150 caixas perto da torre: o orçamento
+## deve levar os corpos dinâmicos ao teto, estacionando só corpos já parados.
+func _t22_body_budget() -> void:
+	var budget: DebrisBudget = main.debris
+	var s0 := budget.get_stats()
+	var base := structures.tower_origin + Vector3(-14, 4, 6)
+	for i in 150:
+		var col := i % 15
+		var row := (i / 15) % 5
+		var layer := i / 75
+		DebugProps.spawn_crate(props, base + Vector3(col * 2.0, layer * 1.5, row * 2.0))
+	var peak := 0
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 10000:
+		await _seconds(0.25)
+		peak = maxi(peak, budget.get_stats().active)
+	var s1 := budget.get_stats()
+	var below := 0
+	for c in props.get_children():
+		var b := c as Node3D
+		var hit := svc.raycast_terrain(Vector3(b.global_position.x, 40, b.global_position.z), Vector3(b.global_position.x, -40, b.global_position.z))
+		if hit.is_empty() or b.global_position.y < hit.position.y - 0.2:
+			below += 1
+	var ok: bool = s1.tracked >= 186 and s1.active <= budget.max_active and s1.parked >= s1.tracked - budget.max_active \
+		and s1.max_park_speed < budget.settle_speed and below == 0
+	_record("T22", "Orçamento: 150 caixas + 36 peças → corpos ativos ≤ teto; só corpos parados são estacionados", ok, {
+		"antes": s0, "depois": s1, "pico_ativos_amostrado": peak, "teto": budget.max_active,
+		"caixas_abaixo_do_chao": below})
+	await _shot("t22_orcamento_150_caixas", structures.tower_origin + Vector3(0, 0.5, 22), 0.0, -14.0)
+	for c in props.get_children():
+		c.queue_free()
+	await _seconds(0.3)
 
 
 # --- Utilidades P2 ------------------------------------------------------------------------
