@@ -275,7 +275,7 @@ func reset_world() -> bool:
 	var t0 := Time.get_ticks_msec()
 	_log("reset: liberando VoxelLodTerrain (geração %d, rev %d)" % [_world_generation, _revision])
 	var old_session := _session_path
-	await _release_terrain(false)
+	await _release_terrain()
 	_discard_session(old_session)
 	_spawn_terrain()
 	_world_generation += 1
@@ -298,17 +298,25 @@ func save_world(slot: String) -> bool:
 	world_save_started.emit(slot)
 	var t0 := Time.get_ticks_msec()
 	var session := _session_path
-	var released: Dictionary = await _release_terrain(true)
-	var copy_err := ERR_UNAVAILABLE
 	var dst := TerrainSaveFiles.slot_path(saves_dir, slot)
-	if released.saved:
-		TerrainSaveFiles.ensure_dir(saves_dir)
-		copy_err = TerrainSaveFiles.copy(session, dst)
+	var flushed: Dictionary = await _flush_modified_blocks()
+	if not flushed.saved:
+		# Sem a gravação completa, liberar o nó perderia as edições: aborta e mantém o terreno.
+		_last_save = {"slot": slot, "ok": false, "reason": "flush_incomplete", "flush_ms": flushed.ms,
+			"blocks_tasks": flushed.tasks}
+		_ready_flag = true
+		_end_busy()
+		_log("save %s ABORTADO: %s" % [slot, _last_save])
+		world_saved.emit(slot, false, float(Time.get_ticks_msec() - t0))
+		return false
+	await _release_terrain()
+	TerrainSaveFiles.ensure_dir(saves_dir)
+	var copy_err := TerrainSaveFiles.copy(session, dst)
 	_spawn_terrain(session)
 	var ready := await _wait_until_ready()
 	var ms := float(Time.get_ticks_msec() - t0)
-	var ok: bool = released.saved and copy_err == OK and ready
-	_last_save = {"slot": slot, "ok": ok, "ms": ms, "flush_ms": released.ms, "blocks_tasks": released.tasks,
+	var ok: bool = copy_err == OK and ready
+	_last_save = {"slot": slot, "ok": ok, "ms": ms, "flush_ms": flushed.ms, "blocks_tasks": flushed.tasks,
 		"copy": error_string(copy_err), "bytes": TerrainSaveFiles.file_size(dst), "path": dst}
 	_last_ready_ms = ms
 	_end_busy()
@@ -328,7 +336,7 @@ func load_world(slot: String) -> bool:
 	world_load_started.emit(slot)
 	var t0 := Time.get_ticks_msec()
 	var old_session := _session_path
-	await _release_terrain(false)
+	await _release_terrain()
 	_discard_session(old_session)
 	var session := _new_session_path()
 	var src := TerrainSaveFiles.slot_path(saves_dir, slot)
@@ -375,23 +383,29 @@ func _new_session_path() -> String:
 	return TerrainSaveFiles.session_path(world_dir, _session_index)
 
 
-## Libera o nó do terreno e fecha o stream. Com `save`, antes grava os blocos
-## modificados e espera o VoxelSaveCompletionTracker (liberar SEM salvar não grava as
-## edições; conferido no spike, I1).
-func _release_terrain(save: bool) -> Dictionary:
+## Grava os blocos modificados no stream e espera o VoxelSaveCompletionTracker.
+## Liberar o nó SEM isto não grava as edições (conferido no spike, I1).
+func _flush_modified_blocks() -> Dictionary:
 	var info := {"saved": false, "tasks": 0, "ms": 0.0}
-	if save and is_instance_valid(_terrain) and _stream != null:
-		var t0 := Time.get_ticks_msec()
-		var tracker: VoxelSaveCompletionTracker = _terrain.save_modified_blocks()
-		var deadline := t0 + int(save_timeout_s * 1000.0)
-		while not tracker.is_complete() and Time.get_ticks_msec() < deadline:
-			await get_tree().physics_frame
-		info.saved = tracker.is_complete() and not tracker.is_aborted()
-		info.tasks = tracker.get_total_tasks()
-		info.ms = float(Time.get_ticks_msec() - t0)
-		if not info.saved:
-			push_error("[TerrainService] save_modified_blocks não concluiu: restantes=%d abortado=%s" % [
-				tracker.get_remaining_tasks(), tracker.is_aborted()])
+	if not is_instance_valid(_terrain) or _stream == null:
+		return info
+	var t0 := Time.get_ticks_msec()
+	var tracker: VoxelSaveCompletionTracker = _terrain.save_modified_blocks()
+	var deadline := t0 + int(save_timeout_s * 1000.0)
+	while not tracker.is_complete() and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	info.saved = tracker.is_complete() and not tracker.is_aborted()
+	info.tasks = tracker.get_total_tasks()
+	info.ms = float(Time.get_ticks_msec() - t0)
+	if not info.saved:
+		# Relatado por world_saved(ok=false) e no overlay; o save é abortado sem perda de dados.
+		_log("save_modified_blocks não concluiu em %.1f s: restantes=%d abortado=%s" % [
+			save_timeout_s, tracker.get_remaining_tasks(), tracker.is_aborted()])
+	return info
+
+
+## Libera o nó do terreno (descartando edições não gravadas) e fecha o stream.
+func _release_terrain() -> void:
 	if is_instance_valid(_terrain):
 		_terrain.get_parent().remove_child(_terrain)
 		_terrain.free()
@@ -403,7 +417,6 @@ func _release_terrain(save: bool) -> Dictionary:
 		_stream.database_path = ""
 		_stream = null
 	_session_path = ""
-	return info
 
 
 ## Apaga uma sessão já fechada; se o Windows ainda a travar, tenta de novo depois.

@@ -70,6 +70,9 @@ func _run_tests() -> bool:
 	if _should_run("T12"): await _t12_terrain_changed()
 	if _should_run("T13"): await _t13_ramp()
 	if _should_run("T14"): await _t14_persistence()
+	if _should_run("T15"): await _t15_bench_100()
+	if _should_run("T16"): await _t16_reset_cycles()
+	if _should_run("T17"): await _t17_overlay()
 	return true
 
 
@@ -122,7 +125,7 @@ func _t8_stroke_trench() -> void:
 		"ops_aplicadas": applied.size(), "ops_tubo_por_salto": paths, "todas_ok": all_ok,
 		"max_ops_num_quadro": s1.max_ops_in_frame, "pontos_sem_vala": dug.missing,
 		"vala_no_collider_ms": dug.ms})
-	await _shot("t8_vala_traco", Vector3(X - 7, 0.5, 0), -PI / 2.0, -28.0)
+	await _shot("t8_vala_traco", Vector3(X - 4, 0.5, 0), -PI / 2.0, -40.0)
 
 
 # --- T8b: G segurado pelo caminho real de input --------------------------------
@@ -442,6 +445,21 @@ func _t14_persistence() -> void:
 	details["edicoes"] = edits
 	details["probes_alteradas_pelas_edicoes"] = visible_edits.size()
 
+	# Save que não termina a gravação a tempo (timeout zerado) deve abortar SEM liberar o
+	# terreno: edições intactas e nenhum slot criado. Se a gravação terminar no 1º quadro, o
+	# caminho de aborto não é exercitado e isso fica registrado.
+	var old_timeout := svc.save_timeout_s
+	svc.save_timeout_s = 0.0
+	TerrainSaveFiles.remove(svc.get_slot_path("selftest_abort"))
+	var ok_abort_save: bool = await main.request_world_save("selftest_abort")
+	svc.save_timeout_s = old_timeout
+	var abort_info: Dictionary = svc.get_debug_stats().last_save
+	var after_abort := await _persist_state(edited.probes)
+	var aborted: bool = not ok_abort_save and abort_info.get("reason", "") == "flush_incomplete"
+	var abort_ok: bool = svc.is_ready() and _state_diff(edited, after_abort).is_empty() \
+		and (not aborted or not svc.has_saved_world("selftest_abort"))
+	details["save_abortado"] = {"exercitado": aborted, "resultado": abort_info, "mundo_intacto": abort_ok}
+
 	var ok_save: bool = await main.request_world_save(PERSIST_SLOT)
 	var save_info: Dictionary = svc.get_debug_stats().last_save
 	var after_save := await _persist_state(edited.probes)
@@ -461,7 +479,7 @@ func _t14_persistence() -> void:
 	var column_key := "v(-14,22)"
 	var sessions := svc.count_session_files()
 	var ok: bool = ok_reset0 and _compare(_baseline, base).is_empty() and edits.all(func(e): return e.begins_with("OK")) \
-		and visible_edits.size() >= 4 and ok_save and d_save.is_empty() and ok_reset and d_reset.is_empty() \
+		and visible_edits.size() >= 4 and abort_ok and ok_save and d_save.is_empty() and ok_reset and d_reset.is_empty() \
 		and ok_load1 and d_load1.is_empty() and ok_load2 and d_load2.is_empty() and sessions <= 2
 	details.merge({
 		"salvar": save_info, "diferencas_apos_salvar": d_save,
@@ -475,6 +493,172 @@ func _t14_persistence() -> void:
 	_record("T14", "Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar", ok, details)
 	await _shot("t14_mundo_carregado", SPAWN, 0.0, -8.0)
 	await main.request_world_reset()
+
+
+# --- T15: benchmark de 100 alterações pela fila -----------------------------------------
+
+## 100 escavações r=1,5 numa grade, enfileiradas a cada 3 quadros de física (20/s, mais
+## rápido que um traço de G). Várias ficam "em voo" ao mesmo tempo. Mede por edição:
+## espera na fila (enfileirar → aplicar), aplicar → collider e enfileirar → collider.
+## Em paralelo mede o intervalo entre quadros de processo (só significativo em janela).
+func _t15_bench_100() -> void:
+	var ready := await _prepare_area(Vector3(0, 0.5, 96), AABB(Vector3(-25, -4, 64), Vector3(50, 8, 26)))
+	await _seconds(1.0)
+	var mem0 := _memory_snapshot()
+	var nodes0 := get_tree().get_node_count()
+	queue.reset_frame_peaks()
+	var pending := []
+	var done := []
+	var frame_ms := PackedFloat32Array()
+	var last_frame := [Time.get_ticks_usec()]
+	var on_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - last_frame[0]) / 1000.0)
+		last_frame[0] = now
+	get_tree().process_frame.connect(on_frame)
+	var log0 := _brush_log.size()
+	var i := 0
+	var t_start := Time.get_ticks_msec()
+	var frame := 0
+	while (i < 100 or not pending.is_empty()) and Time.get_ticks_msec() - t_start < 60000:
+		await get_tree().physics_frame
+		if i < 100 and frame % 3 == 0:
+			var p := Vector3(-22.5 + (i % 10) * 5.0, 0.0, 68.0 + floorf(i / 10.0) * 2.0)
+			var y0 := _hit_y(svc.raycast_terrain(p + Vector3.UP * 30.0, p + Vector3.DOWN * 30.0))
+			var req := TerrainBrushRequest.sphere(TerrainBrushRequest.Op.REMOVE, p, 1.5)
+			req.source = "selftest:T15"
+			queue.enqueue(req)
+			pending.append({"p": p, "y0": y0, "req": req})
+			i += 1
+		frame += 1
+		var still := []
+		for e: Dictionary in pending:
+			var hit := svc.raycast_terrain(e.p + Vector3.UP * 30.0, e.p + Vector3.DOWN * 30.0)
+			if not hit.is_empty() and hit.position.y < e.y0 - 0.4:
+				var r: TerrainBrushRequest = e.req
+				var now := Time.get_ticks_usec()
+				done.append({"fila_ms": (r.applied_usec - r.enqueued_usec) / 1000.0,
+					"aplicar_collider_ms": (now - r.applied_usec) / 1000.0 if r.applied_usec > 0 else NAN,
+					"total_ms": (now - r.enqueued_usec) / 1000.0})
+			else:
+				still.append(e)
+		pending = still
+	get_tree().process_frame.disconnect(on_frame)
+	var elapsed_s := (Time.get_ticks_msec() - t_start) / 1000.0
+	await _seconds(1.0)
+	var applied := _brush_log.slice(log0)
+	var mem1 := _memory_snapshot()
+	var q := queue.get_stats()
+	var col_queue := PackedFloat32Array()
+	var col_apply := PackedFloat32Array()
+	var col_total := PackedFloat32Array()
+	for d: Dictionary in done:
+		col_queue.append(d.fila_ms)
+		col_apply.append(d.aplicar_collider_ms)
+		col_total.append(d.total_ms)
+	var call_ms := PackedFloat32Array()
+	for e: Dictionary in applied:
+		call_ms.append(e.call_ms)
+	if not frame_ms.is_empty():
+		frame_ms.remove_at(0)
+	var frame_stats := _stats(frame_ms)
+	frame_stats["p50"] = _percentile(frame_ms, 0.50)
+	frame_stats["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p1_bench100_fila_ms"] = _stats(col_queue)
+	_metrics["p1_bench100_aplicar_collider_ms"] = _stats(col_apply)
+	_metrics["p1_bench100_total_ms"] = _stats(col_total)
+	_metrics["p1_bench100_quadro_ms"] = frame_stats
+	_metrics["p1_bench100_memoria"] = {"antes": mem0, "depois": mem1}
+	var ok: bool = ready and i == 100 and done.size() == 100 and applied.size() == 100 \
+		and applied.all(func(e): return e.ok) and q.max_ops_in_frame <= queue.max_ops_per_frame and svc.is_ready()
+	_record("T15", "Benchmark: 100 alterações pela fila (20/s), latência até o collider e tempo de quadro", ok, {
+		"enfileiradas": i, "aplicadas": applied.size(), "vistas_no_collider": done.size(), "duracao_s": elapsed_s,
+		"espera_fila_ms": _stats(col_queue), "aplicar_ate_collider_ms": _stats(col_apply),
+		"enfileirar_ate_collider_ms": _stats(col_total), "chamada_ms": _stats(call_ms),
+		"intervalo_entre_quadros_ms": frame_stats, "modo": _mode,
+		"max_ops_num_quadro": q.max_ops_in_frame, "memoria_antes": mem0, "memoria_depois": mem1,
+		"nos_antes": nodes0, "nos_depois": get_tree().get_node_count()})
+	await _shot("t15_grade_100", Vector3(0, 0.5, 92), 0.0, -30.0)
+
+
+# --- T16: 10 resets com stream, edições e memória -----------------------------------------
+
+func _t16_reset_cycles() -> void:
+	player.teleport_to(SPAWN)
+	await main.request_world_reset()
+	await _settled_probes(10.0, _baseline)
+	await _seconds(1.0)
+	var mem0 := _memory_snapshot()
+	var nodes0 := get_tree().get_node_count()
+	var durations := PackedFloat32Array()
+	var failures := []
+	var sessions := []
+	var mem_cycles := []
+	for c in 10:
+		await _wait_until(func(): return svc.can_edit_area(AABB(Vector3(-17, -4, 18), Vector3(34, 12, 8))), 10.0)
+		queue.enqueue(TerrainBrushRequest.sphere(TerrainBrushRequest.Op.REMOVE, CRATER_POINT, CRATER_RADIUS))
+		queue.enqueue(TerrainBrushRequest.sphere(TerrainBrushRequest.Op.ADD, COLUMN_POINT + Vector3(0, 1.5, 0), 2.0,
+			TerrainMaterialLibrary.STONE))
+		await _drain_queue()
+		var w := await _wait_ray(CRATER_POINT + Vector3.UP * 30.0, CRATER_POINT + Vector3.DOWN * 30.0,
+			func(h): return not h.is_empty() and h.position.y < -2.0, 5.0)
+		var ok_reset: bool = await main.request_world_reset()
+		durations.append(svc.get_last_ready_ms())
+		var probes := await _settled_probes(10.0, _baseline)
+		var mism := _compare(_baseline, probes)
+		var mat := svc.get_material_at(COLUMN_POINT + Vector3(0, 0.5, 0))
+		sessions.append(svc.count_session_files())
+		mem_cycles.append(_memory_snapshot().estatica_mb)
+		if not (w.ok and ok_reset and mism.is_empty() and mat == null):
+			failures.append({"ciclo": c, "cratera_no_collider": w.ok, "reset": ok_reset, "diferencas": mism,
+				"material_onde_havia_coluna": str(mat)})
+	await _seconds(1.0)
+	var mem1 := _memory_snapshot()
+	var nodes1 := get_tree().get_node_count()
+	_metrics["p1_reset10_ms"] = _stats(durations)
+	_metrics["p1_reset10_memoria"] = {"antes": mem0, "depois": mem1, "por_ciclo_mb": mem_cycles}
+	var mem_ok: bool = mem1.estatica_mb <= mem0.estatica_mb * 1.25 + 5.0
+	var ok: bool = failures.is_empty() and nodes1 == nodes0 and sessions.max() <= 2 and mem_ok
+	_record("T16", "10 ciclos editar (fila) → reset com stream: baseline, nós, arquivos e memória", ok, {
+		"falhas": failures, "duracao_reset_ms": _stats(durations), "nos_antes": nodes0, "nos_depois": nodes1,
+		"arquivos_de_sessao_por_ciclo": sessions, "memoria_antes": mem0, "memoria_depois": mem1,
+		"memoria_estatica_por_ciclo_mb": mem_cycles, "criterio_memoria": "depois <= 1,25 × antes + 5 MB"})
+
+
+# --- T17: overlay de debug ---------------------------------------------------------------
+
+func _t17_overlay() -> void:
+	var hud: DebugHud = main.hud
+	await _seconds(0.5)
+	var lines := hud._status_lines()
+	var text := "\n".join(lines)
+	var expected := ["FPS", "quadro", "TIME_PHYSICS_PROCESS", "Fila: pendentes", "Último brush:", "Motor voxel: tarefas",
+		"memória estática", "corpos ativos", "Reset:", "Salvar:", "Carregar:", "material do H"]
+	var missing := expected.filter(func(s): return not text.contains(s))
+	var fs := hud.get_frame_stats()
+	var reset_shown := not text.contains("Reset: 0")
+	var ok: bool = missing.is_empty() and fs.n > 0 and reset_shown
+	_record("T17", "Overlay mostra FPS/quadro, fila, último brush, motor voxel, memória, corpos e reset/save/load", ok, {
+		"faltando": missing, "amostras_de_quadro_1s": fs.n, "linhas": lines})
+	await _shot("t17_overlay", SPAWN, 0.0, -8.0)
+
+
+func _memory_snapshot() -> Dictionary:
+	var out := {"estatica_mb": snappedf(Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0, 0.01)}
+	if Engine.has_singleton("VoxelEngine"):
+		var mem: Dictionary = Engine.get_singleton("VoxelEngine").call("get_stats").get("memory_pools", {})
+		out["voxel_usado_mb"] = snappedf(mem.get("voxel_used", 0) / 1048576.0, 0.01)
+		out["voxel_total_mb"] = snappedf(mem.get("voxel_total", 0) / 1048576.0, 0.01)
+		out["blocos"] = mem.get("block_count", 0)
+	return out
+
+
+func _percentile(values: PackedFloat32Array, q: float) -> float:
+	if values.is_empty():
+		return NAN
+	var sorted := values.duplicate()
+	sorted.sort()
+	return snappedf(sorted[clampi(int(ceil(sorted.size() * q)) - 1, 0, sorted.size() - 1)], 0.01)
 
 
 # --- T14x: persistência entre processos -----------------------------------------------
@@ -606,7 +790,7 @@ func _probes_from_json(d: Dictionary) -> Dictionary:
 func _on_brush_applied(req: TerrainBrushRequest, result: TerrainEditResult) -> void:
 	_brush_log.append({"op": req.op_name(), "ok": result.ok, "reason": result.reason, "text": str(result),
 		"aabb": result.world_aabb, "request_aabb": req.world_aabb(), "rev": result.revision,
-		"mass": result.est_mass_kg, "merged": req.merged_count,
+		"mass": result.est_mass_kg, "merged": req.merged_count, "call_ms": result.duration_usec / 1000.0,
 		"queue_ms": (req.applied_usec - req.enqueued_usec) / 1000.0, "applied_usec": req.applied_usec})
 
 

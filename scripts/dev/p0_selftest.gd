@@ -214,11 +214,18 @@ func _t3_tunnel() -> void:
 
 	var r1 := svc.dig_path(_tunnel_points(TUNNEL_Z_START, TUNNEL_Z_MID), _radii(7))
 	var r2 := svc.dig_path(_tunnel_points(TUNNEL_Z_MID, TUNNEL_Z_END), _radii(7))
-	var w := await _wait_ray(axis_from, axis_to, func(h): return h.is_empty(), 8.0)
+	# Eixo livre SOZINHO não prova que o collider do túnel chegou: blocos de malha recebem o
+	# collider novo em quadros diferentes, e um raio que entra num bloco ainda velho (sólido)
+	# pela fronteira entre blocos não acha face frontal e passa "livre". Por isso espera o eixo
+	# livre E o teto e o piso internos visíveis ao mesmo tempo (B5, docs/p1_results.md).
+	var inside := Vector3(0, TUNNEL_Y, TUNNEL_Z_MID)
+	var inner_ok := func() -> bool:
+		return not svc.raycast_terrain(inside, inside + Vector3.UP * 30.0).is_empty() \
+			and not svc.raycast_terrain(inside, inside + Vector3.DOWN * 10.0).is_empty()
+	var w := await _wait_ray(axis_from, axis_to, func(h): return h.is_empty() and inner_ok.call(), 8.0)
 	_metrics["tunnel_collider_latency_ms"] = w.ms
 
 	var top_after := _hit_y(svc.raycast_terrain(top_from, Vector3(0, -20, TUNNEL_Z_MID)))
-	var inside := Vector3(0, TUNNEL_Y, TUNNEL_Z_MID)
 	var ceil_y := _hit_y(svc.raycast_terrain(inside, inside + Vector3.UP * 30.0))
 	var floor_y := _hit_y(svc.raycast_terrain(inside, inside + Vector3.DOWN * 10.0))
 	var geom_ok: bool = r1.ok and r2.ok and w.ok and not face_before.is_empty() \
