@@ -1,0 +1,15 @@
+==> import
+    exit=0  tentativas=1  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\01_import.log
+==> check_env
+    exit=0  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\02_check_env.log
+==> probe_voxel_api
+    exit=0  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\03_probe_run.log
+==> selftest_headless
+    exit=0  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\05_selftest_headless.log
+
+Resumo (exit code 0 = OK):
+  import                     0
+  check_env                  0
+  probe_voxel_api            0
+  selftest_headless          0
+EXIT DO RUNNER=0  duração total 51 s  (2026-10-23T17:14:57)

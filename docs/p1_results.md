@@ -150,7 +150,7 @@ Terrenos próprios, sem a cena do jogo, para provar o comportamento antes de esc
   rodada de referência a espera foi exercitada nos 4 modos (`save_anterior_em_voo: esperado`).
 - **Erro de parse travou um selftest.** `PackedStringArray.any()` não existe; com o `main.gd` sem compilar, a cena rodou
   sem script e o processo nunca saiu (o watchdog do selftest não chega a existir). Passei a conferir os scripts com
-  `--check-only` e a rodar com `timeout`. **O runner ainda não tem timeout por passo** (§8).
+  `--check-only` e a rodar com `timeout`. Depois do relatório, o runner ganhou timeout por passo (§11).
 - **Desempenho:** stream SQLite sem key cache dobrava o reset (581 ms). Resolvido com `set_key_cache_enabled(true)`.
 - **Critérios de teste ajustados com dados:** T10 (3 suavizações achatavam a saliência inteira e a lateral também
   descia; passou a medir a inclinação do perfil) e T12 (posições x = 12,5… arredondavam para o voxel errado; passaram a
@@ -172,8 +172,7 @@ Terrenos próprios, sem a cena do jogo, para provar o comportamento antes de esc
 - Persistência verificada com o jogador no spawn e probes a até ~50 m dele. Edições fora do LOD0 carregado continuam
   recusadas (`area_not_loaded`).
 - `MEMORY_STATIC` não existe no template release (0 no `.exe`).
-- **Runner sem timeout por passo:** se um script não compilar, o processo da Godot fica aberto e o runner espera para
-  sempre.
+- Timeout do runner: um passo que estoura é encerrado com `taskkill /T /F`, sem desligamento limpo da Godot (§11).
 - A captura `10_t8_vala_traco.png` não mostra a vala com clareza (ângulo de câmera); a vala está provada por raycast
   no T8. As demais capturas foram revisadas e batem com os testes.
 - B1 (crash raro no fim do `--import`, D14) continua aceito.
@@ -190,3 +189,24 @@ Terrenos próprios, sem a cena do jogo, para provar o comportamento antes de esc
 
 Rodar o roteiro manual do README (P0 e P1) no editor custom, com teclado e mouse reais, e registrar a sensação de
 G/H/N contínuos e de F5/F9 antes de iniciar o P2.
+
+## 11. Timeout por passo nos runners (23/10/2026, depois da rodada de referência)
+
+`Invoke-Native` (`tools/lib_godot_process.ps1`) passou a aceitar um limite por passo. Os dois runners o expõem como
+`-StepTimeoutSec` (padrão 600 s; 0 = sem limite; o passo mais longo medido leva ~90 s). Ao estourar, a árvore do
+processo é encerrada com `taskkill /T /F`, o log recebe a saída até ali e uma linha `TIMEOUT`, o passo sai com
+**exit 124** e o runner segue para o próximo passo e termina com 1. Um timeout no `--import` não é repetido (o B1 é uma
+queda no encerramento, não um travamento). Só o runner mudou; o código do jogo e os testes não.
+
+Conferência (o código do jogo é o mesmo da rodada de referência):
+
+| Prova | Evidência | Resultado |
+|---|---|---|
+| Processo travado de verdade: cena principal headless **sem** selftest (nunca sai), limite de 8 s | `15_timeout_prova.log` | exit 124 em 8,6 s; log com a saída da Godot e a linha TIMEOUT; nenhum processo de teste restante (o único processo da Godot vivo era um editor aberto pelo usuário no checkout principal, iniciado antes) |
+| `run_p1_tests.ps1 -StepTimeoutSec 20` | `16_runner_timeout_20s.txt` | regressão P0 (≈35 s) e selftest P1 (≈66 s) cortados em 20 s com **124 TIMEOUT**; os outros 6 passos com exit 0; runner com exit 1 em 60 s |
+| `run_p1_tests.ps1` (padrão 600 s, headless) | `17_runner_headless_600s.txt` | 8/8 passos com exit 0 em 134 s; P0 12/12, P1 23/23, persistência 2/2 + 2/2, 0 erros e 0 avisos do motor |
+| `run_p0_tests.ps1` (padrão, headless) | `18_runner_p0_headless.txt` | 4/4 passos com exit 0 em 51 s; 12/12, 0/0 |
+
+Os logs e JSON que essas rodadas regravaram em `docs/evidence/` e `docs/evidence/p1/` foram restaurados do git, para
+que continuem sendo os da rodada de referência (P0: fechamento em 23/10; P1: commit `c489be7`). Ficaram apenas as
+saídas de console acima. A bateria em janela e no `.exe` não foi repetida depois desta mudança.

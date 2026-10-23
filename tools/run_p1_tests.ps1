@@ -14,12 +14,16 @@
             (tempo de quadro e FPS só são significativos neste modo)
   -Export : exporta build/elemental_ruins.exe (template custom do preset) e roda nele o selftest P1
             e a persistência entre processos (headless; com -Window, também o selftest em janela)
+  -StepTimeoutSec : limite de cada passo, em segundos (padrão 600; 0 = sem limite). Estourou: o processo é
+            encerrado, o log ganha uma linha TIMEOUT e o passo sai com exit 124. O passo mais longo medido
+            (selftest P1 em janela) levou ~90 s.
   Feche o editor deste projeto antes de rodar.
 #>
 param(
     [string]$Godot = $env:GODOT,
     [switch]$Window,
-    [switch]$Export
+    [switch]$Export,
+    [int]$StepTimeoutSec = 600
 )
 
 $ErrorActionPreference = 'Stop'
@@ -35,9 +39,10 @@ function Invoke-Step([string]$Name, [string]$LogFile, [string]$Exe, [string[]]$A
     Write-Host "==> $Name"
     $log = Join-Path $evidence $LogFile
     $t0 = Get-Date
-    $code = Invoke-Native $Exe $Arguments $log $root
+    $code = Invoke-Native $Exe $Arguments $log $root $StepTimeoutSec
     $results[$Name] = $code
-    Write-Host ("    exit={0}  {1:N1} s  log={2}" -f $code, ((Get-Date) - $t0).TotalSeconds, $log)
+    Write-Host ("    exit={0}{1}  {2:N1} s  log={3}" -f $code, $(if ($code -eq $script:TimeoutExitCode) { ' (TIMEOUT)' } else { '' }),
+        ((Get-Date) - $t0).TotalSeconds, $log)
 }
 
 function Report([string]$Name) {
@@ -47,7 +52,7 @@ function Report([string]$Name) {
 Push-Location $root
 try {
     Write-Host '==> import'
-    $imp = Invoke-Import $Godot $evidence $root
+    $imp = Invoke-Import $Godot $evidence $root $StepTimeoutSec
     $results['import'] = $imp.Code
     Write-Host ("    exit={0}  tentativas={1}  log={2}" -f $imp.Code, $imp.Attempts, $imp.Log)
 
@@ -86,7 +91,7 @@ Write-Host ''
 Write-Host 'Resumo (exit code 0 = OK):'
 $failed = $false
 foreach ($k in $results.Keys) {
-    Write-Host ("  {0,-26} {1}" -f $k, $results[$k])
+    Write-Host ("  {0,-26} {1}{2}" -f $k, $results[$k], $(if ($results[$k] -eq $script:TimeoutExitCode) { ' TIMEOUT' } else { '' }))
     if ($results[$k] -ne 0) { $failed = $true }
 }
 if ($failed) { exit 1 } else { exit 0 }

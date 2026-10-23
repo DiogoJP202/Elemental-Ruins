@@ -185,6 +185,9 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15+: P1 (23/10
 - Persistência entre processos: `--p1-persist=write` e `--p1-persist=read` em execuções separadas.
 - `tools/run_p1_tests.ps1` é a bateria do P1; `Invoke-Native` e o retry do import (B1) foram para
   `tools/lib_godot_process.ps1`, usado pelos dois runners.
+- Timeout por passo (`-StepTimeoutSec`, padrão 600 s): o watchdog do selftest só existe se os scripts compilarem; um
+  erro de parse deixava a cena rodando e o runner esperando para sempre. Estourou → `taskkill /T /F`, linha `TIMEOUT`
+  no log, exit 124, e o runner segue. Timeout no `--import` não é repetido (não é o B1). Conferido em `p1_results.md` §11.
 
 ## D20. Controles provisórios do P1
 - G escavar, H adicionar e N suavizar (segurar = traço contínuo); J túnel de 10 m; K rampa de 8 m subindo 3 m com o

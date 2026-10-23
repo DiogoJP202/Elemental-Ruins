@@ -1,0 +1,27 @@
+==> import
+    exit=0  tentativas=1  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\01_import.log
+==> check_env
+    exit=0  0,2 s  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\02_check_env.log
+==> probe_voxel_api
+    exit=0  0,3 s  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\03_probe_run.log
+==> spike_p1_api
+    exit=0  2,4 s  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\04_spike_api.log
+==> p0_regressao_headless
+    exit=124 (TIMEOUT)  20,4 s  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\05_p0_regressao_headless.log
+==> p1_selftest_headless
+    exit=124 (TIMEOUT)  20,3 s  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\06_p1_selftest_headless.log
+==> p1_persist_write
+    exit=0  6,2 s  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\07_persist_write.log
+==> p1_persist_read
+    exit=0  5,1 s  log=C:\Users\dsoares\Documents\Projetos\game\.claude\worktrees\charming-mendel-4b469a\docs\evidence\p1\08_persist_read.log
+
+Resumo (exit code 0 = OK):
+  import                     0
+  check_env                  0
+  probe_voxel_api            0
+  spike_p1_api               0
+  p0_regressao_headless      124 TIMEOUT
+  p1_selftest_headless       124 TIMEOUT
+  p1_persist_write           0
+  p1_persist_read            0
+EXIT DO RUNNER=1  duração total 60 s  (2026-10-23T17:11:33)

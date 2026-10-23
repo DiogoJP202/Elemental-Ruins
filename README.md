@@ -109,6 +109,9 @@ spike da API P1 (`tools/spike_p1_api.gd`), selftest P0 sozinho (12 testes), self
 persistência entre processos (`--p1-persist=write` num processo, `--p1-persist=read` noutro). `-Window` roda o
 selftest P1 em janela com capturas em `docs/evidence/p1/screens/` (só aí FPS e tempo de quadro valem algo);
 `-Export` exporta e repete selftest P1 e persistência no `.exe`. Feche o editor deste projeto antes de rodar.
+Cada passo tem limite de tempo (`-StepTimeoutSec`, padrão 600 s; 0 desliga): se estourar (por exemplo, um script
+que não compila deixa a cena rodando sem o selftest), o processo é encerrado, o log ganha uma linha `TIMEOUT` e o passo
+sai com exit 124. O `run_p0_tests.ps1` aceita o mesmo parâmetro.
 
 Direto, num terminal bash:
 
