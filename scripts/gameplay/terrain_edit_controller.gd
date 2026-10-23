@@ -1,23 +1,36 @@
 class_name TerrainEditController
 extends Node
-## Traduz os atalhos de engenharia do P0 em comandos do TerrainService.
-## G escava, H adiciona, J abre túnel, Z reset, roda/[ ] muda raio, B solta caixa.
+## Traduz os atalhos de engenharia (provisórios, P0/P1) em pedidos para a TerrainBrushQueue.
+## G escava, H adiciona e N suaviza enquanto seguradas (traço contínuo); J abre túnel,
+## K ergue rampa, M troca o material do H, Z reset, F5/F9 salvar/carregar o slot,
+## roda/[ ] muda o raio, B solta caixa.
 ## A mira é um raycast FÍSICO do centro da tela contra os colliders do terreno.
 
 signal edit_performed(result: TerrainEditResult)
 signal reset_requested
+signal save_requested
+signal load_requested
 signal aim_changed(has_hit: bool, point: Vector3, editable: bool)
+
+const STROKE_ACTIONS := {
+	&"terrain_dig": TerrainBrushRequest.Op.REMOVE,
+	&"terrain_add": TerrainBrushRequest.Op.ADD,
+	&"terrain_smooth": TerrainBrushRequest.Op.SMOOTH,
+}
+const ADD_MATERIALS: Array[StringName] = [TerrainMaterialLibrary.SOIL, TerrainMaterialLibrary.SAND, TerrainMaterialLibrary.STONE]
 
 @export var max_aim_distance := 40.0
 @export var radius := 2.0
 @export var radius_step := 0.25
-## Repetição enquanto G/H estão pressionados (limita taxa de edições).
-@export var hold_repeat_interval := 0.15
 @export var tunnel_length := 10.0
 @export var tunnel_segments := 5
+@export var ramp_length := 8.0
+@export var ramp_rise := 3.0
+@export var ramp_segments := 8
 @export var max_crates := 10
 
 var terrain_service: TerrainService
+var brush_queue: TerrainBrushQueue
 var player: PlayerController
 var props_root: Node3D
 
@@ -25,16 +38,21 @@ var _aim_hit := false
 var _aim_point := Vector3.ZERO
 var _aim_normal := Vector3.UP
 var _aim_editable := false
-var _repeat_timer := 0.0
+var _aim_material: TerrainMaterial
+var _add_material_index := 0
+## ação → id do traço ativo
+var _strokes := {}
 var _marker: MeshInstance3D
 var _marker_mat: StandardMaterial3D
 
 
-func setup(p_service: TerrainService, p_player: PlayerController, p_props_root: Node3D) -> void:
+func setup(p_service: TerrainService, p_queue: TerrainBrushQueue, p_player: PlayerController, p_props_root: Node3D) -> void:
 	terrain_service = p_service
+	brush_queue = p_queue
 	player = p_player
 	props_root = p_props_root
 	radius = clampf(radius, terrain_service.min_radius, terrain_service.max_radius)
+	brush_queue.brush_applied.connect(func(_req, result): edit_performed.emit(result))
 
 
 func _ready() -> void:
@@ -62,45 +80,94 @@ func get_radius() -> float:
 	return radius
 
 
+func get_add_material() -> StringName:
+	return ADD_MATERIALS[_add_material_index]
+
+
 func get_aim() -> Dictionary:
-	return {"hit": _aim_hit, "point": _aim_point, "normal": _aim_normal, "editable": _aim_editable}
+	return {"hit": _aim_hit, "point": _aim_point, "normal": _aim_normal, "editable": _aim_editable,
+		"material": _aim_material}
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if terrain_service == null or player == null or not player.input_enabled:
 		return
+	for action: StringName in STROKE_ACTIONS:
+		if event.is_action_pressed(action):
+			# O traço abre no EVENTO e já carimba: um toque rápido (tecla desce e sobe no
+			# mesmo quadro) não pode se perder (bug B3 do P0).
+			_begin_stroke(action)
+			return
+		if event.is_action_released(action):
+			_end_stroke(action)
+			return
 	if event.is_action_pressed(&"brush_radius_up"):
 		_change_radius(radius_step)
 	elif event.is_action_pressed(&"brush_radius_down"):
 		_change_radius(-radius_step)
-	elif event.is_action_pressed(&"terrain_dig"):
-		# Primeira edição vem do evento: um toque rápido (tecla desce e sobe no
-		# mesmo quadro) não pode se perder. A repetição segurando fica no _physics_process.
-		_do_sphere(false)
-		_repeat_timer = hold_repeat_interval
-	elif event.is_action_pressed(&"terrain_add"):
-		_do_sphere(true)
-		_repeat_timer = hold_repeat_interval
 	elif event.is_action_pressed(&"world_reset"):
 		reset_requested.emit()
+	elif event.is_action_pressed(&"world_save"):
+		save_requested.emit()
+	elif event.is_action_pressed(&"world_load"):
+		load_requested.emit()
 	elif event.is_action_pressed(&"terrain_tunnel"):
 		_do_tunnel()
+	elif event.is_action_pressed(&"terrain_ramp"):
+		_do_ramp()
+	elif event.is_action_pressed(&"brush_cycle_material"):
+		_add_material_index = (_add_material_index + 1) % ADD_MATERIALS.size()
 	elif event.is_action_pressed(&"debug_spawn_crate"):
 		_spawn_crate()
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if terrain_service == null or player == null or not player.input_enabled:
 		_marker.visible = false
+		_end_all_strokes()
 		return
 	_update_aim()
-	var dig := Input.is_action_pressed(&"terrain_dig")
-	var add := Input.is_action_pressed(&"terrain_add")
-	if dig or add:
-		_repeat_timer -= delta
-		if _repeat_timer <= 0.0:
-			_repeat_timer = hold_repeat_interval
-			_do_sphere(add and not dig)
+	for action: StringName in STROKE_ACTIONS:
+		var held := Input.is_action_pressed(action)
+		if held and not _strokes.has(action):
+			# Sem evento (ex.: Input.action_press em teste, foco recuperado): abre aqui.
+			_begin_stroke(action)
+		elif _strokes.has(action):
+			if not held:
+				_end_stroke(action)
+			else:
+				_feed_stroke(action)
+
+
+func _begin_stroke(action: StringName) -> void:
+	_end_stroke(action)
+	var op: TerrainBrushRequest.Op = STROKE_ACTIONS[action]
+	var mat := get_add_material() if op == TerrainBrushRequest.Op.ADD else &""
+	var r := minf(radius, terrain_service.max_smooth_radius) if op == TerrainBrushRequest.Op.SMOOTH else radius
+	_strokes[action] = brush_queue.begin_stroke(op, r, mat, "input:%s" % action)
+	_feed_stroke(action)
+	if not _aim_hit:
+		edit_performed.emit(TerrainEditResult.failure(TerrainBrushRequest.OP_NAMES[op], "no_aim_target"))
+
+
+func _feed_stroke(action: StringName) -> void:
+	var op: TerrainBrushRequest.Op = STROKE_ACTIONS[action]
+	var center := _aim_point
+	if op == TerrainBrushRequest.Op.ADD:
+		# Centro levemente para fora da superfície: o volume cresce em direção ao jogador.
+		center = _aim_point + _aim_normal * radius * 0.5
+	brush_queue.update_stroke(_strokes[action], center, _aim_normal, _aim_hit)
+
+
+func _end_stroke(action: StringName) -> void:
+	if _strokes.has(action):
+		brush_queue.end_stroke(_strokes[action])
+		_strokes.erase(action)
+
+
+func _end_all_strokes() -> void:
+	for action in _strokes.keys():
+		_end_stroke(action)
 
 
 func _update_aim() -> void:
@@ -114,44 +181,61 @@ func _update_aim() -> void:
 		_aim_normal = hit.normal
 		var box := AABB(_aim_point - Vector3.ONE * radius, Vector3.ONE * radius * 2.0)
 		_aim_editable = terrain_service.can_edit_area(box)
+		_aim_material = terrain_service.get_material_at(_aim_point - _aim_normal * 0.5)
 		_marker.global_position = _aim_point
 		_marker.scale = Vector3.ONE * radius
 		_marker_mat.albedo_color = Color(0.3, 1.0, 0.45, 0.22) if _aim_editable else Color(1.0, 0.25, 0.2, 0.3)
 	else:
 		_aim_editable = false
+		_aim_material = null
 	_marker.visible = _aim_hit
 	aim_changed.emit(_aim_hit, _aim_point, _aim_editable)
-
-
-func _do_sphere(add: bool) -> void:
-	if not _aim_hit:
-		edit_performed.emit(TerrainEditResult.failure("add_sphere" if add else "dig_sphere", "no_aim_target"))
-		return
-	var result: TerrainEditResult
-	if add:
-		# Centro levemente para fora da superfície: o volume cresce em direção ao jogador.
-		result = terrain_service.add_sphere(_aim_point + _aim_normal * radius * 0.5, radius)
-	else:
-		result = terrain_service.dig_sphere(_aim_point, radius)
-	edit_performed.emit(result)
 
 
 ## Túnel horizontal: começa um pouco antes do ponto mirado e segue a direção
 ## horizontal da câmera por tunnel_length, na altura do ponto mirado.
 func _do_tunnel() -> void:
 	if not _aim_hit:
-		edit_performed.emit(TerrainEditResult.failure("dig_path", "no_aim_target"))
+		edit_performed.emit(TerrainEditResult.failure("PATH-", "no_aim_target"))
 		return
-	var forward := -player.camera_rig.get_yaw_basis().z
-	forward.y = 0.0
-	forward = forward.normalized()
+	var forward := _camera_forward_flat()
 	var start := _aim_point - forward * radius * 0.5
 	var points := PackedVector3Array()
 	var radii := PackedFloat32Array()
 	for i in tunnel_segments + 1:
 		points.append(start + forward * (tunnel_length * float(i) / float(tunnel_segments)))
 		radii.append(radius)
-	edit_performed.emit(terrain_service.dig_path(points, radii))
+	var req := TerrainBrushRequest.path(points, radii, false)
+	req.source = "input:terrain_tunnel"
+	brush_queue.enqueue(req)
+
+
+func _do_ramp() -> void:
+	if not _aim_hit:
+		edit_performed.emit(TerrainEditResult.failure("PATH+", "no_aim_target"))
+		return
+	brush_queue.enqueue(make_ramp_request(_aim_point, _camera_forward_flat()))
+
+
+## Rampa: tubo de matéria que nasce em `start` e sobe ramp_rise ao longo de ramp_length
+## na direção `forward`, com o material atual do H. O eixo começa raio − 0,1 m abaixo do
+## chão, então o topo do tubo nasce rente ao solo (sem degrau) e termina ramp_rise acima.
+func make_ramp_request(start: Vector3, forward: Vector3) -> TerrainBrushRequest:
+	var points := PackedVector3Array()
+	var radii := PackedFloat32Array()
+	for i in ramp_segments + 1:
+		var t := float(i) / float(ramp_segments)
+		points.append(start + forward * ramp_length * t + Vector3.UP * (ramp_rise * t - radius + 0.1))
+		radii.append(radius)
+	var req := TerrainBrushRequest.path(points, radii, true, get_add_material())
+	req.source = "input:terrain_ramp"
+	return req
+
+
+func _camera_forward_flat() -> Vector3:
+	var forward := -player.camera_rig.get_yaw_basis().z
+	forward.y = 0.0
+	return forward.normalized()
 
 
 func _change_radius(step: float) -> void:

@@ -28,6 +28,8 @@ signal world_reset_finished(world_generation: int, duration_ms: float)
 @export var max_radius := 6.0
 @export var max_path_length := 60.0
 @export var max_path_points := 32
+## smooth_sphere desfoca uma caixa inteira; raio menor que o de ADD/REMOVE limita o custo.
+@export var max_smooth_radius := 4.0
 ## Orçamento de operações por quadro de física, para evitar rajadas de edição.
 @export var max_edits_per_physics_frame := 4
 ## Folga somada ao raio de REMOÇÃO. Sem ela, remover exatamente a mesma esfera
@@ -136,7 +138,10 @@ func get_material_at(world_point: Vector3) -> TerrainMaterial:
 	if not is_ready() or not _is_finite_vec(world_point):
 		return null
 	var local := _terrain.to_local(world_point)
-	if _tool.get_voxel_f(Vector3i(local.round())) > 0.0:
+	var voxel := Vector3i(local.round())
+	if not _terrain.voxel_bounds.has_point(Vector3(voxel)) or not _tool.is_area_editable(AABB(Vector3(voxel), Vector3.ONE)):
+		return null
+	if _tool.get_voxel_f(voxel) > 0.0:
 		return null
 	return TerrainMaterialLibrary.get_by_index(_material_index_local(local))
 
@@ -161,44 +166,40 @@ func add_sphere(world_point: Vector3, radius: float, material_id: StringName = &
 
 ## Escava um tubo passando pelos pontos (ligação linear), raio por ponto.
 func dig_path(world_points: PackedVector3Array, radii: PackedFloat32Array) -> TerrainEditResult:
-	const OP := "dig_path"
+	return _path_op("dig_path", VoxelTool.MODE_REMOVE, world_points, radii)
+
+
+## Acrescenta um tubo de matéria pelos pontos (rampa, ponte). `material_id` vazio = material
+## que o gerador previa ali. Recusa se o tubo prender o corpo protegido.
+func add_path(world_points: PackedVector3Array, radii: PackedFloat32Array,
+		material_id: StringName = &"") -> TerrainEditResult:
+	return _path_op("add_path", VoxelTool.MODE_ADD, world_points, radii, material_id)
+
+
+## Suaviza o SDF numa esfera (VoxelTool.smooth_sphere, desfoque de `blur_voxels`).
+## Não cria nem pinta material; arredonda quinas e degraus.
+func smooth_area(world_point: Vector3, radius: float, blur_voxels := 2) -> TerrainEditResult:
+	const OP := "smooth_area"
 	var t0 := Time.get_ticks_usec()
-	var n := world_points.size()
-	if n < 2 or n != radii.size() or n > max_path_points:
-		return _reject(OP, "invalid_path_points")
-	var length := 0.0
-	var aabb := AABB()
-	for i in n:
-		var p := world_points[i]
-		var r := radii[i]
-		if not _is_finite_vec(p) or not is_finite(r):
-			return _reject(OP, "invalid_input")
-		if r < min_radius or r > max_radius:
-			return _reject(OP, "radius_out_of_range")
-		var sphere_box := AABB(p - Vector3.ONE * r, Vector3.ONE * r * 2.0)
-		aabb = sphere_box if i == 0 else aabb.merge(sphere_box)
-		if i > 0:
-			length += p.distance_to(world_points[i - 1])
-	if length > max_path_length:
-		return _reject(OP, "path_too_long", aabb)
+	if not _is_finite_vec(world_point) or not is_finite(radius):
+		return _reject(OP, "invalid_input")
+	if radius < min_radius or radius > max_smooth_radius or blur_voxels < 1 or blur_voxels > 4:
+		return _reject(OP, "radius_out_of_range")
+	# O desfoque lê vizinhos até blur_voxels fora da esfera.
+	var extent := radius + blur_voxels
+	var aabb := AABB(world_point - Vector3.ONE * extent, Vector3.ONE * extent * 2.0)
 	var reason := _validate_area(aabb)
 	if reason != "":
 		return _reject(OP, reason, aabb)
 	if not _consume_budget():
 		return _reject(OP, "frame_budget_exceeded", aabb)
-
-	var local_points := PackedVector3Array()
-	local_points.resize(n)
-	var padded_radii := PackedFloat32Array()
-	padded_radii.resize(n)
-	for i in n:
-		local_points[i] = _terrain.to_local(world_points[i])
-		padded_radii[i] = radii[i] + remove_radius_padding
-	var mat := TerrainMaterialLibrary.get_by_index(_material_index_local(local_points[0]))
-	_tool.mode = VoxelTool.MODE_REMOVE
-	_tool.do_path(local_points, padded_radii)
-	var result := _commit(OP, aabb, t0, "pontos=%d comp=%.1fm" % [n, length])
-	_set_estimate(result, mat, _path_volume(world_points, radii))
+	var local := _terrain.to_local(world_point)
+	var mat := TerrainMaterialLibrary.get_by_index(_material_index_local(local))
+	_tool.channel = VoxelBuffer.CHANNEL_SDF
+	_tool.smooth_sphere(local, radius, blur_voxels)
+	var result := _commit(OP, aabb, t0, "c=%s r=%.2f blur=%d" % [_fmt(world_point), radius, blur_voxels])
+	# Suavizar só redistribui matéria: sem massa estimada.
+	_set_estimate(result, mat, 0.0)
 	return result
 
 
@@ -297,6 +298,70 @@ func _sphere_op(op: String, mode: int, world_point: Vector3, radius: float,
 	return result
 
 
+func _path_op(op: String, mode: int, world_points: PackedVector3Array, radii: PackedFloat32Array,
+		material_id: StringName = &"") -> TerrainEditResult:
+	var t0 := Time.get_ticks_usec()
+	var n := world_points.size()
+	if n < 2 or n != radii.size() or n > max_path_points:
+		return _reject(op, "invalid_path_points")
+	var paint: TerrainMaterial = null
+	if material_id != &"":
+		paint = TerrainMaterialLibrary.get_by_id(material_id)
+		if paint == null:
+			return _reject(op, "unknown_material")
+	var pad := remove_radius_padding if mode == VoxelTool.MODE_REMOVE else 0.0
+	var margin := pad + (material_paint_margin if paint != null else 0.0)
+	var length := 0.0
+	var aabb := AABB()
+	for i in n:
+		var p := world_points[i]
+		var r := radii[i]
+		if not _is_finite_vec(p) or not is_finite(r):
+			return _reject(op, "invalid_input")
+		if r < min_radius or r > max_radius:
+			return _reject(op, "radius_out_of_range")
+		var e := r + margin
+		var sphere_box := AABB(p - Vector3.ONE * e, Vector3.ONE * e * 2.0)
+		aabb = sphere_box if i == 0 else aabb.merge(sphere_box)
+		if i > 0:
+			length += p.distance_to(world_points[i - 1])
+	if length > max_path_length:
+		return _reject(op, "path_too_long", aabb)
+	var reason := _validate_area(aabb)
+	if reason != "":
+		return _reject(op, reason, aabb)
+	if mode == VoxelTool.MODE_ADD and _path_overlaps_protected_body(world_points, radii):
+		return _reject(op, "overlaps_player", aabb)
+	if not _consume_budget():
+		return _reject(op, "frame_budget_exceeded", aabb)
+
+	var local_points := PackedVector3Array()
+	local_points.resize(n)
+	var padded_radii := PackedFloat32Array()
+	padded_radii.resize(n)
+	for i in n:
+		local_points[i] = _terrain.to_local(world_points[i])
+		padded_radii[i] = radii[i] + pad
+	var mat := paint if paint != null else TerrainMaterialLibrary.get_by_index(_material_index_local(local_points[0]))
+	_tool.mode = mode
+	_tool.do_path(local_points, padded_radii)
+	if paint != null:
+		var paint_radii := PackedFloat32Array()
+		paint_radii.resize(n)
+		for i in n:
+			paint_radii[i] = padded_radii[i] + material_paint_margin
+		# Mesmo princípio do _paint_sphere; do_path em MODE_SET conferido no spike (S4b).
+		_tool.channel = VoxelBuffer.CHANNEL_INDICES
+		_tool.mode = VoxelTool.MODE_SET
+		_tool.value = paint.index
+		_tool.do_path(local_points, paint_radii)
+		_tool.channel = VoxelBuffer.CHANNEL_SDF
+	var result := _commit(op, aabb, t0, "pontos=%d comp=%.1fm%s" % [n, length,
+		(" mat=%s" % paint.id) if paint != null else ""])
+	_set_estimate(result, mat, _path_volume(world_points, radii))
+	return result
+
+
 func _validate_area(world_aabb: AABB) -> String:
 	if not is_ready():
 		return "terrain_not_ready"
@@ -326,6 +391,17 @@ func _overlaps_protected_body(center: Vector3, radius: float) -> bool:
 		var closest := Geometry3D.get_closest_point_to_segment(center, a, b)
 		if closest.distance_to(center) < radius + capsule.radius + 0.1:
 			return true
+	return false
+
+
+## Amostra cada trecho do tubo a cada 0,5 m contra a cápsula do corpo protegido.
+func _path_overlaps_protected_body(points: PackedVector3Array, radii: PackedFloat32Array) -> bool:
+	for i in range(1, points.size()):
+		var steps := maxi(1, ceili(points[i].distance_to(points[i - 1]) / 0.5))
+		for s in steps + 1:
+			var t := float(s) / steps
+			if _overlaps_protected_body(points[i - 1].lerp(points[i], t), lerpf(radii[i - 1], radii[i], t)):
+				return true
 	return false
 
 

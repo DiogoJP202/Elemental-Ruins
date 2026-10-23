@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/terrain_service.gd" id="1_terrain_service"]
+[ext_resource type="Script" path="res://scripts/world/terrain_brush_queue.gd" id="2_brush_queue"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lab"]
 sky_top_color = Color(0.45, 0.62, 0.78, 1)
@@ -33,6 +34,10 @@ script = ExtResource("1_terrain_service")
 terrain_parent_path = NodePath("../TerrainRoot")
 protected_body_path = NodePath("../../Player")
 ready_probe_point = Vector3(0, 0, 28)
+
+[node name="TerrainBrushQueue" type="Node" parent="."]
+script = ExtResource("2_brush_queue")
+terrain_service_path = NodePath("../TerrainService")
 
 [node name="TerrainRoot" type="Node3D" parent="."]
 

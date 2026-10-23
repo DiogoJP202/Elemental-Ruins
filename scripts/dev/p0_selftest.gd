@@ -53,7 +53,7 @@ func _ready() -> void:
 	props = main.props_root
 	var headless := DisplayServer.get_name() == "headless"
 	var args := OS.get_cmdline_user_args()
-	_screens = args.has("--p0-screenshots") and not headless
+	_screens = (args.has("--p0-screenshots") or args.has("--p1-screenshots")) and not headless
 	for a: String in args:
 		if a.begins_with("--report="):
 			_report_path = a.trim_prefix("--report=")
@@ -63,27 +63,47 @@ func _ready() -> void:
 	if not OS.has_feature("editor"):
 		_mode += "-export"
 	if _report_path == "":
-		var base := "res://docs/evidence/" if OS.has_feature("editor") else "user://"
-		_report_path = base + "p0_selftest_%s.json" % _mode
+		_report_path = _evidence_dir() + "%s_%s.json" % [_report_prefix(), _mode]
 	player.input_enabled = false
 	# Não prende o mouse do usuário enquanto o roteiro roda em janela.
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_logger = LOGGER_SCRIPT.new()
 	OS.add_logger(_logger)
-	get_tree().create_timer(WATCHDOG_S, true).timeout.connect(_on_watchdog)
+	get_tree().create_timer(_watchdog_seconds(), true).timeout.connect(_on_watchdog)
 	if not headless:
 		get_tree().create_timer(0.5, true).timeout.connect(_sample_fps)
 	_run.call_deferred()
 
 
+# Pontos de extensão (o selftest P1 herda este roteiro e os sobrescreve).
+func _report_prefix() -> String:
+	return "p0_selftest"
+
+
+func _watchdog_seconds() -> float:
+	return WATCHDOG_S
+
+
+func _evidence_dir() -> String:
+	return "res://docs/evidence/" if OS.has_feature("editor") else "user://"
+
+
+func _screens_dir() -> String:
+	return "res://docs/evidence/screens/" if OS.has_feature("editor") else "user://screens/"
+
+
 func _run() -> void:
 	_t_start = Time.get_ticks_msec()
 	_log("início | modo=%s | screenshots=%s | Godot %s" % [_mode, _screens, Engine.get_version_info().string])
+	await _run_tests()
+	_finish()
 
+
+## Os 12 testes do P0. false se o T1 falhou (o resto não faz sentido sem terreno).
+func _run_tests() -> bool:
 	await _t1_ground()
 	if _results.back().status != "PASS":
-		_finish()
-		return
+		return false
 	await _capture_baseline()
 	if _should_run("T0"): await _t0_generator_data()
 	if _should_run("T1b"): await _t1b_hill_top()
@@ -95,7 +115,7 @@ func _run() -> void:
 	if _should_run("T6"): await _t6_invalid_edits()
 	if _should_run("T7"): await _t7_reset()
 	if _should_run("T7b"): await _t7b_reset_cycles()
-	_finish()
+	return true
 
 
 ## --only=T2,T5 limita os testes (T1 e baseline sempre rodam). Útil para depurar.
@@ -539,7 +559,7 @@ func _shot(name: String, player_pos: Vector3, yaw: float, pitch_deg: float, move
 	await _seconds(0.8)
 	await RenderingServer.frame_post_draw
 	_shot_index += 1
-	var dir := "res://docs/evidence/screens/" if OS.has_feature("editor") else "user://screens/"
+	var dir := _screens_dir()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
 	var path := "%s%02d_%s.png" % [dir, _shot_index, name]
 	var img := get_viewport().get_texture().get_image()
@@ -566,7 +586,7 @@ func _log(msg: String) -> void:
 
 
 func _on_watchdog() -> void:
-	_record("WATCHDOG", "Selftest excedeu %d s" % WATCHDOG_S, false, {})
+	_record("WATCHDOG", "Selftest excedeu %d s" % _watchdog_seconds(), false, {})
 	_finish(2)
 
 
