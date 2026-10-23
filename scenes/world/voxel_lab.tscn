@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/terrain_service.gd" id="1_terrain_service"]
 [ext_resource type="Script" path="res://scripts/world/terrain_brush_queue.gd" id="2_brush_queue"]
+[ext_resource type="Script" path="res://scripts/structures/structure_service.gd" id="3_structure_service"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lab"]
 sky_top_color = Color(0.45, 0.62, 0.78, 1)
@@ -45,3 +46,10 @@ terrain_service_path = NodePath("../TerrainService")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 28)
 
 [node name="Props" type="Node3D" parent="."]
+
+[node name="Structures" type="Node3D" parent="."]
+
+[node name="StructureService" type="Node" parent="."]
+script = ExtResource("3_structure_service")
+terrain_service_path = NodePath("../TerrainService")
+structures_root_path = NodePath("../Structures")
