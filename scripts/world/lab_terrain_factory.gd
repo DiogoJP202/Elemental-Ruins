@@ -9,6 +9,11 @@ extends RefCounted
 ## (godot_voxel#442), e o grafo roda em C++ nas threads do motor voxel.
 ## Os nomes de portas usados aqui foram conferidos no binário instalado
 ## (docs/evidence/voxel_api_probe.txt).
+##
+## P1: o grafo também escreve o MATERIAL de cada voxel no canal INDICES (modo Single,
+## 8 bits; ver TerrainMaterialLibrary). Layout: pedra abaixo de STONE_BELOW_Y e no
+## núcleo da colina (mais de HILL_SOIL_DEPTH para dentro), areia a leste de SAND_MIN_X,
+## solo no resto. Comportamento do Select conferido no spike: t < limiar → a.
 
 const GROUND_HEIGHT := 0.0
 const HILL_CENTER := Vector3(0.0, -12.0, -10.0)
@@ -16,6 +21,10 @@ const HILL_RADIUS := 24.0
 const HILL_BLEND := 4.0
 ## Topo da colina = HILL_CENTER.y + HILL_RADIUS.
 const HILL_TOP_Y := HILL_CENTER.y + HILL_RADIUS
+
+const STONE_BELOW_Y := -6.0
+const HILL_SOIL_DEPTH := 3.0
+const SAND_MIN_X := 24.0
 
 ## Limites dos dados voxel (coordenadas locais do terreno = mundo, pois o nó
 ## fica na origem sem escala). Edições fora disso são recusadas.
@@ -61,24 +70,54 @@ static func create_generator() -> VoxelGeneratorGraph:
 	var out := fn.create_node(VoxelGraphFunction.NODE_OUTPUT_SDF, Vector2(640, 160))
 	fn.add_connection(union, 0, out, fn.get_node_input_index(out, "sdf"))
 
+	# Material: três Select encadeados (t < limiar → a, senão b).
+	gen.texture_mode = VoxelGeneratorGraph.TEXTURE_MODE_SINGLE
+	var soil_or_sand := _select(fn, TerrainMaterialLibrary.INDEX_SOIL, TerrainMaterialLibrary.INDEX_SAND,
+		in_x, -1, SAND_MIN_X, Vector2(320, 400))
+	var hill_core := _select(fn, TerrainMaterialLibrary.INDEX_STONE, -1, sphere, soil_or_sand, -HILL_SOIL_DEPTH,
+		Vector2(480, 400))
+	var bedrock := _select(fn, TerrainMaterialLibrary.INDEX_STONE, -1, in_y, hill_core, STONE_BELOW_Y,
+		Vector2(640, 400))
+	var out_mat := fn.create_node(VoxelGraphFunction.NODE_OUTPUT_SINGLE_TEXTURE, Vector2(800, 400))
+	fn.add_connection(bedrock, 0, out_mat, fn.get_node_input_index(out_mat, "index"))
+
 	var result: Dictionary = gen.compile()
 	if not result.get("success", false):
 		push_error("[LabTerrainFactory] falha ao compilar o grafo: %s" % result)
 	return gen
 
 
+## Índice de material que o gerador escreve em `p` (mesma regra do grafo). Só para testes:
+## o jogo lê o material dos DADOS voxel (TerrainService.get_material_at), que mudam com edições.
+static func generator_material_index(p: Vector3) -> int:
+	if p.y < STONE_BELOW_Y:
+		return TerrainMaterialLibrary.INDEX_STONE
+	if p.distance_to(HILL_CENTER) - HILL_RADIUS < -HILL_SOIL_DEPTH:
+		return TerrainMaterialLibrary.INDEX_STONE
+	return TerrainMaterialLibrary.INDEX_SAND if p.x >= SAND_MIN_X else TerrainMaterialLibrary.INDEX_SOIL
+
+
 static func create_material() -> Material:
 	var mat := ShaderMaterial.new()
 	mat.shader = TERRAIN_SHADER
+	mat.set_shader_parameter("u_material_colors", TerrainMaterialLibrary.linear_surface_colors())
 	return mat
 
 
 ## Cria um VoxelLodTerrain novo, sem dados editados. Usado na carga e no reset.
-static func create_terrain() -> VoxelLodTerrain:
+## `stream` nulo = edições só em memória (comportamento do P0).
+static func create_terrain(stream: VoxelStream = null) -> VoxelLodTerrain:
 	var terrain := VoxelLodTerrain.new()
 	terrain.name = "VoxelTerrain"
+	var fmt := VoxelFormat.new()
+	fmt.set_channel_depth(VoxelBuffer.CHANNEL_INDICES, VoxelBuffer.DEPTH_8_BIT)
+	terrain.format = fmt
 	terrain.generator = create_generator()
-	terrain.mesher = VoxelMesherTransvoxel.new()
+	var mesher := VoxelMesherTransvoxel.new()
+	mesher.texturing_mode = VoxelMesherTransvoxel.TEXTURES_SINGLE_S4
+	terrain.mesher = mesher
+	if stream != null:
+		terrain.stream = stream
 	terrain.material = create_material()
 	terrain.voxel_bounds = VOXEL_BOUNDS
 	terrain.lod_count = LOD_COUNT
@@ -91,6 +130,20 @@ static func create_terrain() -> VoxelLodTerrain:
 	terrain.collision_lod_count = COLLISION_LOD_COUNT
 	terrain.collision_update_delay = 0
 	return terrain
+
+
+## Select com `a` constante; `b` vem do nó `b_node` ou, se for -1, da constante `b_value`.
+static func _select(fn: VoxelGraphFunction, a_value: int, b_value: int, t_node: int, b_node: int,
+		threshold: float, pos: Vector2) -> int:
+	var sel := fn.create_node(VoxelGraphFunction.NODE_SELECT, pos)
+	fn.set_node_default_input_by_name(sel, "a", float(a_value))
+	if b_node >= 0:
+		fn.add_connection(b_node, 0, sel, fn.get_node_input_index(sel, "b"))
+	else:
+		fn.set_node_default_input_by_name(sel, "b", float(b_value))
+	fn.add_connection(t_node, 0, sel, fn.get_node_input_index(sel, "t"))
+	fn.set_node_param_by_name(sel, "threshold", threshold)
+	return sel
 
 
 static func _add_offset(fn: VoxelGraphFunction, src: int, offset: float, pos: Vector2) -> int:

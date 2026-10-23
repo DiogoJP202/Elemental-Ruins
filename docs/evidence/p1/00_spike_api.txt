@@ -1,6 +1,6 @@
-# Spike P1 — 2026-10-23T10:13:23
+# Spike P1 — 2026-10-23T10:14:46
 # Godot 4.7.2-stable (custom_build)
-# pasta de teste: C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/spike_p1/1792761203
+# pasta de teste: C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/spike_p1/1792761286
 
 ## S1–S5 (sem stream)
 compile do grafo: { "success": true }
@@ -8,22 +8,23 @@ OK   S1 terreno com OutputSingleTexture e índices 8 bits fica pronto | pronto e
 OK   S2 gerador escreve INDICES (Select: t<limiar → a) | x=-6 → 1 (esperado 1); x=+6 → 2 (esperado 2); ar x=-6,y=3 → 1
 OK   S3 MODE_SET em INDICES pinta só a esfera e não mexe no SDF | centro 3, borda 3, fora 1→1; sdf centro -1.0000→-0.9919 (Δ 0.0081), controle fora da esfera Δ 0.0081; 2ª pintura: índice 1, sdf -0.9919→-0.9919
 OK   S4 do_path em MODE_ADD cria matéria | sdf no meio da rampa (+0,5 m): 2.000 → -1.007
-OK   S5 smooth_sphere altera o SDF da saliência | sdf antes [0.00, -0.99, 0.00, 0.00, 0.00] depois [0.99, 0.32, -0.24, -0.03, -0.03]; maior variação 1.312; chamada 0.04 ms
+OK   S4b do_path em MODE_SET pinta INDICES ao longo do tubo | meio 2→3, fora 2→2, sdf meio -1.007→-1.007
+OK   S5 smooth_sphere altera o SDF da saliência e não o material | sdf antes [0.00, -0.99, 0.00, 0.00, 0.00] depois [0.99, 0.32, -0.24, -0.03, -0.03]; maior variação 1.312; índices [1, 1, 1, 1, 1]→[1, 1, 1, 1, 1]; chamada 0.10 ms
 
 ## S6–S7 VoxelStreamSQLite
 compile do grafo: { "success": true }
-terreno com stream pronto em 289 ms
+terreno com stream pronto em 324 ms
 edições aplicadas: 59 de 126 amostras mudaram
 save_modified_blocks: completo=true abortado=false total=8 restantes=0 em 13 ms
 arquivos após salvar (aberto): session_a.sqlite(20480)
 arquivos após fechar: session_a.sqlite(20480)
 cópia sessão → slot: OK (20480 bytes)
 compile do grafo: { "success": true }
-OK   S6 SQLite: salvar, fechar, copiar e reabrir devolve SDF e índices idênticos | pronto em 181 ms; 126 amostras; diferenças: []
+OK   S6 SQLite: salvar, fechar, copiar e reabrir devolve SDF e índices idênticos | pronto em 308 ms; 126 amostras; diferenças: []
 I2 apagar o arquivo com o stream aberto: Failed
 I3 apagar o arquivo depois de fechar: OK
 compile do grafo: { "success": true }
-OK   S7 arquivo novo devolve o estado do gerador | pronto em 136 ms; diferenças: []
+OK   S7 arquivo novo devolve o estado do gerador | pronto em 212 ms; diferenças: []
 
 ## I1 autosave ao liberar o terreno sem salvar
 compile do grafo: { "success": true }

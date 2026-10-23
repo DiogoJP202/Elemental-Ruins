@@ -10,6 +10,12 @@ var reason := ""
 var world_aabb := AABB()
 var revision := 0
 var duration_usec := 0
+## Material envolvido (o adicionado no ADD; o do centro no REMOVE). Vazio se não se aplica.
+var material_id: StringName = &""
+## Volume NOMINAL do brush (esfera/tubo), não o volume real de matéria alterada.
+var est_volume_m3 := 0.0
+## est_volume_m3 × densidade do material. Estimativa por brush (P1), não medição.
+var est_mass_kg := 0.0
 
 
 static func success(p_op: String, p_aabb: AABB, p_revision: int, p_usec: int) -> TerrainEditResult:
@@ -32,5 +38,6 @@ static func failure(p_op: String, p_reason: String, p_aabb: AABB = AABB()) -> Te
 
 func _to_string() -> String:
 	if ok:
-		return "%s OK rev=%d %.2fms" % [op, revision, duration_usec / 1000.0]
+		var mat := (" %s ~%.0f kg" % [material_id, est_mass_kg]) if material_id != &"" else ""
+		return "%s OK rev=%d %.2fms%s" % [op, revision, duration_usec / 1000.0, mat]
 	return "%s RECUSADO (%s)" % [op, reason]

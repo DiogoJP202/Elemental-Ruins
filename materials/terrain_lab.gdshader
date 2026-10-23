@@ -1,6 +1,8 @@
 shader_type spatial;
-// Material de laboratório do P0: cor por orientação da normal (piso / parede / teto)
+// Material de laboratório: cor do MATERIAL do voxel (soil/sand/stone, índice do canal INDICES
+// que o mesher Transvoxel entrega em CUSTOM1), escurecida em paredes e tetos para ler a forma,
 // e grade de 1 m e 4 m em espaço do mundo para ler escala e movimento.
+// As cores vêm de TerrainMaterialLibrary (u_material_colors); a física nunca lê este shader.
 // Não é a direção de arte final (toon/retro ficam para P4).
 
 // --- Início: trecho oficial do Voxel Tools 1.7 (doc/source/smooth_terrain.md,
@@ -44,12 +46,27 @@ vec3 get_transvoxel_position(vec3 vertex_pos, vec4 fdata) {
 }
 // --- Fim do trecho oficial.
 
-uniform vec3 color_floor : source_color = vec3(0.863, 0.780, 0.655);   // areia #DCC7A7
-uniform vec3 color_wall : source_color = vec3(0.722, 0.475, 0.408);    // terracota #B87968
-uniform vec3 color_ceiling : source_color = vec3(0.396, 0.471, 0.416); // verde mineral #65786A
+// Cores de superfície por índice de material, já em espaço linear (preenchidas em código).
+uniform vec3 u_material_colors[3];
+uniform float wall_shade = 0.82;
+uniform float ceiling_shade = 0.62;
 
 varying vec3 v_world_pos;
 varying vec3 v_world_normal;
+// Modo de textura Single/S4 do Transvoxel: CUSTOM1.x = 4 índices (1 byte cada),
+// CUSTOM1.y = 4 pesos (1 byte cada), conforme doc do Voxel Tools 1.7 (smooth_terrain).
+varying flat vec4 v_indices;
+varying vec4 v_weights;
+
+vec4 decode_8bit_vec4(float v) {
+	uint i = floatBitsToUint(v);
+	return vec4(float(i & 0xffu), float((i >> 8u) & 0xffu), float((i >> 16u) & 0xffu), float((i >> 24u) & 0xffu));
+}
+
+vec3 material_color(float index) {
+	int i = clamp(int(index + 0.5), 0, 2);
+	return u_material_colors[i];
+}
 
 float grid_line(vec2 p) {
 	vec2 w = fwidth(p);
@@ -68,13 +85,17 @@ void vertex() {
 	VERTEX = get_transvoxel_position(VERTEX, CUSTOM0);
 	v_world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	v_world_normal = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+	v_indices = decode_8bit_vec4(CUSTOM1.x);
+	v_weights = decode_8bit_vec4(CUSTOM1.y) / 255.0;
 }
 
 void fragment() {
 	vec3 n = normalize(v_world_normal);
-	vec3 col = color_wall;
-	col = mix(col, color_floor, smoothstep(0.55, 0.8, n.y));
-	col = mix(col, color_ceiling, smoothstep(-0.35, -0.65, n.y));
+	vec4 w = v_weights / max(v_weights.x + v_weights.y + v_weights.z + v_weights.w, 1e-4);
+	vec3 col = material_color(v_indices.x) * w.x + material_color(v_indices.y) * w.y
+		+ material_color(v_indices.z) * w.z + material_color(v_indices.w) * w.w;
+	col *= mix(1.0, wall_shade, 1.0 - smoothstep(0.55, 0.8, n.y));
+	col *= mix(1.0, ceiling_shade / wall_shade, smoothstep(-0.35, -0.65, n.y));
 	float g1 = triplanar_grid(v_world_pos, n, 1.0);
 	float g4 = triplanar_grid(v_world_pos, n, 4.0);
 	col *= 1.0 - 0.10 * g1 - 0.22 * g4;

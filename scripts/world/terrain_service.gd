@@ -35,6 +35,10 @@ signal world_reset_finished(world_generation: int, duration_ms: float)
 ## (max(atual, -esfera) = 0), que o Transvoxel transforma numa película sólida de
 ## espessura zero, com colisão. Diagnóstico em docs/voxel_spike_results.md.
 @export var remove_radius_padding := 0.05
+## O ADD com material pinta o canal INDICES num raio um pouco maior que o da matéria,
+## para a superfície nova ler 100% o material (o mesher mistura os voxels de cada célula,
+## inclusive os de ar logo fora da esfera). Matéria existente nessa faixa troca de material.
+@export var material_paint_margin := 0.5
 @export var verbose := true
 
 var _terrain: VoxelLodTerrain
@@ -125,14 +129,34 @@ func sample_sdf(world_point: Vector3) -> float:
 	return _tool.get_voxel_f(Vector3i(local.round()))
 
 
+## Material do voxel mais próximo, lido dos DADOS (canal INDICES). null se o voxel é ar
+## ou o terreno não está pronto. Para um ponto de raycast na superfície, passe um ponto
+## um pouco para dentro (ponto − normal × 0,5).
+func get_material_at(world_point: Vector3) -> TerrainMaterial:
+	if not is_ready() or not _is_finite_vec(world_point):
+		return null
+	var local := _terrain.to_local(world_point)
+	if _tool.get_voxel_f(Vector3i(local.round())) > 0.0:
+		return null
+	return TerrainMaterialLibrary.get_by_index(_material_index_local(local))
+
+
+## Índice cru do canal INDICES (inclui voxels de ar). Só para depuração e testes.
+func sample_material_index(world_point: Vector3) -> int:
+	if not is_ready():
+		return -1
+	return _material_index_local(_terrain.to_local(world_point))
+
+
 # --- Edição -------------------------------------------------------------------
 
 func dig_sphere(world_point: Vector3, radius: float) -> TerrainEditResult:
 	return _sphere_op("dig_sphere", VoxelTool.MODE_REMOVE, world_point, radius)
 
 
-func add_sphere(world_point: Vector3, radius: float) -> TerrainEditResult:
-	return _sphere_op("add_sphere", VoxelTool.MODE_ADD, world_point, radius)
+## `material_id` vazio = a matéria nova fica com o material que o gerador previa ali.
+func add_sphere(world_point: Vector3, radius: float, material_id: StringName = &"") -> TerrainEditResult:
+	return _sphere_op("add_sphere", VoxelTool.MODE_ADD, world_point, radius, material_id)
 
 
 ## Escava um tubo passando pelos pontos (ligação linear), raio por ponto.
@@ -170,9 +194,12 @@ func dig_path(world_points: PackedVector3Array, radii: PackedFloat32Array) -> Te
 	for i in n:
 		local_points[i] = _terrain.to_local(world_points[i])
 		padded_radii[i] = radii[i] + remove_radius_padding
+	var mat := TerrainMaterialLibrary.get_by_index(_material_index_local(local_points[0]))
 	_tool.mode = VoxelTool.MODE_REMOVE
 	_tool.do_path(local_points, padded_radii)
-	return _commit(OP, aabb, t0, "pontos=%d comp=%.1fm" % [n, length])
+	var result := _commit(OP, aabb, t0, "pontos=%d comp=%.1fm" % [n, length])
+	_set_estimate(result, mat, _path_volume(world_points, radii))
+	return result
 
 
 ## Recria o terreno a partir do gerador, descartando TODAS as edições:
@@ -234,14 +261,22 @@ func _wait_until_ready() -> bool:
 	return false
 
 
-func _sphere_op(op: String, mode: int, world_point: Vector3, radius: float) -> TerrainEditResult:
+func _sphere_op(op: String, mode: int, world_point: Vector3, radius: float,
+		material_id: StringName = &"") -> TerrainEditResult:
 	var t0 := Time.get_ticks_usec()
 	if not _is_finite_vec(world_point) or not is_finite(radius):
 		return _reject(op, "invalid_input")
 	if radius < min_radius or radius > max_radius:
 		return _reject(op, "radius_out_of_range")
+	var paint: TerrainMaterial = null
+	if material_id != &"":
+		paint = TerrainMaterialLibrary.get_by_id(material_id)
+		if paint == null:
+			return _reject(op, "unknown_material")
 	var effective_radius := radius + (remove_radius_padding if mode == VoxelTool.MODE_REMOVE else 0.0)
-	var aabb := AABB(world_point - Vector3.ONE * effective_radius, Vector3.ONE * effective_radius * 2.0)
+	# A AABB validada e anunciada cobre tudo o que muda, inclusive a margem de pintura.
+	var extent := effective_radius + (material_paint_margin if paint != null else 0.0)
+	var aabb := AABB(world_point - Vector3.ONE * extent, Vector3.ONE * extent * 2.0)
 	var reason := _validate_area(aabb)
 	if reason != "":
 		return _reject(op, reason, aabb)
@@ -249,9 +284,17 @@ func _sphere_op(op: String, mode: int, world_point: Vector3, radius: float) -> T
 		return _reject(op, "overlaps_player", aabb)
 	if not _consume_budget():
 		return _reject(op, "frame_budget_exceeded", aabb)
+	var local := _terrain.to_local(world_point)
+	# Material de referência lido ANTES da edição (o que sai no REMOVE, o que o gerador previa no ADD).
+	var mat := paint if paint != null else TerrainMaterialLibrary.get_by_index(_material_index_local(local))
 	_tool.mode = mode
-	_tool.do_sphere(_terrain.to_local(world_point), effective_radius)
-	return _commit(op, aabb, t0, "c=%s r=%.2f" % [_fmt(world_point), radius])
+	_tool.do_sphere(local, effective_radius)
+	if paint != null:
+		_paint_sphere(local, effective_radius + material_paint_margin, paint.index)
+	var result := _commit(op, aabb, t0, "c=%s r=%.2f%s" % [_fmt(world_point), radius,
+		(" mat=%s" % paint.id) if paint != null else ""])
+	_set_estimate(result, mat, 4.0 / 3.0 * PI * pow(radius, 3.0))
+	return result
 
 
 func _validate_area(world_aabb: AABB) -> String:
@@ -284,6 +327,40 @@ func _overlaps_protected_body(center: Vector3, radius: float) -> bool:
 		if closest.distance_to(center) < radius + capsule.radius + 0.1:
 			return true
 	return false
+
+
+func _material_index_local(local: Vector3) -> int:
+	_tool.channel = VoxelBuffer.CHANNEL_INDICES
+	var v := _tool.get_voxel(Vector3i(local.round()))
+	_tool.channel = VoxelBuffer.CHANNEL_SDF
+	return v
+
+
+## Modo Single: MODE_SET + CHANNEL_INDICES + value (doc do Voxel Tools; conferido no spike S3).
+func _paint_sphere(local_center: Vector3, radius: float, index: int) -> void:
+	_tool.channel = VoxelBuffer.CHANNEL_INDICES
+	_tool.mode = VoxelTool.MODE_SET
+	_tool.value = index
+	_tool.do_sphere(local_center, radius)
+	_tool.channel = VoxelBuffer.CHANNEL_SDF
+
+
+## Volume nominal de um tubo: troncos de cone entre pontos + meia esfera em cada ponta.
+## Ignora sobreposição em curvas (estimativa).
+static func _path_volume(points: PackedVector3Array, radii: PackedFloat32Array) -> float:
+	var v := 2.0 / 3.0 * PI * (pow(radii[0], 3.0) + pow(radii[-1], 3.0))
+	for i in range(1, points.size()):
+		var r0 := radii[i - 1]
+		var r1 := radii[i]
+		v += PI / 3.0 * points[i].distance_to(points[i - 1]) * (r0 * r0 + r0 * r1 + r1 * r1)
+	return v
+
+
+static func _set_estimate(result: TerrainEditResult, mat: TerrainMaterial, volume_m3: float) -> void:
+	result.est_volume_m3 = volume_m3
+	if mat != null:
+		result.material_id = mat.id
+		result.est_mass_kg = volume_m3 * mat.density
 
 
 func _consume_budget() -> bool:

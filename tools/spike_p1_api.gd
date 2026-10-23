@@ -8,8 +8,8 @@ extends SceneTree
 ##   S1 grafo com OutputSingleTexture compila; VoxelFormat com índices de 8 bits
 ##   S2 o gerador escreve o canal INDICES (lido com get_voxel)
 ##   S3 MODE_SET + CHANNEL_INDICES + value + do_sphere altera só a esfera e não o SDF
-##   S4 do_path em MODE_ADD cria matéria (rampa)
-##   S5 smooth_sphere altera o SDF de uma saliência
+##   S4 do_path em MODE_ADD cria matéria (rampa); S4b do_path em MODE_SET pinta INDICES
+##   S5 smooth_sphere altera o SDF de uma saliência e não o material
 ##   S6 VoxelStreamSQLite: editar → save_modified_blocks → tracker completo → liberar →
 ##      fechar → copiar → reabrir a cópia → SDF e índices idênticos
 ##   S7 arquivo novo/vazio devolve o estado do gerador (sem edições)
@@ -124,24 +124,44 @@ func _s1_to_s5() -> void:
 	_check("S4 do_path em MODE_ADD cria matéria", mid_before > 0.0 and mid_after < 0.0,
 		"sdf no meio da rampa (+0,5 m): %.3f → %.3f" % [mid_before, mid_after])
 
+	var idx_mid_before := _idx(tool, mid)
+	var idx_out_before := _idx(tool, mid + Vector3(4, 0, 0))
+	tool.channel = VoxelBuffer.CHANNEL_INDICES
+	tool.mode = VoxelTool.MODE_SET
+	tool.value = IDX_PAINT
+	tool.do_path(PackedVector3Array([p0, p1]), PackedFloat32Array([1.5, 1.5]))
+	tool.channel = VoxelBuffer.CHANNEL_SDF
+	var idx_mid_after := _idx(tool, mid)
+	var idx_out_after := _idx(tool, mid + Vector3(4, 0, 0))
+	var sdf_mid_after2 := _sdf(tool, mid + Vector3.UP * 0.5)
+	_check("S4b do_path em MODE_SET pinta INDICES ao longo do tubo", idx_mid_after == IDX_PAINT
+			and idx_out_after == idx_out_before and sdf_mid_after2 == mid_after,
+		"meio %d→%d, fora %d→%d, sdf meio %.3f→%.3f" % [idx_mid_before, idx_mid_after, idx_out_before, idx_out_after, mid_after, sdf_mid_after2])
+
 	var b := Vector3(-10, 1.0, -10)
 	tool.mode = VoxelTool.MODE_ADD
 	tool.do_sphere(b, 2.0)
 	var probes := [b + Vector3(0, 2, 0), b + Vector3(0, 1, 0), b + Vector3(2, -1, 0), b + Vector3(3, -1, 0), b + Vector3(0, -1, 3)]
 	var before := []
+	var idx_before := []
 	for p: Vector3 in probes:
 		before.append(_sdf(tool, p))
+		idx_before.append(_idx(tool, p))
 	var t0 := Time.get_ticks_usec()
+	tool.mode = VoxelTool.MODE_ADD
 	tool.smooth_sphere(b, 3.5, 2)
 	var smooth_ms := (Time.get_ticks_usec() - t0) / 1000.0
 	var after := []
+	var idx_after := []
 	var max_delta := 0.0
 	for i in probes.size():
 		var v := _sdf(tool, probes[i])
 		after.append(v)
+		idx_after.append(_idx(tool, probes[i]))
 		max_delta = maxf(max_delta, absf(v - before[i]))
-	_check("S5 smooth_sphere altera o SDF da saliência", max_delta > 0.05,
-		"sdf antes %s depois %s; maior variação %.3f; chamada %.2f ms" % [_fmt_arr(before), _fmt_arr(after), max_delta, smooth_ms])
+	_check("S5 smooth_sphere altera o SDF da saliência e não o material", max_delta > 0.05 and idx_after == idx_before,
+		"sdf antes %s depois %s; maior variação %.3f; índices %s→%s; chamada %.2f ms" % [
+			_fmt_arr(before), _fmt_arr(after), max_delta, idx_before, idx_after, smooth_ms])
 
 	root.remove_child(t)
 	t.free()
