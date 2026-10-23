@@ -1,5 +1,5 @@
-# Voxel Tools API probe — 2026-10-22T18:07:54
-# Godot 4.7.2-stable (official)
+# Voxel Tools API probe — 2026-10-23T09:49:07
+# Godot 4.7.2-stable (custom_build)
 
 ## VoxelNode (extends Node3D)
   prop stream: VoxelStream
@@ -210,7 +210,7 @@
   func get_raycast_binary_search_iterations() -> int
   func get_voxel_f_interpolated(position: Vector3) -> float
   func run_blocky_random_tick(area: AABB, voxel_count: int, callback: Callable, batch_count: int, tags_mask: int) -> void  defaults=[16, 4294967295]
-  func separate_floating_chunks(box: AABB, parent_node: Object) -> Array
+  func separate_floating_chunks(box: AABB, parent_node: Node) -> Array
   func set_raycast_binary_search_iterations(iterations: int) -> void
   func stamp_sdf(mesh_sdf: VoxelMeshSDF, transform: Transform3D, isolevel: float, sdf_scale: float) -> void
 

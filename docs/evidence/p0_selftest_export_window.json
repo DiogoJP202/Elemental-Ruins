@@ -2,53 +2,53 @@
   "amostras_erros": [],
   "avisos_motor": 0,
   "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
-  "data": "2026-10-22T18:11:04",
-  "duracao_s": 40.27,
+  "data": "2026-10-23T09:51:54",
+  "duracao_s": 39.145,
   "erros_motor": 0,
   "fisica_3d": "Jolt Physics",
-  "godot": "4.7.2-stable (official)",
+  "godot": "4.7.2-stable (custom_build)",
   "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
   "metricas": {
     "baseline_probes": 14,
-    "column_collider_latency_ms": 19.147,
-    "crater_collider_latency_ms": 31.165,
+    "column_collider_latency_ms": 15.706,
+    "crater_collider_latency_ms": 32.854,
     "fps_janela": {
       "max": 61.0,
-      "media": 58.1,
-      "min": 1.0,
-      "n": 78,
-      "p95": 61.0
+      "media": 58.74,
+      "min": 15.0,
+      "n": 76,
+      "p95": 60.0
     },
-    "initial_terrain_ready_ms": 786.0,
+    "initial_terrain_ready_ms": 464.0,
     "repeat_latency_ms": {
-      "max": 37.72,
-      "media": 33.05,
-      "min": 29.55,
+      "max": 35.15,
+      "media": 33.13,
+      "min": 31.57,
       "n": 40,
-      "p95": 36.11
+      "p95": 34.43
     },
     "reset_ms": {
-      "max": 484.0,
-      "media": 461.2,
-      "min": 445.0,
+      "max": 414.0,
+      "media": 387.7,
+      "min": 365.0,
       "n": 10,
-      "p95": 484.0
+      "p95": 414.0
     },
     "stress100_collider_latency_ms": {
-      "max": 37.97,
-      "media": 33.07,
-      "min": 27.84,
+      "max": 36.53,
+      "media": 33.14,
+      "min": 30.55,
       "n": 100,
-      "p95": 36.58
+      "p95": 34.57
     },
     "stress100_edit_call_ms": {
-      "max": 0.28,
-      "media": 0.11,
-      "min": 0.06,
+      "max": 0.36,
+      "media": 0.08,
+      "min": 0.04,
       "n": 100,
-      "p95": 0.15
+      "p95": 0.11
     },
-    "tunnel_collider_latency_ms": 30.578
+    "tunnel_collider_latency_ms": 31.831
   },
   "modo": "window-export",
   "renderer": "forward_plus",
@@ -57,7 +57,7 @@
     {
       "detalhes": {
         "on_floor": true,
-        "pronto_ms": 786.0,
+        "pronto_ms": 464.0,
         "y_apos_2s": 0.0203826446086168,
         "y_apos_3_5s": 0.0203826446086168
       },
@@ -93,9 +93,9 @@
       "detalhes": {
         "chao_antes_y": 0.0200023651123047,
         "chao_depois_y": -3.04615783691406,
-        "edicao": "dig_sphere OK rev=1 0.56ms",
+        "edicao": "dig_sphere OK rev=1 0.45ms",
         "jogador_y_apos_2s": -3.03762030601501,
-        "latencia_collider_ms": 31.165,
+        "latencia_collider_ms": 32.854,
         "on_floor": true,
         "quadros_fisica": 2,
         "sdf_dados_logo_apos_edicao": 1.03762924671173
@@ -107,10 +107,10 @@
     {
       "detalhes": {
         "edicoes": [
-          "dig_path OK rev=2 0.98ms",
-          "dig_path OK rev=3 0.46ms"
+          "dig_path OK rev=2 0.88ms",
+          "dig_path OK rev=3 0.44ms"
         ],
-        "eixo_livre_apos_ms": 30.578,
+        "eixo_livre_apos_ms": 31.831,
         "face_antes_z": 10.5977001190186,
         "piso_interno_y": -0.349205732345581,
         "teto_interno_y": 3.34920597076416,
@@ -126,10 +126,10 @@
         "amostras_com_teto": 360,
         "amostras_teto": 360,
         "chegou_na_saida": true,
-        "tempo_s": 11.302,
+        "tempo_s": 11.283,
         "y_max_dentro": -0.328295469284058,
-        "y_min_dentro": -0.333820700645447,
-        "z_final": -37.0682334899902
+        "y_min_dentro": -0.3337641954422,
+        "z_final": -37.0682601928711
       },
       "id": "T3b",
       "status": "PASS",
@@ -140,12 +140,12 @@
         "caixa_vel": 0.0,
         "caixa_y_apos_3s": 7.0,
         "edicoes": [
-          "add_sphere OK rev=4 0.42ms",
-          "add_sphere OK rev=5 0.14ms",
-          "add_sphere OK rev=6 0.14ms"
+          "add_sphere OK rev=4 0.16ms",
+          "add_sphere OK rev=5 0.12ms",
+          "add_sphere OK rev=6 0.09ms"
         ],
         "jogador_y_no_topo": 6.22515630722046,
-        "latencia_collider_ms": 19.147,
+        "latencia_collider_ms": 15.706,
         "on_floor": true,
         "topo_coluna_y": 6.49999809265137
       },
@@ -157,11 +157,11 @@
       "detalhes": {
         "falhas": [],
         "latencia_collider_ms": {
-          "max": 37.72,
-          "media": 33.05,
-          "min": 29.55,
+          "max": 35.15,
+          "media": 33.13,
+          "min": 31.57,
           "n": 40,
-          "p95": 36.11
+          "p95": 34.43
         },
         "nos_antes": 34,
         "nos_depois": 34
@@ -174,19 +174,19 @@
       "detalhes": {
         "executadas": 100,
         "latencia_collider_ms": {
-          "max": 37.97,
-          "media": 33.07,
-          "min": 27.84,
+          "max": 36.53,
+          "media": 33.14,
+          "min": 30.55,
           "n": 100,
-          "p95": 36.58
+          "p95": 34.57
         },
         "recusadas": 0,
         "tempo_chamada_ms": {
-          "max": 0.28,
-          "media": 0.11,
-          "min": 0.06,
+          "max": 0.36,
+          "media": 0.08,
+          "min": 0.04,
           "n": 100,
-          "p95": 0.15
+          "p95": 0.11
         },
         "timeouts_collider": 0
       },
@@ -200,28 +200,28 @@
           {
             "caso": "fora dos voxel_bounds",
             "esperado": "outside_bounds",
-            "ms": 0.059,
+            "ms": 0.04,
             "ok": true,
             "resultado": "dig_sphere RECUSADO (outside_bounds)"
           },
           {
             "caso": "dentro dos bounds, fora do LOD0 carregado",
             "esperado": "area_not_loaded",
-            "ms": 0.037,
+            "ms": 0.021,
             "ok": true,
             "resultado": "dig_sphere RECUSADO (area_not_loaded)"
           },
           {
             "caso": "raio gigante",
             "esperado": "radius_out_of_range",
-            "ms": 0.017,
+            "ms": 0.012,
             "ok": true,
             "resultado": "dig_sphere RECUSADO (radius_out_of_range)"
           },
           {
             "caso": "adicionar sobre o jogador",
             "esperado": "overlaps_player",
-            "ms": 0.079,
+            "ms": 0.046,
             "ok": true,
             "resultado": "add_sphere RECUSADO (overlaps_player)"
           }
@@ -233,7 +233,7 @@
     },
     {
       "detalhes": {
-        "duracao_ms": 478.0,
+        "duracao_ms": 365.0,
         "nos_baseline": 31,
         "nos_depois": 31,
         "probes_diferentes": [],
@@ -248,11 +248,11 @@
     {
       "detalhes": {
         "duracao_reset_ms": {
-          "max": 484.0,
-          "media": 461.2,
-          "min": 445.0,
+          "max": 414.0,
+          "media": 387.7,
+          "min": 365.0,
           "n": 10,
-          "p95": 484.0
+          "p95": 414.0
         },
         "falhas": [],
         "nos_baseline": 31,

@@ -2,46 +2,46 @@
   "amostras_erros": [],
   "avisos_motor": 0,
   "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
-  "data": "2026-10-22T18:08:31",
-  "duracao_s": 36.945,
+  "data": "2026-10-23T09:49:43",
+  "duracao_s": 34.857,
   "erros_motor": 0,
   "fisica_3d": "Jolt Physics",
-  "godot": "4.7.2-stable (official)",
+  "godot": "4.7.2-stable (custom_build)",
   "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
   "metricas": {
     "baseline_probes": 14,
-    "column_collider_latency_ms": 20.754,
-    "crater_collider_latency_ms": 20.343,
-    "initial_terrain_ready_ms": 338.0,
+    "column_collider_latency_ms": 13.864,
+    "crater_collider_latency_ms": 19.321,
+    "initial_terrain_ready_ms": 306.0,
     "repeat_latency_ms": {
-      "max": 20.53,
-      "media": 16.31,
-      "min": 13.01,
+      "max": 20.57,
+      "media": 16.29,
+      "min": 13.21,
       "n": 40,
-      "p95": 20.4
+      "p95": 20.49
     },
     "reset_ms": {
-      "max": 480.0,
-      "media": 423.7,
-      "min": 348.0,
+      "max": 344.0,
+      "media": 247.8,
+      "min": 208.0,
       "n": 10,
-      "p95": 480.0
+      "p95": 344.0
     },
     "stress100_collider_latency_ms": {
-      "max": 27.34,
-      "media": 16.38,
-      "min": 11.38,
+      "max": 20.57,
+      "media": 16.43,
+      "min": 13.19,
       "n": 100,
-      "p95": 20.47
+      "p95": 20.54
     },
     "stress100_edit_call_ms": {
-      "max": 0.41,
-      "media": 0.14,
-      "min": 0.07,
+      "max": 0.26,
+      "media": 0.09,
+      "min": 0.06,
       "n": 100,
-      "p95": 0.23
+      "p95": 0.17
     },
-    "tunnel_collider_latency_ms": 18.579
+    "tunnel_collider_latency_ms": 11.734
   },
   "modo": "headless",
   "renderer": "forward_plus",
@@ -50,7 +50,7 @@
     {
       "detalhes": {
         "on_floor": true,
-        "pronto_ms": 338.0,
+        "pronto_ms": 306.0,
         "y_apos_2s": 0.0203826446086168,
         "y_apos_3_5s": 0.0203826446086168
       },
@@ -86,11 +86,11 @@
       "detalhes": {
         "chao_antes_y": 0.0200023651123047,
         "chao_depois_y": -3.04615783691406,
-        "edicao": "dig_sphere OK rev=1 7.11ms",
+        "edicao": "dig_sphere OK rev=1 1.08ms",
         "jogador_y_apos_2s": -3.03762030601501,
-        "latencia_collider_ms": 20.343,
+        "latencia_collider_ms": 19.321,
         "on_floor": true,
-        "quadros_fisica": 2,
+        "quadros_fisica": 1,
         "sdf_dados_logo_apos_edicao": 1.03762924671173
       },
       "id": "T2",
@@ -100,10 +100,10 @@
     {
       "detalhes": {
         "edicoes": [
-          "dig_path OK rev=2 1.27ms",
-          "dig_path OK rev=3 0.56ms"
+          "dig_path OK rev=2 2.28ms",
+          "dig_path OK rev=3 0.85ms"
         ],
-        "eixo_livre_apos_ms": 18.579,
+        "eixo_livre_apos_ms": 11.734,
         "face_antes_z": 10.5977001190186,
         "piso_interno_y": -0.349205732345581,
         "teto_interno_y": 3.34920597076416,
@@ -119,10 +119,10 @@
         "amostras_com_teto": 360,
         "amostras_teto": 360,
         "chegou_na_saida": true,
-        "tempo_s": 11.305,
-        "y_max_dentro": -0.328368335962296,
-        "y_min_dentro": -0.333832979202271,
-        "z_final": -37.0683746337891
+        "tempo_s": 11.293,
+        "y_max_dentro": -0.328321754932404,
+        "y_min_dentro": -0.333623975515366,
+        "z_final": -37.0682983398438
       },
       "id": "T3b",
       "status": "PASS",
@@ -133,12 +133,12 @@
         "caixa_vel": 0.0,
         "caixa_y_apos_3s": 7.0,
         "edicoes": [
-          "add_sphere OK rev=4 6.73ms",
-          "add_sphere OK rev=5 0.17ms",
-          "add_sphere OK rev=6 0.12ms"
+          "add_sphere OK rev=4 0.35ms",
+          "add_sphere OK rev=5 0.10ms",
+          "add_sphere OK rev=6 0.10ms"
         ],
         "jogador_y_no_topo": 6.22515630722046,
-        "latencia_collider_ms": 20.754,
+        "latencia_collider_ms": 13.864,
         "on_floor": true,
         "topo_coluna_y": 6.49999809265137
       },
@@ -150,11 +150,11 @@
       "detalhes": {
         "falhas": [],
         "latencia_collider_ms": {
-          "max": 20.53,
-          "media": 16.31,
-          "min": 13.01,
+          "max": 20.57,
+          "media": 16.29,
+          "min": 13.21,
           "n": 40,
-          "p95": 20.4
+          "p95": 20.49
         },
         "nos_antes": 34,
         "nos_depois": 34
@@ -167,19 +167,19 @@
       "detalhes": {
         "executadas": 100,
         "latencia_collider_ms": {
-          "max": 27.34,
-          "media": 16.38,
-          "min": 11.38,
+          "max": 20.57,
+          "media": 16.43,
+          "min": 13.19,
           "n": 100,
-          "p95": 20.47
+          "p95": 20.54
         },
         "recusadas": 0,
         "tempo_chamada_ms": {
-          "max": 0.41,
-          "media": 0.14,
-          "min": 0.07,
+          "max": 0.26,
+          "media": 0.09,
+          "min": 0.06,
           "n": 100,
-          "p95": 0.23
+          "p95": 0.17
         },
         "timeouts_collider": 0
       },
@@ -193,28 +193,28 @@
           {
             "caso": "fora dos voxel_bounds",
             "esperado": "outside_bounds",
-            "ms": 0.125,
+            "ms": 0.092,
             "ok": true,
             "resultado": "dig_sphere RECUSADO (outside_bounds)"
           },
           {
             "caso": "dentro dos bounds, fora do LOD0 carregado",
             "esperado": "area_not_loaded",
-            "ms": 0.075,
+            "ms": 0.074,
             "ok": true,
             "resultado": "dig_sphere RECUSADO (area_not_loaded)"
           },
           {
             "caso": "raio gigante",
             "esperado": "radius_out_of_range",
-            "ms": 0.141,
+            "ms": 0.034,
             "ok": true,
             "resultado": "dig_sphere RECUSADO (radius_out_of_range)"
           },
           {
             "caso": "adicionar sobre o jogador",
             "esperado": "overlaps_player",
-            "ms": 0.09,
+            "ms": 0.065,
             "ok": true,
             "resultado": "add_sphere RECUSADO (overlaps_player)"
           }
@@ -226,7 +226,7 @@
     },
     {
       "detalhes": {
-        "duracao_ms": 391.0,
+        "duracao_ms": 251.0,
         "nos_baseline": 31,
         "nos_depois": 31,
         "probes_diferentes": [],
@@ -241,11 +241,11 @@
     {
       "detalhes": {
         "duracao_reset_ms": {
-          "max": 480.0,
-          "media": 423.7,
-          "min": 348.0,
+          "max": 344.0,
+          "media": 247.8,
+          "min": 208.0,
           "n": 10,
-          "p95": 480.0
+          "p95": 344.0
         },
         "falhas": [],
         "nos_baseline": 31,

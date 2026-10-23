@@ -1,0 +1,19 @@
+B1 com o módulo - importações limpas do projeto já trocado (2026-10-23T09:52:23-03:00)
+Godot: 4.7.2.stable.custom_build.ed1daf0bf
+tentativa 1: exit=0  erro_is_cmdline_mode=0
+tentativa 2: exit=0  erro_is_cmdline_mode=0
+tentativa 3: exit=0  erro_is_cmdline_mode=0
+tentativa 4: exit=0  erro_is_cmdline_mode=0
+tentativa 5: exit=0  erro_is_cmdline_mode=0
+tentativa 6: exit=0  erro_is_cmdline_mode=0
+tentativa 7: exit=0  erro_is_cmdline_mode=0
+tentativa 8: exit=0  erro_is_cmdline_mode=0
+tentativa 9: exit=0  erro_is_cmdline_mode=0
+tentativa 10: exit=0  erro_is_cmdline_mode=0
+tentativa 11: exit=0  erro_is_cmdline_mode=0
+tentativa 12: exit=0  erro_is_cmdline_mode=0
+tentativa 13: exit=0  erro_is_cmdline_mode=0
+tentativa 14: exit=0  erro_is_cmdline_mode=0
+tentativa 15: exit=0  erro_is_cmdline_mode=0
+crashes: 0/15 | execuções com o ERROR de encerramento: 0/15
+(exit 139 = segmentation fault)

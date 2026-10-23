@@ -1,11 +1,12 @@
-Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
 
-[check_env] Godot: 4.7.2-stable (official) (hash ed1daf0bf001b61586d9930840f2f1394092c079)
+[check_env] Godot: 4.7.2-stable (custom_build) (hash ed1daf0bf001b61586d9930840f2f1394092c079)
 [check_env] OS: Windows 10.0.26200 | CPU: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz x8
 [check_env] Renderer setting: forward_plus
 [check_env] Physics 3D setting: Jolt Physics
 [check_env] PhysicsServer3D class: PhysicsServer3D
-[check_env] GDExtensions carregadas: ["res://addons/zylann.voxel/voxel.gdextension"]
+[check_env] GDExtensions carregadas: []
+[check_env] Voxel Tools: módulo embutido no executável
 [check_env] class VoxelLodTerrain: OK
 [check_env] class VoxelNode: OK
 [check_env] class VoxelTool: OK
@@ -17,5 +18,5 @@ Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
 [check_env] class VoxelBuffer: OK
 [check_env] class VoxelEngine: OK
 [check_env] class VoxelStreamSQLite: OK
-[check_env] VoxelEngine.get_stats(): { "thread_pools": { "general": { "tasks": 0, "active_threads": 0, "thread_count": 4, "task_names": ["", "", "", ""] } }, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 }, "memory_pools": { "voxel_total": 0, "voxel_used": 0, "block_count": 0, "std_allocated": 34680, "std_deallocated": 5664, "std_current": 29016 } }
+[check_env] VoxelEngine.get_stats(): { "thread_pools": { "general": { "tasks": 0, "active_threads": 0, "thread_count": 4, "task_names": ["", "", "", ""] } }, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 }, "memory_pools": { "voxel_total": 0, "voxel_used": 0, "block_count": 0, "std_allocated": 49632, "std_deallocated": 7048, "std_current": 42584 } }
 [check_env] RESULTADO: OK

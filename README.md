@@ -13,30 +13,36 @@ arte final, menus ou água.
 
 | Item | Versão / origem |
 |---|---|
-| Godot | **4.7.2.stable.official.ed1daf0bf** (build padrão, não a mono/.NET), assinatura Authenticode válida |
-| Voxel Tools | **GDExtension 1.7** (release `v1.7x`, `GodotVoxelExtension.zip`, sha256 `600737572a5e…a1d2d8`), em `addons/zylann.voxel/` |
+| Editor Godot | **Godot 4.7.2.stable.custom_build.ed1daf0bf + Voxel Tools 1.7 como módulo** (release `v1.7` do Voxel Tools, `godot.windows.editor.x86_64.exe.zip`, sha256 `e2292adb…6f1956b`). Mesmo commit da Godot oficial 4.7.2; binário **não assinado** |
+| Template de export | `godot.windows.template_release.x86_64.exe.zip` da mesma release (sha256 `86fe371e…2f0775`); só **release** no Windows |
 | Física 3D | Jolt Physics integrado (`physics/3d/physics_engine="Jolt Physics"`) |
 | Renderer | Forward+ (Vulkan 1.4.323 na Intel Iris Xe testada) |
-| Templates de export | oficiais 4.7.2 (`Godot_v4.7.2-stable_export_templates.tpz`, sha256 `f298490b…248011`) |
 
-## Requisitos
+> **Por que não a Godot oficial + GDExtension?** Funcionava, mas a primeira importação de um clone limpo derrubava a
+> Godot em 10 de 17 tentativas, e qualquer import com outra Godot aberta no projeto também caía. Com o módulo, o
+> resultado foi 1 em 50 e 0 em 3, respectivamente, com os mesmos testes 12/12. Detalhes em `docs/decisions.md` (D13).
+> **A Godot oficial não abre este projeto corretamente:** ela não tem as classes Voxel. **Não reextraia a GDExtension
+> (`addons/zylann.voxel/`) neste projeto:** módulo e GDExtension juntos registram as mesmas classes e conflitam.
+
+## Requisitos e instalação
 
 1. Windows 10/11 x64.
-2. Godot **4.7.2 padrão**: <https://github.com/godotengine/godot/releases/tag/4.7.2-stable> (`Godot_v4.7.2-stable_win64.exe.zip`).
-   Nesta máquina ela está em `C:\Users\dsoares\Tools\Godot\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_win64.exe`.
-3. O Voxel Tools **já vem no repositório** (`addons/zylann.voxel/`, só os binários Windows x86_64). Para outras
-   plataformas, reextraia o `GodotVoxelExtension.zip` da release `v1.7x` na raiz do projeto.
+2. Baixe da release **v1.7** do Voxel Tools (<https://github.com/Zylann/godot_voxel/releases/tag/v1.7>):
+   - `godot.windows.editor.x86_64.exe.zip` (editor)
+   - `godot.windows.template_release.x86_64.exe.zip` (template de export)
+3. Confira os SHA-256 acima e extraia os dois `.exe` numa pasta fora do projeto. Nesta máquina:
+   `C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\`.
+4. Se usar outra pasta, ajuste `custom_template/release` em `export_presets.cfg` (caminho absoluto) e passe
+   `-Godot <caminho do editor>` ao script de testes (ou defina `$env:GODOT`).
+5. Como o binário não é assinado, o Windows SmartScreen pode avisar na primeira execução.
 
 ## Abrir e rodar no editor
 
-1. Abra a Godot 4.7.2 (o executável **sem** "mono").
+1. Abra `godot.windows.editor.x86_64.exe` (o editor **custom**, não o `Godot_v4.7.2-stable_win64.exe` oficial).
 2. No Gerenciador de Projetos, clique em **Importar**, escolha `project.godot` desta pasta e depois **Importar e editar**.
-3. **Primeira abertura num clone limpo (sem a pasta `.godot/`):** a primeira importação com o Voxel Tools GDExtension
-   fecha a Godot com segfault de forma **intermitente** (10 de 17 tentativas; bug B1 em `docs/voxel_spike_results.md`).
-   Se acontecer, abra o projeto de novo: com o cache criado, não reproduziu. Para evitar, rode antes
-   `powershell -ExecutionPolicy Bypass -File tools/run_p0_tests.ps1`, que pré-registra a extensão em
-   `.godot/extension_list.cfg` (0 de 11 crashes assim) e importa o projeto.
-4. Pressione **F5** (cena principal `res://scenes/main.tscn`).
+   O projeto já aparecia na lista do editor oficial; os dois editores compartilham essa lista, então confira
+   qual executável está aberto.
+3. Pressione **F5** (cena principal `res://scenes/main.tscn`).
    O terreno é **criado em código** ao rodar (`LabTerrainFactory`), por isso a colina não aparece na viewport do editor.
 
 ## Controles (provisórios do P0, conforme CLAUDE.md)
@@ -67,41 +73,47 @@ FPS, estado do terreno (geração/revisão), posição, se o jogador está no ch
 
 ## Testes automatizados
 
-Roteiro de aceite completo (T0–T7b), dentro da cena real, com o mesmo `TerrainService`, a mesma física e o mesmo
-`CharacterBody3D` do jogo:
-
-```bash
-"C:/Users/dsoares/Tools/Godot/Godot_v4.7.2-stable_mono_win64/Godot_v4.7.2-stable_win64_console.exe" --headless --path . res://scenes/main.tscn -- --p0-selftest
-```
-
-Saída `[P0TEST] ...` no console, relatório JSON em `docs/evidence/p0_selftest_<modo>.json` e código de saída 0 quando tudo passa.
-Opções depois de `--`: `--p0-screenshots` (só em janela; salva PNGs em `docs/evidence/screens/`), `--only=T2,T5`,
-`--report=<caminho>`.
-
-Bateria completa (importação, ambiente, dump da API, selftest headless, janela com capturas, export e selftest no `.exe`):
+O jeito recomendado é o script, que espera cada processo terminar e grava os logs em UTF-8 em `docs/evidence/`:
 
 ```bash
 powershell -ExecutionPolicy Bypass -File tools/run_p0_tests.ps1 -Window -Export
 ```
 
-Ferramentas avulsas:
-- `--headless --path . --script res://tools/check_env.gd`: versão, classes Voxel carregadas, física, renderer.
-- `--headless --path . --script res://tools/probe_voxel_api.gd`: dump da API **real** do binário instalado → `docs/evidence/voxel_api_probe.txt`.
+Ele importa o projeto (com uma nova tentativa automática se a Godot cair no encerramento do `--import`, bug B1),
+roda `check_env`, o dump da API, o selftest headless e em janela, exporta e roda o selftest no `.exe`.
+Sem `-Window`/`-Export`, roda só os passos headless. Feche o editor deste projeto antes de rodar.
+
+O selftest (T0–T7b) roda dentro da cena real, com o mesmo `TerrainService`, a mesma física e o mesmo
+`CharacterBody3D` do jogo. Para chamá-lo direto (num terminal bash; o editor custom é um executável de
+subsistema GUI e no `cmd`/PowerShell a saída não aparece sem redirecionamento):
+
+```bash
+"C:/Users/dsoares/Tools/Godot/4.7.2-voxel1.7/godot.windows.editor.x86_64.exe" --headless --path . res://scenes/main.tscn -- --p0-selftest
+```
+
+Saída `[P0TEST] ...`, relatório JSON em `docs/evidence/p0_selftest_<modo>.json` e código de saída 0 quando tudo passa.
+Opções depois de `--`: `--p0-screenshots` (só em janela; salva PNGs em `docs/evidence/screens/`), `--only=T2,T5`,
+`--report=<caminho>`.
+
+Ferramentas avulsas (mesmo executável, `--headless --path . --script ...`):
+- `res://tools/check_env.gd`: versão, variante do Voxel Tools (módulo/GDExtension), classes, física, renderer.
+- `res://tools/probe_voxel_api.gd`: dump da API **real** do binário → `docs/evidence/voxel_api_probe.txt`.
 
 ## Export Windows
 
 ```bash
-"C:/Users/dsoares/Tools/Godot/Godot_v4.7.2-stable_mono_win64/Godot_v4.7.2-stable_win64_console.exe" --headless --path . --export-release "Windows Desktop" build/elemental_ruins.exe
+"C:/Users/dsoares/Tools/Godot/4.7.2-voxel1.7/godot.windows.editor.x86_64.exe" --headless --path . --export-release "Windows Desktop" build/elemental_ruins.exe
 ```
 
-Gera `build/elemental_ruins.exe`, `.pck` e `libvoxel.windows.template_release.x86_64.dll` (os três precisam ficar juntos).
+Gera `build/elemental_ruins.exe` (template custom, 88,5 MB, com o Voxel Tools embutido) e `build/elemental_ruins.pck`.
+O template oficial **não** serve, porque não contém o Voxel Tools. **Export debug** não está disponível: a release só
+traz template de release para Windows, e o debug exigiria compilar o template.
 O selftest também roda no executável: `build/elemental_ruins.exe --headless -- --p0-selftest --report=<caminho.json>`.
 
 ## Estrutura
 
 ```
-project.godot, export_presets.cfg
-addons/zylann.voxel/              Voxel Tools GDExtension 1.7 (binários Windows versionados)
+project.godot, export_presets.cfg (template custom com caminho absoluto desta máquina)
 scenes/main.tscn                  Main → World (voxel_lab) + Player + TerrainEditController + HUD
 scenes/world/voxel_lab.tscn       ambiente, sol, TerrainService, TerrainRoot, SpawnPoint, Props
 scenes/player/player.tscn         CharacterBody3D + VoxelViewer + CameraRig (SpringArm3D + Camera3D)
@@ -113,7 +125,7 @@ scripts/player/*.gd               locomoção e câmera
 scripts/dev/p0_selftest.gd        roteiro automatizado de aceite
 materials/terrain_lab.gdshader    cor por normal + grade 1 m/4 m + costura LOD oficial do Transvoxel
 tools/                            check_env, probe_voxel_api, run_p0_tests.ps1
-docs/                             decisões, resultados e evidências (logs, JSON, PNG)
+docs/                             decisões, resultados e evidências (logs, JSON, PNG); ignorada pela Godot (.gdignore)
 ```
 
 API pública do `TerrainService` (mundo): `dig_sphere(p, r)`, `add_sphere(p, r)`, `dig_path(points, radii)`,

@@ -2,7 +2,7 @@
 
 Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decisão → motivo → consequência.
 
-## D1. Voxel Tools GDExtension 1.7 na Godot oficial (não a build custom)
+## D1. Voxel Tools GDExtension 1.7 na Godot oficial (não a build custom) — **SUBSTITUÍDA por D13 em 23/10/2026**
 - **Motivo:** CLAUDE.md manda testar primeiro a GDExtension. Ela carregou na Godot 4.7.2 oficial
   (`compatibility_minimum = "4.4.1"`) com todas as classes necessárias, e o selftest passou 12/12.
 - **Consequência:** export com os templates **oficiais** (sem template custom). Plano B (build custom
@@ -60,8 +60,9 @@ Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decis
 
 ## D9. Versionamento
 - `.gitattributes` com LF para os arquivos Godot.
-- Do Voxel Tools versionamos `.gdextension`, LICENSE, ícones e **apenas** os binários Windows x86_64 (~21 MB);
-  as libs de outras plataformas ficam ignoradas (o zip completo tem ~134 MB descompactado).
+- ~~Do Voxel Tools versionamos `.gdextension`, LICENSE, ícones e só os binários Windows x86_64.~~ Desde D13 o
+  repositório **não tem binários do Voxel Tools**: ele vem embutido no editor e no template custom, que ficam fora
+  do projeto (são baixados da release `v1.7`; ver README).
 - `export_presets.cfg` **passou a ser versionado** (o `.gitignore` original o ignorava): ele não contém segredos
   (a Godot 4 guarda credenciais em `.godot/export_credentials.cfg`) e é necessário para reproduzir o export.
 - `build/` é ignorado; logs de evidência em `docs/evidence/*.log` são versionados (exceção ao `*.log`).
@@ -83,4 +84,27 @@ Registro das escolhas técnicas da primeira sessão (22/10/2026). Formato: decis
   10/17 para 1/34, com resultados funcionais idênticos (12/12 em todos os modos).
 - **Custo:** editor não assinado, template custom só release no Windows, caminho absoluto no preset de export e
   troca de editor e template a cada atualização.
-- **Estado:** o projeto continua na GDExtension (D1) até o usuário decidir. Nada foi trocado no repositório.
+- **Estado:** decidido pelo usuário em 23/10/2026: trocar para o módulo (D13).
+
+## D13. Voxel Tools 1.7 como **módulo** (build custom Godot 4.7.2 + Voxel Tools 1.7)
+- **Decisão:** o usuário aprovou em 23/10/2026, a partir do comparativo da seção 11 do `voxel_spike_results.md`.
+  CLAUDE.md prevê essa build como alternativa quando a GDExtension se mostrar inviável; aqui o motivo foi
+  robustez do `--import`, do qual a verificação automatizada depende.
+- **O que mudou no repositório:** `addons/zylann.voxel/` removido; `export_presets.cfg` com
+  `custom_template/release = C:/Users/dsoares/Tools/Godot/4.7.2-voxel1.7/godot.windows.template_release.x86_64.exe`;
+  `tools/run_p0_tests.ps1` usa o editor custom por padrão, valida o template antes de exportar e repete o import uma
+  vez se a Godot cair no encerramento (B1 residual); a verificação de DLL travada (B4) saiu, porque não há mais DLL;
+  `check_env.gd` informa a variante. **Nenhuma linha de gameplay mudou.** O dump da API difere só no tipo de um
+  parâmetro de `separate_floating_chunks` (`Object` → `Node`), que não usamos.
+- **Implicações (aceitas):**
+  1. Editor e template **não assinados** (build de CI do projeto Voxel Tools); o SmartScreen pode avisar.
+  2. A Godot oficial deixa de servir para este projeto (sem classes Voxel). Todo colaborador precisa do editor custom.
+  3. Export só **release** no Windows. Não há template debug na release; o debug exigiria compilar o template.
+  4. O caminho do template no preset é absoluto e específico desta máquina: quem usar outra pasta ajusta o preset.
+  5. Atualizar o Voxel Tools significa trocar editor e template juntos, e a versão da Godot acompanha a release do Voxel Tools.
+  6. Outras plataformas: a release `v1.7` tem editor e template para Linux e macOS; Android, iOS e Web exigiriam compilar.
+- **Resultado medido após a troca, no projeto real:** 12/12 PASS em editor headless, editor em janela, `.exe` headless e
+  `.exe` em janela, com 0 erros do motor; importação limpa 1/50 crashes no total (bug da Godot no encerramento do
+  `--import`); import com outra instância aberta 0/3.
+- **Reversão:** reextrair `GodotVoxelExtension.zip` (`v1.7x`) na raiz, limpar `custom_template/release` e usar a
+  Godot oficial (o commit `de7514a` é o último com a GDExtension).

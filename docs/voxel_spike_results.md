@@ -4,6 +4,11 @@
 Todos os números abaixo vêm de execuções reais nesta máquina. Os logs e JSON estão em `docs/evidence/` e as capturas em
 `docs/evidence/screens/`. Nada aqui é estimativa, a menos que esteja marcado como tal.
 
+> **Estado atual (23/10/2026): o projeto usa o Voxel Tools 1.7 como MÓDULO** (build custom Godot 4.7.2), ver §12.
+> As seções 2–10 documentam a rodada de 22/10 com a GDExtension 1.7 na Godot oficial e continuam válidas como
+> histórico. Os arquivos em `docs/evidence/` na raiz (01–09, JSON e `screens/`) agora são da rodada com o módulo
+> (§12); os números das tabelas das seções 3–4 são da rodada GDExtension e estão preservados nesse texto.
+
 ## 1. Ambiente
 
 | Item | Valor (medido) |
@@ -247,3 +252,39 @@ precisa de `custom_template/release` apontando para o template custom (caminho a
 fora do Git); export **debug** no Windows fica indisponível sem compilar o template; `addons/zylann.voxel/` sai do
 projeto (ou o `.gdextension` precisa ser desativado); atualizar o Voxel Tools passa a significar trocar o editor e o
 template juntos.
+
+## 12. Troca para o módulo (23/10/2026) — estado atual
+
+**Decisão do usuário** após o comparativo da §11 (ver `decisions.md`, D13). Mudanças: `addons/zylann.voxel/`
+removido; preset de export apontando para o template custom; `run_p0_tests.ps1` usando o editor custom
+(`C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\godot.windows.editor.x86_64.exe`). **Nenhuma linha de gameplay mudou.**
+
+**Bateria completa no projeto real** (`tools/run_p0_tests.ps1 -Window -Export`, 09:49–09:52, começando com
+`.godot/` apagado): os 8 passos saíram com exit 0. A importação limpa passou na 1ª tentativa, mas imprimiu no
+encerramento o mesmo `EditorNode::is_cmdline_mode … singleton is null` (B1 sem crash, desta vez).
+`check_env`: `Voxel Tools: módulo embutido no executável`, `GDExtensions carregadas: []`, 11/11 classes.
+
+| Medida | Editor headless | Editor janela | `.exe` headless | `.exe` janela |
+|---|---|---|---|---|
+| Resultado | **12/12 PASS**, 0 erros/avisos | **12/12 PASS**, 0/0 | **12/12 PASS**, 0/0 | **12/12 PASS**, 0/0 |
+| Terreno inicial pronto | 306 ms | 655 ms | 263 ms | 464 ms |
+| Latência collider, 100 escavações (méd / p95 / máx) | 16,4 / 20,5 / 20,6 ms | 33,1 / 34,5 / 36,8 ms | 16,4 / 20,6 / 20,6 ms | 33,1 / 34,6 / 36,5 ms |
+| Chamada `dig_sphere` (méd / máx) | 0,09 / 0,26 ms | 0,09 / 0,34 ms | 0,08 / 0,24 ms | 0,08 / 0,36 ms |
+| Reset, 10 ciclos (méd / máx) | 248 / 344 ms | 465 / 499 ms | 227 / 326 ms | 388 / 414 ms |
+| Travessia do túnel (T3b) | 11,3 s, teto 360/360 | 12,0 s, teto 361/361 | 11,3 s, 360/360 | 11,3 s, 360/360 |
+| FPS durante o roteiro (méd / p95) | — | 56,9 / 61 | — | 58,7 / 60 |
+
+**Export:** `build/elemental_ruins.exe` 88 506 368 bytes (= template custom) + `elemental_ruins.pck` 187 700 bytes;
+nenhuma DLL. As 9 capturas em `docs/evidence/screens/` são da rodada com o módulo; revisei `05_dentro_do_tunel`,
+que está idêntica à da GDExtension.
+
+**B1 com o módulo, no projeto já trocado:** 15 importações limpas → **0/15 crashes**
+(`14_b1_modulo_importacao_limpa.log`). Total com o módulo: **1 crash em 50** importações limpas
+(1/34 na avaliação + 0/15 aqui + 0/1 na bateria). É bug da Godot no encerramento do `--import`, não do projeto
+nem do Voxel Tools. O script repete o import uma vez se isso acontecer.
+
+**B4 com o módulo:** não se aplica (não há DLL de extensão para travar); 0/3 crashes com outra instância aberta.
+
+**Ainda não validado depois da troca:** abrir e jogar o projeto **no editor custom com interface** por uma pessoa.
+A sessão interativa e o seu roteiro manual de 22/10 foram feitos com a build GDExtension. O código e os testes são
+os mesmos, mas o editor mudou.

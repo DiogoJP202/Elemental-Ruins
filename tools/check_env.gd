@@ -22,6 +22,11 @@ func _initialize() -> void:
 
 	var loaded := GDExtensionManager.get_loaded_extensions()
 	print("[check_env] GDExtensions carregadas: ", loaded)
+	var voxel_ext := false
+	for path: String in loaded:
+		voxel_ext = voxel_ext or path.contains("zylann.voxel")
+	var variant := "GDExtension" if voxel_ext else ("módulo embutido no executável" if ClassDB.class_exists("VoxelLodTerrain") else "AUSENTE")
+	print("[check_env] Voxel Tools: ", variant)
 
 	for cls: String in VOXEL_CLASSES:
 		var exists := ClassDB.class_exists(cls)

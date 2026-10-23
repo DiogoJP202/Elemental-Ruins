@@ -1,203 +1,203 @@
-Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
 
-[Main] Godot 4.7.2-stable (official) | física 3D: Jolt Physics | renderer: forward_plus
-[P0TEST] início | modo=headless-export | screenshots=false | Godot 4.7.2-stable (official)
-[TerrainService] terreno inicial pronto=true em 287 ms
-[P0TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":287.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P0TEST] início | modo=headless-export | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 263 ms
+[P0TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":263.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
 [P0TEST] baseline: 14 probes, sem chão em []
 [P0TEST] T0 PASS — Dados SDF volumétricos coerentes com o gerador (colina sólida, ar acima) | {"sdf_abaixo_solo":-2.0,"sdf_acima_colina":8.0,"sdf_acima_solo":2.0,"sdf_dentro_colina":-7.0,"topo_colina_colisao_y":12.019998550415,"topo_esperado_y":12.0}
 [P0TEST] T1b PASS — Jogador fica sobre o topo da colina voxel sem atravessar | {"on_floor":true,"topo_esperado_y":12.0,"y_apos_2s":12.0205574035645,"y_apos_3s":12.0205574035645}
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=1 0.594ms
-[P0TEST] T2 PASS — Escavar remove matéria E colisão; jogador cai na cratera | {"chao_antes_y":0.0200023651123047,"chao_depois_y":-3.04615783691406,"edicao":"dig_sphere OK rev=1 0.59ms","jogador_y_apos_2s":-3.03762030601501,"latencia_collider_ms":12.978,"on_floor":true,"quadros_fisica":1,"sdf_dados_logo_apos_edicao":1.03762924671173}
-[TerrainService] dig_path OK pontos=7 comp=26.0m rev=2 1.473ms
-[TerrainService] dig_path OK pontos=7 comp=26.0m rev=3 0.571ms
-[P0TEST] T3a PASS — Túnel escavado: eixo livre, teto e piso sólidos (raycasts físicos) | {"edicoes":["dig_path OK rev=2 1.47ms","dig_path OK rev=3 0.57ms"],"eixo_livre_apos_ms":19.609,"face_antes_z":10.5977001190186,"piso_interno_y":-0.349205732345581,"teto_interno_y":3.34920597076416,"topo_antes_y":12.019998550415,"topo_depois_y":12.019998550415}
-[P0TEST] T3b PASS — Jogador atravessa o túnel de boca a boca com teto sólido acima | {"amostras_com_teto":360,"amostras_teto":360,"chegou_na_saida":true,"tempo_s":11.302,"y_max_dentro":-0.328295469284058,"y_min_dentro":-0.333820700645447,"z_final":-37.0682334899902}
-[TerrainService] add_sphere OK c=(-14.0, 0.5, 22.0) r=2.00 rev=4 0.299ms
-[TerrainService] add_sphere OK c=(-14.0, 2.5, 22.0) r=2.00 rev=5 0.232ms
-[TerrainService] add_sphere OK c=(-14.0, 4.5, 22.0) r=2.00 rev=6 0.219ms
-[P0TEST] T4 PASS — Adicionar matéria forma coluna sólida (caixa e jogador apoiados) | {"caixa_vel":0.0,"caixa_y_apos_3s":7.0,"edicoes":["add_sphere OK rev=4 0.30ms","add_sphere OK rev=5 0.23ms","add_sphere OK rev=6 0.22ms"],"jogador_y_no_topo":6.22515630722046,"latencia_collider_ms":20.922,"on_floor":true,"topo_coluna_y":6.49999809265137}
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=7 0.315ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=8 0.160ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=9 0.109ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=10 0.128ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=11 0.134ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=12 0.184ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=13 0.105ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=14 0.142ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=15 0.098ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=16 0.157ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=17 0.114ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=18 0.118ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=19 0.135ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=20 0.144ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=21 0.077ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=22 0.108ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=23 0.091ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=24 0.135ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=25 0.201ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=26 0.179ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=27 0.128ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=28 0.121ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=29 0.127ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=30 0.133ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=31 0.108ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=32 0.083ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=33 0.144ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=34 0.119ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=35 0.099ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=36 0.199ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=37 0.102ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=38 0.167ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=39 0.132ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=40 0.124ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=41 0.136ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=42 0.150ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=43 0.120ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=44 0.119ms
-[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=45 0.089ms
-[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=46 0.185ms
-[P0TEST] T5 PASS — 20 ciclos escavar+adicionar no mesmo ponto (40 edições) | {"falhas":[],"latencia_collider_ms":{"max":20.53,"media":16.41,"min":13.2,"n":40,"p95":20.45},"nos_antes":34,"nos_depois":34}
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 38.0) r=1.50 rev=47 0.114ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 38.0) r=1.50 rev=48 0.087ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 38.0) r=1.50 rev=49 0.161ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 38.0) r=1.50 rev=50 0.156ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 38.0) r=1.50 rev=51 0.419ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 38.0) r=1.50 rev=52 0.112ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 38.0) r=1.50 rev=53 0.086ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 38.0) r=1.50 rev=54 0.232ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 38.0) r=1.50 rev=55 0.111ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 38.0) r=1.50 rev=56 0.084ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 40.0) r=1.50 rev=57 0.114ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 40.0) r=1.50 rev=58 0.113ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 40.0) r=1.50 rev=59 0.087ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 40.0) r=1.50 rev=60 0.162ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 40.0) r=1.50 rev=61 0.125ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 40.0) r=1.50 rev=62 0.149ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 40.0) r=1.50 rev=63 0.106ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 40.0) r=1.50 rev=64 0.086ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 40.0) r=1.50 rev=65 0.151ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 40.0) r=1.50 rev=66 0.083ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 42.0) r=1.50 rev=67 0.140ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 42.0) r=1.50 rev=68 0.125ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 42.0) r=1.50 rev=69 0.116ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 42.0) r=1.50 rev=70 0.225ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 42.0) r=1.50 rev=71 0.118ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 42.0) r=1.50 rev=72 0.107ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 42.0) r=1.50 rev=73 0.069ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 42.0) r=1.50 rev=74 0.131ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 42.0) r=1.50 rev=75 0.105ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 42.0) r=1.50 rev=76 0.076ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 44.0) r=1.50 rev=77 0.147ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 44.0) r=1.50 rev=78 0.116ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 44.0) r=1.50 rev=79 0.094ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 44.0) r=1.50 rev=80 0.147ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 44.0) r=1.50 rev=81 0.131ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 44.0) r=1.50 rev=82 0.148ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 44.0) r=1.50 rev=83 0.074ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 44.0) r=1.50 rev=84 0.133ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 44.0) r=1.50 rev=85 0.101ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 44.0) r=1.50 rev=86 0.122ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 46.0) r=1.50 rev=87 0.258ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 46.0) r=1.50 rev=88 0.230ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 46.0) r=1.50 rev=89 0.129ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 46.0) r=1.50 rev=90 0.085ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 46.0) r=1.50 rev=91 0.158ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 46.0) r=1.50 rev=92 0.139ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 46.0) r=1.50 rev=93 0.158ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 46.0) r=1.50 rev=94 0.335ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 46.0) r=1.50 rev=95 0.110ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 46.0) r=1.50 rev=96 0.106ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 48.0) r=1.50 rev=97 0.086ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 48.0) r=1.50 rev=98 0.149ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 48.0) r=1.50 rev=99 0.223ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 48.0) r=1.50 rev=100 0.106ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 48.0) r=1.50 rev=101 0.124ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 48.0) r=1.50 rev=102 0.100ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 48.0) r=1.50 rev=103 0.109ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 48.0) r=1.50 rev=104 0.093ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 48.0) r=1.50 rev=105 0.182ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 48.0) r=1.50 rev=106 0.105ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 50.0) r=1.50 rev=107 0.111ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 50.0) r=1.50 rev=108 0.109ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 50.0) r=1.50 rev=109 0.130ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 50.0) r=1.50 rev=110 0.150ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 50.0) r=1.50 rev=111 0.115ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 50.0) r=1.50 rev=112 0.094ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 50.0) r=1.50 rev=113 0.148ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 50.0) r=1.50 rev=114 0.130ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 50.0) r=1.50 rev=115 0.134ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 50.0) r=1.50 rev=116 0.092ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 52.0) r=1.50 rev=117 0.087ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 52.0) r=1.50 rev=118 0.094ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 52.0) r=1.50 rev=119 0.098ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 52.0) r=1.50 rev=120 0.096ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 52.0) r=1.50 rev=121 0.091ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 52.0) r=1.50 rev=122 0.121ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 52.0) r=1.50 rev=123 0.121ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 52.0) r=1.50 rev=124 0.107ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 52.0) r=1.50 rev=125 0.092ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 52.0) r=1.50 rev=126 0.106ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 54.0) r=1.50 rev=127 0.089ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 54.0) r=1.50 rev=128 0.239ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 54.0) r=1.50 rev=129 0.090ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 54.0) r=1.50 rev=130 0.096ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 54.0) r=1.50 rev=131 0.090ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 54.0) r=1.50 rev=132 0.165ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 54.0) r=1.50 rev=133 0.141ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 54.0) r=1.50 rev=134 0.072ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 54.0) r=1.50 rev=135 0.162ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 54.0) r=1.50 rev=136 0.082ms
-[TerrainService] dig_sphere OK c=(-22.5, 0.0, 56.0) r=1.50 rev=137 0.142ms
-[TerrainService] dig_sphere OK c=(-17.5, 0.0, 56.0) r=1.50 rev=138 0.115ms
-[TerrainService] dig_sphere OK c=(-12.5, 0.0, 56.0) r=1.50 rev=139 0.103ms
-[TerrainService] dig_sphere OK c=(-7.5, 0.0, 56.0) r=1.50 rev=140 0.205ms
-[TerrainService] dig_sphere OK c=(-2.5, 0.0, 56.0) r=1.50 rev=141 0.143ms
-[TerrainService] dig_sphere OK c=(2.5, 0.0, 56.0) r=1.50 rev=142 0.108ms
-[TerrainService] dig_sphere OK c=(7.5, 0.0, 56.0) r=1.50 rev=143 0.106ms
-[TerrainService] dig_sphere OK c=(12.5, 0.0, 56.0) r=1.50 rev=144 0.080ms
-[TerrainService] dig_sphere OK c=(17.5, 0.0, 56.0) r=1.50 rev=145 0.069ms
-[TerrainService] dig_sphere OK c=(22.5, 0.0, 56.0) r=1.50 rev=146 0.105ms
-[P0TEST] T5b PASS — 100 escavações em sequência (latência edição→collider) | {"executadas":100,"latencia_collider_ms":{"max":20.62,"media":16.38,"min":13.06,"n":100,"p95":20.48},"recusadas":0,"tempo_chamada_ms":{"max":0.42,"media":0.13,"min":0.07,"n":100,"p95":0.23},"timeouts_collider":0}
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=1 1.138ms
+[P0TEST] T2 PASS — Escavar remove matéria E colisão; jogador cai na cratera | {"chao_antes_y":0.0200023651123047,"chao_depois_y":-3.04615783691406,"edicao":"dig_sphere OK rev=1 1.14ms","jogador_y_apos_2s":-3.03762030601501,"latencia_collider_ms":15.617,"on_floor":true,"quadros_fisica":1,"sdf_dados_logo_apos_edicao":1.03762924671173}
+[TerrainService] dig_path OK pontos=7 comp=26.0m rev=2 0.959ms
+[TerrainService] dig_path OK pontos=7 comp=26.0m rev=3 0.455ms
+[P0TEST] T3a PASS — Túnel escavado: eixo livre, teto e piso sólidos (raycasts físicos) | {"edicoes":["dig_path OK rev=2 0.96ms","dig_path OK rev=3 0.46ms"],"eixo_livre_apos_ms":14.492,"face_antes_z":10.5977001190186,"piso_interno_y":-0.349205732345581,"teto_interno_y":3.34920597076416,"topo_antes_y":12.019998550415,"topo_depois_y":12.019998550415}
+[P0TEST] T3b PASS — Jogador atravessa o túnel de boca a boca com teto sólido acima | {"amostras_com_teto":360,"amostras_teto":360,"chegou_na_saida":true,"tempo_s":11.302,"y_max_dentro":-0.328314036130905,"y_min_dentro":-0.333590298891068,"z_final":-37.0682830810547}
+[TerrainService] add_sphere OK c=(-14.0, 0.5, 22.0) r=2.00 rev=4 0.370ms
+[TerrainService] add_sphere OK c=(-14.0, 2.5, 22.0) r=2.00 rev=5 0.107ms
+[TerrainService] add_sphere OK c=(-14.0, 4.5, 22.0) r=2.00 rev=6 0.121ms
+[P0TEST] T4 PASS — Adicionar matéria forma coluna sólida (caixa e jogador apoiados) | {"caixa_vel":0.0,"caixa_y_apos_3s":7.0,"edicoes":["add_sphere OK rev=4 0.37ms","add_sphere OK rev=5 0.11ms","add_sphere OK rev=6 0.12ms"],"jogador_y_no_topo":6.22515630722046,"latencia_collider_ms":13.905,"on_floor":true,"topo_coluna_y":6.49999809265137}
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=7 0.404ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=8 0.074ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=9 0.073ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=10 0.095ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=11 0.130ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=12 0.064ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=13 0.062ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=14 0.137ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=15 0.089ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=16 0.136ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=17 0.116ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=18 0.128ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=19 0.102ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=20 0.138ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=21 0.155ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=22 0.146ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=23 0.142ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=24 0.064ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=25 0.070ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=26 0.131ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=27 0.102ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=28 0.068ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=29 0.061ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=30 0.093ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=31 0.067ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=32 0.085ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=33 0.121ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=34 0.093ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=35 0.114ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=36 0.115ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=37 0.058ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=38 0.142ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=39 0.182ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=40 0.098ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=41 0.061ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=42 0.125ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=43 0.133ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=44 0.088ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=45 0.110ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=46 0.103ms
+[P0TEST] T5 PASS — 20 ciclos escavar+adicionar no mesmo ponto (40 edições) | {"falhas":[],"latencia_collider_ms":{"max":20.64,"media":16.48,"min":13.41,"n":40,"p95":20.56},"nos_antes":34,"nos_depois":34}
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 38.0) r=1.50 rev=47 0.064ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 38.0) r=1.50 rev=48 0.059ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 38.0) r=1.50 rev=49 0.057ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 38.0) r=1.50 rev=50 0.052ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 38.0) r=1.50 rev=51 0.168ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 38.0) r=1.50 rev=52 0.120ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 38.0) r=1.50 rev=53 0.060ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 38.0) r=1.50 rev=54 0.094ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 38.0) r=1.50 rev=55 0.087ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 38.0) r=1.50 rev=56 0.049ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 40.0) r=1.50 rev=57 0.071ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 40.0) r=1.50 rev=58 0.056ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 40.0) r=1.50 rev=59 0.057ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 40.0) r=1.50 rev=60 0.063ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 40.0) r=1.50 rev=61 0.087ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 40.0) r=1.50 rev=62 0.051ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 40.0) r=1.50 rev=63 0.056ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 40.0) r=1.50 rev=64 0.090ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 40.0) r=1.50 rev=65 0.058ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 40.0) r=1.50 rev=66 0.055ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 42.0) r=1.50 rev=67 0.072ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 42.0) r=1.50 rev=68 0.052ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 42.0) r=1.50 rev=69 0.056ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 42.0) r=1.50 rev=70 0.053ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 42.0) r=1.50 rev=71 0.098ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 42.0) r=1.50 rev=72 0.057ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 42.0) r=1.50 rev=73 0.053ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 42.0) r=1.50 rev=74 0.054ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 42.0) r=1.50 rev=75 0.055ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 42.0) r=1.50 rev=76 0.081ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 44.0) r=1.50 rev=77 0.078ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 44.0) r=1.50 rev=78 0.081ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 44.0) r=1.50 rev=79 0.075ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 44.0) r=1.50 rev=80 0.076ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 44.0) r=1.50 rev=81 0.070ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 44.0) r=1.50 rev=82 0.067ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 44.0) r=1.50 rev=83 0.058ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 44.0) r=1.50 rev=84 0.079ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 44.0) r=1.50 rev=85 0.076ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 44.0) r=1.50 rev=86 0.123ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 46.0) r=1.50 rev=87 0.107ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 46.0) r=1.50 rev=88 0.147ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 46.0) r=1.50 rev=89 0.077ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 46.0) r=1.50 rev=90 0.071ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 46.0) r=1.50 rev=91 0.125ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 46.0) r=1.50 rev=92 0.093ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 46.0) r=1.50 rev=93 0.092ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 46.0) r=1.50 rev=94 0.238ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 46.0) r=1.50 rev=95 0.119ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 46.0) r=1.50 rev=96 0.095ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 48.0) r=1.50 rev=97 0.080ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 48.0) r=1.50 rev=98 0.064ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 48.0) r=1.50 rev=99 0.059ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 48.0) r=1.50 rev=100 0.066ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 48.0) r=1.50 rev=101 0.060ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 48.0) r=1.50 rev=102 0.066ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 48.0) r=1.50 rev=103 0.052ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 48.0) r=1.50 rev=104 0.057ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 48.0) r=1.50 rev=105 0.108ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 48.0) r=1.50 rev=106 0.071ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 50.0) r=1.50 rev=107 0.082ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 50.0) r=1.50 rev=108 0.056ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 50.0) r=1.50 rev=109 0.132ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 50.0) r=1.50 rev=110 0.054ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 50.0) r=1.50 rev=111 0.075ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 50.0) r=1.50 rev=112 0.055ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 50.0) r=1.50 rev=113 0.055ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 50.0) r=1.50 rev=114 0.059ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 50.0) r=1.50 rev=115 0.055ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 50.0) r=1.50 rev=116 0.113ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 52.0) r=1.50 rev=117 0.050ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 52.0) r=1.50 rev=118 0.067ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 52.0) r=1.50 rev=119 0.052ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 52.0) r=1.50 rev=120 0.107ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 52.0) r=1.50 rev=121 0.071ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 52.0) r=1.50 rev=122 0.053ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 52.0) r=1.50 rev=123 0.096ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 52.0) r=1.50 rev=124 0.051ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 52.0) r=1.50 rev=125 0.167ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 52.0) r=1.50 rev=126 0.054ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 54.0) r=1.50 rev=127 0.108ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 54.0) r=1.50 rev=128 0.110ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 54.0) r=1.50 rev=129 0.099ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 54.0) r=1.50 rev=130 0.073ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 54.0) r=1.50 rev=131 0.111ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 54.0) r=1.50 rev=132 0.108ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 54.0) r=1.50 rev=133 0.103ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 54.0) r=1.50 rev=134 0.115ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 54.0) r=1.50 rev=135 0.069ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 54.0) r=1.50 rev=136 0.103ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 56.0) r=1.50 rev=137 0.103ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 56.0) r=1.50 rev=138 0.107ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 56.0) r=1.50 rev=139 0.106ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 56.0) r=1.50 rev=140 0.137ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 56.0) r=1.50 rev=141 0.103ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 56.0) r=1.50 rev=142 0.107ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 56.0) r=1.50 rev=143 0.059ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 56.0) r=1.50 rev=144 0.054ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 56.0) r=1.50 rev=145 0.117ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 56.0) r=1.50 rev=146 0.058ms
+[P0TEST] T5b PASS — 100 escavações em sequência (latência edição→collider) | {"executadas":100,"latencia_collider_ms":{"max":20.64,"media":16.42,"min":13.26,"n":100,"p95":20.58},"recusadas":0,"tempo_chamada_ms":{"max":0.24,"media":0.08,"min":0.05,"n":100,"p95":0.13},"timeouts_collider":0}
 [TerrainService] dig_sphere RECUSADO: outside_bounds (5000.0, 0.0, 5000.0)
 [TerrainService] dig_sphere RECUSADO: area_not_loaded (200.0, 0.0, 200.0)
 [TerrainService] dig_sphere RECUSADO: radius_out_of_range 
 [TerrainService] add_sphere RECUSADO: overlaps_player (0.0, 1.0, 28.0)
-[P0TEST] T6 PASS — Edições inválidas/fora da área falham rápido e com motivo | {"casos":[{"caso":"fora dos voxel_bounds","esperado":"outside_bounds","ms":0.104,"ok":true,"resultado":"dig_sphere RECUSADO (outside_bounds)"},{"caso":"dentro dos bounds, fora do LOD0 carregado","esperado":"area_not_loaded","ms":0.072,"ok":true,"resultado":"dig_sphere RECUSADO (area_not_loaded)"},{"caso":"raio gigante","esperado":"radius_out_of_range","ms":0.036,"ok":true,"resultado":"dig_sphere RECUSADO (radius_out_of_range)"},{"caso":"adicionar sobre o jogador","esperado":"overlaps_player","ms":0.085,"ok":true,"resultado":"add_sphere RECUSADO (overlaps_player)"}]}
+[P0TEST] T6 PASS — Edições inválidas/fora da área falham rápido e com motivo | {"casos":[{"caso":"fora dos voxel_bounds","esperado":"outside_bounds","ms":0.051,"ok":true,"resultado":"dig_sphere RECUSADO (outside_bounds)"},{"caso":"dentro dos bounds, fora do LOD0 carregado","esperado":"area_not_loaded","ms":0.046,"ok":true,"resultado":"dig_sphere RECUSADO (area_not_loaded)"},{"caso":"raio gigante","esperado":"radius_out_of_range","ms":0.016,"ok":true,"resultado":"dig_sphere RECUSADO (radius_out_of_range)"},{"caso":"adicionar sobre o jogador","esperado":"overlaps_player","ms":0.056,"ok":true,"resultado":"add_sphere RECUSADO (overlaps_player)"}]}
 [TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 146)
-[TerrainService] reset: geração 2 pronta=true em 349 ms
-[P0TEST] T7 PASS — Reset restaura geometria E colisão originais (cratera, túnel e coluna somem) | {"duracao_ms":349.0,"nos_baseline":31,"nos_depois":31,"probes_diferentes":[],"props_antes":1,"props_depois":0,"reset_ok":true}
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=147 0.597ms
+[TerrainService] reset: geração 2 pronta=true em 226 ms
+[P0TEST] T7 PASS — Reset restaura geometria E colisão originais (cratera, túnel e coluna somem) | {"duracao_ms":226.0,"nos_baseline":31,"nos_depois":31,"probes_diferentes":[],"props_antes":1,"props_depois":0,"reset_ok":true}
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=147 0.971ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 147)
-[TerrainService] reset: geração 3 pronta=true em 303 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=148 0.688ms
+[TerrainService] reset: geração 3 pronta=true em 225 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=148 0.316ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 148)
-[TerrainService] reset: geração 4 pronta=true em 383 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=149 0.812ms
+[TerrainService] reset: geração 4 pronta=true em 216 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=149 0.285ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 149)
-[TerrainService] reset: geração 5 pronta=true em 358 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=150 0.570ms
+[TerrainService] reset: geração 5 pronta=true em 216 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=150 0.480ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 150)
-[TerrainService] reset: geração 6 pronta=true em 366 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=151 0.889ms
+[TerrainService] reset: geração 6 pronta=true em 222 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=151 0.846ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 151)
-[TerrainService] reset: geração 7 pronta=true em 364 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=152 0.558ms
+[TerrainService] reset: geração 7 pronta=true em 213 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=152 0.862ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 152)
-[TerrainService] reset: geração 8 pronta=true em 367 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=153 0.627ms
+[TerrainService] reset: geração 8 pronta=true em 211 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=153 0.879ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 8, rev 153)
-[TerrainService] reset: geração 9 pronta=true em 323 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=154 0.333ms
+[TerrainService] reset: geração 9 pronta=true em 213 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=154 0.347ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 9, rev 154)
-[TerrainService] reset: geração 10 pronta=true em 367 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=155 0.791ms
+[TerrainService] reset: geração 10 pronta=true em 224 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=155 0.887ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 10, rev 155)
-[TerrainService] reset: geração 11 pronta=true em 305 ms
-[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=156 0.748ms
+[TerrainService] reset: geração 11 pronta=true em 203 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=156 0.385ms
 [TerrainService] reset: liberando VoxelLodTerrain (geração 11, rev 156)
-[TerrainService] reset: geração 12 pronta=true em 399 ms
-[P0TEST] T7b PASS — 10 ciclos escavar→reset retornam ao baseline | {"duracao_reset_ms":{"max":399.0,"media":353.5,"min":303.0,"n":10,"p95":399.0},"falhas":[],"nos_baseline":31,"nos_depois":31}
+[TerrainService] reset: geração 12 pronta=true em 326 ms
+[P0TEST] T7b PASS — 10 ciclos escavar→reset retornam ao baseline | {"duracao_reset_ms":{"max":326.0,"media":226.9,"min":203.0,"n":10,"p95":326.0},"falhas":[],"nos_baseline":31,"nos_depois":31}
 [P0TEST] relatório: C:/Users/dsoares/Documents/Projetos/game/docs/evidence/p0_selftest_export_headless.json
 [P0TEST] erros do motor durante o teste: 0 | avisos: 0
-[P0TEST] RESULTADO GERAL: PASS (12/12) em 36.1 s
+[P0TEST] RESULTADO GERAL: PASS (12/12) em 34.6 s
