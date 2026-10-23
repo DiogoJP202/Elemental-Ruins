@@ -19,6 +19,8 @@ const KEY_ACTIONS := {
 	&"terrain_ramp": [KEY_K],
 	&"terrain_smooth": [KEY_N],
 	&"brush_cycle_material": [KEY_M],
+	&"terrain_extract": [KEY_R],
+	&"debug_push": [KEY_T],
 	&"world_reset": [KEY_Z],
 	&"world_save": [KEY_F5],
 	&"world_load": [KEY_F9],

@@ -6,7 +6,8 @@ extends CanvasLayer
 
 const LEGEND := "WASD mover · Shift correr · Space pular · Mouse câmera · Esc solta o mouse\n" \
 	+ "G escavar · H adicionar · N suavizar (segure) · J túnel · K rampa · M material do H · roda / [ ] raio\n" \
-	+ "Z RESET DO MUNDO · F5 salvar slot · F9 carregar slot · B caixa de teste"
+	+ "R extrair rocha · T impulso de teste no corpo mirado · B caixa de teste\n" \
+	+ "Z RESET DO MUNDO · F5 salvar slot · F9 carregar slot"
 const MATERIAL_NAMES := {&"soil": "solo", &"sand": "areia", &"stone": "pedra"}
 ## Janela das métricas de tempo de quadro.
 const FRAME_WINDOW_S := 1.0
@@ -15,6 +16,8 @@ var terrain_service: TerrainService
 var brush_queue: TerrainBrushQueue
 var player: PlayerController
 var edit_controller: TerrainEditController
+var structures: StructureService
+var debris: DebrisBudget
 
 var _status: Label
 var _last_edit: Label
@@ -28,11 +31,13 @@ var _last_load := ""
 
 
 func setup(p_service: TerrainService, p_queue: TerrainBrushQueue, p_player: PlayerController,
-		p_controller: TerrainEditController) -> void:
+		p_controller: TerrainEditController, p_structures: StructureService = null, p_debris: DebrisBudget = null) -> void:
 	terrain_service = p_service
 	brush_queue = p_queue
 	player = p_player
 	edit_controller = p_controller
+	structures = p_structures
+	debris = p_debris
 	edit_controller.edit_performed.connect(_on_edit_performed)
 	terrain_service.world_reset_started.connect(func(): _set_last("RESET DO MUNDO em andamento...", Color.YELLOW))
 	terrain_service.world_reset_finished.connect(_on_reset_finished)
@@ -119,6 +124,7 @@ func _status_lines() -> PackedStringArray:
 		"Motor voxel: %s  |  memória estática %.0f MB  |  corpos ativos %d" % [
 			_voxel_engine_text(), Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0,
 			Performance.get_monitor(Performance.PHYSICS_3D_ACTIVE_OBJECTS)],
+		_physics_text(),
 		"Jogador: (%.1f, %.1f, %.1f)  no chão: %s" % [p.x, p.y, p.z, "sim" if player.is_on_floor() else "não"],
 		"Pincel: raio %.2f m  |  material do H: %s" % [edit_controller.get_radius(),
 			MATERIAL_NAMES.get(edit_controller.get_add_material(), edit_controller.get_add_material())],
@@ -146,6 +152,19 @@ func _last_brush_text() -> String:
 	else:
 		text += "  RECUSADO (%s)" % res.reason
 	return text
+
+
+func _physics_text() -> String:
+	if debris == null or structures == null:
+		return "Destroços: —"
+	var d := debris.get_stats()
+	var s := structures.get_stats()
+	var rocks := 0
+	for n in get_tree().get_nodes_in_group(DebrisBudget.GROUP):
+		rocks += int(n.has_meta("volume_m3"))
+	return "Destroços: corpos ativos %d (teto %d)  estacionados %d  |  torre: %d/%d peças soltas%s  |  rochas extraídas %d" % [
+		d.active, debris.max_active, d.parked, s.released_now, s.pieces,
+		("  (%d na fila)" % s.queued) if s.queued > 0 else "", rocks]
 
 
 func _aim_text(aim: Dictionary) -> String:

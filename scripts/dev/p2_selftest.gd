@@ -50,7 +50,91 @@ func _run_tests() -> bool:
 	if _should_run("T20"): await _t20_partial_collapse()
 	if _should_run("T21"): await _t21_full_collapse()
 	if _should_run("T22"): await _t22_body_budget()
+	if _should_run("T23"): await _t23_extract_rock()
+	if _should_run("T24"): await _t24_push_rock()
 	return true
+
+
+# --- T23: extração de rocha ----------------------------------------------------------------
+
+var _rock: RigidBody3D
+const ROCK_POINT := Vector3(-6, 0, 44)
+const ROCK_RADIUS := 1.5
+
+
+func _t23_extract_rock() -> void:
+	var p := ROCK_POINT
+	var ready := await _prepare_area(p + Vector3(0, 0, 10), AABB(p - Vector3(5, 5, 5), Vector3(10, 10, 10)))
+	var mat_before := svc.get_material_at(p - Vector3(0, ROCK_RADIUS, 0))
+	# Jogador em +z: a rocha sai do buraco para −z.
+	var out: Dictionary = svc.extract_rock(p, Vector3.UP, ROCK_RADIUS, props, Vector3(0, 0, -1))
+	var result: TerrainEditResult = out.result
+	var bodies: Array = out.bodies
+	var core := p - Vector3(0, ROCK_RADIUS, 0)
+	var sdf_core := svc.sample_sdf(core)
+	var w := await _wait_ray(p + Vector3.UP * 30.0, p + Vector3.DOWN * 30.0,
+		func(h): return not h.is_empty() and h.position.y < -1.5, 5.0)
+	await _seconds(4.0)
+	_rock = bodies[0] as RigidBody3D if bodies.size() == 1 else null
+	var details := {"edicao": str(result), "corpos": bodies.size(), "material_antes": str(mat_before),
+		"sdf_no_nucleo_depois": sdf_core, "cavidade_no_collider_y": _hit_y(w.hit)}
+	var ok: bool = ready and result != null and result.ok and _rock != null and sdf_core > 0.0 and w.ok
+	if _rock != null:
+		var volume: float = _rock.get_meta("volume_m3", 0.0)
+		var sphere := 4.0 / 3.0 * PI * pow(ROCK_RADIUS, 3.0)
+		var density := mat_before.density if mat_before != null else NAN
+		var shape_ok := false
+		for ch in _rock.get_children():
+			shape_ok = shape_ok or (ch is CollisionShape3D and (ch as CollisionShape3D).shape is ConvexPolygonShape3D)
+		var box := _mesh_box(_rock)
+		var c := box.get_center()
+		var floor_hit := svc.raycast_terrain(Vector3(c.x, 30, c.z), Vector3(c.x, -30, c.z))
+		var from_hole := Vector2(c.x - p.x, c.z - p.z).length()
+		details.merge({"camada": _rock.collision_layer, "mascara": _rock.collision_mask, "forma_convexa": shape_ok,
+			"volume_malha_m3": volume, "volume_esfera_nominal_m3": sphere, "massa_kg": _rock.mass,
+			"massa_esperada_kg": volume * density, "material": _rock.get_meta("material_id", &""),
+			"no_grupo_debris": _rock.is_in_group(DebrisBudget.GROUP), "centro_malha": str(c),
+			"fundo_malha_y": _mesh_bottom_y(_rock), "vel": _rock.linear_velocity.length(),
+			"chao_sob_a_rocha_y": _hit_y(floor_hit), "distancia_ao_buraco_m": from_hole})
+		ok = ok and _rock.collision_layer == Layers.PROPS and shape_ok and volume > 0.5 * sphere and volume < 1.3 * sphere \
+			and absf(_rock.mass - volume * density) < 1.0 and mat_before != null \
+			and _rock.get_meta("material_id", &"") == mat_before.id and _rock.is_in_group(DebrisBudget.GROUP) \
+			and not floor_hit.is_empty() and absf(_mesh_bottom_y(_rock) - _hit_y(floor_hit)) < 0.6 and from_hole > 2.5 \
+			and _rock.linear_velocity.length() < 0.3
+	_record("T23", "Extração: núcleo do terreno vira corpo convexo (separate_floating_chunks) com massa = volume × densidade", ok, details)
+	await _shot("t23_rocha_extraida", p + Vector3(0, 0.5, 6), 0.0, -30.0)
+
+
+# --- T24: impulso de teste ---------------------------------------------------------------
+
+func _t24_push_rock() -> void:
+	if _rock == null or not is_instance_valid(_rock):
+		_record("T24", "Impulso de teste desloca a rocha extraída", false, {"erro": "sem rocha do T23"})
+		return
+	var p0 := _mesh_box(_rock).get_center()
+	var dir := Vector3(1, 0, 0)
+	var state0 := _body_state(_rock)
+	var applied := controller.apply_test_impulse(_rock, dir, 10.0)
+	var max_y := p0.y
+	var trace := []
+	var t0 := Time.get_ticks_msec()
+	var f := 0
+	while Time.get_ticks_msec() - t0 < 1500:
+		await get_tree().physics_frame
+		f += 1
+		max_y = maxf(max_y, _mesh_box(_rock).get_center().y)
+		if f in [1, 2, 5, 10, 30, 60]:
+			trace.append({"quadro": f, "estado": _body_state(_rock)})
+	await _seconds(3.0)
+	var p1 := _mesh_box(_rock).get_center()
+	var hit := svc.raycast_terrain(Vector3(p1.x, 30, p1.z), Vector3(p1.x, -30, p1.z))
+	var ok: bool = applied and max_y > p0.y + 1.0 and (p1.x - p0.x) > 2.0 and not hit.is_empty() \
+		and p1.y > hit.position.y - 0.2
+	_record("T24", "Impulso de teste (T) arremessa a rocha para fora da cavidade e ela repousa no terreno", ok, {
+		"aplicado": applied, "pos_antes": str(p0), "altura_max": max_y, "pos_depois": str(p1),
+		"deslocamento_x": p1.x - p0.x, "chao_y": _hit_y(hit), "vel_final": _rock.linear_velocity.length(),
+		"massa_kg": _rock.mass, "estado_antes": state0, "rastro": trace})
+	await _shot("t24_rocha_arremessada", p1 + Vector3(0, 0.5, 8), 0.0, -20.0)
 
 
 # --- T18: corpo dormindo + escavação embaixo ------------------------------------------
@@ -219,6 +303,36 @@ func _t22_body_budget() -> void:
 
 
 # --- Utilidades P2 ------------------------------------------------------------------------
+
+## Menor y real da malha (vértices transformados; a AABB transformada de um corpo girado
+## envolve a malha e fica abaixo do fundo verdadeiro).
+func _mesh_bottom_y(b: RigidBody3D) -> float:
+	var low := INF
+	for ch in b.get_children():
+		if ch is MeshInstance3D and (ch as MeshInstance3D).mesh != null:
+			var mi := ch as MeshInstance3D
+			for s in mi.mesh.get_surface_count():
+				for v: Vector3 in mi.mesh.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]:
+					low = minf(low, (mi.global_transform * v).y)
+	return low
+
+
+## Caixa da malha do corpo no mundo (a origem do corpo criado pelo Voxel Tools não é o centro).
+func _mesh_box(b: RigidBody3D) -> AABB:
+	for ch in b.get_children():
+		if ch is MeshInstance3D and (ch as MeshInstance3D).mesh != null:
+			var mi := ch as MeshInstance3D
+			return mi.global_transform * mi.mesh.get_aabb()
+	return AABB(b.global_position, Vector3.ZERO)
+
+
+func _body_state(b: RigidBody3D) -> String:
+	var timer := ""
+	for ch in b.get_children():
+		if ch is Timer:
+			timer = " timer(parado=%s resta=%.2f one_shot=%s)" % [(ch as Timer).is_stopped(), (ch as Timer).time_left, (ch as Timer).one_shot]
+	return "pos=%s vel=%s freeze=%s modo=%d sleeping=%s parked=%s%s" % [b.global_position, b.linear_velocity, b.freeze,
+		b.freeze_mode, b.sleeping, b.get_meta(DebrisBudget.PARKED_META, ""), timer]
 
 ## Jogador a 16 m da torre (fora do alcance da queda), com os pés da torre no LOD0 carregado.
 func _go_to_tower() -> bool:

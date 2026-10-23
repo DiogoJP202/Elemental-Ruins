@@ -37,7 +37,7 @@ func _ready() -> void:
 		ProjectSettings.get_setting("physics/3d/physics_engine"),
 		RenderingServer.get_current_rendering_method()])
 	edit_controller.setup(terrain_service, brush_queue, player, props_root)
-	hud.setup(terrain_service, brush_queue, player, edit_controller)
+	hud.setup(terrain_service, brush_queue, player, edit_controller, structures, debris)
 	edit_controller.reset_requested.connect(request_world_reset)
 	edit_controller.save_requested.connect(func(): request_world_save(SAVE_SLOT))
 	edit_controller.load_requested.connect(func(): request_world_load(SAVE_SLOT))

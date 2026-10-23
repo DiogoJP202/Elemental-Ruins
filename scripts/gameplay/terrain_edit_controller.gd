@@ -1,9 +1,10 @@
 class_name TerrainEditController
 extends Node
 ## Traduz os atalhos de engenharia (provisórios, P0/P1) em pedidos para a TerrainBrushQueue.
-## G escava, H adiciona e N suaviza enquanto seguradas (traço contínuo); J abre túnel,
-## K ergue rampa, M troca o material do H, Z reset, F5/F9 salvar/carregar o slot,
-## roda/[ ] muda o raio, B solta caixa.
+## G escava, H adiciona e N suavizam enquanto seguradas (traço contínuo); J abre túnel,
+## K ergue rampa, M troca o material do H, R extrai uma rocha, T dá um impulso de teste no
+## corpo mirado, Z reset, F5/F9 salvar/carregar o slot, roda/[ ] muda o raio, B solta caixa.
+## R e T são ferramentas de laboratório do P2, não as habilidades de terra do P3.
 ## A mira é um raycast FÍSICO do centro da tela contra os colliders do terreno.
 
 signal edit_performed(result: TerrainEditResult)
@@ -117,6 +118,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		_do_ramp()
 	elif event.is_action_pressed(&"brush_cycle_material"):
 		_add_material_index = (_add_material_index + 1) % ADD_MATERIALS.size()
+	elif event.is_action_pressed(&"terrain_extract"):
+		_do_extract()
+	elif event.is_action_pressed(&"debug_push"):
+		_do_push()
 	elif event.is_action_pressed(&"debug_spawn_crate"):
 		_spawn_crate()
 
@@ -232,6 +237,49 @@ func make_ramp_request(start: Vector3, forward: Vector3) -> TerrainBrushRequest:
 	var req := TerrainBrushRequest.path(points, radii, true, get_add_material())
 	req.source = "input:terrain_ramp"
 	return req
+
+
+## Extrai uma rocha logo abaixo do ponto mirado (raio do pincel limitado a 1–2 m).
+func _do_extract() -> void:
+	if not _aim_hit:
+		edit_performed.emit(TerrainEditResult.failure("extract_rock", "no_aim_target"))
+		return
+	var r := clampf(radius, terrain_service.min_extract_radius, terrain_service.max_extract_radius)
+	# A rocha sai do buraco para o lado oposto ao jogador (não cai em cima dele).
+	var away := _aim_point - player.global_position
+	var out: Dictionary = terrain_service.extract_rock(_aim_point, _aim_normal, r, props_root, away)
+	edit_performed.emit(out.result)
+
+
+## Impulso de teste no corpo físico sob a mira (camada PROPS), na direção da câmera.
+func _do_push() -> void:
+	var ray: Array = player.camera_rig.get_aim_ray()
+	var origin: Vector3 = ray[0]
+	var dir: Vector3 = ray[1]
+	var q := PhysicsRayQueryParameters3D.create(origin, origin + dir * max_aim_distance, Layers.PROPS)
+	var hit := player.get_world_3d().direct_space_state.intersect_ray(q)
+	var body := hit.get("collider") as RigidBody3D
+	if body == null or not apply_test_impulse(body, dir):
+		edit_performed.emit(TerrainEditResult.failure("impulso", "no_body_target"))
+
+
+## Impulso de laboratório: lançamento a 45° (direção horizontal dada + a mesma componente
+## para cima) com velocidade `speed` (m/s). Só horizontal não serve: uma rocha recém-extraída
+## está no fundo da cavidade e seria empurrada contra a parede (medido no T24).
+## Peça de estrutura ainda presa não é empurrada (só o StructureService a solta); corpo
+## estacionado pelo DebrisBudget volta a ser dinâmico antes.
+func apply_test_impulse(body: RigidBody3D, direction: Vector3, speed := 8.0) -> bool:
+	if body is StructurePiece and not (body as StructurePiece).released:
+		return false
+	if body.get_meta(DebrisBudget.PARKED_META, "") != "":
+		DebrisBudget.unpark(body)
+	if body.freeze:
+		return false
+	var flat := Vector3(direction.x, 0.0, direction.z)
+	var d := (flat.normalized() + Vector3.UP).normalized() if flat.length() > 0.01 else Vector3.UP
+	body.sleeping = false
+	body.apply_central_impulse(d * body.mass * speed)
+	return true
 
 
 func _camera_forward_flat() -> Vector3:

@@ -42,6 +42,12 @@ signal world_loaded(slot: String, ok: bool, duration_ms: float)
 @export var max_path_points := 32
 ## smooth_sphere desfoca uma caixa inteira; raio menor que o de ADD/REMOVE limita o custo.
 @export var max_smooth_radius := 4.0
+## Extração de rocha (P2): com r = 1 o casco convexo sai grosseiro (10 pontos no spike; r = 1,5
+## deu 34). O máximo mantém a caixa de separate_floating_chunks bem abaixo de ~30 voxels.
+@export var min_extract_radius := 1.0
+@export var max_extract_radius := 2.0
+## Folga entre o núcleo e a parede da cavidade.
+@export var extract_gap := 0.9
 ## Orçamento de operações por quadro de física, para evitar rajadas de edição.
 @export var max_edits_per_physics_frame := 4
 ## Folga somada ao raio de REMOÇÃO. Sem ela, remover exatamente a mesma esfera
@@ -262,6 +268,128 @@ func smooth_area(world_point: Vector3, radius: float, blur_voxels := 2) -> Terra
 	# Suavizar só redistribui matéria: sem massa estimada.
 	_set_estimate(result, mat, 0.0)
 	return result
+
+
+## Extrai uma rocha do terreno (P2, laboratório): o núcleo de raio `core_radius` logo
+## abaixo de `world_point` (encostado na superfície, ao longo de −normal) vira um
+## RigidBody3D convexo de verdade, filho de `parent`. Como: cavidade em volta do núcleo
+## (REMOVE), núcleo recriado com o material que estava ali (ADD + INDICES) e
+## VoxelToolLodTerrain.separate_floating_chunks numa caixa ≤ 30 voxels (spike P2, F1/F3).
+## O Voxel Tools cria o corpo na camada/máscara 1 (as do terreno), com massa 1 kg e malha
+## sem material: aqui ele vai para PROPS, recebe massa = volume da malha × densidade e a cor
+## do material.
+## A cavidade esférica em volta do núcleo tem boca mais estreita que ela (r = 1,5: boca de
+## ~1,9 m de raio para uma rocha de ~1,3 m de meia-largura), então a rocha ficaria presa no
+## fundo (medido no T24). Com `place_dir` horizontal, a rocha é posicionada UMA vez, ainda
+## cinemática, sobre o chão ao lado do buraco nessa direção; com Vector3.ZERO fica no buraco.
+## Retorna {"result": TerrainEditResult, "bodies": Array[RigidBody3D]}.
+func extract_rock(world_point: Vector3, normal: Vector3, core_radius: float, parent: Node,
+		place_dir := Vector3.ZERO) -> Dictionary:
+	const OP := "extract_rock"
+	var t0 := Time.get_ticks_usec()
+	var out := {"result": null, "bodies": []}
+	if not _is_finite_vec(world_point) or not _is_finite_vec(normal) or normal.length() < 0.5 or parent == null:
+		out.result = _reject(OP, "invalid_input")
+		return out
+	if core_radius < min_extract_radius or core_radius > max_extract_radius:
+		out.result = _reject(OP, "radius_out_of_range")
+		return out
+	var center := world_point - normal.normalized() * core_radius
+	var cavity := core_radius + extract_gap + remove_radius_padding
+	var aabb := AABB(center - Vector3.ONE * (cavity + material_paint_margin), Vector3.ONE * (cavity + material_paint_margin) * 2.0)
+	var reason := _validate_area(aabb)
+	if reason != "":
+		out.result = _reject(OP, reason, aabb)
+		return out
+	var local := _terrain.to_local(center)
+	if _tool.get_voxel_f(Vector3i(local.round())) > 0.0:
+		out.result = _reject(OP, "no_solid_core", aabb)
+		return out
+	var mat := TerrainMaterialLibrary.get_by_index(_material_index_local(local))
+	var policy := TerrainBrushQueue.material_policy(TerrainBrushRequest.Op.REMOVE, mat)
+	if policy != "":
+		out.result = _reject(OP, policy, aabb)
+		return out
+	if _overlaps_protected_body(center, cavity):
+		out.result = _reject(OP, "overlaps_player", aabb)
+		return out
+	if not _consume_budget():
+		out.result = _reject(OP, "frame_budget_exceeded", aabb)
+		return out
+	_tool.mode = VoxelTool.MODE_REMOVE
+	_tool.do_sphere(local, cavity)
+	_tool.mode = VoxelTool.MODE_ADD
+	_tool.do_sphere(local, core_radius)
+	if mat != null:
+		_paint_sphere(local, core_radius + material_paint_margin, mat.index)
+	var half := Vector3.ONE * (cavity + 1.0)
+	var lod_tool := _tool as VoxelToolLodTerrain
+	var bodies: Array = lod_tool.separate_floating_chunks(AABB(local - half, half * 2.0), parent)
+	var total_volume := 0.0
+	for b in bodies:
+		var rb := b as RigidBody3D
+		if rb == null:
+			continue
+		rb.name = "Rock"
+		rb.collision_layer = Layers.PROPS
+		rb.collision_mask = Layers.TERRAIN | Layers.PLAYER | Layers.PROPS
+		var volume := 0.0
+		for ch in rb.get_children():
+			if ch is MeshInstance3D and (ch as MeshInstance3D).mesh != null:
+				volume = _mesh_volume((ch as MeshInstance3D).mesh)
+				if mat != null:
+					var m := StandardMaterial3D.new()
+					m.albedo_color = mat.surface_color
+					m.roughness = 0.95
+					(ch as MeshInstance3D).material_override = m
+		rb.mass = maxf(volume * (mat.density if mat != null else 1500.0), 1.0)
+		rb.set_meta("material_id", mat.id if mat != null else &"")
+		rb.set_meta("volume_m3", volume)
+		rb.add_to_group(DebrisBudget.GROUP)
+		total_volume += volume
+		out.bodies.append(rb)
+		var flat := Vector3(place_dir.x, 0.0, place_dir.z)
+		if flat.length() > 0.01:
+			_place_beside_hole(rb, world_point, flat.normalized(), cavity)
+	var result := _commit(OP, aabb, t0, "c=%s r=%.2f corpos=%d" % [_fmt(center), core_radius, bodies.size()])
+	_set_estimate(result, mat, total_volume)
+	out.result = result
+	return out
+
+
+## Move a rocha recém-criada (ainda cinemática) para cima do chão, ao lado da boca do buraco.
+func _place_beside_hole(rb: RigidBody3D, hole: Vector3, dir: Vector3, cavity: float) -> void:
+	var box := AABB()
+	for ch in rb.get_children():
+		if ch is MeshInstance3D and (ch as MeshInstance3D).mesh != null:
+			var mi := ch as MeshInstance3D
+			box = mi.global_transform * mi.mesh.get_aabb()
+	if not box.has_volume():
+		return
+	var half := maxf(box.size.x, box.size.z) * 0.5
+	var target := hole + dir * (cavity + half + 0.5)
+	var hit := raycast_terrain(Vector3(target.x, target.y + 20.0, target.z), Vector3(target.x, target.y - 20.0, target.z))
+	if hit.is_empty():
+		return
+	var center := box.get_center()
+	var delta := Vector3(target.x - center.x, hit.position.y + 0.2 - box.position.y, target.z - center.z)
+	rb.global_position += delta
+
+
+## Volume de uma malha fechada (soma de tetraedros com a origem), em m³.
+static func _mesh_volume(mesh: Mesh) -> float:
+	var total := 0.0
+	for s in mesh.get_surface_count():
+		var arrays := mesh.surface_get_arrays(s)
+		var v: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var idx: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+		var n := idx.size() if not idx.is_empty() else v.size()
+		for i in range(0, n - 2, 3):
+			var a := v[idx[i]] if not idx.is_empty() else v[i]
+			var b := v[idx[i + 1]] if not idx.is_empty() else v[i + 1]
+			var c := v[idx[i + 2]] if not idx.is_empty() else v[i + 2]
+			total += a.dot(b.cross(c)) / 6.0
+	return absf(total)
 
 
 ## Recria o terreno a partir do gerador, descartando TODAS as edições:
