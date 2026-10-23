@@ -58,8 +58,15 @@ func _ready() -> void:
 
 	var legend := _make_label(root, Vector2.ZERO, 14)
 	legend.text = LEGEND
-	legend.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	legend.position = Vector2(16, -80)
+	# Presa ao canto inferior esquerdo pelos offsets, crescendo para cima. (Até o P2 usava
+	# `position` depois do preset, o que a punha acima da borda de cima, fora da tela.)
+	legend.anchor_left = 0.0
+	legend.anchor_right = 0.0
+	legend.anchor_top = 1.0
+	legend.anchor_bottom = 1.0
+	legend.offset_left = 16.0
+	legend.offset_top = -12.0
+	legend.offset_bottom = -12.0
 	legend.grow_vertical = Control.GROW_DIRECTION_BEGIN
 
 	var reticle := Label.new()
@@ -109,7 +116,7 @@ func _status_lines() -> PackedStringArray:
 	var state := "PRONTO" if stats.ready else (("OCUPADO: %s" % stats.busy_op) if stats.resetting else "CARREGANDO")
 	var p := player.global_position
 	var lines := PackedStringArray([
-		"ELEMENTAL // RUINS — laboratório P1 (terreno volumétrico)",
+		"ELEMENTAL // RUINS — laboratório P2 (terreno volumétrico, estruturas e destroços)",
 		"FPS %d  |  quadro %.1f ms (pico 1 s: %.1f ms)  |  monitores TIME_PROCESS %.2f ms, TIME_PHYSICS_PROCESS %.2f ms" % [
 			Engine.get_frames_per_second(), fs.avg_ms, fs.max_ms,
 			Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
