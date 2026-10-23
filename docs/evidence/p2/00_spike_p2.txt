@@ -1,0 +1,27 @@
+# Spike P2 — 2026-10-23T17:50:00
+# Godot 4.7.2-stable (custom_build) | física Jolt Physics
+terreno pronto em 131 ms
+
+## F1/F2 matéria flutuante → separate_floating_chunks
+OK   F1 1 corpo criado e a matéria saiu do terreno | corpos=1 sdf centro -1.495 → 99.994; chamada 0.58 ms
+I1 logo após (como o Voxel Tools cria): RigidBody3D | massa=1.000 layer=1 mask=1 freeze=true freeze_mode=1 sleeping=false pos=(1.5, 6.5, 1.5) vel=0.00 | pai=Bodies | filho CollisionShape3D(ConvexPolygonShape3D pontos=54) | filho Timer | filho MeshInstance3D(aabb=[P: (1.5, 1.5, 1.5), S: (3.0, 3.0, 3.0)] superfícies=1 material=surface:nenhum)
+I1 após 0,5 s: RigidBody3D | massa=1.000 layer=4 mask=5 freeze=false freeze_mode=1 sleeping=false pos=(1.5, 6.087179, 1.5) vel=2.74 | pai=Bodies | filho CollisionShape3D(ConvexPolygonShape3D pontos=54) | filho Timer | filho MeshInstance3D(aabb=[P: (1.5, 1.5, 1.5), S: (3.0, 3.0, 3.0)] superfícies=1 material=surface:nenhum)
+I1 após 3 s: RigidBody3D | massa=1.000 layer=4 mask=5 freeze=false freeze_mode=1 sleeping=true pos=(1.497558, 3.001117, 1.5013) vel=0.00 | pai=Bodies | filho CollisionShape3D(ConvexPolygonShape3D pontos=54) | filho Timer | filho MeshInstance3D(aabb=[P: (1.5, 1.5, 1.5), S: (3.0, 3.0, 3.0)] superfícies=1 material=surface:nenhum)
+OK   F2 o corpo cai e repousa sobre o terreno (fundo da malha no chão) | fundo da malha y 3.50 → -0.00; chão (raycast só terreno) y=0.02; vel 0.00
+
+## I2 custo de separate_floating_chunks por tamanho de caixa
+I2 caixa 8³: com 1 pedaço 0.54 ms (1 corpo[s]); sem pedaço 0.02 ms (0)
+I2 caixa 16³: com 1 pedaço 0.75 ms (1 corpo[s]); sem pedaço 0.12 ms (0)
+I2 caixa 30³: com 1 pedaço 1.89 ms (1 corpo[s]); sem pedaço 1.57 ms (0)
+
+## F3 extração: cavidade em volta de um núcleo no chão
+F3 corpos=1 em 0.66 ms; sdf no centro do núcleo depois: 99.994
+F3 logo após: RigidBody3D | massa=1.000 layer=1 mask=1 freeze=true freeze_mode=1 sleeping=false pos=(-9.0, -0.5, 11.0) vel=0.00 | pai=Bodies | filho CollisionShape3D(ConvexPolygonShape3D pontos=34) | filho Timer | filho MeshInstance3D(aabb=[P: (1.45283, 0.98, 1.45283), S: (2.56717, 2.04, 2.56717)] superfícies=1 material=surface:nenhum)
+F3 após 1 s (antes do impulso): RigidBody3D | massa=1.000 layer=4 mask=5 freeze=false freeze_mode=1 sleeping=false pos=(-9.034491, -1.288872, 10.99834) vel=0.00 | pai=Bodies | filho CollisionShape3D(ConvexPolygonShape3D pontos=34) | filho Timer | filho MeshInstance3D(aabb=[P: (1.45283, 0.98, 1.45283), S: (2.56717, 2.04, 2.56717)] superfícies=1 material=surface:nenhum)
+OK   F3 núcleo vira 1 corpo e o impulso o desloca | pos antes (-9.034491, -1.288872, 10.99834); altura máx 0.15; pos 3,5 s depois (-9.932248, -0.569468, 10.64206); massa 1.00; impulso (0.0, 5.57086, 2.228344)
+
+## I3 caixa dormindo sobre o chão e escavação embaixo
+I3 sem intervenção: dormiu=true em 620 ms (y=0.52); collider do buraco em 30 ms; y 2 s depois=0.52; sleeping=true → FICOU FLUTUANDO
+I3 com acordar manual: dormiu=true em 600 ms (y=0.52); collider do buraco em 18 ms; y 2 s depois=-1.78; sleeping=true → CAIU
+
+RESULTADO: OK (0 falha(s))
