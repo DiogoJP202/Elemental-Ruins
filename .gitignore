@@ -37,6 +37,7 @@ build/
 # Logs de evidência dos testes são versionados de propósito
 !docs/evidence/*.log
 !docs/evidence/p1/*.log
+!docs/evidence/p2/*.log
 
 # Preset de export é versionado (sem segredos; credenciais ficam em .godot/export_credentials.cfg)
 !export_presets.cfg

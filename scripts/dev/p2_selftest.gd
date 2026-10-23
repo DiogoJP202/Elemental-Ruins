@@ -21,7 +21,9 @@ func _ready() -> void:
 
 
 func _report_prefix() -> String:
-	return "p2_selftest"
+	# Fases de persistência (--p2-selftest --p1-persist=...) mantêm o nome do P1, mas gravam
+	# em docs/evidence/p2/, sem tocar nas evidências de referência do P1.
+	return super._report_prefix() if _persist_phase != "" else "p2_selftest"
 
 
 func _watchdog_seconds() -> float:
@@ -54,7 +56,66 @@ func _run_tests() -> bool:
 	if _should_run("T24"): await _t24_push_rock()
 	if _should_run("T25"): await _t25_collapse_reset_cycles()
 	if _should_run("T26"): await _t26_save_load_structures()
+	if _should_run("T27"): await _t27_collapse_benchmark()
 	return true
+
+
+# --- T27: benchmark do colapso total ---------------------------------------------------------
+
+## Pior caso: os 4 pés escavados no mesmo quadro (36 peças a soltar). Mede por 6 s o intervalo
+## entre quadros de processo, o monitor TIME_PHYSICS_PROCESS e os corpos dinâmicos.
+## Critério (decisão 8 do plano P2), só em janela: p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms.
+func _t27_collapse_benchmark() -> void:
+	await main.request_world_reset()
+	await _go_to_tower()
+	await _seconds(1.0)
+	var budget: DebrisBudget = main.debris
+	var frame_ms := PackedFloat32Array()
+	var phys_ms := PackedFloat32Array()
+	var last := [Time.get_ticks_usec()]
+	var on_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - last[0]) / 1000.0)
+		last[0] = now
+	var peak_dynamic := 0
+	for corner in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
+		var c := _foot_at(corner).home.origin
+		queue.enqueue(TerrainBrushRequest.sphere(TerrainBrushRequest.Op.REMOVE, Vector3(c.x, 0, c.z), 2.0))
+	get_tree().process_frame.connect(on_frame)
+	var t0 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 6000:
+		await get_tree().physics_frame
+		phys_ms.append(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0)
+		var dyn := 0
+		for p in structures.get_pieces():
+			dyn += int(p.released and not p.freeze)
+		peak_dynamic = maxi(peak_dynamic, dyn)
+	get_tree().process_frame.disconnect(on_frame)
+	if not frame_ms.is_empty():
+		frame_ms.remove_at(0)
+	var fs := _stats(frame_ms)
+	fs["p50"] = _percentile(frame_ms, 0.5)
+	fs["p99"] = _percentile(frame_ms, 0.99)
+	var ps := _stats(phys_ms)
+	ps["p99"] = _percentile(phys_ms, 0.99)
+	_metrics["p2_colapso_quadro_ms"] = fs
+	_metrics["p2_colapso_fisica_ms"] = ps
+	var below := []
+	for p in structures.get_pieces():
+		var c := p.global_position
+		var hit := svc.raycast_terrain(Vector3(c.x, 40, c.z), Vector3(c.x, -40, c.z))
+		if hit.is_empty() or c.y < hit.position.y - 0.2:
+			below.append(p.name)
+	var windowed := not _mode.begins_with("headless")
+	var fps_ok: bool = (not windowed) or (fs.get("p95", 999.0) <= 20.0 and fs.get("p99", 999.0) <= 33.0 and fs.get("max", 999.0) <= 50.0)
+	var ok: bool = structures.released_count() == 36 and below.is_empty() and fps_ok
+	_record("T27", "Benchmark do colapso total (4 pés no mesmo quadro): quadro e física por 6 s; critério de FPS em janela", ok, {
+		"modo": _mode, "criterio_fps_aplicado": windowed, "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
+		"intervalo_entre_quadros_ms": fs, "time_physics_process_ms": ps, "pico_pecas_dinamicas": peak_dynamic,
+		"soltas": structures.released_count(), "abaixo_do_chao": below, "orcamento": budget.get_stats(),
+		"poeira": main.dust.get_stats()})
+	await _shot("t27_colapso_total_simultaneo", structures.tower_origin + Vector3(0, 0.5, 16), 0.0, -12.0)
+	await main.request_world_reset()
 
 
 # --- T25: 10 ciclos colapso → reset --------------------------------------------------------
