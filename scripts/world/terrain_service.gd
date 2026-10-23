@@ -8,12 +8,24 @@ extends Node
 ## dados imediatamente; malha e colisão são reconstruídas assincronamente pelo
 ## motor voxel. Use raycast_terrain() (física) para saber o que o jogador
 ## realmente colide.
+##
+## Persistência (P1): o terreno vivo usa um VoxelStreamSQLite num arquivo de SESSÃO
+## novo a cada recriação (TerrainSaveFiles). Salvar = save_modified_blocks → esperar o
+## tracker → liberar o nó → fechar o stream → copiar a sessão para o slot → reabrir a
+## mesma sessão. Carregar = copiar o slot para uma sessão nova e recriar o nó. Reset =
+## sessão nova e vazia (só o gerador). O slot fica intacto no reset.
 
 signal terrain_ready
+## Evento TerrainChanged {aabb, revision}: emitido quando os DADOS mudaram. Malha e
+## collider da região ainda NÃO refletem a edição neste momento (atualizam em quadros seguintes).
 signal terrain_changed(world_aabb: AABB, revision: int)
 signal edit_rejected(op: String, reason: String, world_aabb: AABB)
 signal world_reset_started
 signal world_reset_finished(world_generation: int, duration_ms: float)
+signal world_save_started(slot: String)
+signal world_saved(slot: String, ok: bool, duration_ms: float)
+signal world_load_started(slot: String)
+signal world_loaded(slot: String, ok: bool, duration_ms: float)
 
 ## Nó onde o VoxelLodTerrain é instanciado (e recriado no reset).
 @export var terrain_parent_path: NodePath = ^"../TerrainRoot"
@@ -43,8 +55,22 @@ signal world_reset_finished(world_generation: int, duration_ms: float)
 @export var material_paint_margin := 0.5
 @export var verbose := true
 
+@export_group("Persistência")
+## false = sem stream: edições só em memória (comportamento do P0).
+@export var persistence_enabled := true
+@export var world_dir := "user://world"
+@export var saves_dir := "user://saves"
+@export var save_timeout_s := 15.0
+
 var _terrain: VoxelLodTerrain
 var _tool: VoxelTool
+var _stream: VoxelStreamSQLite
+var _session_index := 0
+var _session_path := ""
+var _stale_sessions := PackedStringArray()
+var _busy_op := ""
+var _last_save := {}
+var _last_load := {}
 var _ready_flag := false
 var _resetting := false
 var _revision := 0
@@ -57,6 +83,11 @@ var _last_ready_ms := 0.0
 
 
 func _ready() -> void:
+	if persistence_enabled:
+		# Sessões de execuções anteriores (fechadas) são lixo; as de outro processo aberto
+		# continuam travadas pelo Windows e a remoção só falha.
+		for path in TerrainSaveFiles.list_sessions(world_dir):
+			TerrainSaveFiles.remove(path)
 	_spawn_terrain()
 	_world_generation = 1
 	var t0 := Time.get_ticks_msec()
@@ -73,8 +104,30 @@ func is_ready() -> bool:
 	return _ready_flag and not _resetting and is_instance_valid(_terrain)
 
 
+## true enquanto o terreno está sendo recriado (reset, salvar ou carregar).
 func is_resetting() -> bool:
 	return _resetting
+
+
+## "reset", "save", "load" ou "" (livre).
+func get_busy_op() -> String:
+	return _busy_op
+
+
+func has_saved_world(slot: String) -> bool:
+	return TerrainSaveFiles.is_valid_slot(slot) and TerrainSaveFiles.exists(TerrainSaveFiles.slot_path(saves_dir, slot))
+
+
+func get_slot_path(slot: String) -> String:
+	return TerrainSaveFiles.slot_path(saves_dir, slot)
+
+
+func get_session_path() -> String:
+	return _session_path
+
+
+func count_session_files() -> int:
+	return TerrainSaveFiles.list_sessions(world_dir).size()
 
 
 func get_revision() -> int:
@@ -98,10 +151,16 @@ func get_debug_stats() -> Dictionary:
 	return {
 		"ready": is_ready(),
 		"resetting": _resetting,
+		"busy_op": _busy_op,
 		"revision": _revision,
 		"world_generation": _world_generation,
 		"edits": _edit_count,
 		"rejects": _reject_count,
+		"persistence": persistence_enabled,
+		"session_file": _session_path.get_file(),
+		"session_files": count_session_files() if persistence_enabled else 0,
+		"last_save": _last_save,
+		"last_load": _last_load,
 	}
 
 
@@ -206,41 +265,167 @@ func smooth_area(world_point: Vector3, radius: float, blur_voxels := 2) -> Terra
 ## Recria o terreno a partir do gerador, descartando TODAS as edições:
 ## dados voxel, malhas e colliders do nó antigo são liberados com ele.
 ## Aguarda a região de ready_probe_point ter malha e colisão de novo.
+## Com persistência, o terreno novo usa uma sessão nova e vazia; a sessão descartada
+## é apagada (o slot salvo não é tocado).
 func reset_world() -> bool:
 	if _resetting:
 		return false
-	_resetting = true
-	_ready_flag = false
+	_begin_busy("reset")
 	world_reset_started.emit()
 	var t0 := Time.get_ticks_msec()
 	_log("reset: liberando VoxelLodTerrain (geração %d, rev %d)" % [_world_generation, _revision])
+	var old_session := _session_path
+	await _release_terrain(false)
+	_discard_session(old_session)
+	_spawn_terrain()
+	_world_generation += 1
+	var ok := await _wait_until_ready()
+	_last_ready_ms = Time.get_ticks_msec() - t0
+	_end_busy()
+	_log("reset: geração %d pronta=%s em %d ms" % [_world_generation, ok, _last_ready_ms])
+	world_reset_finished.emit(_world_generation, _last_ready_ms)
+	return ok
+
+
+## Grava todas as edições no slot. O terreno é liberado e recriado a partir da mesma
+## sessão (o mundo volta do disco), então o jogador deve ficar congelado durante a chamada.
+func save_world(slot: String) -> bool:
+	if _resetting or not persistence_enabled or not TerrainSaveFiles.is_valid_slot(slot):
+		_last_save = {"slot": slot, "ok": false, "reason": "busy" if _resetting else "unavailable"}
+		world_saved.emit(slot, false, 0.0)
+		return false
+	_begin_busy("save")
+	world_save_started.emit(slot)
+	var t0 := Time.get_ticks_msec()
+	var session := _session_path
+	var released: Dictionary = await _release_terrain(true)
+	var copy_err := ERR_UNAVAILABLE
+	var dst := TerrainSaveFiles.slot_path(saves_dir, slot)
+	if released.saved:
+		TerrainSaveFiles.ensure_dir(saves_dir)
+		copy_err = TerrainSaveFiles.copy(session, dst)
+	_spawn_terrain(session)
+	var ready := await _wait_until_ready()
+	var ms := float(Time.get_ticks_msec() - t0)
+	var ok: bool = released.saved and copy_err == OK and ready
+	_last_save = {"slot": slot, "ok": ok, "ms": ms, "flush_ms": released.ms, "blocks_tasks": released.tasks,
+		"copy": error_string(copy_err), "bytes": TerrainSaveFiles.file_size(dst), "path": dst}
+	_last_ready_ms = ms
+	_end_busy()
+	_log("save %s: ok=%s %s" % [slot, ok, _last_save])
+	world_saved.emit(slot, ok, ms)
+	return ok
+
+
+## Substitui o mundo atual pelo slot salvo (sessão nova copiada do slot).
+func load_world(slot: String) -> bool:
+	if _resetting or not persistence_enabled or not has_saved_world(slot):
+		_last_load = {"slot": slot, "ok": false,
+			"reason": "busy" if _resetting else ("slot_not_found" if persistence_enabled else "unavailable")}
+		world_loaded.emit(slot, false, 0.0)
+		return false
+	_begin_busy("load")
+	world_load_started.emit(slot)
+	var t0 := Time.get_ticks_msec()
+	var old_session := _session_path
+	await _release_terrain(false)
+	_discard_session(old_session)
+	var session := _new_session_path()
+	var src := TerrainSaveFiles.slot_path(saves_dir, slot)
+	var copy_err := TerrainSaveFiles.copy(src, session)
+	_spawn_terrain(session)
+	_world_generation += 1
+	var ready := await _wait_until_ready()
+	var ms := float(Time.get_ticks_msec() - t0)
+	var ok := copy_err == OK and ready
+	_last_load = {"slot": slot, "ok": ok, "ms": ms, "copy": error_string(copy_err),
+		"bytes": TerrainSaveFiles.file_size(src)}
+	_last_ready_ms = ms
+	_end_busy()
+	_log("load %s: ok=%s %s" % [slot, ok, _last_load])
+	world_loaded.emit(slot, ok, ms)
+	return ok
+
+
+# --- Internos -----------------------------------------------------------------
+
+## `session_path` vazio = sessão nova. Sem persistência, terreno sem stream.
+func _spawn_terrain(session_path := "") -> void:
+	var parent := get_node(terrain_parent_path) as Node3D
+	assert(parent != null, "TerrainService: terrain_parent_path inválido")
+	_stream = null
+	if persistence_enabled:
+		TerrainSaveFiles.ensure_dir(world_dir)
+		_session_path = session_path if session_path != "" else _new_session_path()
+		_stream = VoxelStreamSQLite.new()
+		# Cache das chaves existentes no banco: blocos nunca salvos vão direto ao gerador sem
+		# consulta SQL. Medido: reset médio 581 → ~260 ms (docs/p1_results.md).
+		_stream.set_key_cache_enabled(true)
+		_stream.database_path = _session_path
+	_terrain = LabTerrainFactory.create_terrain(_stream)
+	parent.add_child(_terrain)
+	# API pública em coordenadas do mundo assume escala 1 (1 voxel = 1 unidade).
+	assert(_terrain.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE))
+	_tool = _terrain.get_voxel_tool()
+	_tool.channel = VoxelBuffer.CHANNEL_SDF
+
+
+func _new_session_path() -> String:
+	_session_index += 1
+	return TerrainSaveFiles.session_path(world_dir, _session_index)
+
+
+## Libera o nó do terreno e fecha o stream. Com `save`, antes grava os blocos
+## modificados e espera o VoxelSaveCompletionTracker (liberar SEM salvar não grava as
+## edições; conferido no spike, I1).
+func _release_terrain(save: bool) -> Dictionary:
+	var info := {"saved": false, "tasks": 0, "ms": 0.0}
+	if save and is_instance_valid(_terrain) and _stream != null:
+		var t0 := Time.get_ticks_msec()
+		var tracker: VoxelSaveCompletionTracker = _terrain.save_modified_blocks()
+		var deadline := t0 + int(save_timeout_s * 1000.0)
+		while not tracker.is_complete() and Time.get_ticks_msec() < deadline:
+			await get_tree().physics_frame
+		info.saved = tracker.is_complete() and not tracker.is_aborted()
+		info.tasks = tracker.get_total_tasks()
+		info.ms = float(Time.get_ticks_msec() - t0)
+		if not info.saved:
+			push_error("[TerrainService] save_modified_blocks não concluiu: restantes=%d abortado=%s" % [
+				tracker.get_remaining_tasks(), tracker.is_aborted()])
 	if is_instance_valid(_terrain):
 		_terrain.get_parent().remove_child(_terrain)
 		_terrain.free()
 	_terrain = null
 	_tool = null
 	await get_tree().physics_frame
-	_spawn_terrain()
-	_world_generation += 1
-	var ok := await _wait_until_ready()
-	_last_ready_ms = Time.get_ticks_msec() - t0
+	if _stream != null:
+		# database_path vazio fecha o SQLite (doc do Voxel Tools, "streams").
+		_stream.database_path = ""
+		_stream = null
+	_session_path = ""
+	return info
+
+
+## Apaga uma sessão já fechada; se o Windows ainda a travar, tenta de novo depois.
+func _discard_session(path: String) -> void:
+	if path != "":
+		_stale_sessions.append(path)
+	var keep := PackedStringArray()
+	for p in _stale_sessions:
+		if p != _session_path and TerrainSaveFiles.remove(p) != OK:
+			keep.append(p)
+	_stale_sessions = keep
+
+
+func _begin_busy(op: String) -> void:
+	_resetting = true
+	_ready_flag = false
+	_busy_op = op
+
+
+func _end_busy() -> void:
 	_resetting = false
-	_log("reset: geração %d pronta=%s em %d ms" % [_world_generation, ok, _last_ready_ms])
-	world_reset_finished.emit(_world_generation, _last_ready_ms)
-	return ok
-
-
-# --- Internos -----------------------------------------------------------------
-
-func _spawn_terrain() -> void:
-	var parent := get_node(terrain_parent_path) as Node3D
-	assert(parent != null, "TerrainService: terrain_parent_path inválido")
-	_terrain = LabTerrainFactory.create_terrain()
-	parent.add_child(_terrain)
-	# API pública em coordenadas do mundo assume escala 1 (1 voxel = 1 unidade).
-	assert(_terrain.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE))
-	_tool = _terrain.get_voxel_tool()
-	_tool.channel = VoxelBuffer.CHANNEL_SDF
+	_busy_op = ""
 
 
 func _wait_until_ready() -> bool:

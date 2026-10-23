@@ -11,6 +11,8 @@ extends Node3D
 
 const SELFTEST_SCRIPT := "res://scripts/dev/p0_selftest.gd"
 const P1_SELFTEST_SCRIPT := "res://scripts/dev/p1_selftest.gd"
+## Slot único do laboratório (F5 salva, F9 carrega).
+const SAVE_SLOT := "slot1"
 
 @onready var terrain_service: TerrainService = $World/TerrainService
 @onready var brush_queue: TerrainBrushQueue = $World/TerrainBrushQueue
@@ -31,6 +33,8 @@ func _ready() -> void:
 	edit_controller.setup(terrain_service, brush_queue, player, props_root)
 	hud.setup(terrain_service, player, edit_controller)
 	edit_controller.reset_requested.connect(request_world_reset)
+	edit_controller.save_requested.connect(func(): request_world_save(SAVE_SLOT))
+	edit_controller.load_requested.connect(func(): request_world_load(SAVE_SLOT))
 
 	player.set_frozen(true)
 	player.teleport_to(spawn_point.global_position)
@@ -69,3 +73,41 @@ func request_world_reset() -> bool:
 	player.teleport_to(spawn_point.global_position)
 	player.set_frozen(false)
 	return ok
+
+
+## Salva as edições do terreno no slot. O terreno é recriado do disco durante o save:
+## jogador e caixas ficam congelados (sem chão por alguns quadros) e voltam no mesmo lugar.
+## As caixas de teste NÃO são salvas (persistência de objetos é P2).
+func request_world_save(slot: String) -> bool:
+	if terrain_service.is_resetting():
+		return false
+	player.set_frozen(true)
+	_set_props_frozen(true)
+	var ok: bool = await terrain_service.save_world(slot)
+	_set_props_frozen(false)
+	player.set_frozen(false)
+	return ok
+
+
+## Troca o mundo pelo slot salvo: jogador volta ao spawn (o terreno salvo pode ter
+## matéria onde ele está agora) e as caixas de teste são removidas.
+func request_world_load(slot: String) -> bool:
+	if terrain_service.is_resetting():
+		return false
+	if not terrain_service.has_saved_world(slot):
+		return await terrain_service.load_world(slot)
+	player.set_frozen(true)
+	player.teleport_to(spawn_point.global_position)
+	for prop in props_root.get_children():
+		prop.queue_free()
+	var ok: bool = await terrain_service.load_world(slot)
+	player.teleport_to(spawn_point.global_position)
+	player.set_frozen(false)
+	return ok
+
+
+func _set_props_frozen(frozen: bool) -> void:
+	for prop in props_root.get_children():
+		var body := prop as RigidBody3D
+		if body != null:
+			body.freeze = frozen

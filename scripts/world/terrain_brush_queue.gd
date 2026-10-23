@@ -73,6 +73,8 @@ func _ready() -> void:
 	terrain_service = get_node_or_null(terrain_service_path) as TerrainService
 	if terrain_service != null:
 		terrain_service.world_reset_started.connect(func(): clear("reset"))
+		terrain_service.world_save_started.connect(func(_slot): clear("salvar"))
+		terrain_service.world_load_started.connect(func(_slot): clear("carregar"))
 
 
 # --- Pedidos avulsos ------------------------------------------------------------

@@ -6,25 +6,37 @@ extends "res://scripts/dev/p0_selftest.gd"
 ##   godot --path . res://scenes/main.tscn -- --p1-selftest --p1-screenshots
 ##   opcional: --report=<caminho.json>, --only=T8,T11 (T1 e baseline sempre rodam)
 ##
+## Persistência entre processos (T14x), em duas execuções seguidas:
+##   ... -- --p1-persist=write   edita, salva o slot e grava o estado esperado em JSON
+##   ... -- --p1-persist=read    processo novo: carrega o slot e compara com o JSON
+##
 ## Colisão é verificada por raycast físico ou movimento do corpo, como no P0.
 ## Código de saída: 0 = todos PASS, 1 = algum FAIL, 2 = watchdog.
 
 const P1_WATCHDOG_S := 900.0
+const PERSIST_SLOT := "selftest"
+const XPROC_SLOT := "selftest_xproc"
+const XPROC_EXPECTED := "p1_persist_expected.json"
+const SDF_TOLERANCE := 1e-4
 
 var queue: TerrainBrushQueue
 var controller: TerrainEditController
 var _brush_log: Array[Dictionary] = []
+var _persist_phase := ""
 
 
 func _ready() -> void:
 	queue = get_parent().brush_queue
 	controller = get_parent().edit_controller
 	queue.brush_applied.connect(_on_brush_applied)
+	for a: String in OS.get_cmdline_user_args():
+		if a.begins_with("--p1-persist="):
+			_persist_phase = a.trim_prefix("--p1-persist=")
 	super._ready()
 
 
 func _report_prefix() -> String:
-	return "p1_selftest"
+	return "p1_persist_%s" % _persist_phase if _persist_phase != "" else "p1_selftest"
 
 
 func _watchdog_seconds() -> float:
@@ -44,6 +56,8 @@ func _log(msg: String) -> void:
 
 
 func _run_tests() -> bool:
+	if _persist_phase != "":
+		return await _run_persist_phase()
 	var ok: bool = await super._run_tests()
 	if not ok:
 		return false
@@ -55,6 +69,21 @@ func _run_tests() -> bool:
 	if _should_run("T11"): await _t11_materials()
 	if _should_run("T12"): await _t12_terrain_changed()
 	if _should_run("T13"): await _t13_ramp()
+	if _should_run("T14"): await _t14_persistence()
+	return true
+
+
+func _run_persist_phase() -> bool:
+	await _t1_ground()
+	if _results.back().status != "PASS":
+		return false
+	await _capture_baseline()
+	if _persist_phase == "write":
+		await _t14x_write()
+	elif _persist_phase == "read":
+		await _t14x_read()
+	else:
+		_record("T14x", "fase desconhecida: %s" % _persist_phase, false, {})
 	return true
 
 
@@ -399,6 +428,177 @@ func _t13_ramp() -> void:
 		"jogador_x_final": player.global_position.x, "on_floor": player.is_on_floor()})
 	player.teleport_to(SPAWN)
 	await _seconds(0.3)
+
+
+# --- T14: persistência (mesmo processo) ---------------------------------------------
+
+func _t14_persistence() -> void:
+	var details := {}
+	var ok_reset0: bool = await main.request_world_reset()
+	var base := await _settled_probes(10.0, _baseline)
+	var edits := await _persist_scenario()
+	var edited := await _persist_state()
+	var visible_edits := _compare(_baseline, edited.probes)
+	details["edicoes"] = edits
+	details["probes_alteradas_pelas_edicoes"] = visible_edits.size()
+
+	var ok_save: bool = await main.request_world_save(PERSIST_SLOT)
+	var save_info: Dictionary = svc.get_debug_stats().last_save
+	var after_save := await _persist_state(edited.probes)
+	var d_save := _state_diff(edited, after_save)
+
+	var ok_reset: bool = await main.request_world_reset()
+	var after_reset := await _settled_probes(10.0, _baseline)
+	var d_reset := _compare(_baseline, after_reset)
+
+	var ok_load1: bool = await main.request_world_load(PERSIST_SLOT)
+	var load1_info: Dictionary = svc.get_debug_stats().last_load
+	var loaded1 := await _persist_state(edited.probes)
+	var d_load1 := _state_diff(edited, loaded1)
+	var ok_load2: bool = await main.request_world_load(PERSIST_SLOT)
+	var loaded2 := await _persist_state(edited.probes)
+	var d_load2 := _state_diff(edited, loaded2)
+	var column_key := "v(-14,22)"
+	var sessions := svc.count_session_files()
+	var ok: bool = ok_reset0 and _compare(_baseline, base).is_empty() and edits.all(func(e): return e.begins_with("OK")) \
+		and visible_edits.size() >= 4 and ok_save and d_save.is_empty() and ok_reset and d_reset.is_empty() \
+		and ok_load1 and d_load1.is_empty() and ok_load2 and d_load2.is_empty() and sessions <= 2
+	details.merge({
+		"salvar": save_info, "diferencas_apos_salvar": d_save,
+		"reset_volta_ao_baseline": d_reset.is_empty(), "diferencas_reset": d_reset,
+		"carregar_1": load1_info, "diferencas_carga_1": d_load1, "diferencas_carga_2": d_load2,
+		"topo_coluna_salvo_y": _probe_y(edited.probes, column_key),
+		"topo_coluna_carga_2_y": _probe_y(loaded2.probes, column_key),
+		"nos": {"editado": edited.nodes, "apos_salvar": after_save.nodes, "carga_1": loaded1.nodes, "carga_2": loaded2.nodes},
+		"amostras_sdf_material": edited.sdf.size(), "arquivos_de_sessao": sessions,
+	})
+	_record("T14", "Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar", ok, details)
+	await _shot("t14_mundo_carregado", SPAWN, 0.0, -8.0)
+	await main.request_world_reset()
+
+
+# --- T14x: persistência entre processos -----------------------------------------------
+
+func _t14x_write() -> void:
+	var edits := await _persist_scenario()
+	var edited := await _persist_state()
+	var ok_save: bool = await main.request_world_save(XPROC_SLOT)
+	var after_save := await _persist_state(edited.probes)
+	var d_save := _state_diff(edited, after_save)
+	var expected := {
+		"slot": XPROC_SLOT, "slot_path": svc.get_slot_path(XPROC_SLOT), "data": Time.get_datetime_string_from_system(),
+		"probes": _probes_to_json(edited.probes), "baseline": _probes_to_json(_baseline),
+		"sdf": edited.sdf, "mat": edited.mat, "nodes": edited.nodes,
+	}
+	var path := _evidence_dir() + XPROC_EXPECTED
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	var wrote := f != null
+	if wrote:
+		f.store_string(JSON.stringify(expected, "  "))
+		f.close()
+	var ok: bool = edits.all(func(e): return e.begins_with("OK")) and ok_save and d_save.is_empty() and wrote
+	_record("T14x-write", "Fase 1: editar, salvar o slot e gravar o estado esperado", ok, {
+		"edicoes": edits, "salvar": svc.get_debug_stats().last_save, "diferencas_apos_salvar": d_save,
+		"esperado_json": ProjectSettings.globalize_path(path), "probes_alteradas": _compare(_baseline, edited.probes).size()})
+
+
+func _t14x_read() -> void:
+	var path := _evidence_dir() + XPROC_EXPECTED
+	var text := FileAccess.get_file_as_string(path)
+	var expected = JSON.parse_string(text) if text != "" else null
+	if typeof(expected) != TYPE_DICTIONARY:
+		_record("T14x-read", "Fase 2: carregar o slot num processo novo", false, {"erro": "sem %s" % path})
+		return
+	var exp_probes := _probes_from_json(expected.probes)
+	var fresh_diff := _compare(_baseline, exp_probes)
+	var ok_load: bool = await main.request_world_load(XPROC_SLOT)
+	var loaded := await _persist_state(exp_probes)
+	var exp_state := {"probes": exp_probes, "sdf": expected.sdf, "mat": expected.mat, "nodes": int(expected.nodes)}
+	var d := _state_diff(exp_state, loaded)
+	var ok: bool = fresh_diff.size() >= 4 and ok_load and d.is_empty()
+	_record("T14x-read", "Fase 2: processo novo carrega o slot e reproduz o estado salvo", ok, {
+		"esperado_de": expected.get("data", ""), "slot": expected.get("slot", ""),
+		"mundo_novo_difere_do_salvo_em_probes": fresh_diff.size(), "carregar": svc.get_debug_stats().last_load,
+		"diferencas": d, "amostras_sdf_material": loaded.sdf.size(), "nos": {"esperado": exp_state.nodes, "obtido": loaded.nodes}})
+
+
+## Edições do cenário de persistência, pela fila: cratera, túnel pela colina, coluna de
+## areia e rampa de pedra (cada uma muda pelo menos uma probe do baseline).
+func _persist_scenario() -> Array:
+	player.teleport_to(SPAWN)
+	await _wait_until(func(): return svc.can_edit_area(AABB(Vector3(-18, -4, -40), Vector3(36, 20, 66))), 10.0)
+	var reqs: Array[TerrainBrushRequest] = [
+		TerrainBrushRequest.sphere(TerrainBrushRequest.Op.REMOVE, CRATER_POINT, CRATER_RADIUS),
+		TerrainBrushRequest.path(_tunnel_points(TUNNEL_Z_START, TUNNEL_Z_MID), _radii(7), false),
+		TerrainBrushRequest.path(_tunnel_points(TUNNEL_Z_MID, TUNNEL_Z_END), _radii(7), false),
+	]
+	for y in [0.5, 2.5, 4.5]:
+		reqs.append(TerrainBrushRequest.sphere(TerrainBrushRequest.Op.ADD, COLUMN_POINT + Vector3(0, y, 0), 2.0,
+			TerrainMaterialLibrary.SAND))
+	var old_radius := controller.radius
+	var old_mat := controller._add_material_index
+	controller.radius = 2.0
+	controller._add_material_index = TerrainMaterialLibrary.INDEX_STONE
+	reqs.append(controller.make_ramp_request(REPEAT_POINT + Vector3(0, 0, 4), Vector3.FORWARD))
+	controller.radius = old_radius
+	controller._add_material_index = old_mat
+	var log0 := _brush_log.size()
+	for r in reqs:
+		queue.enqueue(r)
+	await _drain_queue()
+	await _seconds(0.5)
+	return _brush_log.slice(log0).map(func(e): return ("OK " if e.ok else "FALHA ") + e.text)
+
+
+## Probes físicas assentadas + SDF e material dos DADOS em 108 pontos + nº de nós.
+func _persist_state(target := {}) -> Dictionary:
+	var probes := await _settled_probes(10.0, target)
+	var sdf := {}
+	var mat := {}
+	for c: Vector3 in [CRATER_POINT + Vector3.DOWN, Vector3(0, TUNNEL_Y, TUNNEL_Z_MID), COLUMN_POINT + Vector3(0, 3, 0),
+			REPEAT_POINT + Vector3(0, 1.5, 0)]:
+		for dx in [-2, 0, 2]:
+			for dy in [-2, 0, 2]:
+				for dz in [-2, 0, 2]:
+					var p := c + Vector3(dx, dy, dz)
+					var key := "%d,%d,%d" % [roundi(p.x), roundi(p.y), roundi(p.z)]
+					sdf[key] = svc.sample_sdf(p)
+					mat[key] = svc.sample_material_index(p)
+	await _seconds(0.3)
+	return {"probes": probes, "sdf": sdf, "mat": mat, "nodes": get_tree().get_node_count()}
+
+
+func _state_diff(a: Dictionary, b: Dictionary) -> Array:
+	var diffs := _compare(a.probes, b.probes)
+	for k in a.sdf:
+		if not b.sdf.has(k) or absf(float(a.sdf[k]) - float(b.sdf[k])) > SDF_TOLERANCE:
+			diffs.append({"sdf": k, "esperado": a.sdf[k], "obtido": b.sdf.get(k)})
+		if int(a.mat[k]) != int(b.mat.get(k, -1)):
+			diffs.append({"material": k, "esperado": a.mat[k], "obtido": b.mat.get(k)})
+	if int(a.nodes) != int(b.nodes):
+		diffs.append({"nos": {"esperado": a.nodes, "obtido": b.nodes}})
+	return diffs.slice(0, 20)
+
+
+func _probe_y(probes: Dictionary, key: String) -> float:
+	var v = probes.get(key)
+	return v.y if v != null else NAN
+
+
+func _probes_to_json(probes: Dictionary) -> Dictionary:
+	var out := {}
+	for k in probes:
+		var v = probes[k]
+		out[k] = [v.x, v.y, v.z] if v != null else null
+	return out
+
+
+func _probes_from_json(d: Dictionary) -> Dictionary:
+	var out := {}
+	for k in d:
+		var v = d[k]
+		out[k] = Vector3(v[0], v[1], v[2]) if v != null else null
+	return out
 
 
 # --- Utilidades P1 --------------------------------------------------------------------
