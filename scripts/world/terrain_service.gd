@@ -65,6 +65,8 @@ signal world_loaded(slot: String, ok: bool, duration_ms: float)
 var _terrain: VoxelLodTerrain
 var _tool: VoxelTool
 var _stream: VoxelStreamSQLite
+## Tracker de um save abortado que ainda grava em segundo plano (ver _flush_modified_blocks).
+var _inflight_tracker: VoxelSaveCompletionTracker
 var _session_index := 0
 var _session_path := ""
 var _stale_sessions := PackedStringArray()
@@ -317,7 +319,8 @@ func save_world(slot: String) -> bool:
 	var ms := float(Time.get_ticks_msec() - t0)
 	var ok: bool = copy_err == OK and ready
 	_last_save = {"slot": slot, "ok": ok, "ms": ms, "flush_ms": flushed.ms, "blocks_tasks": flushed.tasks,
-		"copy": error_string(copy_err), "bytes": TerrainSaveFiles.file_size(dst), "path": dst}
+		"save_anterior_em_voo": flushed.inflight, "copy": error_string(copy_err),
+		"bytes": TerrainSaveFiles.file_size(dst), "path": dst}
 	_last_ready_ms = ms
 	_end_busy()
 	_log("save %s: ok=%s %s" % [slot, ok, _last_save])
@@ -386,17 +389,32 @@ func _new_session_path() -> String:
 ## Grava os blocos modificados no stream e espera o VoxelSaveCompletionTracker.
 ## Liberar o nó SEM isto não grava as edições (conferido no spike, I1).
 func _flush_modified_blocks() -> Dictionary:
-	var info := {"saved": false, "tasks": 0, "ms": 0.0}
+	var info := {"saved": false, "tasks": 0, "ms": 0.0, "inflight": "nenhum"}
 	if not is_instance_valid(_terrain) or _stream == null:
 		return info
 	var t0 := Time.get_ticks_msec()
-	var tracker: VoxelSaveCompletionTracker = _terrain.save_modified_blocks()
 	var deadline := t0 + int(save_timeout_s * 1000.0)
+	# Um save abortado continua gravando em segundo plano, e os blocos dele já não contam
+	# como modificados: sem esperar por ele, este save veria "nada a gravar", fecharia o
+	# stream e as gravações em voo falhariam.
+	if _inflight_tracker != null:
+		info.inflight = "já concluído" if _inflight_tracker.is_complete() else "esperado"
+		while not _inflight_tracker.is_complete() and Time.get_ticks_msec() < deadline:
+			await get_tree().physics_frame
+		info["inflight_wait_ms"] = float(Time.get_ticks_msec() - t0)
+		if not _inflight_tracker.is_complete():
+			info.ms = float(Time.get_ticks_msec() - t0)
+			_log("save anterior ainda gravando após %.1f s" % save_timeout_s)
+			return info
+		_inflight_tracker = null
+	var tracker: VoxelSaveCompletionTracker = _terrain.save_modified_blocks()
 	while not tracker.is_complete() and Time.get_ticks_msec() < deadline:
 		await get_tree().physics_frame
 	info.saved = tracker.is_complete() and not tracker.is_aborted()
 	info.tasks = tracker.get_total_tasks()
 	info.ms = float(Time.get_ticks_msec() - t0)
+	if not tracker.is_complete():
+		_inflight_tracker = tracker
 	if not info.saved:
 		# Relatado por world_saved(ok=false) e no overlay; o save é abortado sem perda de dados.
 		_log("save_modified_blocks não concluiu em %.1f s: restantes=%d abortado=%s" % [
@@ -417,6 +435,8 @@ func _release_terrain() -> void:
 		_stream.database_path = ""
 		_stream = null
 	_session_path = ""
+	# Gravações pendentes de um save abortado iam para a sessão que acabou de ser fechada.
+	_inflight_tracker = null
 
 
 ## Apaga uma sessão já fechada; se o Windows ainda a travar, tenta de novo depois.

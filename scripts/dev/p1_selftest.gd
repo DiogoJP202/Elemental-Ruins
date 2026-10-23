@@ -446,24 +446,25 @@ func _t14_persistence() -> void:
 	details["probes_alteradas_pelas_edicoes"] = visible_edits.size()
 
 	# Save que não termina a gravação a tempo (timeout zerado) deve abortar SEM liberar o
-	# terreno: edições intactas e nenhum slot criado. Se a gravação terminar no 1º quadro, o
-	# caminho de aborto não é exercitado e isso fica registrado.
+	# terreno: nenhum slot criado e o terreno segue pronto. O save normal sai LOGO DEPOIS,
+	# com as gravações do abortado ainda em voo: ele precisa esperá-las, senão o slot sai
+	# incompleto (a carga mais abaixo compara tudo). Se a gravação abortada terminar no 1º
+	# quadro, o caminho não é exercitado e isso fica registrado.
 	var old_timeout := svc.save_timeout_s
 	svc.save_timeout_s = 0.0
 	TerrainSaveFiles.remove(svc.get_slot_path("selftest_abort"))
 	var ok_abort_save: bool = await main.request_world_save("selftest_abort")
 	svc.save_timeout_s = old_timeout
 	var abort_info: Dictionary = svc.get_debug_stats().last_save
-	var after_abort := await _persist_state(edited.probes)
 	var aborted: bool = not ok_abort_save and abort_info.get("reason", "") == "flush_incomplete"
-	var abort_ok: bool = svc.is_ready() and _state_diff(edited, after_abort).is_empty() \
-		and (not aborted or not svc.has_saved_world("selftest_abort"))
-	details["save_abortado"] = {"exercitado": aborted, "resultado": abort_info, "mundo_intacto": abort_ok}
+	var abort_ok: bool = svc.is_ready() and (not aborted or not svc.has_saved_world("selftest_abort"))
 
 	var ok_save: bool = await main.request_world_save(PERSIST_SLOT)
 	var save_info: Dictionary = svc.get_debug_stats().last_save
 	var after_save := await _persist_state(edited.probes)
 	var d_save := _state_diff(edited, after_save)
+	details["save_abortado"] = {"exercitado": aborted, "resultado": abort_info, "terreno_pronto_sem_slot": abort_ok,
+		"save_seguinte_imediato": save_info}
 
 	var ok_reset: bool = await main.request_world_reset()
 	var after_reset := await _settled_probes(10.0, _baseline)
