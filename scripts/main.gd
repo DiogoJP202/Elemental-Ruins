@@ -30,6 +30,7 @@ const SAVE_SLOT := "slot1"
 @onready var player: PlayerController = $Player
 @onready var edit_controller: TerrainEditController = $TerrainEditController
 @onready var abilities: AbilityController = $AbilityController
+@onready var fx: ElementalFx = $ElementalFx
 @onready var hud: DebugHud = $HUD
 
 var reset_count := 0
@@ -42,6 +43,7 @@ func _ready() -> void:
 		RenderingServer.get_current_rendering_method()])
 	edit_controller.setup(terrain_service, brush_queue, player, props_root)
 	abilities.setup(terrain_service, materials, structures, player, props_root, dust)
+	fx.setup(abilities, materials)
 	hud.setup(terrain_service, brush_queue, player, edit_controller, structures, debris, abilities, materials)
 	edit_controller.reset_requested.connect(request_world_reset)
 	edit_controller.save_requested.connect(func(): request_world_save(SAVE_SLOT))

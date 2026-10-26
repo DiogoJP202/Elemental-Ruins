@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/world/voxel_lab.tscn" id="2_world"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/gameplay/terrain_edit_controller.gd" id="4_controller"]
 [ext_resource type="PackedScene" path="res://scenes/ui/debug_hud.tscn" id="5_hud"]
 [ext_resource type="Script" path="res://scripts/abilities/ability_controller.gd" id="6_abilities"]
+[ext_resource type="Script" path="res://scripts/elements/elemental_fx.gd" id="7_fx"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -20,5 +21,8 @@ script = ExtResource("4_controller")
 
 [node name="AbilityController" type="Node" parent="."]
 script = ExtResource("6_abilities")
+
+[node name="ElementalFx" type="Node3D" parent="."]
+script = ExtResource("7_fx")
 
 [node name="HUD" parent="." instance=ExtResource("5_hud")]

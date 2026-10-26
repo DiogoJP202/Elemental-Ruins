@@ -54,6 +54,7 @@ func _run_tests() -> bool:
 	if _should_run("T32"): await _t32_fire_burst()
 	if _should_run("T33"): await _t33_water_puts_out_fire()
 	if _should_run("T34"): await _t34_air_gust()
+	if _should_run("T35"): await _t35_fire_burns_tower()
 	return true
 
 
@@ -319,6 +320,7 @@ func _t32_fire_burst() -> void:
 	var charred := await _wait_until(func(): return as_.charred or as_.consumed, 12.0)
 	cases["c_acende_espalha_carboniza"] = {"tocou": fired, "acesa": a_lit, "vizinha_acesa": b_lit,
 		"s_ate_vizinha": spread_s, "estado": as_.describe(), "combustivel": as_.fuel,
+		"chamas_fx": (main.fx as ElementalFx).get_stats().flames_created,
 		"ok": fired and a_lit and b_lit and charred and as_.fuel < as_.material.fuel_seconds}
 	player.input_enabled = false
 	var ok: bool = cases.values().all(func(v): return v.ok)
@@ -348,16 +350,19 @@ func _t33_water_puts_out_fire() -> void:
 		if body == crate:
 			causes.append(cause)
 	materials.extinguished.connect(cb)
+	var fx: ElementalFx = main.fx
+	var steam0: int = fx.get_stats().steam
 	ab.select(1)
 	var t0 := Time.get_ticks_msec()
 	await _hold_on(crate, 4.0, func(): return not cs.burning)
 	var out_s := (Time.get_ticks_msec() - t0) / 1000.0
 	materials.extinguished.disconnect(cb)
 	player.input_enabled = false
-	var ok: bool = lit and intensity > 0.8 and not cs.burning and out_s <= 3.0 and causes == ["água"]
-	_record("T33", "Água × Fogo: o jato apaga a caixa em chamas em ≤ 3 s (causa: água)", ok, {
+	var steam: int = fx.get_stats().steam - steam0
+	var ok: bool = lit and intensity > 0.8 and not cs.burning and out_s <= 3.0 and causes == ["água"] and steam >= 1
+	_record("T33", "Água × Fogo: o jato apaga a caixa em chamas em ≤ 3 s (causa: água) e solta vapor", ok, {
 		"acesa": lit, "intensidade_antes": intensity, "s_ate_apagar": out_s, "causas": causes,
-		"estado": cs.describe()})
+		"estado": cs.describe(), "vapor": steam})
 	for ch in props.get_children():
 		ch.queue_free()
 	materials.clear()
@@ -428,6 +433,64 @@ func _t34_air_gust() -> void:
 	for ch in props.get_children():
 		ch.queue_free()
 	materials.clear()
+
+
+# --- T35: Fogo × torre (2º andar de madeira) ------------------------------------------------
+
+func _t35_fire_burns_tower() -> void:
+	var ab: AbilityController = main.abilities
+	var fx: ElementalFx = main.fx
+	await main.request_world_reset()
+	await _go_to_tower()
+	ab.select(2)
+	ab.require_captured_mouse = false
+	player.input_enabled = true
+	await _seconds(0.4)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var o := structures.tower_origin
+	var low: Array[StructurePiece] = []  # bloco de baixo de cada pilar de madeira da frente
+	var front_slabs: Array[StructurePiece] = []
+	var back: Array[StructurePiece] = []  # madeira e placas de trás: devem ficar
+	var wood := 0
+	for p in structures.get_pieces():
+		var d := p.home.origin - o
+		wood += int(p.material_id == BodyMaterialLibrary.WOOD)
+		if p.kind == "pilar1" and d.z > 0 and d.y < 6.5:
+			low.append(p)
+		elif p.kind == "laje2" and d.z > 0:
+			front_slabs.append(p)
+		elif (p.kind == "pilar1" or p.kind == "laje2") and d.z < 0:
+			back.append(p)
+	var s0 := structures.get_stats()
+	var fx0: Dictionary = fx.get_stats()
+	for p in low:
+		await _tap_at(MaterialResponseSystem.body_center(p))
+		await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	var lit := low.all(func(p): return materials.state_of(p).burning)
+	var t0 := Time.get_ticks_msec()
+	var fell := await _wait_until(func(): return front_slabs.all(func(p): return p.released), 45.0)
+	var fell_s := (Time.get_ticks_msec() - t0) / 1000.0
+	await _wait_structures_idle(3.0)
+	await _seconds(1.0)
+	player.input_enabled = false
+	var s1 := structures.get_stats()
+	var fx1: Dictionary = fx.get_stats()
+	var back_held := back.all(func(p): return not p.released)
+	var consumed: int = s1.consumed - s0.consumed
+	await _shot("t35_fogo_derruba_metade_de_cima", o + Vector3(0, 0.5, 16), 0.0, -10.0)
+	# Reset: torre de volta intacta, sem fogo nem estados.
+	await main.request_world_reset()
+	await get_tree().physics_frame
+	var rebuilt := structures.get_pieces()
+	var reset_ok: bool = rebuilt.size() == 36 and rebuilt.all(func(p): return not p.released and p.visible) \
+		and materials.burning_count() == 0 and materials.get_stats().tracked == 0
+	var ok: bool = wood == 8 and low.size() == 2 and front_slabs.size() == 2 and lit and fell and back_held \
+		and consumed >= 2 and fx1.flames_created - fx0.flames_created >= 2 and reset_ok
+	_record("T35", "Fogo × torre: queimar os 2 pilares de madeira da frente derruba as placas de cima pelo grafo; reset remonta", ok, {
+		"blocos_de_madeira": wood, "acesos": lit, "placas_da_frente_caidas": fell, "s_ate_cair": fell_s,
+		"tras_intactas": back_held, "consumidas": consumed, "soltas": s1.released - s0.released,
+		"ultima_quebra": s1.last_break, "chamas_fx": fx1.flames_created - fx0.flames_created,
+		"carbonizadas_fx": fx1.charred - fx0.charred, "reset_torre_intacta_sem_estados": reset_ok})
 
 
 # --- Utilidades P3 -------------------------------------------------------------------------
