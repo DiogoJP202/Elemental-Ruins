@@ -142,6 +142,10 @@ func cancel() -> void:
 	phase = ""
 
 
+func clear() -> void:
+	_thrown.clear()
+
+
 func status() -> String:
 	if phase == "rising" or phase == "held":
 		return "segurando rocha de %.1f t (%s)" % [rock.mass / 1000.0 if rock != null else 0.0, "subindo" if phase == "rising" else "pronta: solte para arremessar"]
@@ -175,11 +179,7 @@ static func half_height(body: RigidBody3D) -> float:
 ## Centro da malha no mundo. O corpo criado por separate_floating_chunks tem a origem no canto
 ## da caixa do pedaço (~3 m do centro): mirar ou segurar pela origem erra o alvo (medido no T29).
 static func center_of(body: RigidBody3D) -> Vector3:
-	for ch in body.get_children():
-		if ch is MeshInstance3D and (ch as MeshInstance3D).mesh != null:
-			var mi := ch as MeshInstance3D
-			return mi.global_transform * mi.mesh.get_aabb().get_center()
-	return body.global_position
+	return MaterialResponseSystem.body_center(body)
 
 
 ## 1º passo de física com contato em CORPOS (terreno não conta: a rocha pode raspar o chão e

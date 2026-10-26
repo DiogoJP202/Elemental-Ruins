@@ -50,6 +50,10 @@ func _run_tests() -> bool:
 	if _should_run("T28"): await _t28_controller()
 	if _should_run("T29"): await _t29_earth_lift_throw()
 	if _should_run("T30"): await _t30_earth_breaks_tower()
+	if _should_run("T31"): await _t31_water_jet()
+	if _should_run("T32"): await _t32_fire_burst()
+	if _should_run("T33"): await _t33_water_puts_out_fire()
+	if _should_run("T34"): await _t34_air_gust()
 	return true
 
 
@@ -226,7 +230,263 @@ func _t30_earth_breaks_tower() -> void:
 	await main.request_world_reset()
 
 
+# --- T31: Água — jato ----------------------------------------------------------------------
+
+func _t31_water_jet() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	# Caixa escondida atrás de um morro de terreno (esfera aditiva entre o jogador e ela).
+	var hidden := DebugProps.spawn_crate(props, base + Vector3(-5, 0, -7))
+	var wall := svc.add_sphere(base + Vector3(-2.5, 0.8, -3.6), 1.4)
+	var wall_up := await _wait_until(func(): return not svc.raycast_terrain(ab.hand_position(),
+		MaterialResponseSystem.body_center(hidden)).is_empty(), 3.0)
+	await _seconds(1.0)
+	var h0 := hidden.global_position
+	var s0 := jet.get_stats()
+	await _hold_on(hidden, 1.0)
+	var s1 := jet.get_stats()
+	var hidden_moved := hidden.global_position.distance_to(h0)
+	var hidden_wet := materials.state_of(hidden).wetness
+	# Caixa à vista, 6 m à frente: 1,5 s de jato (a mira acompanha a caixa, como o jogador faria).
+	var crate := DebugProps.spawn_crate(props, base + Vector3(0, 0, -6))
+	await _seconds(1.0)
+	var c0 := crate.global_position
+	var pressed := await _hold_on(crate, 1.5)
+	await _seconds(1.0)
+	var moved := crate.global_position.distance_to(c0)
+	var cs := materials.state_of(crate)
+	var s2 := jet.get_stats()
+	player.input_enabled = false
+	var ok: bool = wall.ok and wall_up and hidden_moved < 0.05 and hidden_wet < 0.001 \
+		and s1.terrain_ticks > s0.terrain_ticks and s1.body_ticks == s0.body_ticks \
+		and pressed and moved > 1.0 and cs.wetness >= 0.3
+	_record("T31", "Água: jato empurra a caixa por força contínua e a molha; caixa atrás de terreno não é atingida", ok, {
+		"morro_criado": wall.ok, "morro_bloqueia_visada": wall_up, "escondida_deslocada_m": hidden_moved,
+		"escondida_umidade": hidden_wet, "quadros_no_terreno": s1.terrain_ticks - s0.terrain_ticks,
+		"quadros_na_escondida": s1.body_ticks - s0.body_ticks, "caixa_deslocada_m": moved,
+		"caixa_estado": cs.describe(), "quadros_na_caixa": s2.body_ticks - s1.body_ticks})
+	await _shot("t31_jato_dagua", player.global_position, 0.0, -15.0, false)
+	for ch in props.get_children():
+		ch.queue_free()
+
+
+# --- T32: Fogo — rajada --------------------------------------------------------------------
+
+func _t32_fire_burst() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(2)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var cases := {}
+	# a) Rocha real extraída do terreno: só aquece.
+	var ground := svc.raycast_terrain(base + Vector3(6, 5, -12), base + Vector3(6, -10, -12))
+	var out: Dictionary = svc.extract_rock(ground.position, Vector3.UP, 1.2, props, Vector3.BACK) if not ground.is_empty() else {"bodies": []}
+	var rock: RigidBody3D = out.bodies[0] if not out.bodies.is_empty() else null
+	if rock != null:
+		await _seconds(1.5)
+		await _tap_at(MaterialResponseSystem.body_center(rock))
+		await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+		var rs := materials.state_of(rock)
+		cases["a_rocha_so_aquece"] = {"estado": rs.describe() if rs else "sem material", "massa_kg": rock.mass,
+			"ok": rs != null and not rs.burning and rs.temperature > 60.0}
+	else:
+		cases["a_rocha_so_aquece"] = {"extracao": str(out.get("result")), "ok": false}
+	# b) Madeira molhada (60%): a 1ª rajada gasta o calor secando; a 2ª acende.
+	var wet := DebugProps.spawn_crate(props, base + Vector3(-5, 0, -7))
+	await _seconds(0.8)
+	_apply_direct(ElementalEvent.Kind.WET, wet, 0.6)
+	var ws := materials.state_of(wet)
+	await _tap_at(MaterialResponseSystem.body_center(wet))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	var after_1 := ws.describe()
+	var burn_1 := ws.burning
+	await _tap_at(MaterialResponseSystem.body_center(wet))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	cases["b_molhada_resiste_1a_rajada"] = {"apos_1a": after_1, "apos_2a": ws.describe(), "ok": not burn_1 and ws.burning}
+	_apply_direct(ElementalEvent.Kind.WET, wet, 1.0)
+	# c) Caixa seca acende, queima, consome combustível e carboniza; a vizinha (0,5 m de vão) pega fogo.
+	var a := DebugProps.spawn_crate(props, base + Vector3(0, 0, -7))
+	var b := DebugProps.spawn_crate(props, base + Vector3(1.5, 0, -7))
+	await _seconds(0.8)
+	var fired := await _tap_at(MaterialResponseSystem.body_center(a))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	var as_ := materials.state_of(a)
+	var bs := materials.state_of(b)
+	var a_lit := as_.burning
+	var t0 := Time.get_ticks_msec()
+	var b_lit := await _wait_until(func(): return bs.burning, 15.0)
+	var spread_s := (Time.get_ticks_msec() - t0) / 1000.0
+	var charred := await _wait_until(func(): return as_.charred or as_.consumed, 12.0)
+	cases["c_acende_espalha_carboniza"] = {"tocou": fired, "acesa": a_lit, "vizinha_acesa": b_lit,
+		"s_ate_vizinha": spread_s, "estado": as_.describe(), "combustivel": as_.fuel,
+		"ok": fired and a_lit and b_lit and charred and as_.fuel < as_.material.fuel_seconds}
+	player.input_enabled = false
+	var ok: bool = cases.values().all(func(v): return v.ok)
+	_record("T32", "Fogo: rajada acende madeira, queima, carboniza e espalha; molhada resiste à 1ª; rocha só aquece", ok, cases)
+	await _shot("t32_fogo", player.global_position, 0.0, -15.0, false)
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
+# --- T33: Água × Fogo ----------------------------------------------------------------------
+
+func _t33_water_puts_out_fire() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(2)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var crate := DebugProps.spawn_crate(props, base + Vector3(0, 0, -6))
+	await _seconds(0.8)
+	await _tap_at(MaterialResponseSystem.body_center(crate))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	var cs := materials.state_of(crate)
+	var lit := cs.burning
+	await _seconds(2.5)
+	var intensity := cs.intensity
+	var causes := []
+	var cb := func(body, cause):
+		if body == crate:
+			causes.append(cause)
+	materials.extinguished.connect(cb)
+	ab.select(1)
+	var t0 := Time.get_ticks_msec()
+	await _hold_on(crate, 4.0, func(): return not cs.burning)
+	var out_s := (Time.get_ticks_msec() - t0) / 1000.0
+	materials.extinguished.disconnect(cb)
+	player.input_enabled = false
+	var ok: bool = lit and intensity > 0.8 and not cs.burning and out_s <= 3.0 and causes == ["água"]
+	_record("T33", "Água × Fogo: o jato apaga a caixa em chamas em ≤ 3 s (causa: água)", ok, {
+		"acesa": lit, "intensidade_antes": intensity, "s_ate_apagar": out_s, "causas": causes,
+		"estado": cs.describe()})
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
+# --- T34: Ar — rajada ----------------------------------------------------------------------
+
+func _t34_air_gust() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(3)
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	# Leque à frente: caixa a ~5 m, fogo pequeno e grande, e uma caixa atrás de um morro.
+	var hidden := DebugProps.spawn_crate(props, base + Vector3(-3, 0, -7))
+	var wall := svc.add_sphere(base + Vector3(-1.6, 0.6, -3.8), 1.2)
+	var crate := DebugProps.spawn_crate(props, base + Vector3(1.5, 0, -5))
+	var small := DebugProps.spawn_crate(props, base + Vector3(0.3, 0, -2.2))
+	var big := DebugProps.spawn_crate(props, base + Vector3(1.2, 0, -3.0))
+	var wall_up := await _wait_until(func(): return not svc.raycast_terrain(ab.hand_position(),
+		MaterialResponseSystem.body_center(hidden)).is_empty(), 3.0)
+	await _seconds(1.0)
+	_apply_direct(ElementalEvent.Kind.HEAT, small, 400.0)
+	_apply_direct(ElementalEvent.Kind.HEAT, big, 400.0)
+	var ss := materials.state_of(small)
+	var bs := materials.state_of(big)
+	ss.intensity = 0.2
+	bs.intensity = 0.6
+	var c0 := crate.global_position
+	var h0 := hidden.global_position
+	await _tap_at(base + Vector3(0, 0.5, -6))
+	await get_tree().physics_frame
+	var crate_v := crate.linear_velocity.length()
+	var hidden_v := hidden.linear_velocity.length()
+	var small_out := not ss.burning
+	var big_i := bs.intensity
+	var g := gust.last_gust
+	await _seconds(1.5)
+	var crate_moved := crate.global_position.distance_to(c0)
+	var hidden_moved := hidden.global_position.distance_to(h0)
+	# Rocha real (extraída), à mesma faixa de distância: quase não se mexe.
+	var ground := svc.raycast_terrain(base + Vector3(5, 5, -12), base + Vector3(5, -10, -12))
+	var out: Dictionary = svc.extract_rock(ground.position, Vector3.UP, 1.2, props, Vector3.RIGHT) if not ground.is_empty() else {"bodies": []}
+	var rock: RigidBody3D = out.bodies[0] if not out.bodies.is_empty() else null
+	var rock_v := INF
+	var rock_mass := 0.0
+	var rock_in_gust := false
+	if rock != null:
+		await _seconds(1.5)
+		var rc := MaterialResponseSystem.body_center(rock)
+		var away := Vector3(rc.x - ground.position.x, 0.0, rc.z - ground.position.z)
+		away = away.normalized() if away.length() > 0.1 else Vector3.BACK
+		player.teleport_to(Vector3(rc.x, rc.y, rc.z) + away * 4.5)
+		await _seconds(0.8)
+		await _tap_at(rc)
+		await get_tree().physics_frame
+		rock_v = rock.linear_velocity.length()
+		rock_mass = rock.mass
+		rock_in_gust = (gust.last_gust.get("hit", []) as Array).has(rock)
+	player.input_enabled = false
+	var ok: bool = wall.ok and wall_up and crate_v >= 4.0 and crate_moved > 2.0 and hidden_v < 0.05 \
+		and hidden_moved < 0.05 and small_out and bs.burning and big_i > 0.75 \
+		and rock != null and rock_in_gust and rock_v < crate_v / 10.0
+	_record("T34", "Ar: rajada lança a caixa, mal mexe a rocha, não passa terreno; apaga fogo fraco e aviva o forte", ok, {
+		"morro_bloqueia_visada": wall_up, "caixa_vel": crate_v, "caixa_deslocada_m": crate_moved,
+		"escondida_vel": hidden_v, "escondida_deslocada_m": hidden_moved,
+		"corpos_na_rajada": (g.get("hit", []) as Array).size(), "bloqueados_por_terreno": g.get("blocked", -1),
+		"fogo_fraco_apagou": small_out, "fogo_forte_intensidade": big_i, "rocha_kg": rock_mass, "rocha_vel": rock_v, "rocha_na_rajada": rock_in_gust})
+	await _shot("t34_rajada_de_ar", player.global_position, 0.0, -15.0, false)
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
 # --- Utilidades P3 -------------------------------------------------------------------------
+
+## Laboratório P3 limpo (reset), jogador 8 m ao sul de LAB_P3 olhando para -Z, elemento `index`.
+func _p3_lab(index: int) -> Vector3:
+	var ab: AbilityController = main.abilities
+	await main.request_world_reset()
+	var base := LAB_P3 + Vector3(0, 0, 8)
+	await _prepare_area(base, AABB(LAB_P3 - Vector3(8, 4, 16), Vector3(16, 10, 30)))
+	ab.select(index)
+	ab.require_captured_mouse = false
+	player.input_enabled = true
+	player.camera_rig.set_view(0.0, deg_to_rad(-20.0))
+	await _seconds(0.4)
+	return base
+
+
+## Evento aplicado direto a um corpo (prepara estados; não passa por poder).
+func _apply_direct(kind: ElementalEvent.Kind, body: Node3D, magnitude: float) -> void:
+	var e := ElementalEvent.make(kind, MaterialResponseSystem.body_center(body), magnitude, 0.0, &"selftest")
+	e.target = body
+	materials.apply(e)
+
+
+## Mira no ponto e dá um toque no LMB (poder atual).
+func _tap_at(point: Vector3) -> bool:
+	var ab: AbilityController = main.abilities
+	await _aim_settle(point)
+	var ok := ab.use_pressed()
+	ab.use_released()
+	return ok
+
+
+## Mira e espera o braço de mola da câmera assentar: depois de girar muito, a câmera muda de
+## posição no quadro de física seguinte e o raio da mira passava ao lado da caixa (medido no T32).
+func _aim_settle(point: Vector3) -> void:
+	for i in 4:
+		_aim_at(point)
+		await get_tree().physics_frame
+	_aim_at(point)
+
+
+## Segura o LMB por `seconds` de física, com a mira acompanhando o centro do corpo; para antes
+## se `stop` devolver true.
+func _hold_on(body: Node3D, seconds: float, stop := Callable()) -> bool:
+	var ab: AbilityController = main.abilities
+	await _aim_settle(MaterialResponseSystem.body_center(body))
+	var ok := ab.use_pressed()
+	var frames := int(seconds * Engine.physics_ticks_per_second)
+	for i in frames:
+		if not ok or (stop.is_valid() and stop.call()):
+			break
+		if is_instance_valid(body):
+			_aim_at(MaterialResponseSystem.body_center(body))
+		await get_tree().physics_frame
+	ab.use_released()
+	return ok
+
 
 ## Envia um InputEventAction (o mesmo caminho do teclado/mouse até _unhandled_input).
 func _send_action(action: StringName, pressed: bool) -> void:

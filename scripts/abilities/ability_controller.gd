@@ -34,7 +34,7 @@ func setup(p_terrain: TerrainService, p_materials: MaterialResponseSystem, p_str
 	player = p_player
 	props_root = p_props
 	dust = p_dust
-	abilities = [EarthLiftThrow.new()]
+	abilities = [EarthLiftThrow.new(), WaterJet.new(), FireBurst.new(), AirGust.new()]
 	for a in abilities:
 		a.setup(self)
 	require_captured_mouse = DisplayServer.get_name() != "headless"
@@ -90,6 +90,7 @@ func cancel_all() -> void:
 	holding = false
 	for a in abilities:
 		a.cancel()
+		a.clear()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -142,6 +143,30 @@ func aim_terrain(max_distance: float) -> Dictionary:
 func aim_any(max_distance: float, exclude: Array[RID] = []) -> Dictionary:
 	var r := aim_ray()
 	var q := PhysicsRayQueryParameters3D.create(r[0], r[0] + r[1] * max_distance, Layers.TERRAIN | Layers.PROPS, exclude)
+	return player.get_world_3d().direct_space_state.intersect_ray(q)
+
+
+## Ponto que a mira atinge (terreno ou corpo), ou o fim do raio se não atinge nada.
+func aim_point(max_distance: float) -> Vector3:
+	var hit := aim_any(max_distance)
+	if not hit.is_empty():
+		return hit.position
+	var r := aim_ray()
+	return r[0] + (r[1] as Vector3).normalized() * max_distance
+
+
+## De onde saem jato, bola de fogo e rajada: à frente do peito, na direção horizontal da mira
+## (fora da cápsula do jogador, raio 0,35 m).
+func hand_position() -> Vector3:
+	var fwd := aim_direction()
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	return player.global_position + Vector3.UP * 1.3 + fwd * 0.6
+
+
+## Primeiro terreno ou corpo (PROPS) no segmento `from` → `to` ({} se nada).
+func cast_segment(from: Vector3, to: Vector3) -> Dictionary:
+	var q := PhysicsRayQueryParameters3D.create(from, to, Layers.TERRAIN | Layers.PROPS)
 	return player.get_world_3d().direct_space_state.intersect_ray(q)
 
 

@@ -5,7 +5,7 @@ extends Node
 ## Não é solver de combustão nem de fluidos: são transições de estado de jogo.
 ##
 ## Regras:
-##   HEAT     umidade evapora primeiro (100 unidades secam tudo); o resto sobe a temperatura,
+##   HEAT     umidade evapora primeiro (DRY_HEAT = 400 unidades secam tudo); o resto sobe a temperatura,
 ##            dividido pela resistência térmica. Inflamável, quase seco e acima da ignição: acende.
 ##   WET      soma umidade, resfria (200 °C por unidade) e enfraquece o fogo; apaga se o fogo
 ##            acaba ou o corpo passa de 30% de umidade.
@@ -21,8 +21,10 @@ signal burned_out(body: Node3D)
 signal kinetic_break(body: Node3D, impulse: float)
 
 const TICK_S := 0.2
-const SPREAD_RADIUS := 1.8
-const SPREAD_HEAT_PER_S := 120.0
+const SPREAD_RADIUS := 2.2
+const SPREAD_HEAT_PER_S := 200.0
+## Calor gasto para secar umidade 1,0 antes de esquentar: madeira encharcada resiste a uma rajada.
+const DRY_HEAT := 400.0
 const FIRE_GROWTH_PER_S := 0.25
 const MAX_BURNING := 48
 
@@ -82,16 +84,21 @@ func clear() -> void:
 
 # --- Eventos -------------------------------------------------------------------------------
 
-## Aplica o evento aos corpos atingidos e devolve quais foram.
+## Aplica o evento aos corpos atingidos e devolve quais foram. Com `target`, o alvo recebe a
+## magnitude inteira; com `radius` > 0, os outros corpos da esfera recebem a queda linear
+## (alvo + raio = golpe direto com respingo).
 func apply(event: ElementalEvent) -> Array[Node3D]:
 	_stats.events += 1
 	var hit: Array[Node3D] = []
 	if event.target != null:
 		_apply_to(event, event.target, 1.0)
 		hit.append(event.target)
-		return hit
+		if event.radius <= 0.0:
+			return hit
 	for body in bodies_in_sphere(event.origin, event.radius):
-		var falloff := 1.0 - clampf(body.global_position.distance_to(event.origin) / maxf(event.radius, 0.01), 0.0, 1.0)
+		if body == event.target:
+			continue
+		var falloff := 1.0 - clampf(body_center(body).distance_to(event.origin) / maxf(event.radius, 0.01), 0.0, 1.0)
 		if falloff <= 0.0:
 			continue
 		_apply_to(event, body, falloff)
@@ -115,6 +122,16 @@ func bodies_in_sphere(center: Vector3, radius: float, max_results := 64) -> Arra
 		if b != null and not out.has(b):
 			out.append(b)
 	return out
+
+
+## Centro da malha no mundo. Rochas de separate_floating_chunks têm a origem no canto da caixa
+## do pedaço (~3 m do centro): distâncias e mira pela origem erram (medido no T29).
+static func body_center(body: Node3D) -> Vector3:
+	for ch in body.get_children():
+		if ch is MeshInstance3D and (ch as MeshInstance3D).mesh != null:
+			var mi := ch as MeshInstance3D
+			return mi.global_transform * mi.mesh.get_aabb().get_center()
+	return body.global_position
 
 
 func _apply_to(event: ElementalEvent, body: Node3D, falloff: float) -> void:
@@ -151,8 +168,8 @@ func _apply_to(event: ElementalEvent, body: Node3D, falloff: float) -> void:
 
 func _heat(body: Node3D, s: MaterialState, units: float) -> void:
 	var effective := units / s.material.heat_resistance
-	var to_dry := minf(effective, s.wetness * 100.0)
-	s.wetness = maxf(0.0, s.wetness - to_dry / 100.0)
+	var to_dry := minf(effective, s.wetness * DRY_HEAT)
+	s.wetness = maxf(0.0, s.wetness - to_dry / DRY_HEAT)
 	s.temperature += effective - to_dry
 	if s.burning:
 		s.intensity = minf(1.0, s.intensity + effective / 400.0)
@@ -214,10 +231,11 @@ func _physics_process(delta: float) -> void:
 		var src: Node3D = item[0]
 		if not is_instance_valid(src):
 			continue
-		for other in bodies_in_sphere(src.global_position, SPREAD_RADIUS):
+		var c := body_center(src)
+		for other in bodies_in_sphere(c, SPREAD_RADIUS):
 			if other == src:
 				continue
-			var falloff := 1.0 - clampf(other.global_position.distance_to(src.global_position) / SPREAD_RADIUS, 0.0, 1.0)
+			var falloff := 1.0 - clampf(body_center(other).distance_to(c) / SPREAD_RADIUS, 0.0, 1.0)
 			var os := state_of(other)
 			if os != null and not os.consumed and falloff > 0.0:
 				_heat(other, os, SPREAD_HEAT_PER_S * item[1] * falloff * dt)

@@ -37,8 +37,13 @@ func physics_tick(_delta: float) -> void:
 	pass
 
 
-## Interrompe tudo (troca de elemento, reset, salvar/carregar).
+## Interrompe a ação em curso do botão (troca de elemento, reset, salvar/carregar).
 func cancel() -> void:
+	pass
+
+
+## Descarta também o que já está em voo (reset, salvar/carregar): projéteis, rochas lançadas.
+func clear() -> void:
 	pass
 
 
