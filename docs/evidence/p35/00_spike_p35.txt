@@ -1,0 +1,32 @@
+# Spike P3.5 (Terra) — 2026-10-26T13:41:07
+# Godot 4.7.2-stable (custom_build) | física Jolt Physics | ticks/s 60 | display Windows
+
+## E1/E2 Timer do Voxel Tools e confirmação da cavidade
+E1 Timer logo após a extração: wait_time=0.200 one_shot=true autostart=false parado=false time_left=0.200 conexões=["RigidBody3D::set_freeze_enabled"]
+E1 A (padrão do VT): descongelou após 13 quadros (207 ms); forma livre do terreno no quadro 1; depois: { "max_speed": 4.62778568267822, "max_up": 0.0, "moved": 1.14132273197174 }
+E2 B (Timer parado): raio no buraco vê o fundo da cavidade após 2 quadros (23 ms); congelado até lá: true; depois de descongelar: { "max_speed": 4.62778568267822, "max_up": 0.0, "moved": 1.14132297039032 }
+E1 C (controle: descongela no 1º quadro, forma livre=true): { "max_speed": 4.62778568267822, "max_up": 0.0, "moved": 1.14130997657776 }
+OK   E1 Timer do VT parado deixa o corpo congelado (o desprendimento controla o descongelamento) | Timer encontrado=true; congelado após 1 s com o Timer parado=true
+OK   E2 collider da cavidade confirmado dentro do desprendimento (≤ 100 ms) e descongelar não dá empurrão | 2 quadros / 23 ms; subida máx. depois da confirmação 0.00 m/s; no controle sem confirmação 0.00 m/s
+
+## E3 levantamento planejado (smoothstep; PD ω=30 + aceleração de alimentação direta; teto 600 m/s²; centro a 1.4 m sobre o chão)
+E3 r=1.0 T=120 ms (informativo) | massa 1.8 t | erro em T 0.048 m | sobressinal 0.000 m | maior passo 0.565 m | v máx 33.9 m/s | a pedida máx 1357 m/s² | quadros no teto 5 | contatos 0
+E3 r=1.0 T=160 ms | massa 1.8 t | subida 2.58 m | erro em T 0.112 m | sobressinal 0.000 m | erro após 0,4 s 0.000 m | maior passo 0.381 m | v máx 22.9 m/s | a pedida máx 605 m/s² | quadros no teto 1 | contatos com terreno 0
+E3 r=1.0 T=200 ms | massa 1.8 t | subida 2.58 m | erro em T 0.073 m | sobressinal 0.000 m | erro após 0,4 s 0.000 m | maior passo 0.306 m | v máx 18.3 m/s | a pedida máx 468 m/s² | quadros no teto 0 | contatos com terreno 0
+E3 r=1.2 T=120 ms (informativo) | massa 5.5 t | erro em T 0.045 m | sobressinal 0.000 m | maior passo 0.574 m | v máx 34.4 m/s | a pedida máx 1382 m/s² | quadros no teto 5 | contatos 0
+E3 r=1.2 T=160 ms | massa 4.2 t | subida 2.47 m | erro em T 0.107 m | sobressinal 0.000 m | erro após 0,4 s 0.000 m | maior passo 0.364 m | v máx 21.9 m/s | a pedida máx 579 m/s² | quadros no teto 0 | contatos com terreno 0
+E3 r=1.2 T=200 ms | massa 4.2 t | subida 2.47 m | erro em T 0.070 m | sobressinal 0.000 m | erro após 0,4 s 0.000 m | maior passo 0.293 m | v máx 17.6 m/s | a pedida máx 448 m/s² | quadros no teto 0 | contatos com terreno 0
+E3 r=1.6 T=120 ms (informativo) | massa 22.8 t | erro em T 0.026 m | sobressinal 0.020 m | maior passo 0.665 m | v máx 39.9 m/s | a pedida máx 1732 m/s² | quadros no teto 7 | contatos 0
+E3 r=1.6 T=160 ms (informativo) | massa 22.8 t | erro em T 0.125 m | sobressinal 0.000 m | maior passo 0.433 m | v máx 26.0 m/s | a pedida máx 684 m/s² | quadros no teto 2 | contatos 0
+E3 r=1.6 T=200 ms (informativo) | massa 22.8 t | erro em T 0.082 m | sobressinal 0.000 m | maior passo 0.346 m | v máx 20.7 m/s | a pedida máx 529 m/s² | quadros no teto 0 | contatos 0
+OK   E3 levantamento nos tempos padrão (160–200 ms, núcleo ≤ 1,2 m) chega ao ponto (erro ≤ 0,25 m), sobressinal ≤ 0,15 m, sem raspar a cavidade | pior erro em T 0.112 m; pior sobressinal 0.000 m; maior nº de contatos 0
+
+## E4 custo de GPU (janela, vsync desligado durante a medição)
+E4 base          quadro p50 5.60 / p95 7.56 / máx 8.14 ms (n=330)
+E4 +8 decals     quadro p50 6.59 / p95 8.34 / máx 8.73 ms (n=293)
+E4 +6 emissores  quadro p50 7.31 / p95 9.27 / máx 10.67 ms (n=272)
+E4 +heightfield  quadro p50 6.70 / p95 8.55 / máx 8.86 ms (n=287)
+E4 captura: res://docs/evidence/p35/spike_decal.png (conferir a rachadura sobre o terreno a olho)
+OK   E4 decals + pedrinhas + heightfield custam < 2 ms no p95 | Δp95 = 0.98 ms
+
+RESULTADO: OK (0 falha(s))
