@@ -416,3 +416,7 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. 
 - Fallback só aceito com mesmo RID, normais compatíveis (dot ≥ 0,95) e contatos a até 4 mm entre si. Máscara, exclusões e alcance preservados; ponto retornado é contato físico testemunha, até 1 mm fora do eixo.
 - Amostra: 90/90 raios inclinados sobre coordenadas inteiras (6 recuperados pelo fallback), 100/100 através de parede de 1 mm e 100/100 seleções corretas em colisores adjacentes. Testes negativos rejeitam testemunhas de RIDs diferentes e contato unilateral; exclusão preservada.
 - Não é prova universal. Em quinas de normais incompatíveis, fronteiras de RIDs ou detalhes menores que 1 mm, o fallback conserva a ausência de acerto. Custo máximo: duas consultas extras por raio que falha; comparar no baseline corrigido.
+
+## D45. P3.6 M0: transporte e limites por elemento
+Arquitetura, alternativas, medições, riscos, compatibilidade e critérios numéricos estão em docs/p36_m0.md. Água por pacotes evita transporte instantâneo ao girar; fogo mantém varredura com antecipação; ar usa frente/casca e exposição parcial. Nenhuma habilidade nova. GPU isolada e playtest humano não foram comprovados pelos spikes.
+

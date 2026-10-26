@@ -19,3 +19,6 @@ Resultados: 26/26 casos de contrato/log; integração do runner 3/3 (normal 0, e
 
 Etapa B concluída: commit medido 8c4beaf, 51/51 nos quatro modos, zero erros/avisos. T37 janela: editor p95/p99/máx 19,67/21,23/30,13 ms; export 18,16/19,37/30,80 ms. Ver docs/p36_baseline_corrected.md. Próximo marco M0.
 
+
+M0 concluído: auditoria de seis sistemas, revisão independente, consultas comparativas, força/massa, parede fina e controles visuais. Zero erros/avisos nos spikes válidos. Arquitetura: água por pacotes, fogo varrido com antecipação, ar por casca temporal; Resources independentes e limites em docs/p36_m0.md. Próximo: M1 Água.
+

@@ -1,0 +1,133 @@
+{
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "force_models": {
+    "immediate": {
+      "heavy_mps": 0.0730933621525764,
+      "light_mps": 7.30933666229248,
+      "mass_ratio": 100.0,
+      "seconds": 0.5
+    },
+    "pressure_ramp": {
+      "heavy_mps": 0.0647426098585129,
+      "light_mps": 6.47425937652588,
+      "mass_ratio": 100.0,
+      "seconds": 0.5
+    }
+  },
+  "godot": {
+    "build": "custom_build",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (custom_build)",
+    "timestamp": 1786929518
+  },
+  "logger": {
+    "errors": 0,
+    "samples": [],
+    "warnings": 0
+  },
+  "methodology": "CPU: 7 batches, median microseconds per operation; render: 1.5s warmup + 3s frame intervals per candidate. Isolated effects, not aggregate gate.",
+  "mode": "headless",
+  "propagation_models": {
+    "20.0": {
+      "far_9m_s": 0.45,
+      "near_3m_s": 0.15,
+      "spatial_solver": "front=min(range,speed*elapsed); once per target"
+    },
+    "30.0": {
+      "far_9m_s": 0.3,
+      "near_3m_s": 0.1,
+      "spatial_solver": "front=min(range,speed*elapsed); once per target"
+    },
+    "60.0": {
+      "far_9m_s": 0.15,
+      "near_3m_s": 0.05,
+      "spatial_solver": "front=min(range,speed*elapsed); once per target"
+    }
+  },
+  "query_cpu_us": {
+    "air_single_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 319.67,
+      "median_us": 266.82,
+      "min_us": 199.44
+    },
+    "air_three_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 717.43,
+      "median_us": 505.96,
+      "min_us": 390.71
+    },
+    "fire_single_sweep": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 8.258,
+      "median_us": 5.897,
+      "min_us": 5.018
+    },
+    "fire_three_substeps": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 14.077,
+      "median_us": 12.513,
+      "min_us": 11.695
+    },
+    "heat_area_with_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 277.39,
+      "median_us": 243.16,
+      "min_us": 171.2
+    },
+    "heat_area_without_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 198.2,
+      "median_us": 109.93,
+      "min_us": 62.99
+    },
+    "water_packet_segment_budget_16": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 78.144,
+      "median_us": 73.021,
+      "min_us": 56.852
+    },
+    "water_single_ray": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 7.011,
+      "median_us": 6.516,
+      "min_us": 3.132
+    },
+    "water_three_rays": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 16.178,
+      "median_us": 12.668,
+      "min_us": 10.383
+    }
+  },
+  "renderer": "forward_plus",
+  "resolution": "(64.0, 64.0)",
+  "thin_wall_sweeps": {
+    "1": {
+      "attempts": 100,
+      "failures": 0,
+      "hits": 100,
+      "thickness_m": 0.001
+    },
+    "3": {
+      "attempts": 100,
+      "failures": 0,
+      "hits": 100,
+      "thickness_m": 0.001
+    }
+  }
+}
