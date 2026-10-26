@@ -1,20 +1,25 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2)
+# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2 + P3)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
 **Status: gate P0 PASSOU em 23/10/2026, com ressalva aceita** (crash raro da Godot no fim do `--import`; ver `P0_CHECKLIST.md`).
 **P1 (ferramentas, materiais e persistência):** resultado e gate em [`docs/p1_results.md`](docs/p1_results.md).
 **P2 (sustentação, destroços e extração):** resultado e gate em [`docs/p2_results.md`](docs/p2_results.md).
+**P3 (quatro elementos iniciais):** resultado e gate em [`docs/p3_results.md`](docs/p3_results.md).
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
 solo/areia/pedra com propriedades físicas gravadas nos voxels, evento `TerrainChanged`, salvar/carregar com
 `VoxelStreamSQLite`, overlay de observabilidade e benchmarks. P2: torre modular de 36 peças que perde apoio quando
 se escava sob ela e cai em etapas, corpos que acordam quando o chão some, teto de corpos ativos, poeira decorativa e
-extração de rocha real do terreno. Não há poderes, arte final, menus ou água.
+extração de rocha real do terreno. P3: um poder por elemento pela mesma interface (`AbilityController` → `Ability` →
+`ElementalEvent` → `MaterialResponseSystem`): Terra ergue e arremessa uma rocha real (dano cinético na torre), Água
+empurra, molha e apaga, Fogo acende madeira que queima, carboniza e espalha (o 2º andar da torre é de madeira e cai
+quando queima), Ar empurra pela massa e apaga fogo fraco; FX mínimos. Não há arte final, menus, áudio nem simulação
+de fluidos.
 
 > Comece por [`INICIO_AQUI.md`](INICIO_AQUI.md) e [`CLAUDE.md`](CLAUDE.md) (requisitos). Resultados e provas estão em
-> [`docs/voxel_spike_results.md`](docs/voxel_spike_results.md) (P0), [`docs/p1_results.md`](docs/p1_results.md) (P1) e [`docs/p2_results.md`](docs/p2_results.md) (P2),
+> [`docs/voxel_spike_results.md`](docs/voxel_spike_results.md) (P0), [`docs/p1_results.md`](docs/p1_results.md) (P1), [`docs/p2_results.md`](docs/p2_results.md) (P2) e [`docs/p3_results.md`](docs/p3_results.md) (P3),
 > decisões em [`docs/decisions.md`](docs/decisions.md) e o gate do P0 em [`P0_CHECKLIST.md`](P0_CHECKLIST.md).
 
 ## Versões usadas (verificadas nesta máquina)
@@ -53,10 +58,12 @@ extração de rocha real do terreno. Não há poderes, arte final, menus ou águ
 3. Pressione **F5** (cena principal `res://scenes/main.tscn`).
    O terreno é **criado em código** ao rodar (`LabTerrainFactory`), por isso a colina não aparece na viewport do editor.
 
-## Controles (provisórios, conforme CLAUDE.md; sem seleção 1–4)
+## Controles (provisórios, conforme CLAUDE.md)
 
 | Tecla | Ação |
 |---|---|
+| **1 / 2 / 3 / 4** | escolher o elemento: Terra / Água / Fogo / Ar (P3; o HUD mostra o poder atual) |
+| **LMB** | usar o poder do elemento. Terra (segurar): ergue uma rocha do chão mirado e a mantém à frente; soltar arremessa no ponto mirado. Água (segurar): jato até 14 m que empurra, molha e apaga. Fogo (toque): bola de fogo até 30 m que aquece; madeira acende. Ar (toque): rajada em cone de 10 m que empurra pela massa e apaga fogo fraco |
 | WASD | andar, relativo à câmera |
 | Shift | correr |
 | Espaço | pular |
@@ -109,7 +116,33 @@ mira com dureza/densidade, tarefas e memória do motor voxel, corpos físicos at
 5. Solte uma caixa (**B**), espere ela parar e escave embaixo: ela cai na cratera (não fica flutuando).
 6. **F5**, **Z** (torre de pé de novo) e **F9**: a torre cai de novo, porque o terreno salvo não tem o apoio.
 
+### Roteiro manual do P3 (≈ 5 min)
+O LMB só age com o mouse preso (o clique que prende o mouse não lança poder). O HUD mostra o elemento, o resultado do
+último uso e o estado do corpo mirado (`MADEIRA • 470 °C • EM CHAMAS 40%`).
+1. Ande até ~16 m da frente da torre. **1** (Terra), mire o chão a uns 5 m e **segure LMB**: a rocha sobe e fica à
+   frente. Mire o pé do pilar de pedra da frente e **solte**: o pilar perde blocos e o de cima cai.
+2. **3** (Fogo), mire o bloco de baixo de um pilar de **madeira** (2º andar, marrom) e clique: ele acende. Acenda
+   também o outro pilar de madeira da frente e espere ~15 s: os blocos queimam até sumir e as placas de cima caem.
+3. Solte duas caixas (**B**) lado a lado com ~0,5 m de vão e acenda uma: em alguns segundos a vizinha pega fogo e
+   ambas escurecem (carbonizadas).
+4. **2** (Água), segure LMB numa caixa em chamas: ela apaga com vapor e é empurrada. Molhe uma caixa e tente acendê-la
+   (**3**): a 1ª bola só a seca.
+5. **4** (Ar), clique perto de caixas e de destroços: as caixas voam, os blocos de pedra mal se mexem; uma caixa atrás
+   de um morro (**H**) não é atingida. Fogo fraco apaga; fogo forte cresce.
+6. **Z**: torre de pé, sem fogo nem estados, poderes parados.
+
 ## Testes automatizados
+
+### P3 (inclui as regressões do P0, P1 e P2)
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools/run_p3_tests.ps1 -Window -Export
+```
+
+Grava em `docs/evidence/p3/`: import, `check_env`, dump da API, spike de física do P3 (`tools/spike_p3_physics.gd`,
+`00_spike_p3.txt`), selftest P0 sozinho, selftest P3 (P0 + P1 + P2 + T28–T38) e a persistência entre processos;
+`-Window` roda o selftest P3 em janela com capturas (os critérios de FPS do T27 e do T37 só valem aí) e `-Export`
+repete tudo no `.exe`. Direto: `... -- --p3-selftest` (opções `--only=T31,T35`, `--p3-screenshots`, `--report=`).
 
 ### P2 (inclui as regressões do P0 e do P1)
 
@@ -188,8 +221,8 @@ O selftest também roda no executável: `build/elemental_ruins.exe --headless --
 
 ```
 project.godot, export_presets.cfg (template custom com caminho absoluto desta máquina)
-scenes/main.tscn                  Main → World (voxel_lab) + Player + TerrainEditController + HUD
-scenes/world/voxel_lab.tscn       ambiente, sol, TerrainService, TerrainBrushQueue, TerrainRoot, SpawnPoint, Props, Structures, StructureService, ContactWaker, DebrisBudget, DustFx
+scenes/main.tscn                  Main → World (voxel_lab) + Player + TerrainEditController + AbilityController + ElementalFx + HUD
+scenes/world/voxel_lab.tscn       ambiente, sol, TerrainService, TerrainBrushQueue, TerrainRoot, SpawnPoint, Props, Structures, StructureService, ContactWaker, DebrisBudget, DustFx, MaterialResponseSystem
 scenes/player/player.tscn         CharacterBody3D + VoxelViewer + CameraRig (SpringArm3D + Camera3D)
 scenes/ui/debug_hud.tscn          overlay de engenharia (montado em código)
 scripts/world/terrain_service.gd  ÚNICO ponto que conhece o Voxel Tools (API em coordenadas do mundo; stream SQLite)
@@ -203,10 +236,13 @@ scripts/player/*.gd               locomoção e câmera
 scripts/dev/p0_selftest.gd        roteiro automatizado de aceite do P0
 scripts/dev/p1_selftest.gd        P0 + testes do P1 (herda o anterior)
 scripts/dev/p2_selftest.gd        P0 + P1 + testes do P2 (herda o anterior)
+scripts/dev/p3_selftest.gd        P0 + P1 + P2 + testes do P3 (herda o anterior)
+scripts/abilities/*.gd            AbilityController (1–4 + LMB), base Ability e os 4 poderes (Terra, Água, Fogo, Ar)
+scripts/elements/*.gd             ElementalEvent, BodyMaterial(+biblioteca), MaterialState, MaterialResponseSystem, ElementalFx
 scripts/structures/*.gd           peça, fábrica da torre, grafo de apoio e StructureService (âncoras, soltura em etapas)
 scripts/physics/*.gd              TerrainContactWaker, DebrisBudget (teto de corpos, culling) e DustFx
 materials/terrain_lab.gdshader    cor do material (CUSTOM1) + grade 1 m/4 m + costura LOD oficial do Transvoxel
-tools/                            check_env, probe_voxel_api, spike_p1_api, spike_p2_api, run_p0/p1/p2_tests.ps1
+tools/                            check_env, probe_voxel_api, spike_p1_api, spike_p2_api, spike_p3_physics, run_p0/p1/p2/p3_tests.ps1
 docs/                             decisões, resultados e evidências (logs, JSON, PNG); ignorada pela Godot (.gdignore)
 ```
 
@@ -218,3 +254,6 @@ assíncronos), `has_saved_world(slot)`, `is_ready()`. Sinais: `terrain_ready`, `
 `world_reset_started/finished`, `world_save_started/world_saved`, `world_load_started/world_loaded`.
 Gameplay edita pela `TerrainBrushQueue` (`enqueue`, `begin_stroke/update_stroke/end_stroke`, sinal `brush_applied`).
 P2: `TerrainService.extract_rock(p, normal, raio, pai, direção)`; `StructureService.build/check_all/suspend/resume`, sinal `piece_released`.
+P3: `AbilityController.select(i)/use_pressed()/use_released()`, sinais `element_changed` e `ability_used`;
+`MaterialResponseSystem.apply(ElementalEvent)`, `state_of(corpo)`, sinais `ignited`, `extinguished`, `burned_out`,
+`kinetic_break`; `StructureService.break_piece(peça, impulso, motivo)` e `consume_piece(peça, motivo)`.

@@ -261,3 +261,70 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. 
   intervalo entre quadros p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms durante 6 s. Em headless o teste só registra os números.
 - `scripts/dev/p2_selftest.gd` estende o do P1 (P0 + P1 + T18–T27); `tools/run_p2_tests.ps1` roda P0 sozinho, o selftest
   P2 e a persistência entre processos pelo selftest P2 (grava em `docs/evidence/p2/`, sem tocar na evidência do P1).
+
+## D28. Poderes do P3: interface comum e um poder por elemento
+- `AbilityController` (nó em Main) lê 1–4 (elemento) e LMB (usar) pelo input map e chama a `Ability` atual:
+  `on_press` / `on_hold(delta)` / `on_release` (modo "hold" ou "tap") e `physics_tick` em todos os poderes (o que segue
+  em voo depois de soltar). `cancel()` interrompe o botão; `clear()` descarta o que está em voo (reset/salvar/carregar).
+- Um poder age no mundo **só** por `TerrainService`, forças/impulsos em corpos e `ElementalEvent` no
+  `MaterialResponseSystem`; o VFX (`ElementalFx`) só lê o que já foi decidido (pesquisa §3.5).
+- Nada age com o terreno sendo recriado nem com o input do jogador desligado; o clique que recaptura o mouse não age.
+- Terra = **erguer e arremessar rocha** (decisão do usuário em 26/10, roadmap), não o pilar do GDD. Modo Criativo:
+  recurso infinito, sem recarga. Q/E, RMB, carga e câmera lenta ficam para o P4.
+
+## D29. Terra: rocha segura por mola-amortecedor, impacto pelo 1º contato
+- Rocha real extraída do terreno (D25), `gravity_scale 0` enquanto segura, força `k(alvo − centro) + c(v_alvo − v)` com
+  k = mω², c = 2mω, ω = 6 rad/s e teto de 40 m/s² (spike H1: atraso de 1,42 m → 0,22 m ao usar a velocidade do alvo).
+  O ponto controlado é o **centro da malha**: a origem do corpo do `separate_floating_chunks` fica no canto da caixa
+  (~3 m do centro) e o arremesso errava o alvo (medido no T29).
+- Sobe primeiro na vertical (a boca da cavidade é mais estreita que a rocha, D25). Soltar: 22 m/s na direção do ponto
+  mirado com compensação de arco; o centro nunca mira abaixo de meia altura acima do chão (raspava e quicava, T29).
+- Impulso = massa × velocidade perdida no 1º passo de física com contato em **corpos** (terreno não conta), dividido
+  igualmente entre os corpos tocados no mesmo passo (atribuir tudo ao 1º relatado soltava a peça errada, T30). Peça
+  presa solta quando impulso/massa ≥ Δv de quebra do material (pedra 6 m/s, madeira 4 m/s).
+
+## D30. Água, Fogo e Ar: modelos de jogo, não simulação
+- **Água (segurar):** raio por quadro da mão até 14 m; o 1º obstáculo para o jato. Força **absoluta** de 300 N no corpo
+  atingido (caixa de 20 kg desliza ~5 m em 1,5 s; rocha de toneladas não se mexe) e WET 0,5/s com respingo de 1,2 m.
+- **Fogo (toque):** bola simulada a 35 m/s, sem gravidade, raio por quadro, até 30 m (não é corpo físico, então anda
+  por posição). HEAT 450 no corpo atingido + respingo de 2 m.
+- **Ar (toque):** cone de 35° e 10 m, visada livre de **terreno** por raycast; impulso `min(massa × 12 m/s, 1500 N·s)
+  × (1 − (d/10)²)` com componente para cima de 0,35: a mesma "pressão" dá Δv no teto à caixa e ~0,2 m/s a uma rocha de
+  4 t. AIRFLOW com a mesma força: apaga fogo de intensidade < 0,35 sob vento > 0,5 e aviva o resto.
+- Evento com `target` **e** `radius`: o alvo recebe a magnitude inteira e os outros corpos da esfera a queda linear pela
+  distância ao centro da malha.
+
+## D31. Estados de material e propagação
+- Madeira 600 kg/m³ (ignição 300 °C, 12 s de combustível, resistência térmica 1); pedra/solo/areia não queimam
+  (resistência 3/2/2). Secar umidade 1,0 custa 400 unidades de calor (`DRY_HEAT`): madeira molhada a 60% gasta a 1ª
+  rajada secando (pela conta, com 100 a rajada de 450 acenderia mesmo molhada).
+- Queima a cada 0,2 s: consome combustível e integridade, carboniza abaixo de 50% e aquece vizinhos num raio de 2,2 m
+  a 200 °C/s × intensidade × queda (pela conta, com 1,8 m e 120 °C/s a caixa vizinha a 0,5 m de vão ganharia ~5 °C/s
+  líquidos contra o resfriamento de 15 °C/s e não acenderia antes de a 1ª queimar até o fim).
+  Teto de 48 corpos em chamas. Consumido → peça sai pelo `StructureService.consume_piece`
+  (invisível, sem colisão, o grafo derruba o que dependia dela); caixa é liberada.
+- Estados não são salvos (como destroços, D26); reset e carregar zeram tudo.
+
+## D32. Torre mista e FX mínimos
+- Os 8 blocos do 2º andar passam a ser de **madeira** (900 kg cada, antes 3,9 t de pedra). Queimar os 2 pilares da
+  frente derruba as 2 placas de cima: a placa sem pilar ainda se sustenta como viga com 2 laterais apoiadas (D21), então
+  um pilar só não basta.
+- `ElementalFx`: chama por corpo em chamas (filha do corpo, teto 24), vapor ao apagar com água, carvão escurece o corpo,
+  cilindro do jato, esferas das bolas de fogo, clarão e rajada. Sem arte: só sinaliza o estado.
+
+## D33. Bateria do P3
+- `scripts/dev/p3_selftest.gd` estende o do P2 (P0 + P1 + P2 + T28–T38); `tools/run_p3_tests.ps1` roda o spike de física
+  do P3, P0 sozinho, o selftest P3 e a persistência entre processos pelo selftest P3 (`docs/evidence/p3/`).
+- T37 aplica o critério de FPS do P2 (D27) ao pior caso do P3: colapso total + 12 caixas em chamas + os 4 poderes.
+- A mira dos testes espera o braço de mola da câmera assentar (4 quadros): depois de um giro grande a câmera muda de
+  posição no quadro seguinte e o raio passava ao lado da caixa (medido no T32).
+
+## D34. Descongelar depois do salvar: esperar o apoio de cada corpo, não só "algum chão"
+- Achado na 3ª rodada da bateria do P3 (`.exe` em janela): no T26 uma peça da coroa caída na borda de um buraco
+  escorregou 0,51 m depois do salvar (parada durante o save; 0,005 m no controle sem save). A espera da D26 usava um
+  único raio vertical pela origem do corpo, que numa peça sobre a borda podia ver o fundo do buraco já carregado.
+- Agora, antes de recriar o terreno, cada corpo congelado registra quais de 5 raios curtos sob o fundo da malha (centro
+  + 4 cantos recuados) tocam terreno; depois, só descongela quando esses mesmos raios tocam de novo (prazo de 3 s).
+- **Não reproduzido:** em 5 rodadas isoladas do T26 (editor headless e janela, 3× no `.exe` em janela) a espera foi de
+  0 quadros, e a peça que mais andou se moveu 0,003–0,05 m. A causa não está provada. Outra hipótese plausível são peças
+  em equilíbrio precário que acordam todas juntas ao descongelar. A mudança não piora nada e fica.
