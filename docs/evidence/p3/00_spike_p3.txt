@@ -1,0 +1,14 @@
+# Spike P3 — 2026-10-26T10:05:00
+# Godot 4.7.2-stable (custom_build) | física Jolt Physics | ticks/s 60
+
+## H1 mola-amortecedor numa rocha de 14670 kg
+OK   H1 rocha segura por forças: chega, estabiliza, acompanha, sem saltos | chegou (<0,3 m) em 842 ms; erro após 2 s 0.002 m; sobressinal 0.287 m; erro máx. seguindo alvo 0.220 m; maior passo por quadro 0.145 m; força máx./teto 1.00 (Δv máx. por quadro pelo teto 0.67 m/s)
+
+## H2 arremesso + contact_monitor contra peça congelada
+H2 trajetória (a cada 10 quadros: posição | corpos em contato): ["(0.0, 2.5, -3.6)|[]", "(0.0, 2.1, -7.1)|[]", "(0.0, 1.5, -10.6)|[]", "(0.0, 1.0, -12.3)|[&\"@RigidBody3D@8\", &\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.2)|[&\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.1)|[&\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.0)|[&\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.1)|[&\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.1)|[&\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.1)|[&\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.1)|[&\"@VoxelLodTerrain@4\"]", "(0.0, 1.0, -12.1)|[&\"@VoxelLodTerrain@4\"]"]
+OK   H2 impacto numa peça congelada é detectado com impulso estimado | contatos=[{ "corpo": &"@RigidBody3D@8", "v_antes": (0.0, -5.238446, -20.58294), "v_depois": (0.0, -2.048558, 0.260229), "impulso_est_Ns": 309329.388027191 }, { "corpo": &"@VoxelLodTerrain@4", "v_antes": (0.0, -2.208477, 0.259796), "v_depois": (0.0, -1.084373, 0.465537), "impulso_est_Ns": 16764.5380926132 }]; 1º contato em 592 ms; posição da peça (0.0, 0.8, -14.0) (congelada continua no lugar)
+
+## H3 consulta em cone com 150 corpos
+OK   H3 consulta em cone custa pouco | 73 corpos na esfera, 30 no cone de 30°, 30 sem terreno no caminho; 1.82 ms
+
+RESULTADO: OK (0 falha(s))
