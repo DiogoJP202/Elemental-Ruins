@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="FireTuning" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/abilities/fire_tuning.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+anticipation_s = 0.08
+cooldown_s = 0.14
+speed = 35.0
+max_range = 30.0
+max_projectiles = 8
+turbulence_mps = 0.5
+turbulence_hz = 6.0
+heat = 450.0
+splash_radius = 2.0
+thermal_tick_s = 0.2
+spread_radius = 2.2
+spread_heat_per_s = 200.0
+fire_growth_per_s = 0.25
+max_burning = 48
+dry_heat = 400.0
+projectile_radius = 0.25
+trail_amount = 16
+trail_lifetime_s = 0.22
+trail_size = 0.12
+max_flame_emitters = 24
+flame_amount = 24
+flame_lifetime_s = 0.7
+flame_size = 0.45

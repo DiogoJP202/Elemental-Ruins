@@ -696,6 +696,8 @@ func _t37_powers_benchmark() -> void:
 	var j0 := jet.get_stats()
 	var g0 := gust.get_stats()
 	var e0 := earth.get_stats()
+	var mat0 := materials.get_stats()
+	var fx0 := fx.get_stats()
 	var frame_ms := PackedFloat32Array()
 	var phys_ms := PackedFloat32Array()
 	var last := [Time.get_ticks_usec()]
@@ -753,9 +755,34 @@ func _t37_powers_benchmark() -> void:
 	ps["p99"] = _percentile(phys_ms, 0.99)
 	_metrics["p3_poderes_quadro_ms"] = fs
 	_metrics["p3_poderes_fisica_ms"] = ps
-	var used := {"fogo_bolas": fire.get_stats().exploded - f0.exploded, "agua_quadros_em_corpo": jet.get_stats().body_ticks - j0.body_ticks,
+	# P3.6 M2: atingir o alcance apenas dissipa, sem calor. O benchmark mantém
+	# os cinco disparos e exige voos/conclusões reais; T50 exige impacto com calor
+	# e dissipação sem calor separadamente. Nenhum limite de FPS foi alterado.
+	var f1 := fire.get_stats()
+	var used := {"fogo_disparos_aceitos": f1.fired - f0.fired, "fogo_lancamentos": f1.launched - f0.launched,
+		"fogo_impactos": f1.exploded - f0.exploded, "fogo_dissipacoes": f1.dissipated - f0.dissipated,
+		"fogo_concluidos": f1.exploded + f1.dissipated - f0.exploded - f0.dissipated,
+		"agua_quadros_em_corpo": jet.get_stats().body_ticks - j0.body_ticks,
 		"ar_rajadas": gust.get_stats().gusts - g0.gusts, "terra_arremessos": earth.get_stats().thrown - e0.thrown}
-	var all_used: bool = used.fogo_bolas >= 4 and used.agua_quadros_em_corpo > 0 and used.ar_rajadas >= 4 and used.terra_arremessos >= 1
+	var all_used: bool = used.fogo_disparos_aceitos >= 5 and used.fogo_lancamentos >= 4 and used.fogo_concluidos >= 4 \
+		and used.agua_quadros_em_corpo > 0 and used.ar_rajadas >= 4 and used.terra_arremessos >= 1
+	# P3.6: custos de CPU por sistema na janela do benchmark (médias; máximos são acumulados do processo).
+	var mat1 := materials.get_stats()
+	var fx1 := fx.get_stats()
+	var fire_ticks: int = f1.update_ticks - f0.update_ticks
+	var thermal_ticks: int = mat1.thermal_ticks - mat0.thermal_ticks
+	var vfx_frames: int = fx1.fire_vfx_frames - fx0.fire_vfx_frames
+	var costs := {"fogo_ticks_ativos": fire_ticks, "fogo_consultas": f1.queries - f0.queries,
+		"fogo_testemunhas_1mm": f1.ray_fallback_hits - f0.ray_fallback_hits,
+		"fogo_avanco_us_medio": float(f1.update_usec - f0.update_usec) / maxf(fire_ticks, 1),
+		"fogo_avanco_us_max_acumulado": f1.update_usec_max, "termico_ticks": thermal_ticks,
+		"termico_us_medio": float(mat1.thermal_usec - mat0.thermal_usec) / maxf(thermal_ticks, 1),
+		"termico_us_max_acumulado": mat1.thermal_usec_max,
+		"propagacao_us_medio": float(mat1.spread_usec - mat0.spread_usec) / maxf(thermal_ticks, 1),
+		"propagacao_consultas": mat1.spread_queries - mat0.spread_queries, "propagacao_bloqueadas": mat1.spread_blocked - mat0.spread_blocked,
+		"vfx_fogo_ar_us_medio_quadro": float(fx1.fire_vfx_usec - fx0.fire_vfx_usec) / maxf(vfx_frames, 1),
+		"vfx_fogo_ar_us_max_acumulado": fx1.fire_vfx_usec_max}
+	_metrics["p36_custos_cpu_us"] = costs
 	var windowed := not _mode.begins_with("headless")
 	var fps_ok: bool = (not windowed) or (fs.get("p95", 999.0) <= 20.0 and fs.get("p99", 999.0) <= 33.0 and fs.get("max", 999.0) <= 50.0)
 	var ok: bool = all_used and structures.released_count() == 36 and peak.burning >= 6 and fps_ok
@@ -763,7 +790,7 @@ func _t37_powers_benchmark() -> void:
 		"modo": _mode, "criterio_fps_aplicado": windowed, "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
 		"duracao_s": dur_s, "intervalo_entre_quadros_ms": fs, "time_physics_process_ms": ps, "poderes_usados": used,
 		"pico_em_chamas": peak.burning, "pico_pecas_dinamicas": peak.dynamic, "soltas": structures.released_count(),
-		"fx": fx.get_stats(), "materiais": materials.get_stats()})
+		"fx": fx1, "materiais": mat1, "custos_cpu_us": costs})
 	await _shot("t37_benchmark_poderes", o + Vector3(0, 0.5, 16), 0.0, -12.0)
 	await main.request_world_reset()
 

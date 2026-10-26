@@ -25,3 +25,5 @@ M0 concluído: auditoria de seis sistemas, revisão independente, consultas comp
 
 M1 Água concluído: T1/T31/T33/T37/T46/T47/T48, 7/7 headless e janela, zero erros/avisos. T37 janela p95/p99/máx 18,92/19,91/38,37 ms. Resource, transporte, pressão, virada90°, parede fina e origem interna validados. Ver docs/p36_water_polish.md. Próximo M2 Fogo.
 
+
+M2 Fogo concluído: T1/T31–T37/T46–T51/T57, 15/15 headless e janela, zero erros/avisos. T37 janela p95/p99/máx 18,64/20,06/30,29 ms. Antecipação com mira do clique, varredura recortada, impacto único, dissipação sem calor, propagação com visibilidade e limpeza em reset/save/load. Ver docs/p36_fire_polish.md. Próximo M3 Ar.

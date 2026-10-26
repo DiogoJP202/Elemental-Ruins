@@ -30,20 +30,25 @@ const MAX_BURNING := 48
 
 @export var structure_service_path: NodePath = ^"../StructureService"
 @export var terrain_service_path: NodePath = ^"../TerrainService"
+@export var fire_tuning: FireTuning = preload("res://data/abilities/fire_tuning.tres")
 
 var structures: StructureService
+var terrain_service: TerrainService
 var _states := {}  # instance_id → {"body": WeakRef, "state": MaterialState}
 var _accum := 0.0
+var _epoch := 0
 var _stats := {"events": 0, "ignitions": 0, "ignitions_skipped": 0, "extinguished": 0, "burned_out": 0,
-	"kinetic_breaks": 0}
+	"kinetic_breaks": 0, "spread_queries": 0, "spread_blocked": 0, "events_rejected_busy": 0,
+	"thermal_ticks": 0, "thermal_usec": 0, "thermal_usec_max": 0, "spread_usec": 0}
 
 
 func _ready() -> void:
 	structures = get_node_or_null(structure_service_path) as StructureService
-	var svc := get_node_or_null(terrain_service_path) as TerrainService
-	if svc != null:
-		svc.world_reset_started.connect(clear)
-		svc.world_load_started.connect(func(_slot): clear())
+	terrain_service = get_node_or_null(terrain_service_path) as TerrainService
+	if terrain_service != null:
+		terrain_service.world_reset_started.connect(clear)
+		terrain_service.world_load_started.connect(func(_slot): clear())
+		terrain_service.world_save_started.connect(func(_slot): _invalidate_tick())
 
 
 # --- Consulta -----------------------------------------------------------------------------
@@ -79,7 +84,14 @@ func get_stats() -> Dictionary:
 
 ## Zera tudo (reset/carregar): os corpos antigos somem ou são remontados intactos.
 func clear() -> void:
+	_invalidate_tick()
 	_states.clear()
+
+
+## Save preserva estados, mas invalida callbacks/tempo acumulado da cena em manutenção.
+func _invalidate_tick() -> void:
+	_epoch += 1
+	_accum = 0.0
 
 
 # --- Eventos -------------------------------------------------------------------------------
@@ -88,14 +100,20 @@ func clear() -> void:
 ## magnitude inteira; com `radius` > 0, os outros corpos da esfera recebem a queda linear
 ## (alvo + raio = golpe direto com respingo).
 func apply(event: ElementalEvent) -> Array[Node3D]:
-	_stats.events += 1
 	var hit: Array[Node3D] = []
+	if terrain_service != null and not terrain_service.is_ready():
+		_stats.events_rejected_busy += 1
+		return hit
+	_stats.events += 1
+	var epoch := _epoch
 	if event.target != null:
 		_apply_to(event, event.target, 1.0)
 		hit.append(event.target)
-		if event.radius <= 0.0:
+		if event.radius <= 0.0 or epoch != _epoch:
 			return hit
 	for body in bodies_in_sphere(event.origin, event.radius):
+		if epoch != _epoch:
+			return hit
 		if body == event.target:
 			continue
 		var falloff := 1.0 - clampf(body_center(body).distance_to(event.origin) / maxf(event.radius, 0.01), 0.0, 1.0)
@@ -195,13 +213,14 @@ func _apply_to(event: ElementalEvent, body: Node3D, falloff: float) -> void:
 
 func _heat(body: Node3D, s: MaterialState, units: float) -> void:
 	var effective := units / s.material.heat_resistance
-	var to_dry := minf(effective, s.wetness * DRY_HEAT)
-	s.wetness = maxf(0.0, s.wetness - to_dry / DRY_HEAT)
+	var dry_heat := maxf(fire_tuning.dry_heat, 0.001)
+	var to_dry := minf(effective, s.wetness * dry_heat)
+	s.wetness = maxf(0.0, s.wetness - to_dry / dry_heat)
 	s.temperature += effective - to_dry
 	if s.burning:
 		s.intensity = minf(1.0, s.intensity + effective / 400.0)
 	elif s.material.flammable and s.fuel > 0.0 and s.wetness < 0.05 and s.temperature >= s.material.ignition_temperature:
-		if burning_count() >= MAX_BURNING:
+		if burning_count() >= clampi(fire_tuning.max_burning, 1, MAX_BURNING):
 			_stats.ignitions_skipped += 1
 			return
 		s.burning = true
@@ -221,15 +240,34 @@ func _extinguish(body: Node3D, s: MaterialState, cause: String) -> void:
 # --- Tick ------------------------------------------------------------------------------------
 
 func _physics_process(delta: float) -> void:
+	# Sem collider durante save/load/reset, visibilidade seria uma consulta incompleta.
+	# Pausa apenas a manutenção local; não altera Engine.time_scale nem o tempo global.
+	if terrain_service != null and not terrain_service.is_ready():
+		_accum = 0.0
+		return
 	_accum += delta
-	if _accum < TICK_S:
+	if _accum < maxf(fire_tuning.thermal_tick_s, 0.01):
 		return
 	var dt := _accum
 	_accum = 0.0
+	var t0 := Time.get_ticks_usec()
+	_thermal_tick(dt)
+	var spent := Time.get_ticks_usec() - t0
+	_stats.thermal_ticks += 1
+	_stats.thermal_usec += spent
+	_stats.thermal_usec_max = maxi(_stats.thermal_usec_max, spent)
+
+
+func _thermal_tick(dt: float) -> void:
+	var epoch := _epoch
 	var dead := []
 	var spread := []
-	for id in _states:
-		var e: Dictionary = _states[id]
+	for id in _states.keys():
+		if epoch != _epoch:
+			return
+		var e: Dictionary = _states.get(id, {})
+		if e.is_empty():
+			continue
 		var body := e.body.get_ref() as Node3D
 		var s: MaterialState = e.state
 		if body == null or not body.is_inside_tree():
@@ -239,7 +277,7 @@ func _physics_process(delta: float) -> void:
 			continue
 		if s.burning:
 			s.wetness = 0.0
-			s.intensity = minf(1.0, s.intensity + FIRE_GROWTH_PER_S * dt)
+			s.intensity = minf(1.0, s.intensity + maxf(fire_tuning.fire_growth_per_s, 0.0) * dt)
 			s.temperature = maxf(s.temperature, s.material.ignition_temperature + 300.0 * s.intensity)
 			s.fuel -= dt * s.intensity
 			s.integrity -= dt * s.material.burn_damage_per_second * s.intensity
@@ -248,24 +286,42 @@ func _physics_process(delta: float) -> void:
 			spread.append([body, s.intensity])
 			if s.fuel <= 0.0 or s.integrity <= 0.0:
 				_burn_out(body, s)
+				if epoch != _epoch:
+					return
 		else:
 			s.temperature = maxf(MaterialState.AMBIENT, s.temperature - s.material.cooling_per_second * dt)
 			s.wetness = maxf(0.0, s.wetness - s.material.drying_per_second * dt)
 	for id in dead:
 		_states.erase(id)
 	# Propagação: cada corpo em chamas aquece os vizinhos (não a si mesmo).
+	var spread_t0 := Time.get_ticks_usec()
+	_spread(spread, dt, epoch)
+	_stats.spread_usec += Time.get_ticks_usec() - spread_t0
+
+
+func _spread(spread: Array, dt: float, epoch: int) -> void:
 	for item in spread:
+		if epoch != _epoch:
+			return
 		var src: Node3D = item[0]
-		if not is_instance_valid(src):
+		if not is_instance_valid(src) or src.is_queued_for_deletion():
 			continue
 		var c := body_center(src)
-		for other in bodies_in_sphere(c, SPREAD_RADIUS):
+		var radius := maxf(fire_tuning.spread_radius, 0.0)
+		for other in bodies_in_sphere(c, radius):
 			if other == src:
 				continue
-			var falloff := 1.0 - clampf(body_center(other).distance_to(c) / SPREAD_RADIUS, 0.0, 1.0)
+			var falloff := 1.0 - clampf(body_center(other).distance_to(c) / maxf(radius, 0.001), 0.0, 1.0)
 			var os := state_of(other)
 			if os != null and not os.consumed and falloff > 0.0:
-				_heat(other, os, SPREAD_HEAT_PER_S * item[1] * falloff * dt)
+				_stats.spread_queries += 1
+				# Fonte em chamas irradia de seu volume; só este caso exclui o emissor.
+				if not line_of_sight(c, other, src):
+					_stats.spread_blocked += 1
+					continue
+				_heat(other, os, maxf(fire_tuning.spread_heat_per_s, 0.0) * item[1] * falloff * dt)
+				if epoch != _epoch:
+					return
 
 
 ## Combustível ou integridade acabou: o corpo é consumido. Peça de estrutura sai do jogo
@@ -277,7 +333,10 @@ func _burn_out(body: Node3D, s: MaterialState) -> void:
 	s.consumed = true
 	s.integrity = 0.0
 	_stats.burned_out += 1
+	var epoch := _epoch
 	burned_out.emit(body)
+	if epoch != _epoch or not is_instance_valid(body):
+		return
 	var piece := body as StructurePiece
 	if piece != null and structures != null:
 		structures.consume_piece(piece, "queimada")

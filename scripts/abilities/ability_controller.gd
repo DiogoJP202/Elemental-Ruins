@@ -183,10 +183,12 @@ func hand_position() -> Vector3:
 
 
 ## Primeiro terreno ou corpo (PROPS) no segmento `from` → `to` ({} se nada).
-func cast_segment(from: Vector3, to: Vector3) -> Dictionary:
+## `robust` usa as testemunhas de ±1 mm do PhysicsRayHelper só quando o raio falha.
+func cast_segment(from: Vector3, to: Vector3, robust := false) -> Dictionary:
 	var q := PhysicsRayQueryParameters3D.create(from, to, Layers.TERRAIN | Layers.PROPS)
 	q.hit_from_inside = true
-	return player.get_world_3d().direct_space_state.intersect_ray(q)
+	var space := player.get_world_3d().direct_space_state
+	return PhysicsRayHelper.intersect(space, q) if robust else space.intersect_ray(q)
 
 
 ## Corpo físico sob a mira (para o HUD mostrar o estado do material).

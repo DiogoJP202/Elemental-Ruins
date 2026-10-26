@@ -11,7 +11,7 @@ function Get-SelftestIds([string]$Suite) {
         'p2' { return $p2 }
         'p3' { return $p3 }
         'p35' { return $p35 }
-        'p36' { return ($p35 + @('T46','T47','T48')) }
+        'p36' { return ($p35 + @('T46','T47','T48','T49','T50','T51','T57')) }
         'persist_write' { return @('T1','T14x-write') }
         'persist_read' { return @('T1','T14x-read') }
         default { throw "Bateria sem contrato: $Suite" }
