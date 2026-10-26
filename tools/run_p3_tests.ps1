@@ -62,14 +62,14 @@ try {
     Invoke-Step 'check_env' '02_check_env.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/check_env.gd')
     Invoke-Step 'probe_voxel_api' '03_probe_run.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/probe_voxel_api.gd')
     Invoke-Step 'spike_p3_physics' '04_spike_p3_physics.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/spike_p3_physics.gd')
-    Invoke-SelftestStep 'p0_regressao_headless' '05_p0_regressao_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest') (Report 'p0_regressao_headless.json') 12
-    Invoke-SelftestStep 'p3_selftest_headless' '06_p3_selftest_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p3-selftest') (Report 'p3_selftest_headless.json') 44
-    Invoke-SelftestStep 'persist_write' '07_persist_write.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p3-selftest', '--p1-persist=write') (Report 'persist_write_headless.json') 2
-    Invoke-SelftestStep 'persist_read' '08_persist_read.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p3-selftest', '--p1-persist=read') (Report 'persist_read_headless.json') 2
+    Invoke-SelftestStep 'p0_regressao_headless' '05_p0_regressao_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest') (Report 'p0_regressao_headless.json') (Get-SelftestIds 'p0')
+    Invoke-SelftestStep 'p3_selftest_headless' '06_p3_selftest_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p3-selftest') (Report 'p3_selftest_headless.json') (Get-SelftestIds 'p3')
+    Invoke-SelftestStep 'persist_write' '07_persist_write.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p3-selftest', '--p1-persist=write') (Report 'persist_write_headless.json') (Get-SelftestIds 'persist_write')
+    Invoke-SelftestStep 'persist_read' '08_persist_read.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p3-selftest', '--p1-persist=read') (Report 'persist_read_headless.json') (Get-SelftestIds 'persist_read')
 
     if ($Window) {
         Remove-Item (Join-Path $evidence 'screens\*.png') -ErrorAction SilentlyContinue
-        Invoke-SelftestStep 'p3_selftest_window' '09_p3_selftest_window.log' $Godot @('--path', '.', $scene, '--', '--p3-selftest', '--p3-screenshots') (Report 'p3_selftest_window.json') 44
+        Invoke-SelftestStep 'p3_selftest_window' '09_p3_selftest_window.log' $Godot @('--path', '.', $scene, '--', '--p3-selftest', '--p3-screenshots') (Report 'p3_selftest_window.json') (Get-SelftestIds 'p3')
     }
 
     if ($Export) {
@@ -77,11 +77,11 @@ try {
         New-Item -ItemType Directory -Force (Join-Path $root 'build') | Out-Null
         Invoke-Step 'export_release' '10_export_release.log' $Godot @('--headless', '--path', '.', '--export-release', 'Windows Desktop', 'build/elemental_ruins.exe')
         $exe = Join-Path $root 'build\elemental_ruins.exe'
-        Invoke-SelftestStep 'export_p3_headless' '11_export_p3_headless.log' $exe @('--headless', '--', '--p3-selftest') (Report 'p3_selftest_export_headless.json') 44
-        Invoke-SelftestStep 'export_persist_write' '12_export_persist_write.log' $exe @('--headless', '--', '--p3-selftest', '--p1-persist=write') (Report 'persist_write_export.json') 2
-        Invoke-SelftestStep 'export_persist_read' '13_export_persist_read.log' $exe @('--headless', '--', '--p3-selftest', '--p1-persist=read') (Report 'persist_read_export.json') 2
+        Invoke-SelftestStep 'export_p3_headless' '11_export_p3_headless.log' $exe @('--headless', '--', '--p3-selftest') (Report 'p3_selftest_export_headless.json') (Get-SelftestIds 'p3')
+        Invoke-SelftestStep 'export_persist_write' '12_export_persist_write.log' $exe @('--headless', '--', '--p3-selftest', '--p1-persist=write') (Report 'persist_write_export.json') (Get-SelftestIds 'persist_write')
+        Invoke-SelftestStep 'export_persist_read' '13_export_persist_read.log' $exe @('--headless', '--', '--p3-selftest', '--p1-persist=read') (Report 'persist_read_export.json') (Get-SelftestIds 'persist_read')
         if ($Window) {
-            Invoke-SelftestStep 'export_p3_window' '14_export_p3_window.log' $exe @('--', '--p3-selftest') (Report 'p3_selftest_export_window.json') 44
+            Invoke-SelftestStep 'export_p3_window' '14_export_p3_window.log' $exe @('--', '--p3-selftest') (Report 'p3_selftest_export_window.json') (Get-SelftestIds 'p3')
         }
     }
 }

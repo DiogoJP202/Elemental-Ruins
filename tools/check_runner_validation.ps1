@@ -22,7 +22,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'lib_godot_process.ps1')
 $Godot = Resolve-Godot $Godot
 $root = Split-Path -Parent $PSScriptRoot
-$evidence = Join-Path $root 'docs\evidence\p36\runner_validation'
+$evidence = Join-Path $root 'docs\evidence\p36\preparation\runner_validation'
 New-Item -ItemType Directory -Force $evidence | Out-Null
 $results = [ordered]@{}
 $scene = 'res://scenes/main.tscn'
@@ -30,9 +30,9 @@ function Report([string]$Name) { return (Join-Path $evidence $Name) -replace '\\
 
 Push-Location $root
 try {
-    Invoke-SelftestStep 'A_normal' 'A_normal.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest') (Report 'A_normal.json') 12
-    Invoke-SelftestStep 'B_encerra_cedo' 'B_encerra_cedo.log' $Godot @('--headless', '--path', '.', $scene, '--quit-after', '90', '--', '--p0-selftest') (Report 'B_encerra_cedo.json') 12
-    Invoke-SelftestStep 'C_contagem_errada' 'C_contagem_errada.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest') (Report 'C_contagem_errada.json') 13
+    Invoke-SelftestStep 'A_normal' 'A_normal.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest') (Report 'A_normal.json') (Get-SelftestIds 'p0')
+    Invoke-SelftestStep 'B_encerra_cedo' 'B_encerra_cedo.log' $Godot @('--headless', '--path', '.', $scene, '--quit-after', '90', '--', '--p0-selftest') (Report 'B_encerra_cedo.json') (Get-SelftestIds 'p0')
+    Invoke-SelftestStep 'C_contagem_errada' 'C_contagem_errada.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest') (Report 'C_contagem_errada.json') (Get-SelftestIds 'p1')
 }
 finally {
     Pop-Location

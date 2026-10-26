@@ -54,11 +54,11 @@ try {
 
     Invoke-Step 'check_env' '02_check_env.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/check_env.gd')
     Invoke-Step 'probe_voxel_api' '03_probe_run.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/probe_voxel_api.gd')
-    Invoke-SelftestStep 'selftest_headless' '05_selftest_headless.log' $Godot @('--headless', '--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest') ((Join-Path $evidence 'p0_selftest_headless.json') -replace '\\', '/') 12
+    Invoke-SelftestStep 'selftest_headless' '05_selftest_headless.log' $Godot @('--headless', '--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest') ((Join-Path $evidence 'p0_selftest_headless.json') -replace '\\', '/') (Get-SelftestIds 'p0')
 
     if ($Window) {
         Remove-Item (Join-Path $evidence 'screens\*.png') -ErrorAction SilentlyContinue
-        Invoke-SelftestStep 'selftest_window' '06_selftest_window.log' $Godot @('--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest', '--p0-screenshots') ((Join-Path $evidence 'p0_selftest_window.json') -replace '\\', '/') 12
+        Invoke-SelftestStep 'selftest_window' '06_selftest_window.log' $Godot @('--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest', '--p0-screenshots') ((Join-Path $evidence 'p0_selftest_window.json') -replace '\\', '/') (Get-SelftestIds 'p0')
     }
 
     if ($Export) {
@@ -67,10 +67,10 @@ try {
         Invoke-Step 'export_release' '07_export_release.log' $Godot @('--headless', '--path', '.', '--export-release', 'Windows Desktop', 'build/elemental_ruins.exe')
         $exe = Join-Path $root 'build\elemental_ruins.exe'
         $report = (Join-Path $evidence 'p0_selftest_export_headless.json') -replace '\\', '/'
-        Invoke-SelftestStep 'export_selftest_headless' '08_export_selftest_headless.log' $exe @('--headless', '--', '--p0-selftest') $report 12
+        Invoke-SelftestStep 'export_selftest_headless' '08_export_selftest_headless.log' $exe @('--headless', '--', '--p0-selftest') $report (Get-SelftestIds 'p0')
         if ($Window) {
             $reportWin = (Join-Path $evidence 'p0_selftest_export_window.json') -replace '\\', '/'
-            Invoke-SelftestStep 'export_selftest_window' '09_export_selftest_window.log' $exe @('--', '--p0-selftest') $reportWin 12
+            Invoke-SelftestStep 'export_selftest_window' '09_export_selftest_window.log' $exe @('--', '--p0-selftest') $reportWin (Get-SelftestIds 'p0')
         }
     }
 }

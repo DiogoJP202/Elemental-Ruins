@@ -609,6 +609,7 @@ func _finish(force_code := -1) -> void:
 			passed += 1
 	var all_pass := passed == _results.size() and not _results.is_empty()
 	var log_snapshot: Dictionary = _logger.snapshot()
+	all_pass = all_pass and log_snapshot.errors == 0 and log_snapshot.warnings == 0
 	if not _fps_samples.is_empty():
 		_metrics["fps_janela"] = _stats(_fps_samples)
 	var report := {
