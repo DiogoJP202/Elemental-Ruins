@@ -29,6 +29,7 @@ const SAVE_SLOT := "slot1"
 @onready var materials: MaterialResponseSystem = $World/MaterialResponseSystem
 @onready var player: PlayerController = $Player
 @onready var edit_controller: TerrainEditController = $TerrainEditController
+@onready var abilities: AbilityController = $AbilityController
 @onready var hud: DebugHud = $HUD
 
 var reset_count := 0
@@ -40,7 +41,8 @@ func _ready() -> void:
 		ProjectSettings.get_setting("physics/3d/physics_engine"),
 		RenderingServer.get_current_rendering_method()])
 	edit_controller.setup(terrain_service, brush_queue, player, props_root)
-	hud.setup(terrain_service, brush_queue, player, edit_controller, structures, debris)
+	abilities.setup(terrain_service, materials, structures, player, props_root, dust)
+	hud.setup(terrain_service, brush_queue, player, edit_controller, structures, debris, abilities, materials)
 	edit_controller.reset_requested.connect(request_world_reset)
 	edit_controller.save_requested.connect(func(): request_world_save(SAVE_SLOT))
 	edit_controller.load_requested.connect(func(): request_world_load(SAVE_SLOT))

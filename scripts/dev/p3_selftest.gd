@@ -47,7 +47,204 @@ func _run_tests() -> bool:
 		return ok
 	_log("--- testes P3 ---")
 	if _should_run("T38"): await _t38_material_states()
+	if _should_run("T28"): await _t28_controller()
+	if _should_run("T29"): await _t29_earth_lift_throw()
+	if _should_run("T30"): await _t30_earth_breaks_tower()
 	return true
+
+
+# --- T28: seleção de elemento e roteamento do LMB ----------------------------------------
+
+func _t28_controller() -> void:
+	var ab: AbilityController = main.abilities
+	await main.request_world_reset()
+	player.input_enabled = true
+	var details := {"poderes": ab.abilities.map(func(a): return "%s/%s/%s" % [a.element, a.id, a.input_mode])}
+	# 1–4 pelo evento de input real (InputEventAction), como o teclado gera.
+	var selected := []
+	for i in ab.abilities.size():
+		_send_action(ElementalKeys.ACTIONS[i], true)
+		_send_action(ElementalKeys.ACTIONS[i], false)
+		await get_tree().physics_frame
+		selected.append(ab.current)
+	var sel_ok := true
+	for i in selected.size():
+		sel_ok = sel_ok and selected[i] == i
+	_send_action(ElementalKeys.ACTIONS[0], true)
+	_send_action(ElementalKeys.ACTIONS[0], false)
+	await get_tree().physics_frame
+	# Clique com o mouse livre (o selftest não captura o mouse) e exigência de captura: ignorado.
+	var uses := []
+	var cb := func(id, phase): uses.append("%s:%s" % [id, phase])
+	ab.ability_used.connect(cb)
+	ab.require_captured_mouse = true
+	_send_action(&"ability_use", true)
+	_send_action(&"ability_use", false)
+	await get_tree().physics_frame
+	var ignored_uncaptured := uses.is_empty()
+	# Sem exigência de captura: o LMB chega ao poder atual.
+	ab.require_captured_mouse = false
+	player.camera_rig.set_view(0.0, deg_to_rad(-35.0))
+	await _seconds(0.3)
+	_send_action(&"ability_use", true)
+	await get_tree().physics_frame
+	_send_action(&"ability_use", false)
+	await get_tree().physics_frame
+	var routed := uses.size() >= 2
+	# Durante o reset nada age.
+	main.request_world_reset.call_deferred()
+	await _wait_until(func(): return svc.is_resetting(), 2.0)
+	var during_reset := ab.use_pressed()
+	await _wait_until(func(): return not svc.is_resetting() and not player.is_frozen(), 10.0)
+	ab.ability_used.disconnect(cb)
+	player.input_enabled = false
+	var ok: bool = sel_ok and ignored_uncaptured and routed and not during_reset
+	details.merge({"selecionados_por_1_4": selected, "clique_sem_mouse_capturado_ignorado": ignored_uncaptured,
+		"lmb_roteado": uses, "agiu_durante_reset": during_reset})
+	_record("T28", "1–4 escolhem o elemento; LMB chega ao poder; clique de recaptura não age; nada age no reset", ok, details)
+	for ch in props.get_children():
+		ch.queue_free()
+
+
+# --- T29: Terra — erguer e arremessar ---------------------------------------------------
+
+func _t29_earth_lift_throw() -> void:
+	var ab: AbilityController = main.abilities
+	await main.request_world_reset()
+	var base := LAB_P3 + Vector3(0, 0, 8)
+	await _prepare_area(base, AABB(LAB_P3 - Vector3(8, 4, 16), Vector3(16, 10, 30)))
+	ab.select(0)
+	ab.require_captured_mouse = false
+	player.input_enabled = true
+	player.camera_rig.set_view(0.0, deg_to_rad(-35.0))
+	await _seconds(0.4)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var pressed := ab.use_pressed()
+	var rock := earth.rock
+	var max_step := 0.0
+	var prev := EarthLiftThrow.center_of(rock) if rock != null else Vector3.ZERO
+	var t0 := Time.get_ticks_msec()
+	var held_ms := -1
+	while rock != null and Time.get_ticks_msec() - t0 < 3000:
+		await get_tree().physics_frame
+		if not is_instance_valid(rock):
+			break
+		max_step = maxf(max_step, EarthLiftThrow.center_of(rock).distance_to(prev))
+		prev = EarthLiftThrow.center_of(rock)
+		if held_ms < 0 and earth.phase == "held" and EarthLiftThrow.center_of(rock).distance_to(earth.hold_target()) < 1.0:
+			held_ms = Time.get_ticks_msec() - t0
+	var hold_err := EarthLiftThrow.center_of(rock).distance_to(earth.hold_target()) if rock != null else INF
+	# Alvo: caixa 10 m à frente, sobre o chão.
+	var crate := DebugProps.spawn_crate(props, base + Vector3(0, 0.0, -14))
+	await _seconds(1.0)
+	var c0 := crate.global_position
+	_aim_at(crate.global_position)
+	await get_tree().physics_frame
+	var aim_hit: Dictionary = ab.aim_any(60.0, [rock.get_rid()] as Array[RID])
+	ab.use_released()
+	await get_tree().physics_frame
+	var launch_speed := rock.linear_velocity.length() if rock != null and is_instance_valid(rock) else 0.0
+	var trace := []
+	for i in 6:
+		await _seconds(0.25)
+		if is_instance_valid(rock):
+			trace.append("%s v=%.1f" % [EarthLiftThrow.center_of(rock).snappedf(0.1), rock.linear_velocity.length()])
+	await _seconds(1.5)
+	var moved := crate.global_position.distance_to(c0)
+	player.input_enabled = false
+	var st := earth.get_stats()
+	var ok: bool = pressed and rock != null and held_ms >= 0 and hold_err < 1.0 and max_step < 0.5 \
+		and launch_speed >= 18.0 and st.hits >= 1 and moved > 2.0
+	_record("T29", "Terra: rocha real extraída, suspensa só por forças e arremessada; acerta a caixa e a desloca", ok, {
+		"rocha_t": rock.mass / 1000.0 if rock != null and is_instance_valid(rock) else 0.0,
+		"ms_ate_suspensa_a_1m": held_ms, "erro_suspensao_m": hold_err, "maior_passo_por_quadro_m": max_step,
+		"vel_no_lancamento": launch_speed, "contatos": st.hits, "maior_impulso_Ns": st.max_impulse,
+		"caixa_deslocada_m": moved, "mira_acertou": str(aim_hit.get("collider", "nada")), "mira_ponto": str(aim_hit.get("position", "")),
+		"caixa_pos": str(c0), "trajetoria": trace})
+	await _shot("t29_rocha_arremessada", player.global_position, 0.0, -15.0, false)
+	for ch in props.get_children():
+		ch.queue_free()
+
+
+# --- T30: Terra × torre (dano cinético) ----------------------------------------------------
+
+func _t30_earth_breaks_tower() -> void:
+	var ab: AbilityController = main.abilities
+	await main.request_world_reset()
+	await _go_to_tower()
+	ab.select(0)
+	ab.require_captured_mouse = false
+	player.input_enabled = true
+	player.camera_rig.set_view(0.0, deg_to_rad(-32.0))
+	await _seconds(0.4)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	# Mira no PÉ do pilar da frente à esquerda: a rocha (centro 1 meia altura acima do ponto
+	# mirado) acerta o pé e/ou o bloco do meio; o bloco de cima só pode cair pelo grafo.
+	var target: StructurePiece = null
+	var above: StructurePiece = null
+	for p in structures.get_pieces():
+		var d := p.home.origin - structures.tower_origin
+		if p.kind == "pilar0" and d.x < 0 and d.z > 0:
+			if absf(p.home.origin.y - 0.8) < 0.1:
+				target = p
+			elif absf(p.home.origin.y - 3.8) < 0.1:
+				above = p
+	var s0 := structures.get_stats()
+	var m0: Dictionary = main.materials.get_stats()
+	ab.use_pressed()
+	var rock := earth.rock
+	var held := await _wait_until(func(): return earth.phase == "held", 4.0)
+	await _seconds(0.5)
+	_aim_at(target.global_position)
+	await get_tree().physics_frame
+	var aim_hit: Dictionary = ab.aim_any(60.0, [rock.get_rid()] as Array[RID]) if is_instance_valid(rock) else {}
+	ab.use_released()
+	var trace := []
+	for i in 6:
+		await _seconds(0.15)
+		if is_instance_valid(rock):
+			trace.append("%s v=%.1f" % [EarthLiftThrow.center_of(rock).snappedf(0.1), rock.linear_velocity.length()])
+	await _wait_until(func(): return above.released, 2.0)
+	await _wait_structures_idle(3.0)
+	await _seconds(1.5)
+	player.input_enabled = false
+	var s1 := structures.get_stats()
+	var m1: Dictionary = main.materials.get_stats()
+	var by_impact: int = m1.kinetic_breaks - m0.kinetic_breaks
+	var released_now := structures.released_count()
+	var ok: bool = target != null and above != null and above.released and by_impact >= 1 \
+		and released_now > by_impact and s1.broken > s0.broken
+	_record("T30", "Terra × torre: rocha arremessada solta bloco(s) de pilar por impacto e o grafo derruba o bloco de cima", ok, {
+		"pe_mirado": target.name if target else "", "pe_solto": target.released if target else false,
+		"bloco_de_cima": above.name if above else "", "bloco_de_cima_solto": above.released if above else false,
+		"soltas_por_impacto": by_impact, "soltas_no_total": released_now,
+		"ultima_quebra": s1.last_break, "quebras_por_impacto": by_impact,
+		"maior_impulso_Ns": earth.get_stats().max_impulse, "soltas_total": structures.released_count(),
+		"suspensa": held, "mira_acertou": str(aim_hit.get("collider", "nada")), "alvo_pos": str(target.global_position),
+		"trajetoria": trace})
+	await _shot("t30_rocha_derruba_pilar", structures.tower_origin + Vector3(0, 0.5, 16), 0.0, -10.0)
+	await main.request_world_reset()
+
+
+# --- Utilidades P3 -------------------------------------------------------------------------
+
+## Envia um InputEventAction (o mesmo caminho do teclado/mouse até _unhandled_input).
+func _send_action(action: StringName, pressed: bool) -> void:
+	var ev := InputEventAction.new()
+	ev.action = action
+	ev.pressed = pressed
+	Input.parse_input_event(ev)
+
+
+## Aponta a câmera (yaw/pitch do rig) para um ponto do mundo; duas passadas porque a posição
+## da câmera depende da própria orientação (braço de mola atrás do jogador).
+func _aim_at(point: Vector3) -> void:
+	for i in 2:
+		var cam: Camera3D = player.camera_rig.camera
+		var dir := (point - cam.global_position).normalized()
+		player.camera_rig.set_view(atan2(-dir.x, -dir.z), asin(clampf(dir.y, -1.0, 1.0)))
+		player.camera_rig.force_update_transform()
+		cam.force_update_transform()
 
 
 # --- T38: máquina de estados de material (eventos aplicados direto) ----------------------

@@ -21,6 +21,11 @@ const KEY_ACTIONS := {
 	&"brush_cycle_material": [KEY_M],
 	&"terrain_extract": [KEY_R],
 	&"debug_push": [KEY_T],
+	# P3: elementos (GDD §4: 1 2 3 4 = Terra / Água / Fogo / Ar).
+	&"element_earth": [KEY_1],
+	&"element_water": [KEY_2],
+	&"element_fire": [KEY_3],
+	&"element_air": [KEY_4],
 	&"world_reset": [KEY_Z],
 	&"world_save": [KEY_F5],
 	&"world_load": [KEY_F9],
@@ -33,6 +38,7 @@ const KEY_ACTIONS := {
 const MOUSE_BUTTON_ACTIONS := {
 	&"brush_radius_up": [MOUSE_BUTTON_WHEEL_UP],
 	&"brush_radius_down": [MOUSE_BUTTON_WHEEL_DOWN],
+	&"ability_use": [MOUSE_BUTTON_LEFT],
 }
 
 

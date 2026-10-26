@@ -5,6 +5,7 @@ extends CanvasLayer
 ## Só lê estado; não executa comandos.
 
 const LEGEND := "WASD mover · Shift correr · Space pular · Mouse câmera · Esc solta o mouse\n" \
+	+ "1 Terra · 2 Água · 3 Fogo · 4 Ar · LMB usar o poder (Terra e Água: segure)\n" \
 	+ "G escavar · H adicionar · N suavizar (segure) · J túnel · K rampa · M material do H · roda / [ ] raio\n" \
 	+ "R extrair rocha · T impulso de teste no corpo mirado · B caixa de teste\n" \
 	+ "Z RESET DO MUNDO · F5 salvar slot · F9 carregar slot"
@@ -18,6 +19,8 @@ var player: PlayerController
 var edit_controller: TerrainEditController
 var structures: StructureService
 var debris: DebrisBudget
+var abilities: AbilityController
+var materials: MaterialResponseSystem
 
 var _status: Label
 var _last_edit: Label
@@ -31,13 +34,16 @@ var _last_load := ""
 
 
 func setup(p_service: TerrainService, p_queue: TerrainBrushQueue, p_player: PlayerController,
-		p_controller: TerrainEditController, p_structures: StructureService = null, p_debris: DebrisBudget = null) -> void:
+		p_controller: TerrainEditController, p_structures: StructureService = null, p_debris: DebrisBudget = null,
+		p_abilities: AbilityController = null, p_materials: MaterialResponseSystem = null) -> void:
 	terrain_service = p_service
 	brush_queue = p_queue
 	player = p_player
 	edit_controller = p_controller
 	structures = p_structures
 	debris = p_debris
+	abilities = p_abilities
+	materials = p_materials
 	edit_controller.edit_performed.connect(_on_edit_performed)
 	terrain_service.world_reset_started.connect(func(): _set_last("RESET DO MUNDO em andamento...", Color.YELLOW))
 	terrain_service.world_reset_finished.connect(_on_reset_finished)
@@ -54,7 +60,7 @@ func _ready() -> void:
 	add_child(root)
 
 	_status = _make_label(root, Vector2(16, 12), 14)
-	_last_edit = _make_label(root, Vector2(16, 262), 16)
+	_last_edit = _make_label(root, Vector2(16, 292), 16)
 
 	var legend := _make_label(root, Vector2.ZERO, 14)
 	legend.text = LEGEND
@@ -132,6 +138,7 @@ func _status_lines() -> PackedStringArray:
 			_voxel_engine_text(), Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0,
 			Performance.get_monitor(Performance.PHYSICS_3D_ACTIVE_OBJECTS)],
 		_physics_text(),
+		_ability_text(),
 		"Jogador: (%.1f, %.1f, %.1f)  no chão: %s" % [p.x, p.y, p.z, "sim" if player.is_on_floor() else "não"],
 		"Pincel: raio %.2f m  |  material do H: %s" % [edit_controller.get_radius(),
 			MATERIAL_NAMES.get(edit_controller.get_add_material(), edit_controller.get_add_material())],
@@ -172,6 +179,21 @@ func _physics_text() -> String:
 	return "Destroços: corpos ativos %d (teto %d)  estacionados %d  |  torre: %d/%d peças soltas%s  |  rochas extraídas %d" % [
 		d.active, debris.max_active, d.parked, s.released_now, s.pieces,
 		("  (%d na fila)" % s.queued) if s.queued > 0 else "", rocks]
+
+
+## Poder atual + estado + material do corpo mirado (ex.: MADEIRA • 20 kg • 180 °C • molhada 40%).
+func _ability_text() -> String:
+	if abilities == null or abilities.abilities.is_empty():
+		return "Poder: —"
+	var a := abilities.current_ability()
+	var text := "Poder: %s  |  %s" % [abilities.element_label(), a.status() if a.status() != "" else "pronto"]
+	if materials != null:
+		var body := abilities.aimed_body()
+		var s := materials.state_of(body) if body != null else null
+		if s != null:
+			text += "  |  corpo mirado: %s • %.0f kg" % [s.describe(), (body as RigidBody3D).mass]
+		text += "  |  em chamas: %d" % materials.burning_count()
+	return text
 
 
 func _aim_text(aim: Dictionary) -> String:

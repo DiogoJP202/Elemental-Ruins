@@ -34,6 +34,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if captured else Input.MOUSE_MODE_CAPTURED
 	elif event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		# O clique que só recaptura o mouse não chega aos poderes (LMB = usar poder no P3).
+		get_viewport().set_input_as_handled()
 
 
 func get_yaw_basis() -> Basis:
