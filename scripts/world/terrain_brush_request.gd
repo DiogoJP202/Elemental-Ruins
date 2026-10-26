@@ -22,6 +22,10 @@ var enqueued_usec := 0
 var applied_usec := 0
 ## Quantos carimbos foram fundidos neste pedido (1 = nenhum).
 var merged_count := 1
+## Epoch da fila: reset/save/load invalidam pedidos capturados antes da transição.
+var world_epoch := -1
+## Segmentos separados por perda da mira nunca podem ser fundidos em um PATH.
+var segment_id := 0
 
 
 static func sphere(p_op: Op, center: Vector3, radius: float, p_material: StringName = &"") -> TerrainBrushRequest:

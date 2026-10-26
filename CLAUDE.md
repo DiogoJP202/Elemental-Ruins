@@ -2,6 +2,20 @@
 
 > Leia este arquivo no início de toda sessão. Este repositório será um **jogo Godot 4**, não uma aplicação web. Idioma das explicações: português brasileiro; nomes de classes, nós, funções e arquivos em inglês quando fizer sentido.
 
+## Estado vigente: continuação do P3.6 (26/10/2026)
+- P0: terreno volumétrico; P1: fila, materiais e persistência; P2: sustentação e extração; P3: quatro elementos; P3.5: Terra em fases. Implementados, com relatórios em docs/. Não reiniciar essas fases.
+- Trabalho autorizado: preparação do P3.6 → baseline corrigido → M0 investigação → M1 Água → M2 Fogo → M3 Ar → M4 integração. Commits incrementais; sem push ou merge na main.
+- Worktree exclusiva: `C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a`, branch `claude/charming-mendel-4b469a`. HEAD inicial: `08b6c6e`. Conferir Git e preservar alterações locais antes de editar.
+- Stack vigente: Godot 4.7.2 custom + Voxel Tools 1.7 como módulo (D13). Editor e template release compatíveis. Não reintroduzir a GDExtension.
+- Referências atuais: README.md, docs/decisions.md, docs/p35_earth_polish.md, docs/p36_baseline.md, docs/p36_progress.md e PROJETO_ROADMAP.md. O prompt inicial e o escopo da primeira entrega abaixo são históricos.
+- Gates: zero erros e zero avisos. Nenhuma exceção ativa. Allowlist futura só com identificação exata, justificativa e documentação. Sem relaxar critérios para obter PASS.
+- Em janela: intervalo entre quadros p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms nos cenários T27/T37. Registrar hardware, resolução, renderer, cenário e metodologia. Headless não comprova renderização.
+- Água, Fogo e Ar: Resources independentes editáveis pelo inspetor, seguindo EarthTuning. Separar comandos, simulação, materiais e VFX. Não criar habilidades novas.
+- PvP nesta fase: timings configuráveis, eventos identificáveis, cancelamentos e telegraphs. Sem rede, rollback, servidores ou dano em jogadores; sem pausa/tempo global para impacto.
+- Capturas e automação não são playtest humano. Controles, legibilidade e game feel: NÃO TESTADO até avaliação humana real.
+- Raycasts: registrar tentativas, acertos e falhas por cenário, superfícies finas e corpos adjacentes. Amostra sem falhas não prova correção universal.
+- Testes direcionados por marco, baseline após estabilização e bateria integral em M4. Evidências novas em docs/evidence/p36/, preservando as históricas.
+
 ## Visão do produto
 Sandbox **3D em terceira pessoa**, focado em controle expressivo de terra, água, fogo e ar, destruição física e modificações persistentes do ambiente. Estética original inspirada no cel-shading/cores e contornos de *Sable* e no low-poly/texturas retro de *Mouthwashing*. **Nunca copiar assets, personagens, marcas, símbolos ou código proprietário dessas obras, nem de Avatar.** O atlas de Avatar é referência mecânica, não material para reprodução de propriedade intelectual.
 
@@ -27,7 +41,7 @@ Sandbox **3D em terceira pessoa**, focado em controle expressivo de terra, água
 
 Em caso de conflito: **requisito explícito do usuário > CLAUDE.md > P0_CHECKLIST.md > GDD v0.2 > pesquisa > documentos históricos**. Nunca trabalhar baseado no GDD antigo `elemental_ruins_gdd.md` nem no prompt antigo `prompt_claude_elemental_ruins.md`, que não estão neste pacote.
 
-## Escopo DA PRIMEIRA ENTREGA: apenas P0
+## Histórico: escopo da primeira entrega (P0 concluído)
 1. Inspecionar máquina/projeto, versões da Godot, Git, ferramentas e dependências sem instalar silenciosamente nada importante.
 2. Criar projeto nativo `.godot` e uma cena de laboratório técnico com personagem `CharacterBody3D`, câmera de terceira pessoa e WASD/Space/mouse.
 3. Integrar terreno SDF volumétrico com geração de malha e colisão.

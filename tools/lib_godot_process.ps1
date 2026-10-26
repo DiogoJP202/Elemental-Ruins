@@ -91,6 +91,7 @@ function Invoke-SelftestStep([string]$Name, [string]$LogFile, [string]$Exe, [str
     $t0 = Get-Date
     $code = Invoke-Native $Exe ($Arguments + @("--report=$ReportPath", "--run-id=$runId")) $log $root $StepTimeoutSec
     $reason = Test-SelftestReport $ReportPath $runId $ExpectedIds $t0
+    if ($reason -eq '') { $reason = Test-GodotLog $log }
     if ($reason -ne '') {
         Add-Content -Path $log -Encoding UTF8 -Value "`n----- RELATÓRIO INVÁLIDO (run_id $runId): $reason; exit do processo=$code -----"
         if ($code -eq 0) { $code = $script:InvalidReportExitCode }

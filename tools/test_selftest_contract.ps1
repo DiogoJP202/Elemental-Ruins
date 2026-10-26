@@ -44,6 +44,10 @@ Check 'antigo' {}
 Check 'json_invalido' {}
 $missing = Test-SelftestReport (Join-Path $EvidenceDirectory ([guid]::NewGuid().ToString()+'.json')) 'contract-test' $ids (Get-Date)
 $checks.Add([pscustomobject]@{case='ausente';passed=($missing -ne '');reason=$missing})
+foreach ($header in @('ERROR: shutdown failure','WARNING: startup warning','SCRIPT ERROR: parse failure')) {
+    Set-Content -LiteralPath $fixture -Value $header -Encoding UTF8
+    $checks.Add([pscustomobject]@{case=$header;passed=((Test-GodotLog $fixture) -ne '');reason='log rejects motor diagnostic'})
+}
 $checks | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $EvidenceDirectory 'results.json') -Encoding UTF8
 if (@($checks | Where-Object { -not $_.passed }).Count) { exit 1 }
 Write-Host "PASS $($checks.Count)/$($checks.Count)"

@@ -112,6 +112,21 @@
     {
         "case":  "ausente",
         "passed":  true,
-        "reason":  "relatório não foi gravado (C:\\Users\\dsoares\\Documents\\Projetos\\game\\.claude\\worktrees\\charming-mendel-4b469a\\docs\\evidence\\p36\\preparation\\contracts\\396c79a1-407b-403e-8447-dcb75d906487.json)"
+        "reason":  "relatório não foi gravado (C:\\Users\\dsoares\\Documents\\Projetos\\game\\.claude\\worktrees\\charming-mendel-4b469a\\docs\\evidence\\p36\\preparation\\contracts\\777856b1-4d9b-4e12-922f-72404075f1ff.json)"
+    },
+    {
+        "case":  "ERROR: shutdown failure",
+        "passed":  true,
+        "reason":  "log rejects motor diagnostic"
+    },
+    {
+        "case":  "WARNING: startup warning",
+        "passed":  true,
+        "reason":  "log rejects motor diagnostic"
+    },
+    {
+        "case":  "SCRIPT ERROR: parse failure",
+        "passed":  true,
+        "reason":  "log rejects motor diagnostic"
     }
 ]

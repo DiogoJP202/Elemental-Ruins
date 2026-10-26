@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[PREP] release_0.2m true {}
+[TerrainBrushQueue] 2 pedido(s) descartado(s): 
+[PREP] release_20.0m true {}
+[TerrainBrushQueue] 2 pedido(s) descartado(s): 
+[PREP] lost_aim_no_bridge true {}
+[TerrainBrushQueue] 2 pedido(s) descartado(s): 
+[PREP] cancel_no_final_segment true {}
+[TerrainBrushQueue] 1 pedido(s) descartado(s): test epoch
+[PREP] stale_request_rejected true {}
+[PREP] fallback_agreement true {"queries":3}
+[PREP] fallback_adjacent_colliders true {"queries":3}
+[PREP] fallback_thin_edge true {"queries":3}
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[TerrainService] terreno inicial pronto=true em 444 ms
+[PREP] terrain_slanted_vertices true {"attempts":90,"failures":0,"fallbacks":6,"hits":90}
+[PREP] tool_switch_explicit true {}
+[PREP] held_action_latched_on_transition true {}
+[TerrainBrushQueue] 3 pedido(s) descartado(s): switch test end
+[TerrainBrushQueue] 2 pedido(s) descartado(s): reset
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[PREP] thin_wall_1mm true {"attempts":100,"failures":0,"hits":100}
+[PREP] ray_exclusion_preserved true {}
+[PREP] adjacent_native_colliders true {"attempts":100,"correct_selection":100,"failures":0}
+[TerrainService] reset: geração 2 pronta=true em 249 ms
+[PREP] transition_reset true {}
+[TerrainBrushQueue] 2 pedido(s) descartado(s): salvar
+[TerrainService] save p36_preparation: ok=true { "slot": "p36_preparation", "ok": true, "ms": 249.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p36_preparation.sqlite" }
+[PREP] transition_save true {}
+[TerrainBrushQueue] 2 pedido(s) descartado(s): carregar
+[TerrainService] load p36_preparation: ok=true { "slot": "p36_preparation", "ok": true, "ms": 231.0, "copy": "OK", "bytes": 20480 }
+[PREP] transition_load true {}
+[PREP] motor_zero true {"errors":0,"samples":[],"warnings":0}
+[PREP] PASS 18 cenarios

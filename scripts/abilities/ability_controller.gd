@@ -151,14 +151,7 @@ func aim_any(max_distance: float, exclude: Array[RID] = []) -> Dictionary:
 	var r := aim_ray()
 	var q := PhysicsRayQueryParameters3D.create(r[0], r[0] + r[1] * max_distance, Layers.TERRAIN | Layers.PROPS, exclude)
 	var space := player.get_world_3d().direct_space_state
-	var hit := space.intersect_ray(q)
-	if hit.is_empty():
-		# Mesmo cuidado do TerrainService.raycast_terrain: raio sobre um vértice exato do collider
-		# pode errar no Jolt (spike P3.6 R3); repete deslocado 1 mm.
-		q.from += Vector3(0.001, 0.0, 0.0007)
-		q.to += Vector3(0.001, 0.0, 0.0007)
-		hit = space.intersect_ray(q)
-	return hit
+	return PhysicsRayHelper.intersect(space, q)
 
 
 ## Ponto que a mira atinge (terreno ou corpo), ou o fim do raio se não atinge nada.

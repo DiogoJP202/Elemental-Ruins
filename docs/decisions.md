@@ -1,4 +1,4 @@
-# Decisões e trade-offs — P0, P1 e P2
+# Decisões e trade-offs — P0–P3.6
 
 Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. D21+: P2 (23/10/2026). Formato: decisão → motivo → consequência.
 
@@ -400,3 +400,19 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. 
 - T29: o "só forças" virou detecção de teleporte (|Δx − v·dt| < 0,05 m, porque o Jolt integra x += v_nova·dt) no lugar
   do limite de passo de 0,5 m (o levantamento chega a 0,6 m/quadro). A caixa deslocada passou de > 2,0 para > 0,5 m:
   o choque às vezes é de raspão (medido 0,85–6,3 m), e o contato continua exigido.
+
+## D42. P3.6: contrato de execução completo nos cinco runners
+- `9788e7b` introduziu run_id, frescor e conclusão; a retomada completa isso com IDs explícitos por bateria, comparação dos resultados individuais, contadores tipados e coerentes, zero erros/avisos e diagnósticos de startup/shutdown no log. Nenhuma exceção ativa.
+- Contratos em `tools/lib_selftest_contract.ps1`; testes negativos em `tools/test_selftest_contract.ps1`. Encerrar a janela com exit 0 continua sendo falha (exit 3). Evidências novas em `docs/evidence/p36/preparation/`, sem substituir as históricas.
+
+## D43. Fechamento, interrupção e época das edições
+- O T8 tinha causa geométrica real: `end_stroke` não cobria o resto até a última mira válida (corrigido em `08b6c6e`). A retomada também fecha restos menores que o espaçamento normal de carimbos.
+- Perder o alvo encerra o segmento válido e quebra a continuidade. Segmentos separados não se fundem no backlog. Trocar ferramenta fecha explicitamente a anterior; reset/save/load cancelam sem segmento final e invalidam a época da fila. Pedido capturado antes da transição é rejeitado se reapresentado.
+- Entrada mantida durante a transição fica bloqueada até soltar. A fila não aceita pedidos enquanto o serviço está indisponível.
+- Teste direcionado T1/T8/T8b: 3/3, zero erros/avisos. Casos de perda da mira, cancelamento, troca e transições reais constam do relatório de preparação.
+
+## D44. Raycast de arestas com testemunhas simétricas de 1 mm
+- `08b6c6e` usava uma segunda consulta deslocada. Um único raio pode selecionar o colisor vizinho na silhueta. Agora `PhysicsRayHelper` compartilha o comportamento entre terreno e `aim_any`: primeiro o raio original; apenas se falhar, duas testemunhas transversais a ±1 mm.
+- Fallback só aceito com mesmo RID, normais compatíveis (dot ≥ 0,95) e contatos a até 4 mm entre si. Máscara, exclusões e alcance preservados; ponto retornado é contato físico testemunha, até 1 mm fora do eixo.
+- Amostra: 90/90 raios inclinados sobre coordenadas inteiras (6 recuperados pelo fallback), 100/100 através de parede de 1 mm e 100/100 seleções corretas em colisores adjacentes. Testes negativos rejeitam testemunhas de RIDs diferentes e contato unilateral; exclusão preservada.
+- Não é prova universal. Em quinas de normais incompatíveis, fronteiras de RIDs ou detalhes menores que 1 mm, o fallback conserva a ausência de acerto. Custo máximo: duas consultas extras por raio que falha; comparar no baseline corrigido.

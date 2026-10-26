@@ -43,6 +43,7 @@ var _aim_material: TerrainMaterial
 var _add_material_index := 0
 ## ação → id do traço ativo
 var _strokes := {}
+var _blocked_actions := {}
 var _marker: MeshInstance3D
 var _marker_mat: StandardMaterial3D
 ## Esconde o marcador do pincel sem desligar G/H (P3.5: enquanto a Terra age, a esfera verde
@@ -57,6 +58,9 @@ func setup(p_service: TerrainService, p_queue: TerrainBrushQueue, p_player: Play
 	props_root = p_props_root
 	radius = clampf(radius, terrain_service.min_radius, terrain_service.max_radius)
 	brush_queue.brush_applied.connect(func(_req, result): edit_performed.emit(result))
+	terrain_service.world_reset_started.connect(_cancel_for_transition)
+	terrain_service.world_save_started.connect(func(_slot): _cancel_for_transition())
+	terrain_service.world_load_started.connect(func(_slot): _cancel_for_transition())
 
 
 func _ready() -> void:
@@ -94,15 +98,18 @@ func get_aim() -> Dictionary:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if terrain_service == null or player == null or not player.input_enabled:
+	if terrain_service == null or player == null or not player.input_enabled or not terrain_service.is_ready():
 		return
 	for action: StringName in STROKE_ACTIONS:
 		if event.is_action_pressed(action):
+			if _blocked_actions.has(action):
+				return
 			# O traço abre no EVENTO e já carimba: um toque rápido (tecla desce e sobe no
 			# mesmo quadro) não pode se perder (bug B3 do P0).
 			_begin_stroke(action)
 			return
 		if event.is_action_released(action):
+			_blocked_actions.erase(action)
 			_end_stroke(action)
 			return
 	if event.is_action_pressed(&"brush_radius_up"):
@@ -130,15 +137,21 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if terrain_service == null or player == null or not player.input_enabled:
+	if terrain_service == null or player == null or not player.input_enabled or not terrain_service.is_ready():
 		_marker.visible = false
 		_aim_hit = false
 		_aim_material = null
-		_end_all_strokes()
+		for stroke_id in _strokes.values():
+			brush_queue.cancel_stroke(stroke_id)
+		_strokes.clear()
 		return
 	_update_aim()
 	for action: StringName in STROKE_ACTIONS:
 		var held := Input.is_action_pressed(action)
+		if _blocked_actions.has(action):
+			if not held:
+				_blocked_actions.erase(action)
+			continue
 		if held and not _strokes.has(action):
 			# Sem evento (ex.: Input.action_press em teste, foco recuperado): abre aqui.
 			_begin_stroke(action)
@@ -150,7 +163,10 @@ func _physics_process(_delta: float) -> void:
 
 
 func _begin_stroke(action: StringName) -> void:
-	_end_stroke(action)
+	for previous in _strokes:
+		if previous != action and Input.is_action_pressed(previous):
+			_blocked_actions[previous] = true
+	_end_all_strokes()
 	var op: TerrainBrushRequest.Op = STROKE_ACTIONS[action]
 	var mat := get_add_material() if op == TerrainBrushRequest.Op.ADD else &""
 	var r := minf(radius, terrain_service.max_smooth_radius) if op == TerrainBrushRequest.Op.SMOOTH else radius
@@ -178,6 +194,15 @@ func _end_stroke(action: StringName) -> void:
 func _end_all_strokes() -> void:
 	for action in _strokes.keys():
 		_end_stroke(action)
+
+
+func _cancel_for_transition() -> void:
+	for action in STROKE_ACTIONS:
+		if Input.is_action_pressed(action):
+			_blocked_actions[action] = true
+	for stroke_id in _strokes.values():
+		brush_queue.cancel_stroke(stroke_id)
+	_strokes.clear()
 
 
 func _update_aim() -> void:

@@ -43,6 +43,7 @@ var terrain_service: TerrainService
 var _pending: Array[TerrainBrushRequest] = []
 var _strokes := {}
 var _next_stroke_id := 1
+var _world_epoch := 0
 var _stats := {
 	"enqueued": 0, "applied": 0, "rejected": 0, "dropped": 0, "cleared": 0,
 	"stamps": 0, "stamps_skipped": 0, "merged": 0, "splits": 0, "strokes_closed": 0,
@@ -67,6 +68,7 @@ class Stroke:
 	## Último ponto mirado (com alvo), mesmo sem carimbo: end_stroke fecha o traço nele.
 	var last_aim := Vector3.ZERO
 	var has_aim := false
+	var segment_id := 0
 	## Último material sólido lido sob a mira. Mantido quando a amostra cai no ar
 	## (dentro do buraco recém-escavado, antes de o collider atualizar).
 	var material: TerrainMaterial
@@ -87,11 +89,17 @@ func _ready() -> void:
 
 ## false se a fila está cheia (o pedido é descartado e contado).
 func enqueue(request: TerrainBrushRequest) -> bool:
+	if terrain_service != null and not terrain_service.is_ready():
+		return false
+	if request.world_epoch >= 0 and request.world_epoch != _world_epoch:
+		_stats.dropped += 1
+		return false
 	if _pending.size() >= max_pending:
 		_stats.dropped += 1
 		_reject_reasons["queue_full"] = _reject_reasons.get("queue_full", 0) + 1
 		return false
 	request.enqueued_usec = Time.get_ticks_usec()
+	request.world_epoch = _world_epoch
 	_pending.append(request)
 	_stats.enqueued += 1
 	return true
@@ -99,6 +107,7 @@ func enqueue(request: TerrainBrushRequest) -> bool:
 
 ## Esvazia a fila e encerra os traços (reset, salvar, carregar). Retorna quantos pedidos caíram.
 func clear(reason := "") -> int:
+	_world_epoch += 1
 	var n := _pending.size()
 	_pending.clear()
 	_strokes.clear()
@@ -127,7 +136,13 @@ func begin_stroke(op: TerrainBrushRequest.Op, radius: float, material_id: String
 ## `normal` é a normal da superfície mirada (para ler o material logo abaixo dela).
 func update_stroke(stroke_id: int, point: Vector3, normal: Vector3, has_target := true) -> void:
 	var s: Stroke = _strokes.get(stroke_id)
-	if s == null or not has_target:
+	if s == null:
+		return
+	if not has_target:
+		_close_segment(s)
+		s.has_stamp = false
+		s.has_aim = false
+		s.segment_id += 1
 		return
 	s.last_aim = point
 	s.has_aim = true
@@ -161,10 +176,19 @@ func update_stroke(stroke_id: int, point: Vector3, normal: Vector3, has_target :
 func end_stroke(stroke_id: int) -> void:
 	var s: Stroke = _strokes.get(stroke_id)
 	_strokes.erase(stroke_id)
+	_close_segment(s)
+
+
+## Cancelamento descarta o resto, sem gerar o segmento final (reset e ferramenta desativada).
+func cancel_stroke(stroke_id: int) -> void:
+	_strokes.erase(stroke_id)
+
+
+func _close_segment(s: Stroke) -> void:
 	if not close_stroke_on_end or s == null or not s.has_stamp or not s.has_aim or s.op == TerrainBrushRequest.Op.SMOOTH:
 		return
 	var moved := s.last_point.distance_to(s.last_aim)
-	if moved < s.radius * stroke_spacing_factor:
+	if moved < 0.001:
 		return
 	var now := Time.get_ticks_usec() / 1000000.0
 	if moved > s.radius * stroke_gap_factor:
@@ -265,6 +289,8 @@ func _physics_process(_delta: float) -> void:
 
 
 func _apply(req: TerrainBrushRequest) -> TerrainEditResult:
+	if req.world_epoch != _world_epoch:
+		return TerrainEditResult.failure(req.op_name(), "stale_world_epoch")
 	var result: TerrainEditResult
 	var reason := _check_policy(req)
 	if terrain_service == null:
@@ -321,7 +347,7 @@ func _merge_backlog() -> void:
 	var i := 1
 	while i < _pending.size():
 		var nxt := _pending[i]
-		if nxt.stroke_id != head.stroke_id or nxt.op != head.op or nxt.is_path() \
+		if nxt.stroke_id != head.stroke_id or nxt.segment_id != head.segment_id or nxt.world_epoch != head.world_epoch or nxt.op != head.op or nxt.is_path() \
 				or nxt.material_id != head.material_id or not is_equal_approx(nxt.radii[0], head.radii[0]):
 			break
 		var step := pts[-1].distance_to(nxt.points[0])
@@ -337,6 +363,8 @@ func _merge_backlog() -> void:
 	radii.fill(head.radii[0])
 	var merged := TerrainBrushRequest.path(pts, radii, head.op == TerrainBrushRequest.Op.ADD, head.material_id)
 	merged.stroke_id = head.stroke_id
+	merged.segment_id = head.segment_id
+	merged.world_epoch = head.world_epoch
 	merged.source = head.source
 	merged.enqueued_usec = head.enqueued_usec
 	merged.merged_count = pts.size()
@@ -393,6 +421,8 @@ func _split_head(req: TerrainBrushRequest) -> Array:
 func _derive(src: TerrainBrushRequest, pts: PackedVector3Array, radii: PackedFloat32Array) -> TerrainBrushRequest:
 	var r := TerrainBrushRequest.path(pts, radii, src.additive, src.material_id)
 	r.stroke_id = src.stroke_id
+	r.segment_id = src.segment_id
+	r.world_epoch = src.world_epoch
 	r.source = src.source
 	r.enqueued_usec = src.enqueued_usec
 	r.merged_count = src.merged_count
@@ -414,6 +444,7 @@ func _stamp(s: Stroke, point: Vector3, now: float) -> void:
 
 func _enqueue_stamp(s: Stroke, req: TerrainBrushRequest, point: Vector3, now: float) -> void:
 	req.stroke_id = s.id
+	req.segment_id = s.segment_id
 	req.source = s.source
 	if enqueue(req):
 		_stats.stamps += 1

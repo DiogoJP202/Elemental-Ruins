@@ -1,0 +1,73 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-26T16:00:25",
+  "duracao_s": 7.49,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 519.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 519.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "amostras_de_mira": 120,
+        "carimbos": 14,
+        "carimbos_pulados_por_espaco": 0,
+        "limite_carimbos": 16,
+        "max_ops_num_quadro": 1,
+        "ops_aplicadas": 14,
+        "ops_tubo_por_salto": 12,
+        "pontos_sem_vala": [],
+        "todas_ok": true,
+        "vala_no_collider_ms": 15
+      },
+      "id": "T8",
+      "status": "PASS",
+      "titulo": "Traço contínuo (120 amostras em 2 s) vira vala contínua com carimbos limitados"
+    },
+    {
+      "detalhes": {
+        "aplicadas": 7,
+        "carimbos": 7,
+        "chao_antes_y": 0.0200004577636719,
+        "chao_depois_y": -1.68731498718262,
+        "collider_ms": 20.76,
+        "material_mirado": "soil(dureza 1.0, 1500 kg/m³)",
+        "mira": "(-40.0, 0.02, 22.7828)",
+        "tracos_ativos_depois": 0
+      },
+      "id": "T8b",
+      "status": "PASS",
+      "titulo": "G segurado 1 s (Input → controlador → fila) abre cratera no collider"
+    }
+  ],
+  "run_id": "",
+  "testes_ids": [
+    "T1",
+    "T8",
+    "T8b"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": ""
+}

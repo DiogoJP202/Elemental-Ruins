@@ -187,16 +187,7 @@ func raycast_terrain(from: Vector3, to: Vector3) -> Dictionary:
 	var query := PhysicsRayQueryParameters3D.create(from, to, Layers.TERRAIN)
 	query.collide_with_areas = false
 	query.hit_back_faces = false
-	var hit := world.direct_space_state.intersect_ray(query)
-	if hit.is_empty():
-		# Raio exatamente sobre um vértice da malha do collider às vezes não acerta nada no Jolt
-		# (spike P3.6 R3: 4 de 90 raios inclinados para vértices em x, z inteiros; 0 com o alvo
-		# deslocado). Repete uma vez com o raio deslocado 1 mm; só custa nos raios que erram.
-		var nudge := Vector3(0.001, 0.0, 0.0007)
-		query.from = from + nudge
-		query.to = to + nudge
-		hit = world.direct_space_state.intersect_ray(query)
-	return hit
+	return PhysicsRayHelper.intersect(world.direct_space_state, query)
 
 
 ## Valor SDF dos DADOS (negativo = sólido). Não reflete a colisão.

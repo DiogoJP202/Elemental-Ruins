@@ -17,6 +17,12 @@ function Get-SelftestIds([string]$Suite) {
     }
 }
 
+function Test-GodotLog([string]$LogPath) {
+    $content = Get-Content -LiteralPath $LogPath -Raw -Encoding UTF8
+    if ($content -match '(?m)^(SCRIPT ERROR|ERROR|WARNING):') { return 'erro/aviso do motor no log do processo' }
+    return ''
+}
+
 # Sem allowlist ativa: todo erro/aviso invalida o gate. Uma exceção futura exige
 # identificação exata e justificativa versionada; não há filtro por substring.
 function Test-SelftestReport([string]$ReportPath, [string]$RunId, [string[]]$ExpectedIds, [datetime]$NotBefore) {
