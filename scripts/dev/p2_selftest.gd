@@ -189,7 +189,7 @@ func _t26_save_load_structures() -> void:
 	var still_frozen := pieces.filter(func(p): return p.freeze and p.get_meta(DebrisBudget.PARKED_META, "") == "").size()
 	var a_ok: bool = settled and ok_save and max_shift < 0.1 and still_frozen == 0 and structures.released_count() == 36
 	details["A_salvar_com_torre_caida"] = {"salvo": ok_save, "cena_parada_antes": settled, "maior_deslocamento_m": max_shift, "pior_peca": worst,
-		"controle_sem_save_2s_m": ctrl_shift, "salvar": svc.get_debug_stats().last_save,
+		"controle_sem_save_2s_m": ctrl_shift, "salvar": svc.get_debug_stats().last_save, "espera_collider": main.last_thaw,
 		"pecas_ainda_congeladas_pelo_save": still_frozen, "soltas": structures.released_count(), "ok": a_ok}
 
 	# B) Reset (torre de pé) → carregar o slot com o apoio escavado → a torre cai de novo.

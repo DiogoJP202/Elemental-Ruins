@@ -1,0 +1,65 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Inicialização do Projeto (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Escaneando estrutura de arquivos...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Carregando nomes de classe globais...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verificando GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Criando scripts autoload...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Inicializando plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Iniciando escaneamento de arquivos...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registrando classes globais... (46 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Ability[39m[0m
+[   2% ] [90m[1mupdate_scripts_classes[22m | AbilityController[39m[0m
+[   4% ] [90m[1mupdate_scripts_classes[22m | AirGust[39m[0m
+[   6% ] [90m[1mupdate_scripts_classes[22m | EarthLiftThrow[39m[0m
+[   8% ] [90m[1mupdate_scripts_classes[22m | ElementalKeys[39m[0m
+[  10% ] [90m[1mupdate_scripts_classes[22m | FireBurst[39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | WaterJet[39m[0m
+[  14% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  17% ] [90m[1mupdate_scripts_classes[22m | Layers[39m[0m
+[  19% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  21% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  23% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  27% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  29% ] [90m[1mupdate_scripts_classes[22m | BodyMaterial[39m[0m
+[  31% ] [90m[1mupdate_scripts_classes[22m | BodyMaterialLibrary[39m[0m
+[  34% ] [90m[1mupdate_scripts_classes[22m | ElementalEvent[39m[0m
+[  36% ] [90m[1mupdate_scripts_classes[22m | ElementalFx[39m[0m
+[  38% ] [90m[1mupdate_scripts_classes[22m | MaterialResponseSystem[39m[0m
+[  40% ] [90m[1mupdate_scripts_classes[22m | MaterialState[39m[0m
+[  42% ] [90m[1mupdate_scripts_classes[22m | DebugProps[39m[0m
+[  44% ] [90m[1mupdate_scripts_classes[22m | TerrainEditController[39m[0m
+[  46% ] [90m[1mupdate_scripts_classes[22m | DebrisBudget[39m[0m
+[  48% ] [90m[1mupdate_scripts_classes[22m | DustFx[39m[0m
+[  51% ] [90m[1mupdate_scripts_classes[22m | TerrainContactWaker[39m[0m
+[  53% ] [90m[1mupdate_scripts_classes[22m | PlayerController[39m[0m
+[  55% ] [90m[1mupdate_scripts_classes[22m | ThirdPersonCamera[39m[0m
+[  57% ] [90m[1mupdate_scripts_classes[22m | StructurePiece[39m[0m
+[  59% ] [90m[1mupdate_scripts_classes[22m | StructureService[39m[0m
+[  61% ] [90m[1mupdate_scripts_classes[22m | SupportGraph[39m[0m
+[  63% ] [90m[1mupdate_scripts_classes[22m | TowerFactory[39m[0m
+[  65% ] [90m[1mupdate_scripts_classes[22m | DebugHud[39m[0m
+[  68% ] [90m[1mupdate_scripts_classes[22m | LabTerrainFactory[39m[0m
+[  70% ] [90m[1mupdate_scripts_classes[22m | TerrainBrushQueue[39m[0m
+[  72% ] [90m[1mupdate_scripts_classes[22m | TerrainBrushRequest[39m[0m
+[  74% ] [90m[1mupdate_scripts_classes[22m | TerrainEditResult[39m[0m
+[  76% ] [90m[1mupdate_scripts_classes[22m | TerrainMaterial[39m[0m
+[  78% ] [90m[1mupdate_scripts_classes[22m | TerrainMaterialLibrary[39m[0m
+[  80% ] [90m[1mupdate_scripts_classes[22m | TerrainSaveFiles[39m[0m
+[  82% ] [90m[1mupdate_scripts_classes[22m | TerrainService[39m[0m
+[  85% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  87% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  89% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  91% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  93% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  95% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Carregando editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Carregando layout do editor...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Carregando abas...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m

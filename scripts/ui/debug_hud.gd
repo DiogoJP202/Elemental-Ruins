@@ -122,7 +122,7 @@ func _status_lines() -> PackedStringArray:
 	var state := "PRONTO" if stats.ready else (("OCUPADO: %s" % stats.busy_op) if stats.resetting else "CARREGANDO")
 	var p := player.global_position
 	var lines := PackedStringArray([
-		"ELEMENTAL // RUINS — laboratório P2 (terreno volumétrico, estruturas e destroços)",
+		"ELEMENTAL // RUINS — laboratório P3 (terreno volumétrico, estruturas, destroços e 4 elementos)",
 		"FPS %d  |  quadro %.1f ms (pico 1 s: %.1f ms)  |  monitores TIME_PROCESS %.2f ms, TIME_PHYSICS_PROCESS %.2f ms" % [
 			Engine.get_frames_per_second(), fs.avg_ms, fs.max_ms,
 			Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,

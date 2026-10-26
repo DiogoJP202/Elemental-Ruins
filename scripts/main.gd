@@ -34,6 +34,8 @@ const SAVE_SLOT := "slot1"
 @onready var hud: DebugHud = $HUD
 
 var reset_count := 0
+## Última espera por collider depois de salvar: {bodies, frames, ms, timeout}.
+var last_thaw := {}
 
 
 func _ready() -> void:
@@ -109,15 +111,19 @@ func request_world_save(slot: String) -> bool:
 	player.set_frozen(true)
 	var frozen := _freeze_props()
 	structures.suspend()
-	var ok: bool = await terrain_service.save_world(slot)
-	# save_world só espera o terreno em volta do ponto de prontidão; em outros trechos o
-	# collider pode chegar alguns quadros depois, e um corpo descongelado antes cairia.
 	var bodies: Array[Node3D] = []
 	for b in frozen:
 		bodies.append(b)
 	for p in structures.get_suspended():
 		bodies.append(p)
-	await _wait_terrain_under(bodies, 3.0)
+	# Antes de recriar o terreno: quais raios curtos sob cada corpo tocam o chão que o apoia.
+	var support := {}
+	for b in bodies:
+		support[b] = _support_hits(b)
+	var ok: bool = await terrain_service.save_world(slot)
+	# save_world só espera o terreno em volta do ponto de prontidão; em outros trechos o
+	# collider pode chegar alguns quadros depois, e um corpo descongelado antes cairia.
+	await _wait_terrain_under(bodies, support, 3.0)
 	structures.resume()
 	for body in frozen:
 		if is_instance_valid(body):
@@ -147,9 +153,14 @@ func request_world_load(slot: String) -> bool:
 	return ok
 
 
-## Espera haver collider de terreno sob cada corpo (raycast vertical), ou o prazo.
-func _wait_terrain_under(bodies: Array[Node3D], timeout_s: float) -> bool:
-	var deadline := Time.get_ticks_msec() + int(timeout_s * 1000.0)
+## Espera haver collider de terreno sob cada corpo (raio vertical pela origem) E de volta em
+## cada raio de apoio que tocava o chão antes do save (`support`), ou o prazo. Só o raio
+## pela origem não bastava: uma peça na borda de um buraco via o fundo do buraco já
+## carregado, era descongelada antes do collider da borda e escorregava 0,5 m (T26 no .exe).
+func _wait_terrain_under(bodies: Array[Node3D], support: Dictionary, timeout_s: float) -> bool:
+	var t0 := Time.get_ticks_msec()
+	var deadline := t0 + int(timeout_s * 1000.0)
+	var frames := 0
 	while Time.get_ticks_msec() < deadline:
 		var missing := 0
 		for b in bodies:
@@ -158,11 +169,41 @@ func _wait_terrain_under(bodies: Array[Node3D], timeout_s: float) -> bool:
 			var p := b.global_position
 			if terrain_service.raycast_terrain(p + Vector3.UP * 2.0, p + Vector3.DOWN * 30.0).is_empty():
 				missing += 1
+				continue
+			var before: Array = support.get(b, [])
+			var now := _support_hits(b)
+			for i in mini(before.size(), now.size()):
+				if before[i] and not now[i]:
+					missing += 1
+					break
 		if missing == 0:
+			last_thaw = {"bodies": bodies.size(), "frames": frames, "ms": Time.get_ticks_msec() - t0, "timeout": false}
 			return true
+		frames += 1
 		await get_tree().physics_frame
+	last_thaw = {"bodies": bodies.size(), "frames": frames, "ms": Time.get_ticks_msec() - t0, "timeout": true}
 	push_warning("[Main] collider do terreno não apareceu sob todos os corpos em %.1f s" % timeout_s)
 	return false
+
+
+## Raios curtos (de 0,3 m acima a 0,6 m abaixo do fundo da malha) no centro e em 4 cantos
+## recuados da base do corpo: quais tocam terreno.
+func _support_hits(b: Node3D) -> Array[bool]:
+	var hits: Array[bool] = []
+	var box := AABB(b.global_position, Vector3.ZERO)
+	for ch in b.get_children():
+		if ch is MeshInstance3D and (ch as MeshInstance3D).mesh != null:
+			var mi := ch as MeshInstance3D
+			box = mi.global_transform * mi.mesh.get_aabb()
+			break
+	var c := box.get_center()
+	var hx := box.size.x * 0.3
+	var hz := box.size.z * 0.3
+	var y := box.position.y
+	for off in [Vector2.ZERO, Vector2(-hx, -hz), Vector2(hx, -hz), Vector2(-hx, hz), Vector2(hx, hz)]:
+		var top := Vector3(c.x + off.x, y + 0.3, c.z + off.y)
+		hits.append(not terrain_service.raycast_terrain(top, top + Vector3.DOWN * 0.9).is_empty())
+	return hits
 
 
 ## Congela as caixas/rochas que estão soltas e devolve quais foram (as que já estavam

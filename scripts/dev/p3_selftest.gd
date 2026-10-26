@@ -55,6 +55,8 @@ func _run_tests() -> bool:
 	if _should_run("T33"): await _t33_water_puts_out_fire()
 	if _should_run("T34"): await _t34_air_gust()
 	if _should_run("T35"): await _t35_fire_burns_tower()
+	if _should_run("T36"): await _t36_cross_sequence()
+	if _should_run("T37"): await _t37_powers_benchmark()
 	return true
 
 
@@ -82,6 +84,10 @@ func _t28_controller() -> void:
 	var uses := []
 	var cb := func(id, phase): uses.append("%s:%s" % [id, phase])
 	ab.ability_used.connect(cb)
+	# Em janela o mouse pode ter sido preso no meio do roteiro (qualquer clique na janela o prende,
+	# third_person_camera): na bateria em janela o clique "sem captura" agiu porque estava preso.
+	var captured_before := Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	ab.require_captured_mouse = true
 	_send_action(&"ability_use", true)
 	_send_action(&"ability_use", false)
@@ -104,7 +110,7 @@ func _t28_controller() -> void:
 	ab.ability_used.disconnect(cb)
 	player.input_enabled = false
 	var ok: bool = sel_ok and ignored_uncaptured and routed and not during_reset
-	details.merge({"selecionados_por_1_4": selected, "clique_sem_mouse_capturado_ignorado": ignored_uncaptured,
+	details.merge({"selecionados_por_1_4": selected, "mouse_estava_preso": captured_before, "clique_sem_mouse_capturado_ignorado": ignored_uncaptured,
 		"lmb_roteado": uses, "agiu_durante_reset": during_reset})
 	_record("T28", "1–4 escolhem o elemento; LMB chega ao poder; clique de recaptura não age; nada age no reset", ok, details)
 	for ch in props.get_children():
@@ -493,7 +499,256 @@ func _t35_fire_burns_tower() -> void:
 		"carbonizadas_fx": fx1.charred - fx0.charred, "reset_torre_intacta_sem_estados": reset_ok})
 
 
+# --- T36: sequência transversal (~20 s) e reset ---------------------------------------------
+
+## Os 4 elementos em sequência, pelo mesmo caminho do jogador (1–4 + LMB), diante da torre:
+## Terra arremessa rocha no pilar de pedra → Fogo acende um pilar de madeira e uma caixa →
+## Água apaga a caixa → Ar sopra outra caixa → o jogador anda até a torre e apaga o pilar →
+## Ar sopra os destroços de pedra. Depois, reset: tudo como antes.
+func _t36_cross_sequence() -> void:
+	var ab: AbilityController = main.abilities
+	var fx: ElementalFx = main.fx
+	await main.request_world_reset()
+	await _go_to_tower()
+	ab.require_captured_mouse = false
+	player.input_enabled = true
+	var o := structures.tower_origin
+	var crate_fire := DebugProps.spawn_crate(props, o + Vector3(1.5, 0.6, 8))
+	var crate_air := DebugProps.spawn_crate(props, o + Vector3(3.5, 0.6, 11))
+	await _seconds(1.0)
+	var steps := {}
+	var m0: Dictionary = materials.get_stats()
+	var t0 := Time.get_ticks_msec()
+	# 1) Terra: rocha arremessada no pé do pilar de pedra da frente à esquerda.
+	_send_key(0)
+	await get_tree().physics_frame
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var foot := _foot_at(Vector2(-1, 1))
+	player.camera_rig.set_view(0.0, deg_to_rad(-32.0))
+	await _seconds(0.3)
+	_send_action(&"ability_use", true)
+	var held := await _wait_until(func(): return earth.phase == "held", 4.0)
+	await _seconds(0.4)
+	await _aim_settle(foot.global_position)
+	_send_action(&"ability_use", false)
+	await _wait_until(func(): return materials.get_stats().kinetic_breaks > m0.kinetic_breaks, 2.5)
+	await _seconds(1.0)
+	steps["1_terra"] = {"suspensa": held, "quebras_por_impacto": materials.get_stats().kinetic_breaks - m0.kinetic_breaks,
+		"soltas": structures.released_count(), "ok": held and materials.get_stats().kinetic_breaks > m0.kinetic_breaks}
+	# 2) Fogo: pilar de madeira da frente à direita (bloco de baixo) e a caixa.
+	_send_key(2)
+	await get_tree().physics_frame
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var wood: StructurePiece = null
+	for p in structures.get_pieces():
+		var d := p.home.origin - o
+		if p.kind == "pilar1" and d.x > 0 and d.z > 0 and d.y < 6.5:
+			wood = p
+	await _tap_at(MaterialResponseSystem.body_center(wood))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	await _tap_at(MaterialResponseSystem.body_center(crate_fire))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	steps["2_fogo"] = {"madeira_acesa": materials.state_of(wood).burning, "caixa_acesa": materials.state_of(crate_fire).burning,
+		"ok": materials.state_of(wood).burning and materials.state_of(crate_fire).burning}
+	await _seconds(1.5)
+	# 3) Água: apaga a caixa.
+	_send_key(1)
+	await get_tree().physics_frame
+	var cs := materials.state_of(crate_fire)
+	await _hold_on(crate_fire, 3.0, func(): return not cs.burning)
+	steps["3_agua"] = {"caixa": cs.describe(), "madeira_segue_acesa": materials.state_of(wood).burning, "ok": not cs.burning}
+	# 4) Ar: sopra a outra caixa e os destroços de pedra caídos.
+	_send_key(3)
+	await get_tree().physics_frame
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var debris := structures.get_pieces().filter(func(p): return p.released and not p.freeze)
+	var a0 := crate_air.global_position
+	await _tap_at(MaterialResponseSystem.body_center(crate_air))
+	await get_tree().physics_frame
+	var blown: Array = gust.last_gust.get("hit", [])
+	var debris_hit := debris.filter(func(p): return blown.has(p)).size()
+	await _seconds(1.5)
+	var air_moved := crate_air.global_position.distance_to(a0)
+	steps["4_ar"] = {"caixa_deslocada_m": air_moved, "corpos_na_rajada": blown.size(), "destrocos_na_rajada": debris_hit,
+		"ok": air_moved > 1.0}
+	# 5) O pilar de madeira segue queimando; o jogador ANDA até ~10 m da torre (contornando pela
+	#    direita o buraco de onde a rocha saiu: indo na diagonal, caía nele) e o apaga com o jato.
+	await _seconds(2.0)
+	var walk_from := player.global_position
+	player.set_scripted_move(Vector3.RIGHT)
+	var walked := await _wait_until(func(): return player.global_position.x > o.x + 4.5, 3.0)
+	player.set_scripted_move(Vector3.FORWARD)
+	walked = walked and await _wait_until(func(): return player.global_position.z < o.z + 10.0, 4.0)
+	player.clear_scripted_move()
+	await _seconds(0.3)
+	_send_key(1)
+	await get_tree().physics_frame
+	var ws := materials.state_of(wood)
+	var wood_lit := ws.burning
+	await _hold_on(wood, 5.0, func(): return not ws.burning)
+	steps["5_agua_no_pilar"] = {"andou": walked, "de": str(walk_from - o), "ate": str(player.global_position - o),
+		"acesa_antes": wood_lit, "pilar": ws.describe(),
+		"ok": walked and wood_lit and not ws.burning}
+	# 6) Ar nos destroços de pedra caídos do pilar atingido pela rocha.
+	_send_key(3)
+	await get_tree().physics_frame
+	# O bloco cai num lugar diferente a cada rodada e pode ficar além dos 10 m do Ar (o jogador
+	# parou a ~10,4 m dele numa rodada da bateria): anda até o mais próximo se estiver a > 7 m.
+	var fallen := structures.get_pieces().filter(func(p): return p.released and not p.freeze and p.visible)
+	fallen.sort_custom(func(a, b): return a.global_position.distance_to(player.global_position) \
+		< b.global_position.distance_to(player.global_position))
+	var fallen_hit := 0
+	var debris_dist := -1.0
+	if not fallen.is_empty():
+		var target: StructurePiece = fallen[0]
+		var flat := func(): return Vector2(target.global_position.x - player.global_position.x,
+			target.global_position.z - player.global_position.z)
+		if (flat.call() as Vector2).length() > 7.0:
+			var d2: Vector2 = (flat.call() as Vector2).normalized()
+			player.set_scripted_move(Vector3(d2.x, 0, d2.y))
+			await _wait_until(func(): return (flat.call() as Vector2).length() < 6.0, 3.0)
+			player.clear_scripted_move()
+			await _seconds(0.3)
+		debris_dist = (flat.call() as Vector2).length()
+		await _tap_at(MaterialResponseSystem.body_center(target))
+		await get_tree().physics_frame
+		var blown2: Array = gust.last_gust.get("hit", [])
+		fallen_hit = fallen.filter(func(p): return blown2.has(p)).size()
+	await _seconds(1.0)
+	steps["6_ar_nos_destrocos"] = {"destrocos": fallen.size(), "distancia_m": debris_dist, "destrocos_na_rajada": fallen_hit,
+		"ok": fallen_hit >= 1}
+	var seq_s := (Time.get_ticks_msec() - t0) / 1000.0
+	player.input_enabled = false
+	await _shot("t36_sequencia_transversal", o + Vector3(0, 0.5, 16), 0.0, -10.0)
+	var before_reset := {"soltas": structures.released_count(), "em_chamas": materials.burning_count(),
+		"chamas_fx": fx.get_stats().flames_active, "destrocos": get_tree().get_nodes_in_group(DebrisBudget.GROUP).size()}
+	# Reset: torre idêntica, sem estados, sem fogo, poderes parados, nós = baseline.
+	var ok_reset: bool = await main.request_world_reset()
+	await _seconds(0.5)
+	var pieces := structures.get_pieces()
+	var off_home := pieces.filter(func(p): return p.global_position.distance_to(p.home.origin) > 0.001 or not p.freeze or p.released or not p.visible)
+	var st: Dictionary = materials.get_stats()
+	var nodes := get_tree().get_node_count()
+	var idle: bool = earth.phase == "" and earth.rock == null and fire.projectiles.is_empty() \
+		and not (ab.get_ability(&"water_jet") as WaterJet).active and not ab.holding
+	var after := {"reset": ok_reset, "pecas": pieces.size(), "fora_do_lugar": off_home.size(), "estados": st.tracked,
+		"em_chamas": st.burning, "chamas_fx": fx.get_stats().flames_active,
+		"destrocos": get_tree().get_nodes_in_group(DebrisBudget.GROUP).size(), "nos": nodes, "nos_baseline": _baseline_nodes,
+		"poderes_parados": idle}
+	var reset_good: bool = ok_reset and pieces.size() == 36 and off_home.is_empty() and st.tracked == 0 and st.burning == 0 \
+		and fx.get_stats().flames_active == 0 and after.destrocos == 0 and nodes == _baseline_nodes and idle
+	var ok: bool = steps.values().all(func(v): return v.ok) and seq_s <= 30.0 and before_reset.soltas > 0 and reset_good
+	_record("T36", "Sequência transversal (Terra → Fogo → Água → Ar diante da torre, ~20 s) e reset devolve tudo ao início", ok, {
+		"passos": steps, "duracao_s": seq_s, "antes_do_reset": before_reset, "depois_do_reset": after})
+
+
+# --- T37: benchmark com os 4 poderes -------------------------------------------------------
+
+## Pior caso do P3: colapso total da torre (4 pés no mesmo quadro, como o T27) + 12 caixas em
+## chamas espalhando fogo + Fogo, Água, Ar e Terra usados em sequência, por ~9 s.
+## Critério do P2, só em janela: p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms.
+func _t37_powers_benchmark() -> void:
+	var ab: AbilityController = main.abilities
+	var fx: ElementalFx = main.fx
+	await main.request_world_reset()
+	await _go_to_tower()
+	ab.require_captured_mouse = false
+	player.input_enabled = true
+	var o := structures.tower_origin
+	var crates: Array[RigidBody3D] = []
+	for i in 4:
+		for j in 3:
+			crates.append(DebugProps.spawn_crate(props, o + Vector3(-2.4 + i * 1.6, 0.6, 5.5 + j * 1.5)))
+	await _seconds(1.0)
+	for c in crates:
+		_apply_direct(ElementalEvent.Kind.HEAT, c, 400.0)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var f0 := fire.get_stats()
+	var j0 := jet.get_stats()
+	var g0 := gust.get_stats()
+	var e0 := earth.get_stats()
+	var frame_ms := PackedFloat32Array()
+	var phys_ms := PackedFloat32Array()
+	var last := [Time.get_ticks_usec()]
+	var peak := {"burning": 0, "dynamic": 0}
+	var on_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - last[0]) / 1000.0)
+		last[0] = now
+	var on_physics := func():
+		phys_ms.append(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0)
+		peak.burning = maxi(peak.burning, materials.burning_count())
+		var dyn := 0
+		for p in structures.get_pieces():
+			dyn += int(p.released and not p.freeze)
+		peak.dynamic = maxi(peak.dynamic, dyn)
+	for corner in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
+		var c := _foot_at(corner).home.origin
+		queue.enqueue(TerrainBrushRequest.sphere(TerrainBrushRequest.Op.REMOVE, Vector3(c.x, 0, c.z), 2.0))
+	get_tree().process_frame.connect(on_frame)
+	get_tree().physics_frame.connect(on_physics)
+	var t0 := Time.get_ticks_msec()
+	# Fogo: 5 bolas nas caixas e na torre.
+	_send_key(2)
+	for k in 5:
+		await _tap_at(MaterialResponseSystem.body_center(crates[(k * 5) % crates.size()]) if k < 4 else o + Vector3(0, 6, 2.5))
+		await _seconds(0.3)
+	# Água: 2 s de jato numa caixa em chamas.
+	_send_key(1)
+	await get_tree().physics_frame
+	await _hold_on(crates[5], 2.0)
+	# Ar: 4 rajadas nas caixas e nos destroços.
+	_send_key(3)
+	for k in 4:
+		await _tap_at(o + Vector3(-1.5 + k, 0.5, 6.0))
+		await _seconds(0.35)
+	# Terra: ergue uma rocha do chão à frente do jogador e arremessa na torre caída.
+	_send_key(0)
+	await get_tree().physics_frame
+	await _aim_settle(player.global_position + Vector3(0, 0, -4.5))
+	ab.use_pressed()
+	await _wait_until(func(): return earth.phase == "held", 3.0)
+	await _aim_settle(o + Vector3(0, 1.0, 1.0))
+	ab.use_released()
+	await _seconds(1.5)
+	var dur_s := (Time.get_ticks_msec() - t0) / 1000.0
+	get_tree().process_frame.disconnect(on_frame)
+	get_tree().physics_frame.disconnect(on_physics)
+	player.input_enabled = false
+	if not frame_ms.is_empty():
+		frame_ms.remove_at(0)
+	var fs := _stats(frame_ms)
+	fs["p50"] = _percentile(frame_ms, 0.5)
+	fs["p99"] = _percentile(frame_ms, 0.99)
+	var ps := _stats(phys_ms)
+	ps["p99"] = _percentile(phys_ms, 0.99)
+	_metrics["p3_poderes_quadro_ms"] = fs
+	_metrics["p3_poderes_fisica_ms"] = ps
+	var used := {"fogo_bolas": fire.get_stats().exploded - f0.exploded, "agua_quadros_em_corpo": jet.get_stats().body_ticks - j0.body_ticks,
+		"ar_rajadas": gust.get_stats().gusts - g0.gusts, "terra_arremessos": earth.get_stats().thrown - e0.thrown}
+	var all_used: bool = used.fogo_bolas >= 4 and used.agua_quadros_em_corpo > 0 and used.ar_rajadas >= 4 and used.terra_arremessos >= 1
+	var windowed := not _mode.begins_with("headless")
+	var fps_ok: bool = (not windowed) or (fs.get("p95", 999.0) <= 20.0 and fs.get("p99", 999.0) <= 33.0 and fs.get("max", 999.0) <= 50.0)
+	var ok: bool = all_used and structures.released_count() == 36 and peak.burning >= 6 and fps_ok
+	_record("T37", "Benchmark: colapso total + 12 caixas em chamas + os 4 poderes; critério de FPS em janela", ok, {
+		"modo": _mode, "criterio_fps_aplicado": windowed, "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
+		"duracao_s": dur_s, "intervalo_entre_quadros_ms": fs, "time_physics_process_ms": ps, "poderes_usados": used,
+		"pico_em_chamas": peak.burning, "pico_pecas_dinamicas": peak.dynamic, "soltas": structures.released_count(),
+		"fx": fx.get_stats(), "materiais": materials.get_stats()})
+	await _shot("t37_benchmark_poderes", o + Vector3(0, 0.5, 16), 0.0, -12.0)
+	await main.request_world_reset()
+
+
 # --- Utilidades P3 -------------------------------------------------------------------------
+
+## Tecla 1–4 (índice 0–3) pelo mesmo evento de input do teclado.
+func _send_key(index: int) -> void:
+	_send_action(ElementalKeys.ACTIONS[index], true)
+	_send_action(ElementalKeys.ACTIONS[index], false)
+
 
 ## Laboratório P3 limpo (reset), jogador 8 m ao sul de LAB_P3 olhando para -Z, elemento `index`.
 func _p3_lab(index: int) -> Vector3:
