@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2 + P3 + P3.5)
+# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2 + P3 + P3.5 + P3.6)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -143,7 +143,36 @@ Parâmetros em `data/abilities/earth_tuning.tres` (abra no inspetor da Godot; ve
 6. Mire o céu, o chão a 1 m ou a 10 m e clique: X vermelho na retícula, nada acontece.
 7. Mude `anticipation_s`, `rise_s` ou `throw_speed` no `.tres`, rode de novo e compare a sensação.
 
+### Roteiro manual do P3.6 — Água, Fogo e Ar (≈ 6 min)
+Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tuning.tres` (inspetor da Godot); detalhes em
+`docs/p36_elemental_polish.md`. Use **B** para criar caixas de teste e **H** para levantar um morro de terreno.
+1. **2** (Água), segure LMB numa caixa a ~6 m: o jato avança (não nasce inteiro) e a pressão sobe em ~0,1 s. Gire 90° segurando:
+   a água já lançada segue a direção antiga e a nova chega depois. Solte: para na hora.
+2. Com uma caixa atrás de um morro ou de outra caixa, molhe a da frente: a de trás não molha através do obstáculo.
+3. **3** (Fogo), clique numa caixa e gire a câmera logo em seguida: a bola se forma na mão (~0,08 s) e segue a mira do clique.
+   Clique várias vezes: no máximo 8 bolas e uma nova a cada ~0,14 s. Troque de elemento logo após clicar: a bola não sai.
+4. Mire o céu: a bola some numa baforada de fumaça no fim dos 30 m, sem aquecer nada.
+5. Acenda uma caixa encostada em outra e uma terceira separada por um morro: a encostada pega fogo, a de trás do morro não.
+   Atire numa caixa molhada: sai vapor, ela seca e só a 2ª bola acende.
+6. **4** (Ar), toque perto de um grupo de caixas: o anel avança e as caixas reagem na ordem da distância; uma caixa escondida
+   atrás de outra ou de um morro fica (total ou parcialmente) protegida; a rocha extraída (**R**) mal se mexe.
+7. Ar em fogo fraco apaga; em fogo forte aviva e a caixa voa queimando. A água apaga com vapor.
+8. Com bolas de fogo ou frentes de ar em andamento, aperte **Z**, **F5** ou **F9**: nada continua depois.
+9. Avalie (como jogador e como observador de outro ângulo, pensando em PvP): legibilidade das antecipações e frentes, peso,
+   clareza de limites e recuperação. **NÃO TESTADO** por pessoas até aqui.
+
 ## Testes automatizados
+
+### P3.6 — Água, Fogo e Ar polidos (inclui as regressões do P0 ao P3.5)
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools/run_p36_tests.ps1 -Stage final -Window -Export
+```
+
+Grava em `docs/evidence/p36/final/`: import, selftest P3.6 (P0–P3.5 + T46–T58) no editor e no export, headless e em janela,
+com contrato explícito de IDs, zero erros/avisos e capturas em janela. `-Stage m1|m2|m3` grava as evidências de cada marco;
+`-TestIds T49,T50` limita a IDs do contrato (T1 sempre incluso). Direto: `... -- --p36-selftest --evidence-stage=final`
+(opções `--only=`, `--p36-screenshots`).
 
 ### P3.5 — Terra polida (inclui as regressões do P0 ao P3)
 
@@ -288,5 +317,5 @@ P3.5: `Ability.fx_event(kind, data)` (ganchos de FX/áudio); `EarthLiftThrow.pha
 `extract_rock(..., hold_kinematic)`; `ThirdPersonCamera.add_trauma(x)`.
 
 ## P3.6 — polimento incremental
-M0, M1 Água, M2 Fogo e M3 Ar concluídos; baseline corrigido em docs/p36_baseline_corrected.md, arquitetura em docs/p36_m0.md, Água em docs/p36_water_polish.md, Fogo em docs/p36_fire_polish.md e Ar em docs/p36_air_polish.md (parâmetros em data/abilities/*_tuning.tres; testes por marco: `tools/run_p36_tests.ps1 -Stage m2|m3 -Window`). M4 integração segue em andamento. Capturas e automação não são playtest humano.
+M0–M4 concluídos (relatório final em docs/p36_elemental_polish.md); baseline corrigido em docs/p36_baseline_corrected.md, arquitetura em docs/p36_m0.md, Água em docs/p36_water_polish.md, Fogo em docs/p36_fire_polish.md e Ar em docs/p36_air_polish.md (parâmetros em data/abilities/*_tuning.tres; testes por marco: `tools/run_p36_tests.ps1 -Stage m2|m3 -Window`). Capturas e automação não são playtest humano.
 

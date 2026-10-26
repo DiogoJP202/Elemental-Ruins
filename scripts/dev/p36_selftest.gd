@@ -1,7 +1,7 @@
 extends "res://scripts/dev/p35_selftest.gd"
 ## P3.6: regressões P0–P3.5 e cenários novos. --only=T46,T47,T48 limita a Água;
-## --only=T49,T50,T51 limita o Fogo; --only=T52,T53,T54,T56 limita o Ar; T57 é o ciclo de vida
-## (reset/save/load) de Fogo e Ar.
+## --only=T49,T50,T51 limita o Fogo; --only=T52,T53,T54,T56 limita o Ar; T55/T58 integram os
+## elementos e limites de VFX; T57 é o ciclo de vida (reset/save/load) de Fogo e Ar.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -59,6 +59,9 @@ func _run_tests() -> bool:
 	if _should_run("T53"): await _t53_air_mass_response()
 	if _should_run("T54"): await _t54_air_occlusion_and_dust()
 	if _should_run("T56"): await _t56_air_tuning_and_events()
+	_log("--- testes P3.6 M4 (integração) ---")
+	if _should_run("T55"): await _t55_cross_elements()
+	if _should_run("T58"): await _t58_vfx_limits()
 	_log("--- testes P3.6 ciclo de vida ---")
 	if _should_run("T57"): await _t57_lifecycle_invalidation()
 	return true
@@ -1180,6 +1183,195 @@ func _t56_air_tuning_and_events() -> void:
 	_record("T56", "Ar: AirTuning muda velocidade, alcance e teto; limite de ondas e recuperação; eventos identificáveis",
 		tuning_case.ok and limit_case.ok and recovery_case.ok and events_case.ok,
 		{"variant": tuning_case, "wave_limit": limit_case, "recovery": recovery_case, "events": events_case})
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
+# --- M4: integração ---------------------------------------------------------------------------
+
+func _has_flame(body: Node3D) -> bool:
+	for ch in body.get_children():
+		if ch is GPUParticles3D:
+			return true
+	return false
+
+
+## Interações cruzadas com as mecânicas novas, todas pelo caminho do jogador (seleção + LMB).
+func _t55_cross_elements() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(2)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var fx: ElementalFx = main.fx
+	var steps := {}
+	# Corpos auxiliares fora do cone das rajadas anteriores (ângulo > 35° em relação à caixa principal).
+	var crate := DebugProps.spawn_crate(props, base + Vector3(0, 0, -6))
+	var hot := DebugProps.spawn_crate(props, base + Vector3(-4.5, 0, -4.5))
+	var damp := DebugProps.spawn_crate(props, base + Vector3(4.5, 0, -4.5))
+	await _seconds(0.8)
+	_apply_direct(ElementalEvent.Kind.WET, crate, 0.6)
+	_apply_direct(ElementalEvent.Kind.WET, damp, 0.5)
+	var cs := materials.state_of(crate)
+	var ds := materials.state_of(damp)
+	# 1) Fogo × umidade: a 1ª rajada seca (vapor no impacto) sem acender; a 2ª acende.
+	var fx0 := fx.get_stats()
+	await _tap_at(MaterialResponseSystem.body_center(crate))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	var wet_after_1 := cs.wetness
+	var lit_1 := cs.burning
+	var steam_fire: int = fx.get_stats().fire_steam - fx0.fire_steam
+	await _seconds(0.2)
+	await _tap_at(MaterialResponseSystem.body_center(crate))
+	await _wait_until(func(): return fire.projectiles.is_empty(), 2.0)
+	steps["1_fogo_seca_e_acende"] = {"umidade_apos_1a": wet_after_1, "acesa_apos_1a": lit_1, "vapor_do_fogo": steam_fire,
+		"acesa_apos_2a": cs.burning, "ok": wet_after_1 < 0.6 and not lit_1 and steam_fire >= 1 and cs.burning}
+	# 2) Ar × fogo forte: a frente empurra o corpo em chamas, aviva e a chama segue presa ao corpo.
+	await _seconds(0.6)
+	_send_key(3)
+	await get_tree().physics_frame
+	var p0 := crate.global_position
+	var i0 := cs.intensity
+	var hits: Array = []
+	await _tap_at(MaterialResponseSystem.body_center(crate))
+	hits = gust.last_gust.get("hit", [])
+	await _wait_until(func(): return hits.has(crate) or gust.waves.is_empty(), 1.0)
+	var i1 := cs.intensity
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	await _seconds(0.6)
+	steps["2_ar_empurra_e_aviva"] = {"intensidade_antes": i0, "intensidade_no_contato": i1, "deslocada_m": crate.global_position.distance_to(p0),
+		"segue_acesa": cs.burning, "chama_no_corpo": _has_flame(crate),
+		"ok": hits.has(crate) and i1 >= i0 + 0.05 and crate.global_position.distance_to(p0) > 1.0 and cs.burning and _has_flame(crate)}
+	# 3) Água × fogo: o jato apaga (causa água, vapor).
+	_send_key(1)
+	await get_tree().physics_frame
+	var causes := []
+	var cb := func(body, cause):
+		if body == crate:
+			causes.append(cause)
+	materials.extinguished.connect(cb)
+	var steam0: int = fx.get_stats().steam
+	await _hold_on(crate, 4.0, func(): return not cs.burning)
+	materials.extinguished.disconnect(cb)
+	var wet_after_water := cs.wetness
+	steps["3_agua_apaga"] = {"apagada": not cs.burning, "causas": causes, "vapor": fx.get_stats().steam - steam0,
+		"umidade": wet_after_water, "ok": not cs.burning and causes == ["água"] and fx.get_stats().steam - steam0 >= 1}
+	# 4) Água × calor: corpo quente (sem chama) esfria com o jato.
+	_apply_direct(ElementalEvent.Kind.HEAT, hot, 200.0)
+	var hs := materials.state_of(hot)
+	var t0 := hs.temperature
+	await _hold_on(hot, 0.8)
+	steps["4_agua_esfria"] = {"temperatura_antes": t0, "temperatura_depois": hs.temperature, "acesa": hs.burning,
+		"ok": not hs.burning and hs.temperature < t0 - 20.0}
+	# 5) Ar × umidade: a frente seca um pouco o corpo molhado (AIRFLOW).
+	await _seconds(0.4)
+	_send_key(3)
+	await get_tree().physics_frame
+	var w0 := ds.wetness
+	await _tap_at(MaterialResponseSystem.body_center(damp))
+	var hits2: Array = gust.last_gust.get("hit", [])
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	steps["5_ar_seca"] = {"umidade_antes": w0, "umidade_depois": ds.wetness, "na_rajada": hits2.has(damp),
+		"ok": w0 > 0.0 and hits2.has(damp) and ds.wetness < w0}
+	player.input_enabled = false
+	_record("T55", "Interações cruzadas: fogo seca e acende, ar empurra e aviva em chamas, água apaga e esfria, ar seca",
+		steps.values().all(func(s): return s.ok), steps)
+	if _screens:
+		await _shot("p36_cross_elements", player.global_position, 0.0, -12.0, false)
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
+## Limites de VFX sob estresse e ausência de vazamento de nós no ElementalFx.
+func _t58_vfx_limits() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(2)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var fx: ElementalFx = main.fx
+	var fx_children := fx.get_child_count()
+	# a) 30 corpos em chamas: no máximo 24 emissores; os excedentes queimam sem chama e são contados.
+	var crates: Array[RigidBody3D] = []
+	for i in 30:
+		var c := DebugProps.spawn_crate(props, base + Vector3(-7.5 + (i % 6) * 1.6, 0.8, -12.0 - floorf(i / 6.0) * 1.6))
+		c.freeze = true
+		crates.append(c)
+	await _frames(2)
+	var s0 := fx.get_stats()
+	for c in crates:
+		_apply_direct(ElementalEvent.Kind.HEAT, c, 400.0)
+	await get_tree().process_frame
+	var s1 := fx.get_stats()
+	var flames := {"burning": materials.burning_count(), "flames_active": s1.flames_active,
+		"skipped": s1.flames_skipped - s0.flames_skipped, "cap": mini(ElementalFx.MAX_FLAMES, fire.tuning.max_flame_emitters)}
+	flames["ok"] = flames.burning >= 30 and flames.flames_active <= flames.cap and flames.skipped >= 30 - flames.cap
+	# b) 8 projéteis + 4 frentes + jato no mesmo intervalo; amostra por quadro.
+	var fire_original: FireTuning = fire.tuning
+	var air_original: AirTuning = gust.tuning
+	var fire_variant: FireTuning = fire_original.duplicate(true)
+	fire_variant.cooldown_s = 0.0
+	fire_variant.anticipation_s = 0.0
+	fire.tuning = fire_variant
+	var air_variant: AirTuning = air_original.duplicate(true)
+	air_variant.cooldown_s = 0.0
+	gust.tuning = air_variant
+	await _aim_settle(base + Vector3(0, 1.0, -10))
+	for i in 10:
+		ab.use_pressed()
+		ab.use_released()
+	# Um tick para emitir: trocar de elemento cancela o que ainda estiver em antecipação.
+	await get_tree().physics_frame
+	_send_key(3)
+	await get_tree().physics_frame
+	for i in 6:
+		ab.use_pressed()
+		ab.use_released()
+	_send_key(1)
+	await get_tree().physics_frame
+	ab.use_pressed()
+	var peak := {"fire_balls": 0, "fire_slots": 0, "air_rings": 0, "water_instances": 0, "fire_live": 0, "air_live": 0}
+	var frame_ms := PackedFloat32Array()
+	var last := Time.get_ticks_usec()
+	for i in 30:
+		await get_tree().process_frame
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - last) / 1000.0)
+		last = now
+		var st := fx.get_stats()
+		peak.fire_balls = maxi(peak.fire_balls, st.fire_balls_visible)
+		peak.fire_slots = maxi(peak.fire_slots, st.fire_slots_live)
+		peak.air_rings = maxi(peak.air_rings, st.air_rings_live)
+		peak.water_instances = maxi(peak.water_instances, st.water_instances)
+		peak.fire_live = maxi(peak.fire_live, fire.projectiles.size())
+		peak.air_live = maxi(peak.air_live, gust.waves.size())
+	if _screens:
+		await _snap("p36_vfx_stress")
+	ab.use_released()
+	fire.tuning = fire_original
+	gust.tuning = air_original
+	await _wait_until(func(): return fire.projectiles.is_empty() and gust.waves.is_empty(), 2.0)
+	await get_tree().process_frame
+	var s2 := fx.get_stats()
+	var stress := {"peak": peak, "caps": {"fire": FireBurst.MAX_PROJECTILES, "air": AirGust.MAX_WAVES, "water": 24},
+		"missing_slots": {"fire": s2.fire_slots_missing - s0.fire_slots_missing, "air": s2.air_rings_missing - s0.air_rings_missing},
+		"frame_ms": _stats(frame_ms), "note": "amostra informativa; o gate de quadro é o T27/T37"}
+	stress["ok"] = peak.fire_live == FireBurst.MAX_PROJECTILES and peak.fire_balls <= FireBurst.MAX_PROJECTILES \
+		and peak.air_live == AirGust.MAX_WAVES and peak.air_rings <= AirGust.MAX_WAVES and peak.water_instances <= 24 \
+		and peak.water_instances > 0 and stress.missing_slots.fire == 0 and stress.missing_slots.air == 0
+	# c) Sem vazamento: o ElementalFx mantém só os pools; depois do reset, nenhuma chama nem slot ativo.
+	await main.request_world_reset()
+	# Chamas de corpos removidos saem da lista na verificação periódica (CHAR_CHECK_S = 0,25 s).
+	await _seconds(0.4)
+	var s3 := fx.get_stats()
+	var leak := {"fx_children_before": fx_children, "fx_children_after": fx.get_child_count(), "flames_active": s3.flames_active,
+		"fire_slots": s3.fire_slots_live, "air_rings": s3.air_rings_live, "burning": materials.burning_count()}
+	leak["ok"] = leak.fx_children_after == fx_children and leak.flames_active == 0 and leak.fire_slots == 0 \
+		and leak.air_rings == 0 and leak.burning == 0
+	player.input_enabled = false
+	_record("T58", "VFX limitados sob estresse (24 chamas, 8 projéteis, 4 frentes, 24 volumes de água) e sem vazamento após reset",
+		flames.ok and stress.ok and leak.ok, {"flames": flames, "stress": stress, "no_leak": leak})
 	for ch in props.get_children():
 		ch.queue_free()
 	materials.clear()
