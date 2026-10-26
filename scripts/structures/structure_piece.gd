@@ -6,6 +6,8 @@ extends RigidBody3D
 
 var piece_index := -1
 var kind := ""
+## Material elemental da peça (BodyMaterialLibrary): pedra ou madeira.
+var material_id: StringName = &"stone"
 var size := Vector3.ONE
 ## Transform de montagem (para conferir que o reset devolve a torre idêntica).
 var home := Transform3D()

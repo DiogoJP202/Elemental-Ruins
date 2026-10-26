@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/terrain_service.gd" id="1_terrain_service"]
 [ext_resource type="Script" path="res://scripts/world/terrain_brush_queue.gd" id="2_brush_queue"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/physics/terrain_contact_waker.gd" id="4_contact_waker"]
 [ext_resource type="Script" path="res://scripts/physics/debris_budget.gd" id="5_debris_budget"]
 [ext_resource type="Script" path="res://scripts/physics/dust_fx.gd" id="6_dust_fx"]
+[ext_resource type="Script" path="res://scripts/elements/material_response_system.gd" id="7_materials"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lab"]
 sky_top_color = Color(0.45, 0.62, 0.78, 1)
@@ -69,3 +70,8 @@ player_path = NodePath("../../Player")
 [node name="DustFx" type="Node3D" parent="."]
 script = ExtResource("6_dust_fx")
 structure_service_path = NodePath("../StructureService")
+
+[node name="MaterialResponseSystem" type="Node" parent="."]
+script = ExtResource("7_materials")
+structure_service_path = NodePath("../StructureService")
+terrain_service_path = NodePath("../TerrainService")

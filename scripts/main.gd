@@ -8,11 +8,13 @@ extends Node3D
 ##   --p1-selftest        P0 + testes do P1 (capturas com --p1-screenshots em docs/evidence/p1/screens)
 ##   --p1-persist=write|read  fases do teste de persistência entre processos (ver p1_selftest.gd)
 ##   --p2-selftest        P0 + P1 + testes do P2 (capturas com --p2-screenshots em docs/evidence/p2/screens)
+##   --p3-selftest        P0 + P1 + P2 + testes do P3 (capturas com --p3-screenshots em docs/evidence/p3/screens)
 ##   --report=<caminho>   caminho do relatório JSON do selftest
 
 const SELFTEST_SCRIPT := "res://scripts/dev/p0_selftest.gd"
 const P1_SELFTEST_SCRIPT := "res://scripts/dev/p1_selftest.gd"
 const P2_SELFTEST_SCRIPT := "res://scripts/dev/p2_selftest.gd"
+const P3_SELFTEST_SCRIPT := "res://scripts/dev/p3_selftest.gd"
 ## Slot único do laboratório (F5 salva, F9 carrega).
 const SAVE_SLOT := "slot1"
 
@@ -24,6 +26,7 @@ const SAVE_SLOT := "slot1"
 @onready var contact_waker: TerrainContactWaker = $World/ContactWaker
 @onready var debris: DebrisBudget = $World/DebrisBudget
 @onready var dust: DustFx = $World/DustFx
+@onready var materials: MaterialResponseSystem = $World/MaterialResponseSystem
 @onready var player: PlayerController = $Player
 @onready var edit_controller: TerrainEditController = $TerrainEditController
 @onready var hud: DebugHud = $HUD
@@ -51,7 +54,9 @@ func _ready() -> void:
 	for a in args:
 		p1 = p1 or a.begins_with("--p1-persist=")
 	var script := ""
-	if args.has("--p2-selftest"):
+	if args.has("--p3-selftest"):
+		script = P3_SELFTEST_SCRIPT
+	elif args.has("--p2-selftest"):
 		script = P2_SELFTEST_SCRIPT
 	elif p1:
 		script = P1_SELFTEST_SCRIPT

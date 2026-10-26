@@ -31,7 +31,8 @@ var _queue: Array[StructurePiece] = []
 var _suspended: Array[StructurePiece] = []
 var _builds := 0
 var _stats := {"checks": 0, "invalid_feet": 0, "confirm_timeouts": 0, "released": 0,
-	"max_released_in_frame": 0, "last_confirm_ms": 0.0, "last_check": ""}
+	"max_released_in_frame": 0, "last_confirm_ms": 0.0, "last_check": "", "broken": 0, "consumed": 0,
+	"last_break": ""}
 
 
 func _ready() -> void:
@@ -88,6 +89,42 @@ func resume() -> void:
 
 func get_pieces() -> Array[StructurePiece]:
 	return _pieces
+
+
+## Solta uma peça presa por causa externa (impacto, fogo) e recalcula o apoio: o que dependia
+## dela entra na fila de soltura. `impulse` é aplicado depois de descongelar.
+func break_piece(piece: StructurePiece, impulse := Vector3.ZERO, reason := "") -> void:
+	if piece == null or not is_instance_valid(piece) or piece.released:
+		return
+	_queue.erase(piece)
+	piece.released = true
+	piece.freeze = false
+	piece.sleeping = false
+	piece.add_to_group(DebrisBudget.GROUP)
+	if impulse != Vector3.ZERO:
+		piece.apply_central_impulse(impulse)
+	_stats.released += 1
+	_stats.broken += 1
+	_stats.last_break = "%s (%s)" % [piece.name, reason]
+	piece_released.emit(piece)
+	_enqueue_unsupported()
+
+
+## Peça consumida (queimou até o fim): sai do jogo sem ser liberada da memória (o grafo e os
+## testes continuam com o índice válido): solta, invisível, sem colisão, fora dos destroços.
+func consume_piece(piece: StructurePiece, reason := "") -> void:
+	if piece == null or not is_instance_valid(piece):
+		return
+	break_piece(piece, Vector3.ZERO, reason)
+	piece.set_meta("consumed", true)
+	piece.freeze = true
+	piece.visible = false
+	for ch in piece.get_children():
+		if ch is CollisionShape3D:
+			(ch as CollisionShape3D).set_deferred("disabled", true)
+	piece.remove_from_group(DebrisBudget.GROUP)
+	_stats.consumed += 1
+	_enqueue_unsupported()
 
 
 ## Peças congeladas por suspend() que resume() vai soltar.

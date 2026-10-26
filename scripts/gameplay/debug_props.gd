@@ -1,7 +1,8 @@
 class_name DebugProps
 extends RefCounted
 ## Caixas RigidBody3D de teste, para verificar se formas novas do terreno
-## sustentam objetos físicos. Não são props de gameplay.
+## sustentam objetos físicos. Não são props de gameplay. Desde o P3 são de MADEIRA
+## (material elemental `wood`: acendem, queimam, molham).
 
 const CRATE_SIZE := 1.0
 const CRATE_MASS := 20.0
@@ -31,6 +32,7 @@ static func spawn_crate(parent: Node3D, world_position: Vector3) -> RigidBody3D:
 	body.add_child(mesh)
 
 	body.add_to_group(DebrisBudget.GROUP)
+	body.set_meta("body_material", BodyMaterialLibrary.WOOD)
 	parent.add_child(body)
 	body.global_position = world_position
 	return body
