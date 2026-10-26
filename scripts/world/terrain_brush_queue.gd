@@ -34,6 +34,9 @@ signal brush_applied(request: TerrainBrushRequest, result: TerrainEditResult)
 @export var stroke_spacing_factor := 0.35
 ## Acima disso (× raio) entre carimbos, o carimbo vira tubo do último ponto até a mira.
 @export var stroke_gap_factor := 1.0
+## Ao soltar a tecla, cava/adiciona do último carimbo até o último ponto mirado (P3.6; ver
+## end_stroke). false = comportamento do P1–P3.5 (o fim do traço podia ficar até um intervalo curto).
+@export var close_stroke_on_end := true
 
 var terrain_service: TerrainService
 
@@ -42,7 +45,7 @@ var _strokes := {}
 var _next_stroke_id := 1
 var _stats := {
 	"enqueued": 0, "applied": 0, "rejected": 0, "dropped": 0, "cleared": 0,
-	"stamps": 0, "stamps_skipped": 0, "merged": 0, "splits": 0,
+	"stamps": 0, "stamps_skipped": 0, "merged": 0, "splits": 0, "strokes_closed": 0,
 	"max_ops_in_frame": 0, "max_volume_in_frame": 0.0, "ops_last_frame": 0,
 }
 var _reject_reasons := {}
@@ -61,6 +64,9 @@ class Stroke:
 	var has_stamp := false
 	var last_point := Vector3.ZERO
 	var last_stamp_s := 0.0
+	## Último ponto mirado (com alvo), mesmo sem carimbo: end_stroke fecha o traço nele.
+	var last_aim := Vector3.ZERO
+	var has_aim := false
 	## Último material sólido lido sob a mira. Mantido quando a amostra cai no ar
 	## (dentro do buraco recém-escavado, antes de o collider atualizar).
 	var material: TerrainMaterial
@@ -123,6 +129,8 @@ func update_stroke(stroke_id: int, point: Vector3, normal: Vector3, has_target :
 	var s: Stroke = _strokes.get(stroke_id)
 	if s == null or not has_target:
 		return
+	s.last_aim = point
+	s.has_aim = true
 	var now := Time.get_ticks_usec() / 1000000.0
 	if s.op == TerrainBrushRequest.Op.REMOVE:
 		var sampled := sample_stroke_material(point, normal)
@@ -146,8 +154,26 @@ func update_stroke(stroke_id: int, point: Vector3, normal: Vector3, has_target :
 		_stamp(s, point, now)
 
 
+## Encerra o traço FECHANDO-O no último ponto mirado: o trecho andado depois do último carimbo
+## (até um intervalo inteiro, ~1,5 m a 10 m/s) não era cavado ao soltar a tecla, e como os
+## carimbos seguem o relógio, a sobra variava a cada rodada (T8 intermitente: fim da vala raso;
+## spike P3.6 R5: 1 de 6 réplicas). SMOOTH não fecha (é por tempo, não por caminho).
 func end_stroke(stroke_id: int) -> void:
+	var s: Stroke = _strokes.get(stroke_id)
 	_strokes.erase(stroke_id)
+	if not close_stroke_on_end or s == null or not s.has_stamp or not s.has_aim or s.op == TerrainBrushRequest.Op.SMOOTH:
+		return
+	var moved := s.last_point.distance_to(s.last_aim)
+	if moved < s.radius * stroke_spacing_factor:
+		return
+	var now := Time.get_ticks_usec() / 1000000.0
+	if moved > s.radius * stroke_gap_factor:
+		var req := TerrainBrushRequest.path(PackedVector3Array([s.last_point, s.last_aim]),
+			PackedFloat32Array([s.radius, s.radius]), s.op == TerrainBrushRequest.Op.ADD, s.material_id)
+		_enqueue_stamp(s, req, s.last_aim, now)
+	else:
+		_stamp(s, s.last_aim, now)
+	_stats.strokes_closed += 1
 
 
 func is_stroke_active(stroke_id: int) -> bool:

@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P1TEST] início | modo=headless-export | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 382 ms
+[P1TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":382.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P1TEST] baseline: 14 probes, sem chão em []
+[P1TEST] --- testes P1 ---
+[TerrainService] dig_sphere OK c=(-30.0, 0.0, 10.0) r=1.20 rev=1 0.649ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=2 0.059ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=3 0.047ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=4 0.056ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=5 0.041ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=6 1.217ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=7 0.067ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=8 0.046ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=9 0.044ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=10 0.048ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=11 0.054ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=12 0.062ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=13 0.040ms
+[TerrainService] dig_sphere OK c=(-30.0, 0.0, -10.0) r=1.20 rev=14 0.046ms
+[P1TEST] T8 PASS — Traço contínuo (120 amostras em 2 s) vira vala contínua com carimbos limitados | {"amostras_de_mira":120,"carimbos":14,"carimbos_pulados_por_espaco":0,"limite_carimbos":16,"max_ops_num_quadro":1,"ops_aplicadas":14,"ops_tubo_por_salto":12,"pontos_sem_vala":[],"todas_ok":true,"vala_no_collider_ms":21}
+[P1TEST] relatório: C:\Users\dsoares\AppData\Local\Temp/t8_exe_5.json
+[P1TEST] erros do motor durante o teste: 0 | avisos: 0
+[P1TEST] RESULTADO GERAL: PASS (2/2) em 5.9 s
