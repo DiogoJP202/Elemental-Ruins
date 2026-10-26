@@ -64,7 +64,7 @@ de fluidos.
 | Tecla | Ação |
 |---|---|
 | **1 / 2 / 3 / 4** | escolher o elemento: Terra / Água / Fogo / Ar (P3; o HUD mostra o poder atual) |
-| **LMB** | usar o poder do elemento. Terra (segurar; P3.5): mire o chão a 2,5–7 m. O chão racha (~0,1 s), a rocha se solta (~0,1 s) e sobe (~0,16 s), pronta em ~0,37 s (o anel da retícula enche); soltar arremessa no ponto mirado. Um toque curto arranca e lança assim que fica pronta; impacto forte no chão abre cratera. Água (segurar): jato até 14 m que empurra, molha e apaga. Fogo (toque; P3.6): a bola se forma na mão por ~0,08 s com a mira do clique, voa a 35 m/s e aquece no primeiro contato; no fim dos 30 m só se dissipa; nova rajada após ~0,14 s; madeira acende e o fogo não atravessa paredes. Ar (toque): rajada em cone de 10 m que empurra pela massa e apaga fogo fraco |
+| **LMB** | usar o poder do elemento. Terra (segurar; P3.5): mire o chão a 2,5–7 m. O chão racha (~0,1 s), a rocha se solta (~0,1 s) e sobe (~0,16 s), pronta em ~0,37 s (o anel da retícula enche); soltar arremessa no ponto mirado. Um toque curto arranca e lança assim que fica pronta; impacto forte no chão abre cratera. Água (segurar): jato até 14 m que empurra, molha e apaga. Fogo (toque; P3.6): a bola se forma na mão por ~0,08 s com a mira do clique, voa a 35 m/s e aquece no primeiro contato; no fim dos 30 m só se dissipa; nova rajada após ~0,14 s; madeira acende e o fogo não atravessa paredes. Ar (toque; P3.6): uma frente de pressão sai da mão a 30 m/s em cone de 10 m e decide cada corpo uma vez; empurra pela massa, é bloqueada por terreno e corpos (exposição parcial reduz o empurrão), apaga fogo fraco e aviva o forte; nova rajada após ~0,15 s |
 | WASD | andar, relativo à câmera |
 | Shift | correr |
 | Espaço | pular |
@@ -288,5 +288,5 @@ P3.5: `Ability.fx_event(kind, data)` (ganchos de FX/áudio); `EarthLiftThrow.pha
 `extract_rock(..., hold_kinematic)`; `ThirdPersonCamera.add_trauma(x)`.
 
 ## P3.6 — polimento incremental
-M0, M1 Água e M2 Fogo concluídos; baseline corrigido em docs/p36_baseline_corrected.md, arquitetura em docs/p36_m0.md, Água em docs/p36_water_polish.md e Fogo em docs/p36_fire_polish.md (parâmetros em data/abilities/fire_tuning.tres; testes: `tools/run_p36_tests.ps1 -Stage m2 -Window`). M3 Ar e M4 integração seguem em andamento. Capturas e automação não são playtest humano.
+M0, M1 Água, M2 Fogo e M3 Ar concluídos; baseline corrigido em docs/p36_baseline_corrected.md, arquitetura em docs/p36_m0.md, Água em docs/p36_water_polish.md, Fogo em docs/p36_fire_polish.md e Ar em docs/p36_air_polish.md (parâmetros em data/abilities/*_tuning.tres; testes por marco: `tools/run_p36_tests.ps1 -Stage m2|m3 -Window`). M4 integração segue em andamento. Capturas e automação não são playtest humano.
 

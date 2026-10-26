@@ -27,3 +27,5 @@ M1 Água concluído: T1/T31/T33/T37/T46/T47/T48, 7/7 headless e janela, zero err
 
 
 M2 Fogo concluído: T1/T31–T37/T46–T51/T57, 15/15 headless e janela, zero erros/avisos. T37 janela p95/p99/máx 18,64/20,06/30,29 ms. Antecipação com mira do clique, varredura recortada, impacto único, dissipação sem calor, propagação com visibilidade e limpeza em reset/save/load. Ver docs/p36_fire_polish.md. Próximo M3 Ar.
+
+M3 Ar concluído: T1/T31–T37/T46–T54/T56/T57, 19/19 headless e janela, zero erros/avisos. T37 janela p95/p99/máx 18,45/19,73/32,68 ms. Casca a 30 m/s, uma decisão por corpo por onda, exposição por 5 raios, resposta por massa com tetos e limpeza em reset/save/load. T34 separado em duas rajadas (bloqueio por corpos), limiares iguais. Ver docs/p36_air_polish.md. Próximo M4 integração.

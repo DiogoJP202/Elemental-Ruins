@@ -10,13 +10,16 @@ extends Node3D
 ##   fogo      núcleo + chamas periféricas por projétil (slot estável por id), brasas na antecipação,
 ##             trilha térmica chama→brasa→fumaça em voo, clarão no impacto, vapor ao secar alvo molhado,
 ##             baforada de fumaça na dissipação por alcance
-##   ar        disparo único em cone na rajada
+##   ar        sopro curto na mão ao emitir; anel na seção do cone acompanhando a casca real (pool por onda,
+##             turbulência só visual); poeira em cada contato efetivo e no chão a cada `dust_spacing_m` da frente
 
 const MAX_FLAMES := 24
 const BURST_POOL := 4
 const CHAR_CHECK_S := 0.25
 const CHARRED_COLOR := Color("#2B2420")
 const FIRE_TUNING_PATH := "res://data/abilities/fire_tuning.tres"
+const AIR_TUNING_PATH := "res://data/abilities/air_tuning.tres"
+const DUST_POOL := 6
 static var _soft_texture: ImageTexture
 
 var abilities: AbilityController
@@ -30,7 +33,11 @@ var _steam: Array[GPUParticles3D] = []
 var _blasts: Array[GPUParticles3D] = []
 var _gusts: Array[GPUParticles3D] = []
 var _fizzles: Array[GPUParticles3D] = []
-var _next := {"steam": 0, "blast": 0, "gust": 0, "fizzle": 0}
+var _next := {"steam": 0, "blast": 0, "gust": 0, "fizzle": 0, "dust": 0}
+var _dust: Array[GPUParticles3D] = []
+var _rings: Array[MeshInstance3D] = []
+var _ring_slots := {}  # wave id → índice do pool, estável durante a vida da onda
+var _ring_dust_next := {}  # wave id → próxima distância com poeira de passagem
 var _beam: MultiMeshInstance3D
 var _water_snapshot: Array = []
 var _water_tail := 0.0
@@ -41,11 +48,11 @@ var _fire_trails: Array[GPUParticles3D] = []
 var _halos: Array[MeshInstance3D] = []
 var _fire_slots := {}  # projectile id → índice do pool, estável durante a vida do projétil
 var _slot_idle_ms: Array[int] = []
-var _last_gust_ms := -1
 var _char_accum := 0.0
 var _stats := {"flames_created": 0, "flames_skipped": 0, "steam": 0, "blasts": 0, "gusts": 0, "charred": 0,
 	"fire_anticipations": 0, "fire_launches": 0, "fire_dissipations": 0, "fire_steam": 0, "fire_slots_missing": 0,
-	"fire_vfx_frames": 0, "fire_vfx_usec": 0, "fire_vfx_usec_max": 0}
+	"fire_vfx_frames": 0, "fire_vfx_usec": 0, "fire_vfx_usec_max": 0, "air_dust_contacts": 0, "air_dust_front": 0,
+	"air_rings_missing": 0}
 
 
 func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) -> void:
@@ -57,6 +64,9 @@ func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) 
 	var fire := abilities.get_ability(&"fire_burst")
 	if fire != null:
 		fire.fx_event.connect(_on_fire_event)
+	var air := abilities.get_ability(&"air_gust")
+	if air != null:
+		air.fx_event.connect(_on_air_event)
 
 
 func get_stats() -> Dictionary:
@@ -66,6 +76,7 @@ func get_stats() -> Dictionary:
 	d["water_spray"] = _spray.emitting if _spray != null else false
 	d["fire_trail_pool"] = _fire_trails.size()
 	d["fire_slots_live"] = _fire_slots.size()
+	d["air_rings_live"] = _ring_slots.size()
 	var visible_balls := 0
 	for ball in _balls:
 		visible_balls += int(ball.visible)
@@ -105,6 +116,27 @@ func _ready() -> void:
 		_fizzles.append(_burst_emitter("FireFizzle%d" % i, fizzle, 0.6, 0.35))
 	for i in 2:
 		_gusts.append(_burst_emitter("Gust%d" % i, _process_material(Vector3.FORWARD, 35.0, 8.0, 14.0, Vector3.ZERO, Color("#DDE6EA")), 0.35, 0.7))
+	var air_tuning = load(AIR_TUNING_PATH)
+	for i in DUST_POOL:
+		_dust.append(_burst_emitter("AirDust%d" % i,
+			_process_material(Vector3.UP, 55.0, 0.6, 2.0, Vector3(0, -1.2, 0), air_tuning.dust_color), 0.7, 0.5))
+	for i in AirGust.MAX_WAVES:
+		var ring := MeshInstance3D.new()
+		ring.name = "AirFront%d" % i
+		var torus := TorusMesh.new()
+		torus.inner_radius = 0.9
+		torus.outer_radius = 1.0
+		torus.rings = 24
+		torus.ring_segments = 6
+		var front: Color = air_tuning.front_color
+		var front_material := _unshaded(Color(front.r, front.g, front.b, air_tuning.front_alpha))
+		front_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		torus.material = front_material
+		ring.mesh = torus
+		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		ring.visible = false
+		add_child(ring)
+		_rings.append(ring)
 	_beam = MultiMeshInstance3D.new()
 	_beam.name = "WaterStream"
 	var volume := SphereMesh.new()
@@ -172,7 +204,7 @@ func _process(delta: float) -> void:
 	_update_jet(delta)
 	var t0 := Time.get_ticks_usec()
 	_update_fireballs()
-	_update_gust()
+	_update_air()
 	_char_accum += delta
 	if _char_accum >= CHAR_CHECK_S:
 		_char_accum = 0.0
@@ -400,13 +432,70 @@ func _on_fire_event(kind: StringName, data: Dictionary) -> void:
 				_stats.fire_steam += 1
 
 
-func _update_gust() -> void:
+## Frente: anel na seção do cone à distância atual da casca; poeira no chão a cada `dust_spacing_m`
+## percorrido (consulta só de leitura, sem efeito físico).
+func _update_air() -> void:
 	var air := abilities.get_ability(&"air_gust") as AirGust
-	if air == null or air.last_gust.is_empty() or air.last_gust.at_ms == _last_gust_ms:
+	if air == null:
 		return
-	_last_gust_ms = air.last_gust.at_ms
-	_fire_burst(_gusts, "gust", air.last_gust.origin, air.last_gust.dir)
-	_stats.gusts += 1
+	var live := {}
+	for w: Dictionary in air.waves:
+		live[int(w.id)] = w
+	for wid: int in _ring_slots.keys():
+		if live.has(wid):
+			continue
+		_rings[_ring_slots[wid]].visible = false
+		_ring_slots.erase(wid)
+		_ring_dust_next.erase(wid)
+	var t := air.tuning
+	var spacing := maxf(t.dust_spacing_m, 0.5)
+	for wid: int in live:
+		var w: Dictionary = live[wid]
+		if not _ring_slots.has(wid):
+			var used := {}
+			for s: int in _ring_slots.values():
+				used[s] = true
+			var free := -1
+			for i in _rings.size():
+				if not used.has(i):
+					free = i
+					break
+			if free < 0:
+				_stats.air_rings_missing += 1
+				continue
+			_ring_slots[wid] = free
+			_ring_dust_next[wid] = spacing
+		var dir: Vector3 = w.dir
+		var origin: Vector3 = w.origin
+		var radius := float(w.radius)
+		var section := maxf(radius * tan(deg_to_rad(t.half_angle_deg)), 0.15)
+		section *= 1.0 + t.visual_turbulence * sin(float(w.age) * 37.0 + float(wid) * 1.3)
+		var side := dir.cross(Vector3.UP if absf(dir.y) < 0.99 else Vector3.RIGHT).normalized()
+		var across := side.cross(dir).normalized()
+		var ring := _rings[_ring_slots[wid]]
+		ring.visible = radius > 0.05
+		ring.global_transform = Transform3D(Basis(side * section, dir * 0.6, across * section), origin + dir * radius)
+		var fade := clampf(1.0 - radius / maxf(t.max_range, 0.01), 0.0, 1.0)
+		var ring_material := (ring.mesh as TorusMesh).material as StandardMaterial3D
+		ring_material.albedo_color.a = t.front_alpha * sqrt(fade)
+		while radius >= float(_ring_dust_next[wid]) and float(_ring_dust_next[wid]) <= t.max_range + 0.001:
+			var at := origin + dir * float(_ring_dust_next[wid])
+			var q := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 0.5, at + Vector3.DOWN * 3.0, Layers.TERRAIN)
+			var hit := get_world_3d().direct_space_state.intersect_ray(q)
+			if not hit.is_empty():
+				_fire_burst(_dust, "dust", hit.position, Vector3.UP)
+				_stats.air_dust_front += 1
+			_ring_dust_next[wid] = float(_ring_dust_next[wid]) + spacing
+
+
+func _on_air_event(kind: StringName, data: Dictionary) -> void:
+	match kind:
+		&"air_launch":
+			_fire_burst(_gusts, "gust", data.position, data.direction)
+			_stats.gusts += 1
+		&"air_contact":
+			_fire_burst(_dust, "dust", data.position, data.direction)
+			_stats.air_dust_contacts += 1
 
 
 # --- Emissores ------------------------------------------------------------------------------

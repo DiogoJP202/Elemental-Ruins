@@ -395,14 +395,33 @@ func _t34_air_gust() -> void:
 	var ab: AbilityController = main.abilities
 	var base: Vector3 = await _p3_lab(3)
 	var gust: AirGust = ab.get_ability(&"air_gust")
-	# Leque à frente: caixa a ~5 m, fogo pequeno e grande, e uma caixa atrás de um morro.
+	# Massa e oclusão: caixa a ~5 m e uma caixa atrás de um morro.
+	# P3.6 M3: corpos agora também bloqueiam o ar. As caixas em chamas do P3 ficavam na linha
+	# da caixa de massa (medido: exposição zero) e passam a uma rajada separada; limiares iguais.
 	var hidden := DebugProps.spawn_crate(props, base + Vector3(-3, 0, -7))
 	var wall := svc.add_sphere(base + Vector3(-1.6, 0.6, -3.8), 1.2)
 	var crate := DebugProps.spawn_crate(props, base + Vector3(1.5, 0, -5))
-	var small := DebugProps.spawn_crate(props, base + Vector3(0.3, 0, -2.2))
-	var big := DebugProps.spawn_crate(props, base + Vector3(1.2, 0, -3.0))
 	var wall_up := await _wait_until(func(): return not svc.raycast_terrain(ab.hand_position(),
 		MaterialResponseSystem.body_center(hidden)).is_empty(), 3.0)
+	await _seconds(1.0)
+	var c0 := crate.global_position
+	var h0 := hidden.global_position
+	await _tap_at(base + Vector3(0, 0.5, -6))
+	# P3.6 M3: a frente avança a 30 m/s em vez de agir no clique. A velocidade é lida no início do
+	# tick seguinte ao impulso, como antes; prazo de chegada d/v + 2 ticks é exigido pelo T52.
+	var hit_list: Array = gust.last_gust.get("hit", [])
+	var arrived := await _wait_until(func(): return hit_list.has(crate), 1.0)
+	var crate_v := crate.linear_velocity.length()
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	var hidden_v := hidden.linear_velocity.length()
+	var g := gust.last_gust
+	await _seconds(1.5)
+	var crate_moved := crate.global_position.distance_to(c0)
+	var hidden_moved := hidden.global_position.distance_to(h0)
+	# Fogo fraco e forte (laboratório limpo, sem o morro): o forte fica fora da sombra do fraco.
+	base = await _p3_lab(3)
+	var small := DebugProps.spawn_crate(props, base + Vector3(0.3, 0, -2.2))
+	var big := DebugProps.spawn_crate(props, base + Vector3(-0.9, 0, -2.6))
 	await _seconds(1.0)
 	_apply_direct(ElementalEvent.Kind.HEAT, small, 400.0)
 	_apply_direct(ElementalEvent.Kind.HEAT, big, 400.0)
@@ -410,18 +429,10 @@ func _t34_air_gust() -> void:
 	var bs := materials.state_of(big)
 	ss.intensity = 0.2
 	bs.intensity = 0.6
-	var c0 := crate.global_position
-	var h0 := hidden.global_position
 	await _tap_at(base + Vector3(0, 0.5, -6))
-	await get_tree().physics_frame
-	var crate_v := crate.linear_velocity.length()
-	var hidden_v := hidden.linear_velocity.length()
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 	var small_out := not ss.burning
 	var big_i := bs.intensity
-	var g := gust.last_gust
-	await _seconds(1.5)
-	var crate_moved := crate.global_position.distance_to(c0)
-	var hidden_moved := hidden.global_position.distance_to(h0)
 	# Rocha real (extraída), à mesma faixa de distância: quase não se mexe.
 	var ground := svc.raycast_terrain(base + Vector3(5, 5, -12), base + Vector3(5, -10, -12))
 	var out: Dictionary = svc.extract_rock(ground.position, Vector3.UP, 1.2, props, Vector3.RIGHT) if not ground.is_empty() else {"bodies": []}
@@ -437,16 +448,18 @@ func _t34_air_gust() -> void:
 		player.teleport_to(Vector3(rc.x, rc.y, rc.z) + away * 4.5)
 		await _seconds(0.8)
 		await _tap_at(rc)
-		await get_tree().physics_frame
+		var rock_hits: Array = gust.last_gust.get("hit", [])
+		await _wait_until(func(): return rock_hits.has(rock) or gust.waves.is_empty(), 1.0)
 		rock_v = rock.linear_velocity.length()
 		rock_mass = rock.mass
-		rock_in_gust = (gust.last_gust.get("hit", []) as Array).has(rock)
+		rock_in_gust = rock_hits.has(rock)
+		await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 	player.input_enabled = false
-	var ok: bool = wall.ok and wall_up and crate_v >= 4.0 and crate_moved > 2.0 and hidden_v < 0.05 \
+	var ok: bool = wall.ok and wall_up and arrived and crate_v >= 4.0 and crate_moved > 2.0 and hidden_v < 0.05 \
 		and hidden_moved < 0.05 and small_out and bs.burning and big_i > 0.75 \
 		and rock != null and rock_in_gust and rock_v < crate_v / 10.0
 	_record("T34", "Ar: rajada lança a caixa, mal mexe a rocha, não passa terreno; apaga fogo fraco e aviva o forte", ok, {
-		"morro_bloqueia_visada": wall_up, "caixa_vel": crate_v, "caixa_deslocada_m": crate_moved,
+		"morro_bloqueia_visada": wall_up, "frente_chegou_na_caixa": arrived, "caixa_vel": crate_v, "caixa_deslocada_m": crate_moved,
 		"escondida_vel": hidden_v, "escondida_deslocada_m": hidden_moved,
 		"corpos_na_rajada": (g.get("hit", []) as Array).size(), "bloqueados_por_terreno": g.get("blocked", -1),
 		"fogo_fraco_apagou": small_out, "fogo_forte_intensidade": big_i, "rocha_kg": rock_mass, "rocha_vel": rock_v, "rocha_na_rajada": rock_in_gust})
@@ -578,7 +591,8 @@ func _t36_cross_sequence() -> void:
 	var debris := structures.get_pieces().filter(func(p): return p.released and not p.freeze)
 	var a0 := crate_air.global_position
 	await _tap_at(MaterialResponseSystem.body_center(crate_air))
-	await get_tree().physics_frame
+	# P3.6 M3: lista completa só depois que a frente percorre o alcance.
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 	var blown: Array = gust.last_gust.get("hit", [])
 	var debris_hit := debris.filter(func(p): return blown.has(p)).size()
 	await _seconds(1.5)
@@ -635,7 +649,7 @@ func _t36_cross_sequence() -> void:
 		if not clear.is_empty():
 			target = clear[0]
 		await _tap_at(MaterialResponseSystem.body_center(target))
-		await get_tree().physics_frame
+		await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 		var blown2: Array = gust.last_gust.get("hit", [])
 		fallen_hit = fallen.filter(func(p): return blown2.has(p)).size()
 		debris_blocked = gust.last_gust.get("blocked", -1)

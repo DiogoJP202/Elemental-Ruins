@@ -9,6 +9,8 @@ const RANGE := 30.0
 const HEAT := 450.0
 const SPLASH_RADIUS := 2.0
 const MAX_PROJECTILES := 8
+## Resíduo de ponto flutuante: um cooldown múltiplo exato do tick não custa um tick a mais.
+const COOLDOWN_EPSILON_S := 0.000001
 const TUNING_PATH := "res://data/abilities/fire_tuning.tres"
 
 var tuning: FireTuning
@@ -40,9 +42,9 @@ func get_stats() -> Dictionary:
 
 
 func on_press() -> void:
-	if _cooldown_left > 0.0 or projectiles.size() >= clampi(tuning.max_projectiles, 1, MAX_PROJECTILES):
+	if _cooldown_left > COOLDOWN_EPSILON_S or projectiles.size() >= clampi(tuning.max_projectiles, 1, MAX_PROJECTILES):
 		_stats.rejected += 1
-		last_result = "recuperando" if _cooldown_left > 0.0 else "muitos projéteis"
+		last_result = "recuperando" if _cooldown_left > COOLDOWN_EPSILON_S else "muitos projéteis"
 		return
 	if controller == null or not controller.terrain_service.is_ready():
 		return

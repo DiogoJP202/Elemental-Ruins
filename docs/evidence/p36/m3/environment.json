@@ -1,0 +1,55 @@
+{
+  "commit": "33d26ba82228d4f4cc93ea83b21d26e3620f5f1e",
+  "changes": [
+    " M scripts/abilities/air_gust.gd",
+    " M scripts/abilities/fire_burst.gd",
+    " M scripts/dev/p36_selftest.gd",
+    " M scripts/dev/p3_selftest.gd",
+    " M scripts/elements/elemental_fx.gd",
+    " M tools/lib_selftest_contract.ps1",
+    "?? data/abilities/air_tuning.tres",
+    "?? docs/evidence/p36/m3/",
+    "?? docs/p36_air_polish.md",
+    "?? scripts/abilities/air_tuning.gd",
+    "?? scripts/abilities/air_tuning.gd.uid"
+  ],
+  "date": "2026-10-26T19:28:10.1664332-03:00",
+  "stage": "m3",
+  "expected_ids": [
+    "T1",
+    "T31",
+    "T32",
+    "T33",
+    "T34",
+    "T35",
+    "T36",
+    "T37",
+    "T46",
+    "T47",
+    "T48",
+    "T49",
+    "T50",
+    "T51",
+    "T52",
+    "T53",
+    "T54",
+    "T56",
+    "T57"
+  ],
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "gpu": [
+    {
+      "Name": "Intel(R) Iris(R) Xe Graphics",
+      "DriverVersion": "32.0.101.7085"
+    }
+  ],
+  "resolution": "1600x900 configured",
+  "renderer": "Forward+",
+  "physics": "Jolt Physics",
+  "frame_gates_ms": {
+    "p99": 33,
+    "max": 50,
+    "p95": 20
+  },
+  "human_playtest": "NAO TESTADO"
+}

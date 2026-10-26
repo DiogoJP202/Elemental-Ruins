@@ -1,6 +1,7 @@
 extends "res://scripts/dev/p35_selftest.gd"
 ## P3.6: regressões P0–P3.5 e cenários novos. --only=T46,T47,T48 limita a Água;
-## --only=T49,T50,T51,T57 limita o Fogo e o ciclo de vida (reset/save/load).
+## --only=T49,T50,T51 limita o Fogo; --only=T52,T53,T54,T56 limita o Ar; T57 é o ciclo de vida
+## (reset/save/load) de Fogo e Ar.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -53,6 +54,11 @@ func _run_tests() -> bool:
 	if _should_run("T49"): await _t49_fire_anticipation_and_tuning()
 	if _should_run("T50"): await _t50_fire_sweep_and_dissipation()
 	if _should_run("T51"): await _t51_fire_spread_visibility()
+	_log("--- testes P3.6 M3 (Ar) ---")
+	if _should_run("T52"): await _t52_air_front_arrival()
+	if _should_run("T53"): await _t53_air_mass_response()
+	if _should_run("T54"): await _t54_air_occlusion_and_dust()
+	if _should_run("T56"): await _t56_air_tuning_and_events()
 	_log("--- testes P3.6 ciclo de vida ---")
 	if _should_run("T57"): await _t57_lifecycle_invalidation()
 	return true
@@ -835,12 +841,356 @@ func _t51_fire_spread_visibility() -> void:
 	materials.clear()
 
 
+# --- M3: Ar ---------------------------------------------------------------------------------
+
+## Registra os fx_event do ar com tick, sessão, id do evento e onda.
+func _air_watch(gust: AirGust) -> Dictionary:
+	var watch := {"log": [], "callback": Callable()}
+	var log: Array = watch.log
+	var cb := func(kind: StringName, data: Dictionary) -> void:
+		log.append({"kind": String(kind), "tick": int(data.get("tick", -1)), "session": int(data.get("session_id", -1)),
+			"event_id": int(data.get("event_id", -1)), "wave": int(data.get("wave_id", -1)), "data": data.duplicate()})
+	gust.fx_event.connect(cb)
+	watch.callback = cb
+	return watch
+
+
+func _air_unwatch(gust: AirGust, watch: Dictionary) -> void:
+	if gust.fx_event.is_connected(watch.callback):
+		gust.fx_event.disconnect(watch.callback)
+
+
+func _air_contacts(watch: Dictionary, wave: int) -> Array:
+	var out := []
+	for e: Dictionary in watch.log:
+		if e.kind == "air_contact" and int(e.wave) == wave:
+			out.append(e)
+	return out
+
+
+## Contato da onda `wave` com o corpo (pelo id da instância registrado no evento).
+func _air_contact_for(watch: Dictionary, wave: int, body: Node3D) -> Dictionary:
+	for e: Dictionary in _air_contacts(watch, wave):
+		if int(e.data.get("body_id", -1)) == body.get_instance_id():
+			return e
+	return {}
+
+
+## Caixa flutuante sem gravidade, amortecimento ou colisões: a velocidade medida é só a do ar.
+func _air_crate(at: Vector3, mass := DebugProps.CRATE_MASS) -> RigidBody3D:
+	var body := DebugProps.spawn_crate(props, at)
+	body.mass = mass
+	body.gravity_scale = 0.0
+	body.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+	body.linear_damp = 0.0
+	body.angular_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+	body.angular_damp = 0.0
+	body.collision_mask = 0
+	return body
+
+
+## Toque único; id da onda criada ou -1 se recusada (recuperação ou limite).
+func _air_press(ab: AbilityController, gust: AirGust) -> int:
+	var before: int = gust.get_stats().gusts
+	ab.use_pressed()
+	ab.use_released()
+	if gust.get_stats().gusts == before or gust.waves.is_empty():
+		return -1
+	return int(gust.waves[gust.waves.size() - 1].id)
+
+
+## Mira num ponto e dispara uma onda no início do tick (o clique precede a física desse tick).
+func _air_fire_at(ab: AbilityController, gust: AirGust, point: Vector3) -> Dictionary:
+	await _aim_settle(point)
+	var press_tick := Engine.get_physics_frames()
+	var wave := _air_press(ab, gust)
+	return {"wave": wave, "press_tick": press_tick}
+
+
+func _t52_air_front_arrival() -> void:
+	var ab: AbilityController = main.abilities
+	await _p3_lab(3)
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var dt := 1.0 / float(Engine.physics_ticks_per_second)
+	var hand := ab.hand_position()
+	var crates: Array[RigidBody3D] = [_air_crate(hand + Vector3(0, 0, -3)), _air_crate(hand + Vector3(2.0, 0, -6)),
+		_air_crate(hand + Vector3(-2.6, 0, -9))]
+	await _frames(2)
+	var watch := _air_watch(gust)
+	var shot := await _air_fire_at(ab, gust, hand + Vector3(0, 0, -8))
+	var first_motion := [-1, -1, -1]
+	for i in 60:
+		for k in crates.size():
+			if first_motion[k] < 0 and crates[k].linear_velocity.length() > 0.0:
+				first_motion[k] = Engine.get_physics_frames()
+		if gust.waves.is_empty():
+			break
+		await get_tree().physics_frame
+	await _frames(2)
+	var cases := []
+	var all_ok: bool = shot.wave > 0
+	for k in crates.size():
+		var contact := _air_contact_for(watch, shot.wave, crates[k])
+		var d: float = float(contact.data.distance) if not contact.is_empty() else -1.0
+		var arrival := _ticks_s(shot.press_tick, contact.tick) if not contact.is_empty() else -1.0
+		var expected := d / gust.tuning.front_speed
+		# A velocidade aparece no início do tick seguinte ao impulso (a física integra depois do callback).
+		var motion_s := float(int(first_motion[k]) - int(shot.press_tick)) * dt if int(first_motion[k]) >= 0 else -1.0
+		var entry := {"distance_m": d, "arrival_s": arrival, "expected_s": expected, "deadline_s": expected + 2.0 * dt,
+			"first_motion_s": motion_s}
+		entry["ok"] = not contact.is_empty() and arrival >= expected - 0.000001 and arrival <= expected + 2.0 * dt + 0.000001 \
+			and motion_s >= arrival - 0.000001
+		all_ok = all_ok and entry.ok
+		cases.append(entry)
+	var contacts := _air_contacts(watch, shot.wave).size()
+	if _screens:
+		await _air_fire_at(ab, gust, hand + Vector3(0, 0, -8))
+		_capture_view(hand + Vector3(0, 0, -6), 30.0)
+		await _frames(4)
+		await _snap("p36_air_front_mid")
+		await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+		await _snap("p36_air_after_front")
+	_air_unwatch(gust, watch)
+	player.input_enabled = false
+	_record("T52", "Ar: frente progressiva; nenhum efeito antes da casca; chegada em d/v + 2 ticks", all_ok and contacts == crates.size(),
+		{"front_speed": gust.tuning.front_speed, "crates": cases, "contacts_in_wave": contacts,
+		"method": "ticks de física; distância ao centro do corpo"})
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
+func _t53_air_mass_response() -> void:
+	var ab: AbilityController = main.abilities
+	await _p3_lab(3)
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var hand := ab.hand_position()
+	var masses := [20.0, 200.0, 2000.0]
+	var crates: Array[RigidBody3D] = []
+	for k in masses.size():
+		var ang := deg_to_rad(-20.0 + 20.0 * k)
+		crates.append(_air_crate(hand + Vector3(sin(ang), 0, -cos(ang)) * 5.0, masses[k]))
+	await _frames(2)
+	var watch := _air_watch(gust)
+	var events0: int = materials.get_stats().events
+	var s0 := gust.get_stats()
+	var shot := await _air_fire_at(ab, gust, hand + Vector3(0, 0, -8))
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	await _frames(2)
+	var cases := []
+	var all_ok: bool = shot.wave > 0
+	for body in crates:
+		var contact := _air_contact_for(watch, shot.wave, body)
+		var strength: float = float(contact.data.strength) if not contact.is_empty() else 0.0
+		var exposure: float = float(contact.data.exposure) if not contact.is_empty() else 0.0
+		var expected_dv := minf(gust.tuning.max_delta_v, gust.tuning.impulse_cap / body.mass) * strength * exposure
+		var dv := body.linear_velocity.length()
+		var entry := {"mass_kg": body.mass, "strength": strength, "exposure": exposure,
+			"impulse_Ns": float(contact.data.impulse) if not contact.is_empty() else -1.0,
+			"expected_dv": expected_dv, "measured_dv": dv, "cap_dv": gust.tuning.max_delta_v * strength,
+			"cap_impulse_Ns": gust.tuning.impulse_cap}
+		entry["ok"] = not contact.is_empty() and exposure >= 0.999 and absf(dv - expected_dv) <= expected_dv * 0.02 + 0.0001 \
+			and dv <= gust.tuning.max_delta_v * strength + 0.001
+		all_ok = all_ok and entry.ok
+		cases.append(entry)
+	var s1 := gust.get_stats()
+	var contacts := _air_contacts(watch, shot.wave).size()
+	var once := {"contacts": contacts, "bodies": crates.size(), "airflow_events": materials.get_stats().events - events0,
+		"stats_contacts": s1.contacts - s0.contacts}
+	once["ok"] = contacts == crates.size() and once.airflow_events == crates.size() and once.stats_contacts == crates.size()
+	var light_over_mid: float = float(cases[0].measured_dv) / maxf(float(cases[1].measured_dv), 0.0001)
+	var mid_over_heavy: float = float(cases[1].measured_dv) / maxf(float(cases[2].measured_dv), 0.0001)
+	if _screens:
+		_capture_view(hand + Vector3(0, 0, -5), 30.0)
+		await _snap("p36_air_mass_response")
+	_air_unwatch(gust, watch)
+	player.input_enabled = false
+	_record("T53", "Ar: mesma pressão respeita teto de Δv e de impulso; resposta inversa à massa; um contato por corpo por onda",
+		all_ok and once.ok and light_over_mid > 1.5 and mid_over_heavy > 9.0,
+		{"bodies": cases, "once_per_wave": once, "ratios": {"light_over_mid": light_over_mid, "mid_over_heavy": mid_over_heavy}})
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
+func _t54_air_occlusion_and_dust() -> void:
+	var ab: AbilityController = main.abilities
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var fx: ElementalFx = main.fx
+	# a) Parede de 1 mm cobrindo a caixa inteira: exposição zero, nenhum impulso nem AIRFLOW.
+	await _p3_lab(3)
+	var hand := ab.hand_position()
+	_p36_thin_wall(hand + Vector3(0, 0, -4.0), Vector3(3, 3, 0.001))
+	var hidden := _air_crate(hand + Vector3(0, 0, -4.8))
+	await _frames(2)
+	var watch := _air_watch(gust)
+	var e0: int = materials.get_stats().events
+	var b0 := gust.get_stats()
+	var fx0 := fx.get_stats()
+	var shot_a := await _air_fire_at(ab, gust, hand + Vector3(0, 0, -8))
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	await _frames(2)
+	var b1 := gust.get_stats()
+	var wall_case := {"velocity": hidden.linear_velocity.length(), "blocked": b1.blocked - b0.blocked,
+		"airflow_events": materials.get_stats().events - e0, "contacts": _air_contacts(watch, shot_a.wave).size(),
+		"exposure_rays": b1.exposure_rays - b0.exposure_rays, "ray_fallback_hits": b1.ray_fallback_hits - b0.ray_fallback_hits,
+		"dust_contacts": fx.get_stats().air_dust_contacts - fx0.air_dust_contacts}
+	wall_case["ok"] = shot_a.wave > 0 and is_zero_approx(float(wall_case.velocity)) and wall_case.blocked == 1 \
+		and wall_case.airflow_events == 0 and wall_case.contacts == 0 and wall_case.dust_contacts == 0
+	# b) Exposição parcial: a borda da parede cobre só o ponto esquerdo da silhueta (4/5 livres);
+	#    a gêmea simétrica, sem parede, recebe a frente inteira na mesma distância.
+	await _p3_lab(3)
+	hand = ab.hand_position()
+	var partial := _air_crate(hand + Vector3(2.5, 0, -6.0))
+	var twin := _air_crate(hand + Vector3(-2.5, 0, -6.0))
+	_p36_thin_wall(hand + Vector3(0.43, 0, -5.0), Vector3(3, 3, 0.001))
+	await _frames(2)
+	var p0 := gust.get_stats()
+	var dust0: int = fx.get_stats().air_dust_contacts
+	var shot_b := await _air_fire_at(ab, gust, hand + Vector3(0, 0, -8))
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	await _frames(2)
+	var pc := _air_contact_for(watch, shot_b.wave, partial)
+	var tc := _air_contact_for(watch, shot_b.wave, twin)
+	var p_dv := partial.linear_velocity.length()
+	var t_dv := twin.linear_velocity.length()
+	var partial_case := {"partial_exposure": float(pc.data.exposure) if not pc.is_empty() else -1.0,
+		"twin_exposure": float(tc.data.exposure) if not tc.is_empty() else -1.0, "partial_dv": p_dv, "twin_dv": t_dv,
+		"ratio": p_dv / maxf(t_dv, 0.0001), "stats_partial": gust.get_stats().partial - p0.partial,
+		"dust_contacts": fx.get_stats().air_dust_contacts - dust0, "contacts": _air_contacts(watch, shot_b.wave).size()}
+	partial_case["ok"] = shot_b.wave > 0 and is_equal_approx(float(partial_case.partial_exposure), 0.8) \
+		and is_equal_approx(float(partial_case.twin_exposure), 1.0) and absf(float(partial_case.ratio) - 0.8) <= 0.02 \
+		and partial_case.stats_partial == 1 and partial_case.contacts == 2 and partial_case.dust_contacts == partial_case.contacts
+	if _screens:
+		_capture_view(hand + Vector3(0, 0, -6), -25.0)
+		await _snap("p36_air_partial_exposure")
+	# c) Terreno: morro entre a mão e a caixa bloqueia todas as amostras.
+	await _p3_lab(3)
+	hand = ab.hand_position()
+	var behind := _air_crate(hand + Vector3(0, -0.3, -7.0))
+	var mound := svc.add_sphere(hand + Vector3(0, -0.6, -3.8), 1.4)
+	var behind_center := MaterialResponseSystem.body_center(behind)
+	var mound_up := await _wait_until(func(): return not svc.raycast_terrain(hand, behind_center).is_empty(), 3.0)
+	await _frames(2)
+	var t0 := gust.get_stats()
+	var te0: int = materials.get_stats().events
+	var shot_c := await _air_fire_at(ab, gust, hand + Vector3(0, 0, -8))
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	await _frames(2)
+	var terrain_case := {"mound": str(mound), "mound_collider": mound_up, "velocity": behind.linear_velocity.length(),
+		"blocked": gust.get_stats().blocked - t0.blocked, "airflow_events": materials.get_stats().events - te0}
+	terrain_case["ok"] = mound.ok and mound_up and shot_c.wave > 0 and is_zero_approx(float(terrain_case.velocity)) \
+		and terrain_case.blocked == 1 and terrain_case.airflow_events == 0
+	# d) Poeira de passagem: no máximo uma por espaçamento por onda, e o pool de anéis volta a zero.
+	var fx1 := fx.get_stats()
+	var max_front_dust := 3 * ceili(gust.tuning.max_range / gust.tuning.dust_spacing_m)
+	var dust_case := {"front_dust": fx1.air_dust_front - fx0.air_dust_front, "max_front_dust": max_front_dust,
+		"rings_live_after": fx1.air_rings_live, "rings_missing": fx1.air_rings_missing - fx0.air_rings_missing,
+		"contact_dust_total": fx1.air_dust_contacts - fx0.air_dust_contacts}
+	dust_case["ok"] = dust_case.front_dust > 0 and dust_case.front_dust <= max_front_dust and dust_case.rings_live_after == 0 \
+		and dust_case.rings_missing == 0
+	_air_unwatch(gust, watch)
+	player.input_enabled = false
+	_record("T54", "Ar: parede de 1 mm e terreno bloqueiam; exposição parcial reduz o impulso; poeira só de contatos e passagem reais",
+		wall_case.ok and partial_case.ok and terrain_case.ok and dust_case.ok,
+		{"thin_wall": wall_case, "partial": partial_case, "terrain": terrain_case, "dust": dust_case,
+		"raycast_note": "amostra sem falhas não prova correção universal"})
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
+func _t56_air_tuning_and_events() -> void:
+	var ab: AbilityController = main.abilities
+	await _p3_lab(3)
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var original: AirTuning = gust.tuning
+	var variant: AirTuning = original.duplicate(true)
+	variant.front_speed = 15.0
+	variant.max_range = 6.0
+	variant.impulse_cap = 300.0
+	variant.max_waves = 2
+	variant.cooldown_s = 0.0
+	gust.tuning = variant
+	var dt := 1.0 / float(Engine.physics_ticks_per_second)
+	var hand := ab.hand_position()
+	var near := _air_crate(hand + Vector3(0.6, 0, -4.0), 200.0)
+	var far := _air_crate(hand + Vector3(-1.2, 0, -7.0))
+	await _frames(2)
+	var watch := _air_watch(gust)
+	var shot := await _air_fire_at(ab, gust, hand + Vector3(0, 0, -8))
+	await _wait_until(func(): return gust.waves.is_empty(), 1.5)
+	await _frames(2)
+	var contact := _air_contact_for(watch, shot.wave, near)
+	var arrival := _ticks_s(shot.press_tick, contact.tick) if not contact.is_empty() else -1.0
+	var d: float = float(contact.data.distance) if not contact.is_empty() else -1.0
+	var strength: float = float(contact.data.strength) if not contact.is_empty() else 0.0
+	var expected_dv := minf(variant.max_delta_v, variant.impulse_cap / near.mass) * strength
+	var tuning_case := {"arrival_s": arrival, "expected_s": d / variant.front_speed, "near_dv": near.linear_velocity.length(),
+		"expected_dv": expected_dv, "far_velocity_beyond_range": far.linear_velocity.length(), "range_m": variant.max_range}
+	tuning_case["ok"] = shot.wave > 0 and not contact.is_empty() and arrival >= d / variant.front_speed - 0.000001 \
+		and arrival <= d / variant.front_speed + 2.0 * dt + 0.000001 \
+		and absf(float(tuning_case.near_dv) - expected_dv) <= expected_dv * 0.02 + 0.0001 \
+		and is_zero_approx(float(tuning_case.far_velocity_beyond_range))
+	# Limite de ondas simultâneas e recusa contabilizada.
+	await _aim_settle(hand + Vector3(0, 0, -8))
+	var r0 := gust.get_stats()
+	var accepted := 0
+	for i in 3:
+		accepted += int(_air_press(ab, gust) > 0)
+	var limit_case := {"accepted": accepted, "live": gust.waves.size(), "rejected": gust.get_stats().rejected - r0.rejected,
+		"max_waves": variant.max_waves}
+	limit_case["ok"] = accepted == 2 and limit_case.live == 2 and limit_case.rejected == 1
+	await _wait_until(func(): return gust.waves.is_empty(), 1.5)
+	gust.tuning = original
+	# Recuperação padrão: segundo toque no mesmo tick é recusado; aceito em cooldown_s ± 1 tick.
+	await get_tree().physics_frame
+	var first := _air_press(ab, gust)
+	var first_tick := Engine.get_physics_frames()
+	var immediate := _air_press(ab, gust)
+	var accept_tick := -1
+	for i in 40:
+		await get_tree().physics_frame
+		if _air_press(ab, gust) > 0:
+			accept_tick = Engine.get_physics_frames()
+			break
+	var recovery_s := float(accept_tick - first_tick) * dt if accept_tick >= 0 else -1.0
+	var recovery_case := {"immediate_rejected": immediate < 0, "recovery_s": recovery_s, "cooldown_s": original.cooldown_s}
+	recovery_case["ok"] = first > 0 and immediate < 0 and absf(recovery_s - original.cooldown_s) <= dt + 0.000001
+	await _wait_until(func(): return gust.waves.is_empty(), 1.5)
+	# Eventos identificáveis: ids únicos e crescentes, sessão atual, onda, tick e habilidade em todos.
+	var ids := []
+	var kinds := {}
+	var fields_ok := true
+	for e: Dictionary in watch.log:
+		ids.append(e.event_id)
+		kinds[e.kind] = int(kinds.get(e.kind, 0)) + 1
+		fields_ok = fields_ok and e.event_id > 0 and e.session == ab.session_id and e.wave > 0 and e.tick > 0 \
+			and e.data.get("ability", &"") == &"air_gust"
+	var sorted_ids := ids.duplicate()
+	sorted_ids.sort()
+	var unique := {}
+	for i in ids:
+		unique[i] = true
+	var events_case := {"events": ids.size(), "kinds": kinds, "fields_ok": fields_ok,
+		"unique": unique.size() == ids.size(), "increasing": sorted_ids == ids}
+	events_case["ok"] = ids.size() > 0 and fields_ok and events_case.unique and events_case.increasing
+	_air_unwatch(gust, watch)
+	player.input_enabled = false
+	_record("T56", "Ar: AirTuning muda velocidade, alcance e teto; limite de ondas e recuperação; eventos identificáveis",
+		tuning_case.ok and limit_case.ok and recovery_case.ok and events_case.ok,
+		{"variant": tuning_case, "wave_limit": limit_case, "recovery": recovery_case, "events": events_case})
+	for ch in props.get_children():
+		ch.queue_free()
+	materials.clear()
+
+
 # --- Ciclo de vida: reset/save/load -------------------------------------------------------------
 
 const LIFECYCLE_SLOT := "p36_lifecycle"
 
 
-## Laboratório com um alvo a 12 m (voo de ~0,3 s) e mira nele.
+## Laboratório com o Fogo, um alvo congelado a 12 m (voo de ~0,3 s) e mira nele.
 func _lifecycle_lab() -> RigidBody3D:
 	var base: Vector3 = await _p3_lab(2)
 	var target := DebugProps.spawn_crate(props, base + Vector3(0, 0.8, -12))
@@ -850,18 +1200,24 @@ func _lifecycle_lab() -> RigidBody3D:
 	return target
 
 
-## Executa o comando e confere, no próprio sinal de início, que o controlador já descartou tudo.
-func _lifecycle_command(kind: String, ab: AbilityController, fire: FireBurst, watch: Dictionary) -> Dictionary:
+## Executa o comando e confere, no próprio sinal de início, que o controlador já descartou projéteis
+## de fogo e frentes de ar, sem eventos de material, contatos ou FX depois.
+func _lifecycle_command(kind: String, ab: AbilityController, watch: Dictionary, air_watch: Dictionary) -> Dictionary:
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var gust: AirGust = ab.get_ability(&"air_gust")
 	var s0 := fire.get_stats()
+	var a0 := gust.get_stats()
 	var m0: int = materials.get_stats().events
 	var session0 := ab.session_id
-	var live_before := fire.projectiles.size()
+	var live_before := fire.projectiles.size() + gust.waves.size()
 	var phases := []
 	for p: Dictionary in fire.projectiles:
 		phases.append(p.phase)
+	for w: Dictionary in gust.waves:
+		phases.append("air_front")
 	var at_signal := {}
 	var probe := func(_slot := "") -> void:
-		at_signal["live"] = fire.projectiles.size()
+		at_signal["live"] = fire.projectiles.size() + gust.waves.size()
 		at_signal["session"] = ab.session_id
 	var sig: Signal = svc.world_reset_started
 	if kind == "save":
@@ -869,7 +1225,8 @@ func _lifecycle_command(kind: String, ab: AbilityController, fire: FireBurst, wa
 	elif kind == "load":
 		sig = svc.world_load_started
 	sig.connect(probe)
-	var log_index: int = (watch.log as Array).size()
+	var fire_index: int = (watch.log as Array).size()
+	var air_index: int = (air_watch.log as Array).size()
 	var command_ok := false
 	if kind == "reset":
 		command_ok = await main.request_world_reset()
@@ -880,49 +1237,72 @@ func _lifecycle_command(kind: String, ab: AbilityController, fire: FireBurst, wa
 	sig.disconnect(probe)
 	await _seconds(0.6)
 	var s1 := fire.get_stats()
+	var a1 := gust.get_stats()
 	var out := {"command": kind, "command_ok": command_ok, "live_before": live_before, "phases_before": phases,
 		"live_at_signal": at_signal.get("live", -1), "session_changed": int(at_signal.get("session", session0)) != session0,
 		"launches_after": s1.launched - s0.launched, "impacts_after": s1.exploded - s0.exploded,
-		"dissipations_after": s1.dissipated - s0.dissipated, "heat_events_after": materials.get_stats().events - m0,
-		"fx_after_command": _fire_kinds_since(watch, log_index), "cooldown_left": s1.cooldown_left}
+		"dissipations_after": s1.dissipated - s0.dissipated, "air_contacts_after": a1.contacts - a0.contacts,
+		"material_events_after": materials.get_stats().events - m0,
+		"fx_after_command": _fire_kinds_since(watch, fire_index) + _fire_kinds_since(air_watch, air_index),
+		"cooldown_left": s1.cooldown_left + a1.cooldown_left}
 	out["ok"] = command_ok and live_before > 0 and out.live_at_signal == 0 and out.session_changed \
-		and out.launches_after == 0 and out.impacts_after == 0 and out.dissipations_after == 0 \
-		and out.heat_events_after == 0 and (out.fx_after_command as Array).is_empty() and is_zero_approx(float(out.cooldown_left))
+		and out.launches_after == 0 and out.impacts_after == 0 and out.dissipations_after == 0 and out.air_contacts_after == 0 \
+		and out.material_events_after == 0 and (out.fx_after_command as Array).is_empty() and is_zero_approx(float(out.cooldown_left))
 	return out
 
 
 func _t57_lifecycle_invalidation() -> void:
 	var ab: AbilityController = main.abilities
 	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var gust: AirGust = ab.get_ability(&"air_gust")
 	var watch := _fire_watch(fire, [])
-	# Reset durante a antecipação.
+	var air_watch := _air_watch(gust)
+	var cases := {}
+	# Fogo: reset durante a antecipação.
 	await _lifecycle_lab()
 	_fire_press(ab, fire)
-	var reset_case := await _lifecycle_command("reset", ab, fire, watch)
-	# Save com projétil em voo: as caixas sobrevivem ao save, então um voo antigo as atingiria.
+	cases["fire_reset_during_anticipation"] = await _lifecycle_command("reset", ab, watch, air_watch)
+	# Fogo: save com projétil em voo; as caixas sobrevivem ao save, então um voo antigo as atingiria.
 	var target: RigidBody3D = await _lifecycle_lab()
 	var f0 := fire.get_stats()
 	_fire_press(ab, fire)
 	await _wait_until(func(): return fire.get_stats().launched != f0.launched, 1.0)
 	var target_state := materials.state_of(target)
-	var save_case := await _lifecycle_command("save", ab, fire, watch)
+	var save_case := await _lifecycle_command("save", ab, watch, air_watch)
 	save_case["target_survived"] = is_instance_valid(target)
 	save_case["target_temperature"] = target_state.temperature if target_state != null else -1.0
 	save_case.ok = save_case.ok and save_case.target_survived and is_equal_approx(float(save_case.target_temperature), MaterialState.AMBIENT)
-	# Load com um voo e uma antecipação ao mesmo tempo.
+	cases["fire_save_during_flight"] = save_case
+	# Fogo: load com um voo e uma antecipação ao mesmo tempo.
 	await _lifecycle_lab()
 	var g0 := fire.get_stats()
 	_fire_press(ab, fire)
 	await _wait_until(func(): return fire.get_stats().launched != g0.launched, 1.0)
 	await _wait_until(func(): return fire.get_stats().cooldown_left <= 0.0, 1.0)
 	_fire_press(ab, fire)
-	var load_case := await _lifecycle_command("load", ab, fire, watch)
+	var load_case := await _lifecycle_command("load", ab, watch, air_watch)
 	load_case.ok = load_case.ok and load_case.live_before == 2 and load_case.phases_before == ["flight", "anticipation"]
+	cases["fire_load_flight_and_anticipation"] = load_case
+	# Ar: o comando chega com a frente ainda antes da caixa a 8 m (que sobrevive ao save).
+	for kind: String in ["reset", "save", "load"]:
+		var base: Vector3 = await _p3_lab(3)
+		var crate := _air_crate(base + Vector3(0, 1.3, -8))
+		await _frames(2)
+		await _aim_settle(MaterialResponseSystem.body_center(crate))
+		var wave := _air_press(ab, gust)
+		var air_case := await _lifecycle_command(kind, ab, watch, air_watch)
+		air_case["wave"] = wave
+		air_case.ok = air_case.ok and wave > 0 and air_case.phases_before == ["air_front"]
+		if kind == "save":
+			air_case["crate_survived"] = is_instance_valid(crate)
+			air_case["crate_velocity"] = crate.linear_velocity.length() if is_instance_valid(crate) else -1.0
+			air_case.ok = air_case.ok and air_case.crate_survived and is_zero_approx(float(air_case.crate_velocity))
+		cases["air_%s_during_front" % kind] = air_case
 	_fire_unwatch(fire, watch)
+	_air_unwatch(gust, air_watch)
 	player.input_enabled = false
-	_record("T57", "Reset/save/load descartam antecipações e voos no próprio comando, sem eventos térmicos ou FX tardios",
-		reset_case.ok and save_case.ok and load_case.ok, {"reset_during_anticipation": reset_case,
-		"save_during_flight": save_case, "load_flight_and_anticipation": load_case, "slot": LIFECYCLE_SLOT})
+	_record("T57", "Reset/save/load descartam antecipações, voos e frentes de ar no próprio comando, sem eventos ou FX tardios",
+		cases.values().all(func(c): return c.ok), {"cases": cases, "slot": LIFECYCLE_SLOT})
 	for ch in props.get_children():
 		ch.queue_free()
 	materials.clear()
