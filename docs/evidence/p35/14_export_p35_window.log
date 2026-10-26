@@ -1,0 +1,643 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.323 - Forward+ - Using Device #0: Intel - Intel(R) Iris(R) Xe Graphics
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P35TEST] início | modo=window-export | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 968 ms
+[P35TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":968.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P35TEST] baseline: 14 probes, sem chão em []
+[P35TEST] T0 PASS — Dados SDF volumétricos coerentes com o gerador (colina sólida, ar acima) | {"sdf_abaixo_solo":-2.0,"sdf_acima_colina":8.0,"sdf_acima_solo":2.0,"sdf_dentro_colina":-7.0,"topo_colina_colisao_y":12.019998550415,"topo_esperado_y":12.0}
+[P35TEST] T1b PASS — Jogador fica sobre o topo da colina voxel sem atravessar | {"on_floor":true,"topo_esperado_y":12.0,"y_apos_2s":12.0205574035645,"y_apos_3s":12.0205574035645}
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=1 1.637ms
+[P35TEST] T2 PASS — Escavar remove matéria E colisão; jogador cai na cratera | {"chao_antes_y":0.0200023651123047,"chao_depois_y":-3.04615783691406,"edicao":"dig_sphere OK rev=1 1.64ms soil ~169646 kg","jogador_y_apos_2s":-3.03762030601501,"latencia_collider_ms":13.877,"on_floor":true,"quadros_fisica":1,"sdf_dados_logo_apos_edicao":1.03762924671173}
+[TerrainService] dig_path OK pontos=7 comp=26.0m rev=2 1.857ms
+[TerrainService] dig_path OK pontos=7 comp=26.0m rev=3 0.711ms
+[P35TEST] T3a PASS — Túnel escavado: eixo livre, teto e piso sólidos (raycasts físicos) | {"edicoes":["dig_path OK rev=2 1.86ms soil ~433615 kg","dig_path OK rev=3 0.71ms stone ~751600 kg"],"eixo_livre_apos_ms":30.063,"face_antes_z":10.5977001190186,"piso_interno_y":-0.349205732345581,"teto_interno_y":3.34920597076416,"topo_antes_y":12.019998550415,"topo_depois_y":12.019998550415}
+[P35TEST] T3b PASS — Jogador atravessa o túnel de boca a boca com teto sólido acima | {"amostras_com_teto":360,"amostras_teto":360,"chegou_na_saida":true,"tempo_s":11.302,"y_max_dentro":-0.328295469284058,"y_min_dentro":-0.3337641954422,"z_final":-37.0682601928711}
+[TerrainService] add_sphere OK c=(-14.0, 0.5, 22.0) r=2.00 rev=4 0.195ms
+[TerrainService] add_sphere OK c=(-14.0, 2.5, 22.0) r=2.00 rev=5 0.106ms
+[TerrainService] add_sphere OK c=(-14.0, 4.5, 22.0) r=2.00 rev=6 0.101ms
+[P35TEST] T4 PASS — Adicionar matéria forma coluna sólida (caixa e jogador apoiados) | {"caixa_vel":0.0,"caixa_y_apos_3s":7.0,"edicoes":["add_sphere OK rev=4 0.20ms soil ~50265 kg","add_sphere OK rev=5 0.11ms soil ~50265 kg","add_sphere OK rev=6 0.10ms soil ~50265 kg"],"jogador_y_no_topo":6.22515630722046,"latencia_collider_ms":16.823,"on_floor":true,"topo_coluna_y":6.49999809265137}
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=7 0.375ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=8 0.086ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=9 0.074ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=10 0.097ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=11 0.081ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=12 0.103ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=13 0.083ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=14 0.079ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=15 0.073ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=16 0.139ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=17 0.095ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=18 0.086ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=19 0.075ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=20 0.110ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=21 0.098ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=22 0.079ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=23 0.104ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=24 0.079ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=25 0.088ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=26 0.084ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=27 0.075ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=28 0.090ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=29 0.097ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=30 0.095ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=31 0.079ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=32 0.086ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=33 0.083ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=34 0.086ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=35 0.077ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=36 0.082ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=37 0.098ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=38 0.087ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=39 0.090ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=40 0.084ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=41 0.085ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=42 0.090ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=43 0.095ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=44 0.109ms
+[TerrainService] dig_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=45 0.079ms
+[TerrainService] add_sphere OK c=(-14.0, 0.0, 36.0) r=2.00 rev=46 0.101ms
+[P35TEST] T5 PASS — 20 ciclos escavar+adicionar no mesmo ponto (40 edições) | {"falhas":[],"latencia_collider_ms":{"max":34.08,"media":31.03,"min":16.25,"n":40,"p95":33.74},"nos_antes":202,"nos_depois":202}
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 38.0) r=1.50 rev=47 0.090ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 38.0) r=1.50 rev=48 0.082ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 38.0) r=1.50 rev=49 0.080ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 38.0) r=1.50 rev=50 0.065ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 38.0) r=1.50 rev=51 0.285ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 38.0) r=1.50 rev=52 0.072ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 38.0) r=1.50 rev=53 0.092ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 38.0) r=1.50 rev=54 0.245ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 38.0) r=1.50 rev=55 0.106ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 38.0) r=1.50 rev=56 0.081ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 40.0) r=1.50 rev=57 0.064ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 40.0) r=1.50 rev=58 0.074ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 40.0) r=1.50 rev=59 0.131ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 40.0) r=1.50 rev=60 0.101ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 40.0) r=1.50 rev=61 0.100ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 40.0) r=1.50 rev=62 0.155ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 40.0) r=1.50 rev=63 0.085ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 40.0) r=1.50 rev=64 0.069ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 40.0) r=1.50 rev=65 0.081ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 40.0) r=1.50 rev=66 0.066ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 42.0) r=1.50 rev=67 0.078ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 42.0) r=1.50 rev=68 0.083ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 42.0) r=1.50 rev=69 0.068ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 42.0) r=1.50 rev=70 0.066ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 42.0) r=1.50 rev=71 0.080ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 42.0) r=1.50 rev=72 0.111ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 42.0) r=1.50 rev=73 0.087ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 42.0) r=1.50 rev=74 0.105ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 42.0) r=1.50 rev=75 0.106ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 42.0) r=1.50 rev=76 0.091ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 44.0) r=1.50 rev=77 0.064ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 44.0) r=1.50 rev=78 0.072ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 44.0) r=1.50 rev=79 0.082ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 44.0) r=1.50 rev=80 0.069ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 44.0) r=1.50 rev=81 0.116ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 44.0) r=1.50 rev=82 0.074ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 44.0) r=1.50 rev=83 0.073ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 44.0) r=1.50 rev=84 0.084ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 44.0) r=1.50 rev=85 0.064ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 44.0) r=1.50 rev=86 0.067ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 46.0) r=1.50 rev=87 0.300ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 46.0) r=1.50 rev=88 0.182ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 46.0) r=1.50 rev=89 0.085ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 46.0) r=1.50 rev=90 0.132ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 46.0) r=1.50 rev=91 0.167ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 46.0) r=1.50 rev=92 0.090ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 46.0) r=1.50 rev=93 0.066ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 46.0) r=1.50 rev=94 0.184ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 46.0) r=1.50 rev=95 0.083ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 46.0) r=1.50 rev=96 0.066ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 48.0) r=1.50 rev=97 0.067ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 48.0) r=1.50 rev=98 0.069ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 48.0) r=1.50 rev=99 0.073ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 48.0) r=1.50 rev=100 0.072ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 48.0) r=1.50 rev=101 0.076ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 48.0) r=1.50 rev=102 0.147ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 48.0) r=1.50 rev=103 0.092ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 48.0) r=1.50 rev=104 0.069ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 48.0) r=1.50 rev=105 0.099ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 48.0) r=1.50 rev=106 0.085ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 50.0) r=1.50 rev=107 0.077ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 50.0) r=1.50 rev=108 0.089ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 50.0) r=1.50 rev=109 0.124ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 50.0) r=1.50 rev=110 0.089ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 50.0) r=1.50 rev=111 0.117ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 50.0) r=1.50 rev=112 0.088ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 50.0) r=1.50 rev=113 0.068ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 50.0) r=1.50 rev=114 0.074ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 50.0) r=1.50 rev=115 0.081ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 50.0) r=1.50 rev=116 0.062ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 52.0) r=1.50 rev=117 0.083ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 52.0) r=1.50 rev=118 0.068ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 52.0) r=1.50 rev=119 0.095ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 52.0) r=1.50 rev=120 0.096ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 52.0) r=1.50 rev=121 0.105ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 52.0) r=1.50 rev=122 0.099ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 52.0) r=1.50 rev=123 0.120ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 52.0) r=1.50 rev=124 0.071ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 52.0) r=1.50 rev=125 0.073ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 52.0) r=1.50 rev=126 0.075ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 54.0) r=1.50 rev=127 0.063ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 54.0) r=1.50 rev=128 0.089ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 54.0) r=1.50 rev=129 0.106ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 54.0) r=1.50 rev=130 0.065ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 54.0) r=1.50 rev=131 0.083ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 54.0) r=1.50 rev=132 0.075ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 54.0) r=1.50 rev=133 0.080ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 54.0) r=1.50 rev=134 0.066ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 54.0) r=1.50 rev=135 0.065ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 54.0) r=1.50 rev=136 0.065ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 56.0) r=1.50 rev=137 0.062ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 56.0) r=1.50 rev=138 0.078ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 56.0) r=1.50 rev=139 0.079ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 56.0) r=1.50 rev=140 0.073ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 56.0) r=1.50 rev=141 0.099ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 56.0) r=1.50 rev=142 0.067ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 56.0) r=1.50 rev=143 0.070ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 56.0) r=1.50 rev=144 0.079ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 56.0) r=1.50 rev=145 0.083ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 56.0) r=1.50 rev=146 0.064ms
+[P35TEST] T5b PASS — 100 escavações em sequência (latência edição→collider) | {"executadas":100,"latencia_collider_ms":{"max":37.34,"media":30.76,"min":13.58,"n":100,"p95":34.23},"recusadas":0,"tempo_chamada_ms":{"max":0.3,"media":0.09,"min":0.06,"n":100,"p95":0.17},"timeouts_collider":0}
+[TerrainService] dig_sphere RECUSADO: outside_bounds (5000.0, 0.0, 5000.0)
+[TerrainService] dig_sphere RECUSADO: area_not_loaded (200.0, 0.0, 200.0)
+[TerrainService] dig_sphere RECUSADO: radius_out_of_range 
+[TerrainService] add_sphere RECUSADO: overlaps_player (0.0, 1.0, 28.0)
+[P35TEST] T6 PASS — Edições inválidas/fora da área falham rápido e com motivo | {"casos":[{"caso":"fora dos voxel_bounds","esperado":"outside_bounds","ms":0.088,"ok":true,"resultado":"dig_sphere RECUSADO (outside_bounds)"},{"caso":"dentro dos bounds, fora do LOD0 carregado","esperado":"area_not_loaded","ms":0.023,"ok":true,"resultado":"dig_sphere RECUSADO (area_not_loaded)"},{"caso":"raio gigante","esperado":"radius_out_of_range","ms":0.012,"ok":true,"resultado":"dig_sphere RECUSADO (radius_out_of_range)"},{"caso":"adicionar sobre o jogador","esperado":"overlaps_player","ms":0.043,"ok":true,"resultado":"add_sphere RECUSADO (overlaps_player)"}]}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 146)
+[TerrainService] reset: geração 2 pronta=true em 461 ms
+[P35TEST] T7 PASS — Reset restaura geometria E colisão originais (cratera, túnel e coluna somem) | {"duracao_ms":461.0,"nos_baseline":199,"nos_depois":199,"probes_diferentes":[],"props_antes":1,"props_depois":0,"reset_ok":true}
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=147 2.024ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 147)
+[TerrainService] reset: geração 3 pronta=true em 377 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=148 0.616ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 148)
+[TerrainService] reset: geração 4 pronta=true em 397 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=149 0.669ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 149)
+[TerrainService] reset: geração 5 pronta=true em 380 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=150 1.060ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 150)
+[TerrainService] reset: geração 6 pronta=true em 396 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=151 0.701ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 151)
+[TerrainService] reset: geração 7 pronta=true em 346 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=152 1.667ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 152)
+[TerrainService] reset: geração 8 pronta=true em 430 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=153 1.282ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 8, rev 153)
+[TerrainService] reset: geração 9 pronta=true em 429 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=154 0.849ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 9, rev 154)
+[TerrainService] reset: geração 10 pronta=true em 446 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=155 0.690ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 10, rev 155)
+[TerrainService] reset: geração 11 pronta=true em 429 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=156 1.222ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 11, rev 156)
+[TerrainService] reset: geração 12 pronta=true em 413 ms
+[P35TEST] T7b PASS — 10 ciclos escavar→reset retornam ao baseline | {"duracao_reset_ms":{"max":446.0,"media":404.3,"min":346.0,"n":10,"p95":446.0},"falhas":[],"nos_baseline":199,"nos_depois":199}
+[P35TEST] --- testes P1 ---
+[TerrainService] dig_sphere OK c=(-30.0, 0.0, 10.0) r=1.20 rev=157 0.599ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=158 0.052ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=159 0.043ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=160 0.080ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=161 0.096ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=162 0.085ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=163 0.921ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=164 0.091ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=165 0.062ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=166 0.051ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=167 0.089ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=168 0.069ms
+[TerrainService] dig_path OK pontos=2 comp=1.7m rev=169 0.054ms
+[P35TEST] T8 PASS — Traço contínuo (120 amostras em 2 s) vira vala contínua com carimbos limitados | {"amostras_de_mira":120,"carimbos":13,"carimbos_pulados_por_espaco":0,"limite_carimbos":16,"max_ops_num_quadro":1,"ops_aplicadas":13,"ops_tubo_por_salto":12,"pontos_sem_vala":[],"todas_ok":true,"vala_no_collider_ms":16}
+[TerrainService] dig_sphere OK c=(-40.0, 0.0, 22.8) r=1.50 rev=170 0.161ms
+[TerrainService] dig_path OK pontos=2 comp=1.5m rev=171 0.069ms
+[TerrainService] dig_sphere OK c=(-40.0, -1.2, 20.1) r=1.50 rev=172 0.045ms
+[TerrainService] dig_sphere OK c=(-40.0, -1.9, 18.7) r=1.50 rev=173 0.040ms
+[TerrainService] dig_sphere OK c=(-40.0, -2.5, 17.4) r=1.50 rev=174 0.046ms
+[TerrainService] dig_sphere OK c=(-40.0, -3.1, 16.1) r=1.50 rev=175 0.045ms
+[TerrainService] dig_sphere OK c=(-40.0, -3.7, 14.8) r=1.50 rev=176 0.089ms
+[P35TEST] T8b PASS — G segurado 1 s (Input → controlador → fila) abre cratera no collider | {"aplicadas":7,"carimbos":7,"chao_antes_y":0.0200004577636719,"chao_depois_y":-1.68731498718262,"collider_ms":17.448,"material_mirado":"soil(dureza 1.0, 1500 kg/m³)","mira":"(-40.0, 0.02, 22.7828)","tracos_ativos_depois":0}
+[TerrainService] dig_path OK pontos=7 comp=11.0m rev=177 0.661ms
+[TerrainService] dig_path OK pontos=7 comp=11.0m rev=178 0.695ms
+[TerrainService] dig_path OK pontos=3 comp=4.0m rev=179 0.059ms
+[TerrainService] dig_path OK pontos=20 comp=9.5m rev=180 0.095ms
+[P35TEST] T9 PASS — PATH de 26 m dividido por AABB; rajada de 20 carimbos fundida; orçamento por quadro | {"divisoes":2,"limite_extensao_m":14.0,"maior_extensao_aabb_m":14.1,"max_ops_num_quadro":2,"max_volume_aabb_num_quadro_m3":252.0,"orcamento_volume_m3":3000.0,"rajada_fundidos":19,"rajada_ops_aplicadas":1,"rajada_pedidos":20,"rajada_pontos_sem_vala":[],"tubo_pontos_sem_vala":[],"tubo_trechos":3}
+[TerrainService] add_sphere OK c=(-26.0, 1.0, 48.0) r=2.00 rev=181 0.361ms
+[TerrainService] smooth_area OK c=(-26.0, 1.0, 48.0) r=3.50 blur=2 rev=182 0.086ms
+[TerrainService] smooth_area OK c=(-26.0, 1.0, 48.0) r=3.50 blur=2 rev=183 0.071ms
+[P35TEST] T10 PASS — SMOOTH arredonda saliência: topo desce e a maior inclinação cai (collider e dados) | {"alturas_antes":[3.02,2.789,2.217,0.77,0.02,0.02,0.02],"alturas_depois":[0.805,0.737,0.595,0.374,0.071,0.033,0.02],"collider_ms":16.983,"distancias_m":[0.0,0.75,1.5,2.25,3.0,3.75,4.5],"inclinacao_max_antes":1.929,"inclinacao_max_depois":0.404,"saliencia":"add_sphere OK rev=181 0.36ms soil ~50265 kg","sdf_topo_antes":0.0,"sdf_topo_depois":1.48014760017395,"suavizacoes":["smooth_area OK rev=182 0.09ms soil ~0 kg","smooth_area OK rev=183 0.07ms soil ~0 kg"]}
+[TerrainService] add_sphere OK c=(-36.0, 0.5, 60.0) r=1.50 mat=sand rev=184 0.307ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, 0.0) r=1.00 rev=185 0.470ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -0.5) r=1.00 rev=186 0.045ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -1.0) r=1.00 rev=187 0.047ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -1.5) r=1.00 rev=188 0.054ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -2.0) r=1.00 rev=189 0.044ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -2.5) r=1.00 rev=190 0.041ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -3.0) r=1.00 rev=191 0.060ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -3.5) r=1.00 rev=192 0.060ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -4.0) r=1.00 rev=193 0.058ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -4.6) r=1.00 rev=194 0.059ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -5.1) r=1.00 rev=195 0.049ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -5.6) r=1.00 rev=196 0.051ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -6.1) r=1.00 rev=197 0.145ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -6.6) r=1.00 rev=198 0.076ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -7.1) r=1.00 rev=199 0.042ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -7.6) r=1.00 rev=200 0.047ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -8.1) r=1.00 rev=201 0.050ms
+[TerrainService] dig_sphere OK c=(30.0, 0.0, -8.6) r=1.00 rev=202 0.042ms
+[TerrainService] dig_sphere OK c=(-44.0, 0.0, 44.0) r=1.00 rev=203 0.124ms
+[TerrainService] dig_sphere OK c=(-44.0, 0.0, 43.1) r=1.00 rev=204 0.083ms
+[TerrainService] dig_path OK pontos=2 comp=1.0m rev=205 0.041ms
+[TerrainService] dig_sphere OK c=(-44.0, 0.0, 41.2) r=1.00 rev=206 0.058ms
+[TerrainService] dig_path OK pontos=2 comp=1.0m rev=207 0.063ms
+[TerrainService] dig_sphere OK c=(-44.0, 0.0, 39.2) r=1.00 rev=208 0.049ms
+[TerrainService] dig_sphere OK c=(-44.0, 0.0, 38.3) r=1.00 rev=209 0.051ms
+[TerrainService] dig_path OK pontos=2 comp=1.0m rev=210 0.040ms
+[TerrainService] dig_sphere OK c=(-44.0, 0.0, 36.4) r=1.00 rev=211 0.085ms
+[TerrainService] dig_path OK pontos=2 comp=1.0m rev=212 0.062ms
+[TerrainService] dig_sphere OK c=(-44.0, -8.0, 30.0) r=1.00 rev=213 0.053ms
+[TerrainService] dig_path OK pontos=2 comp=2.8m rev=214 0.045ms
+[TerrainService] dig_path OK pontos=2 comp=2.7m rev=215 0.042ms
+[TerrainService] dig_path OK pontos=2 comp=2.7m rev=216 0.098ms
+[P35TEST] T11 PASS — Materiais: layout do gerador, ADD de areia lido nos dados, dureza no ritmo, massa por densidade | {"add_areia":{"dentro":"sand(dureza 0.5, 1600 kg/m³)","fora_3m":"soil(dureza 1.0, 1500 kg/m³)","massa_esperada_kg":22619.4671058465,"massa_kg":22619.4671058465,"ok":true,"resultado":"add_sphere OK rev=184 0.31ms sand ~22619 kg"},"dureza_ok":true,"dureza_tracos":{"areia":{"carimbos":18,"material":"sand(dureza 0.5, 1600 kg/m³)"},"pedra":{"carimbos":4,"material":"stone(dureza 3.0, 2600 kg/m³)"},"solo":{"carimbos":10,"material":"soil(dureza 1.0, 1500 kg/m³)"}},"layout_gerador":[{"esperado":"soil","lido":"soil(dureza 1.0, 1500 kg/m³)","ok":true,"p":"(0.0, -1.0, 28.0)"},{"esperado":"sand","lido":"sand(dureza 0.5, 1600 kg/m³)","ok":true,"p":"(30.0, -1.0, 28.0)"},{"esperado":"stone","lido":"stone(dureza 3.0, 2600 kg/m³)","ok":true,"p":"(0.0, -8.0, 28.0)"},{"esperado":"stone","lido":"stone(dureza 3.0, 2600 kg/m³)","ok":true,"p":"(0.0, 4.0, -10.0)"},{"esperado":"soil","lido":"soil(dureza 1.0, 1500 kg/m³)","ok":true,"p":"(0.0, 10.5, -10.0)"},{"esperado":"soil","lido":"soil(dureza 1.0, 1500 kg/m³)","ok":true,"p":"(5.0, -3.0, 40.0)"},{"esperado":"stone","lido":"stone(dureza 3.0, 2600 kg/m³)","ok":true,"p":"(5.0, -7.0, 40.0)"}],"politica_bendable":{"nao_dobravel":"material_not_bendable","ok":true,"solo":""}}
+[TerrainService] dig_sphere OK c=(10.0, 0.0, 62.0) r=1.00 rev=217 1.075ms
+[TerrainService] dig_sphere OK c=(13.0, 0.0, 62.0) r=1.00 rev=218 0.640ms
+[TerrainService] dig_sphere OK c=(16.0, 0.0, 62.0) r=1.00 rev=219 0.042ms
+[TerrainService] dig_sphere RECUSADO: outside_bounds (5000.0, 0.0, 5000.0)
+[TerrainService] dig_sphere OK c=(19.0, 0.0, 62.0) r=1.00 rev=220 0.041ms
+[TerrainService] dig_sphere OK c=(22.0, 0.0, 62.0) r=1.00 rev=221 0.020ms
+[TerrainService] add_sphere RECUSADO: unknown_material 
+[TerrainService] dig_sphere OK c=(25.0, 0.0, 62.0) r=1.00 rev=222 0.038ms
+[TerrainService] dig_sphere OK c=(28.0, 0.0, 62.0) r=1.00 rev=223 0.038ms
+[TerrainService] dig_sphere OK c=(31.0, 0.0, 62.0) r=1.00 rev=224 0.369ms
+[P35TEST] T12 PASS — TerrainChanged {aabb, revision}: 1 evento por edição aplicada, nenhum por recusa | {"aabb_do_evento_contem_brush":true,"collider_ainda_velho_no_evento":"8/8","collider_ultimo_ms":16.793,"dados_ja_mudados_no_evento":true,"edicoes_ok":8,"eventos":8,"recusas":["dig_sphere RECUSADO (outside_bounds)","add_sphere RECUSADO (unknown_material)"],"revisoes_consecutivas":true}
+[TerrainService] add_path OK pontos=9 comp=8.5m mat=sand rev=225 0.447ms
+[P35TEST] T13 PASS — Rampa (PATH aditivo de areia): jogador sobe a pé até o topo | {"edicao":"add_path OK rev=225 0.45ms sand ~225404 kg","jogador_x_final":-21.0135231018066,"jogador_y_final":2.88012409210205,"jogador_y_max":2.88012409210205,"material_no_meio":"sand(dureza 0.5, 1600 kg/m³)","on_floor":true,"topo_esperado_y":3.1,"topo_no_fim_y":2.91332626342773}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 12, rev 225)
+[TerrainService] reset: geração 13 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=226 0.643ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=227 0.662ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=228 1.092ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=229 0.041ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=230 0.403ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=231 0.388ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=232 0.086ms
+[TerrainService] add_sphere OK c=(-14.0, 0.5, 22.0) r=2.00 mat=sand rev=233 0.145ms
+[TerrainService] add_sphere OK c=(-14.0, 2.5, 22.0) r=2.00 mat=sand rev=234 0.083ms
+[TerrainService] add_sphere OK c=(-14.0, 4.5, 22.0) r=2.00 mat=sand rev=235 0.046ms
+[TerrainService] add_path OK pontos=9 comp=8.5m mat=stone rev=236 0.496ms
+[TerrainService] save_modified_blocks não concluiu em 0.0 s: restantes=58 abortado=false
+[TerrainService] save selftest_abort ABORTADO: { "slot": "selftest_abort", "ok": false, "reason": "flush_incomplete", "flush_ms": 0.0, "blocks_tasks": 58 }
+[TerrainService] save selftest: ok=true { "slot": "selftest", "ok": true, "ms": 414.0, "flush_ms": 14.0, "blocks_tasks": 0, "save_anterior_em_voo": "esperado", "copy": "OK", "bytes": 147456, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 13, rev 236)
+[TerrainService] reset: geração 14 pronta=true em 394 ms
+[TerrainService] load selftest: ok=true { "slot": "selftest", "ok": true, "ms": 413.0, "copy": "OK", "bytes": 147456 }
+[TerrainService] load selftest: ok=true { "slot": "selftest", "ok": true, "ms": 412.0, "copy": "OK", "bytes": 147456 }
+[P35TEST] T14 PASS — Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar | {"amostras_sdf_material":108,"arquivos_de_sessao":1,"carregar_1":{"bytes":147456,"copy":"OK","ms":413.0,"ok":true,"slot":"selftest"},"diferencas_apos_salvar":[],"diferencas_carga_1":[],"diferencas_carga_2":[],"diferencas_reset":[],"edicoes":["OK dig_sphere OK rev=226 0.64ms soil ~169646 kg","OK dig_path OK rev=227 0.66ms soil ~195432 kg","OK dig_path OK rev=228 1.09ms soil ~195432 kg","OK dig_path OK rev=229 0.04ms stone ~201132 kg","OK dig_path OK rev=230 0.40ms stone ~338749 kg","OK dig_path OK rev=231 0.39ms stone ~338749 kg","OK dig_path OK rev=232 0.09ms soil ~116038 kg","OK add_sphere OK rev=233 0.14ms sand ~53617 kg","OK add_sphere OK rev=234 0.08ms sand ~53617 kg","OK add_sphere OK rev=235 0.05ms sand ~53617 kg","OK add_path OK rev=236 0.50ms stone ~366281 kg"],"nos":{"apos_salvar":199,"carga_1":199,"carga_2":199,"editado":199},"probes_alteradas_pelas_edicoes":5,"reset_volta_ao_baseline":true,"salvar":{"blocks_tasks":0,"bytes":147456,"copy":"OK","flush_ms":14.0,"ms":414.0,"ok":true,"path":"C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite","save_anterior_em_voo":"esperado","slot":"selftest"},"save_abortado":{"exercitado":true,"resultado":{"blocks_tasks":58,"flush_ms":0.0,"ok":false,"reason":"flush_incomplete","slot":"selftest_abort"},"save_seguinte_imediato":{"blocks_tasks":0,"bytes":147456,"copy":"OK","flush_ms":14.0,"ms":414.0,"ok":true,"path":"C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite","save_anterior_em_voo":"esperado","slot":"selftest"},"terreno_pronto_sem_slot":true},"topo_coluna_carga_2_y":6.5,"topo_coluna_salvo_y":6.5}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 16, rev 236)
+[TerrainService] reset: geração 17 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 68.0) r=1.50 rev=237 0.384ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 68.0) r=1.50 rev=238 0.136ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 68.0) r=1.50 rev=239 0.052ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 68.0) r=1.50 rev=240 0.073ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 68.0) r=1.50 rev=241 0.616ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 68.0) r=1.50 rev=242 0.055ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 68.0) r=1.50 rev=243 0.058ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 68.0) r=1.50 rev=244 0.243ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 68.0) r=1.50 rev=245 0.047ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 68.0) r=1.50 rev=246 0.069ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 70.0) r=1.50 rev=247 0.089ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 70.0) r=1.50 rev=248 0.053ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 70.0) r=1.50 rev=249 0.044ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 70.0) r=1.50 rev=250 0.041ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 70.0) r=1.50 rev=251 0.054ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 70.0) r=1.50 rev=252 0.045ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 70.0) r=1.50 rev=253 0.042ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 70.0) r=1.50 rev=254 0.050ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 70.0) r=1.50 rev=255 0.047ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 70.0) r=1.50 rev=256 0.052ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 72.0) r=1.50 rev=257 0.062ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 72.0) r=1.50 rev=258 0.063ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 72.0) r=1.50 rev=259 0.063ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 72.0) r=1.50 rev=260 0.062ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 72.0) r=1.50 rev=261 0.071ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 72.0) r=1.50 rev=262 0.045ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 72.0) r=1.50 rev=263 0.062ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 72.0) r=1.50 rev=264 0.071ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 72.0) r=1.50 rev=265 0.051ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 72.0) r=1.50 rev=266 0.049ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 74.0) r=1.50 rev=267 0.075ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 74.0) r=1.50 rev=268 0.066ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 74.0) r=1.50 rev=269 0.054ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 74.0) r=1.50 rev=270 0.071ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 74.0) r=1.50 rev=271 0.060ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 74.0) r=1.50 rev=272 0.061ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 74.0) r=1.50 rev=273 0.044ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 74.0) r=1.50 rev=274 0.141ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 74.0) r=1.50 rev=275 0.052ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 74.0) r=1.50 rev=276 0.047ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 76.0) r=1.50 rev=277 0.053ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 76.0) r=1.50 rev=278 0.046ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 76.0) r=1.50 rev=279 0.056ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 76.0) r=1.50 rev=280 0.076ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 76.0) r=1.50 rev=281 0.054ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 76.0) r=1.50 rev=282 0.053ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 76.0) r=1.50 rev=283 0.059ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 76.0) r=1.50 rev=284 0.075ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 76.0) r=1.50 rev=285 0.072ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 76.0) r=1.50 rev=286 0.059ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 78.0) r=1.50 rev=287 0.135ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 78.0) r=1.50 rev=288 0.243ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 78.0) r=1.50 rev=289 0.045ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 78.0) r=1.50 rev=290 0.052ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 78.0) r=1.50 rev=291 0.160ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 78.0) r=1.50 rev=292 0.055ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 78.0) r=1.50 rev=293 0.064ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 78.0) r=1.50 rev=294 0.224ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 78.0) r=1.50 rev=295 0.056ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 78.0) r=1.50 rev=296 0.049ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 80.0) r=1.50 rev=297 0.050ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 80.0) r=1.50 rev=298 0.050ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 80.0) r=1.50 rev=299 0.053ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 80.0) r=1.50 rev=300 0.046ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 80.0) r=1.50 rev=301 0.045ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 80.0) r=1.50 rev=302 0.057ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 80.0) r=1.50 rev=303 0.049ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 80.0) r=1.50 rev=304 0.048ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 80.0) r=1.50 rev=305 0.049ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 80.0) r=1.50 rev=306 0.059ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 82.0) r=1.50 rev=307 0.046ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 82.0) r=1.50 rev=308 0.060ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 82.0) r=1.50 rev=309 0.056ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 82.0) r=1.50 rev=310 0.049ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 82.0) r=1.50 rev=311 0.084ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 82.0) r=1.50 rev=312 0.060ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 82.0) r=1.50 rev=313 0.043ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 82.0) r=1.50 rev=314 0.064ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 82.0) r=1.50 rev=315 0.053ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 82.0) r=1.50 rev=316 0.057ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 84.0) r=1.50 rev=317 0.056ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 84.0) r=1.50 rev=318 0.064ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 84.0) r=1.50 rev=319 0.061ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 84.0) r=1.50 rev=320 0.055ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 84.0) r=1.50 rev=321 0.058ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 84.0) r=1.50 rev=322 0.060ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 84.0) r=1.50 rev=323 0.057ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 84.0) r=1.50 rev=324 0.050ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 84.0) r=1.50 rev=325 0.047ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 84.0) r=1.50 rev=326 0.041ms
+[TerrainService] dig_sphere OK c=(-22.5, 0.0, 86.0) r=1.50 rev=327 0.044ms
+[TerrainService] dig_sphere OK c=(-17.5, 0.0, 86.0) r=1.50 rev=328 0.045ms
+[TerrainService] dig_sphere OK c=(-12.5, 0.0, 86.0) r=1.50 rev=329 0.053ms
+[TerrainService] dig_sphere OK c=(-7.5, 0.0, 86.0) r=1.50 rev=330 0.041ms
+[TerrainService] dig_sphere OK c=(-2.5, 0.0, 86.0) r=1.50 rev=331 0.053ms
+[TerrainService] dig_sphere OK c=(2.5, 0.0, 86.0) r=1.50 rev=332 0.050ms
+[TerrainService] dig_sphere OK c=(7.5, 0.0, 86.0) r=1.50 rev=333 0.041ms
+[TerrainService] dig_sphere OK c=(12.5, 0.0, 86.0) r=1.50 rev=334 0.040ms
+[TerrainService] dig_sphere OK c=(17.5, 0.0, 86.0) r=1.50 rev=335 0.044ms
+[TerrainService] dig_sphere OK c=(22.5, 0.0, 86.0) r=1.50 rev=336 0.048ms
+[P35TEST] T15 PASS — Benchmark: 100 alterações pela fila (20/s), latência até o collider e tempo de quadro | {"aplicadas":100,"aplicar_ate_collider_ms":{"max":34.07,"media":31.41,"min":15.24,"n":100,"p95":33.59},"chamada_ms":{"max":0.62,"media":0.07,"min":0.04,"n":100,"p95":0.16},"duracao_s":5.0,"enfileiradas":100,"enfileirar_ate_collider_ms":{"max":34.78,"media":31.88,"min":15.75,"n":100,"p95":33.96},"espera_fila_ms":{"max":1.01,"media":0.47,"min":0.35,"n":100,"p95":0.64},"intervalo_entre_quadros_ms":{"max":19.14,"media":16.67,"min":14.85,"n":299,"p50":16.63,"p95":18.07,"p99":18.52},"max_ops_num_quadro":1,"memoria_antes":{"blocos":0,"estatica_mb":0.0,"voxel_total_mb":13.0,"voxel_usado_mb":0.0},"memoria_depois":{"blocos":46,"estatica_mb":0.0,"voxel_total_mb":13.0,"voxel_usado_mb":0.29},"modo":"window-export","nos_antes":199,"nos_depois":199,"vistas_no_collider":100}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 17, rev 336)
+[TerrainService] reset: geração 18 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=337 0.637ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=338 0.595ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 18, rev 338)
+[TerrainService] reset: geração 19 pronta=true em 431 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=339 0.618ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=340 0.677ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 19, rev 340)
+[TerrainService] reset: geração 20 pronta=true em 429 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=341 0.554ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=342 0.543ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 20, rev 342)
+[TerrainService] reset: geração 21 pronta=true em 429 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=343 0.559ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=344 0.533ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 21, rev 344)
+[TerrainService] reset: geração 22 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=345 0.617ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=346 0.510ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 22, rev 346)
+[TerrainService] reset: geração 23 pronta=true em 395 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=347 1.049ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=348 0.684ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 23, rev 348)
+[TerrainService] reset: geração 24 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=349 0.591ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=350 0.531ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 24, rev 350)
+[TerrainService] reset: geração 25 pronta=true em 362 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=351 0.622ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=352 0.525ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 25, rev 352)
+[TerrainService] reset: geração 26 pronta=true em 447 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=353 1.469ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=354 1.344ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 26, rev 354)
+[TerrainService] reset: geração 27 pronta=true em 425 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=355 1.228ms
+[TerrainService] add_sphere OK c=(-14.0, 1.5, 22.0) r=2.00 mat=stone rev=356 0.806ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 27, rev 356)
+[TerrainService] reset: geração 28 pronta=true em 396 ms
+[P35TEST] T16 PASS — 10 ciclos editar (fila) → reset com stream: baseline, nós, arquivos e memória | {"arquivos_de_sessao_por_ciclo":[1,1,1,1,1,1,1,1,1,1],"criterio_memoria":"depois <= 1,25 × antes + 5 MB","duracao_reset_ms":{"max":447.0,"media":413.8,"min":362.0,"n":10,"p95":447.0},"falhas":[],"memoria_antes":{"blocos":0,"estatica_mb":0.0,"voxel_total_mb":13.0,"voxel_usado_mb":0.0},"memoria_depois":{"blocos":0,"estatica_mb":0.0,"voxel_total_mb":13.01,"voxel_usado_mb":0.0},"memoria_estatica_por_ciclo_mb":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"nos_antes":199,"nos_depois":199}
+[P35TEST] T17 PASS — Overlay mostra FPS/quadro, fila, último brush, motor voxel, memória, corpos e reset/save/load | {"amostras_de_quadro_1s":60,"faltando":[],"linhas":["ELEMENTAL // RUINS — laboratório P3 (terreno volumétrico, estruturas, destroços e 4 elementos)","FPS 60  |  quadro 16.7 ms (pico 1 s: 16.7 ms)  |  monitores TIME_PROCESS 17.59 ms, TIME_PHYSICS_PROCESS 1.21 ms","Terreno: PRONTO  geração 28  revisão 356  edições 356  recusas 6  |  sessão session_20680_28.sqlite (1 arquivo[s])","Fila: pendentes 0  traços 0  |  aplicadas 199  recusadas 2  descartadas 0  |  fundidos 19  divisões 6  |  ops/quadro 0 (pico 2)","Último brush: ADD r=2.00  AABB 5.0×5.0×5.0 m  pedra ~87127 kg (estimativa)  chamada 0.81 ms  espera na fila 3.0 ms","Motor voxel: tarefas stream 0 / geração 0 / malha 0  |  voxels 0.0 MB  |  memória estática 0 MB  |  corpos ativos 0","Destroços: corpos ativos 0 (teto 64)  estacionados 0  |  torre: 0/36 peças soltas  |  rochas extraídas 0","Poder: 1 TERRA — Erguer e arremessar rocha [segure LMB]  |  pronto  |  em chamas: 0","Jogador: (0.0, 0.0, 28.0)  no chão: sim","Pincel: raio 2.00 m  |  material do H: solo","Mira: sem alvo","Reset: 25  último 396 ms ok  |  Salvar: selftest ok 414 ms 144 KB  |  Carregar: selftest ok 412 ms"]}
+[P35TEST] --- testes P2 ---
+[TerrainService] dig_sphere OK c=(8.0, 0.0, 44.0) r=2.50 rev=357 0.953ms
+[P35TEST] T18 PASS — Caixa dormindo sobre o solo cai quando o chão embaixo é escavado (contato atualizado) | {"acordados_pelo_waker":1,"comecou_a_cair":true,"dormiu":true,"fundo_cratera_y":-2.55384826660156,"ms_ate_cair_0_3m":284,"stats_waker":{"events":357,"pending":0,"pulses":1428,"unparked":0,"woken":1},"y_antes":0.519997477531433,"y_depois":-1.85147368907928}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 28, rev 357)
+[TerrainService] reset: geração 29 pronta=true em 412 ms
+[P35TEST] T19 PASS — Torre modular intacta: 36 peças congeladas paradas 5 s; grafo de apoio como montado | {"coroa_apoiada_em_2_placas":4,"moveram":[],"pecas":36,"pes":4,"placas":8,"placas_1_embaixo_2_laterais":true,"segundos":5.019,"soltas":[],"todas_apoiadas":true}
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=358 0.678ms
+[P35TEST] T20 PASS — Escavar sob 1 pilar solta só esse pilar (laje fica: 2 placas vizinhas a sustentam) | {"confirmacao_collider_ms":15.0,"demais_no_lugar":true,"esperadas":["P02_pilar0","P00_pilar0","P01_pilar0"],"pe":"P00_pilar0","pilar_caiu":true,"soltas":["P02_pilar0","P00_pilar0","P01_pilar0"],"soltas_no_teste":3,"timeouts_confirmacao":0,"ultima_checagem":"pés sem apoio: [&\"P00_pilar0\"]"}
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=359 0.063ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 16.5) r=2.00 rev=360 0.683ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 16.5) r=2.00 rev=361 0.045ms
+[P35TEST] T21 PASS — Escavar sob os outros 3 pilares: colapso total em etapas, peças sobre o terreno | {"abaixo_do_chao":[],"ainda_em_movimento_apos_6s":1,"duracao_s":6.182,"longe_mais_de_15m":[],"max_por_quadro":6,"quadros_com_soltura":7,"quadros_entre_primeira_e_ultima":7,"soltas":33,"stats":{"broken":0,"builds":29,"checks":6,"confirm_timeouts":0,"consumed":0,"invalid_feet":4,"last_break":"","last_check":"pés sem apoio: [&\"P09_pilar0\"]","last_confirm_ms":16.0,"max_released_in_frame":6,"pending_confirm":0,"pieces":36,"queued":0,"released":36,"released_now":36},"todas_soltas":true}
+[P35TEST] T22 PASS — Orçamento: 150 caixas + 36 peças → corpos ativos ≤ teto; só corpos parados são estacionados | {"antes":{"active":36,"checks":311,"max_active_seen":36,"max_park_speed":0.0,"over_budget_moving":0,"parked":0,"parked_budget":0,"parked_distance":0,"tracked":36,"unparked_distance":0},"caixas_abaixo_do_chao":0,"depois":{"active":64,"checks":349,"max_active_seen":152,"max_park_speed":0.0111373038962483,"over_budget_moving":4,"parked":122,"parked_budget":122,"parked_distance":0,"tracked":186,"unparked_distance":0},"pico_ativos_amostrado":152,"teto":64}
+[TerrainService] extract_rock OK c=(-5.5, -1.5, 44.5) r=1.50 corpos=1 rev=362 11.161ms
+[P35TEST] T23 PASS — Extração: núcleo do terreno vira corpo convexo (separate_floating_chunks) com massa = volume × densidade | {"camada":4,"cavidade_no_collider_y":-3.52630996704102,"centro_malha":"(-6.001073, 1.421081, 39.53024)","chao_sob_a_rocha_y":0.0200023651123047,"corpos":1,"distancia_ao_buraco_m":4.46975755691528,"edicao":"extract_rock OK rev=362 11.16ms soil ~14796 kg","forma_convexa":true,"fundo_malha_y":0.00892436504364014,"mascara":7,"massa_esperada_kg":14795.8028401481,"massa_kg":14795.802734375,"material":"soil","material_antes":"soil(dureza 1.0, 1500 kg/m³)","no_grupo_debris":true,"sdf_no_nucleo_depois":99.993896484375,"vel":0.0,"volume_esfera_nominal_m3":14.1371669411541,"volume_malha_m3":9.86386856009873}
+[P35TEST] T24 PASS — Impulso de teste (T) arremessa a rocha para fora da cavidade e ela repousa no terreno | {"altura_max":3.79497408866882,"aplicado":true,"chao_y":0.0200042724609375,"deslocamento_x":11.271249294281,"estado_antes":"pos=(-4.501723, 2.813835, 41.03016) vel=(0.0, 0.0, 0.0) freeze=false modo=1 sleeping=true parked= timer(parado=true resta=0.00 one_shot=true)","massa_kg":14795.802734375,"pos_antes":"(-6.001073, 1.421081, 39.53024)","pos_depois":"(5.270176, 1.380932, 39.67945)","rastro":[{"estado":"pos=(-4.384068, 2.928768, 41.03016) vel=(7.059282, 6.895949, 0.0) freeze=false modo=1 sleeping=false parked= timer(parado=true resta=0.00 one_shot=true)","quadro":1},{"estado":"pos=(-4.266609, 3.040786, 41.03016) vel=(7.047517, 6.721122, 0.0) freeze=false modo=1 sleeping=false parked= timer(parado=true resta=0.00 one_shot=true)","quadro":2},{"estado":"pos=(-3.915407, 3.359408, 41.03016) vel=(7.012338, 6.198389, 0.0) freeze=false modo=1 sleeping=false parked= timer(parado=true resta=0.00 one_shot=true)","quadro":5},{"estado":"pos=(-3.333961, 3.832621, 41.03016) vel=(6.954096, 5.332958, 0.0) freeze=false modo=1 sleeping=false parked= timer(parado=true resta=0.00 one_shot=true)","quadro":10},{"estado":"pos=(-1.056069, 5.013813, 41.03016) vel=(6.725927, 1.94252, 0.0) freeze=false modo=1 sleeping=false parked= timer(parado=true resta=0.00 one_shot=true)","quadro":30},{"estado":"pos=(2.221402, 4.714706, 41.03016) vel=(6.397633, -2.9357, 0.0) freeze=false modo=1 sleeping=false parked= timer(parado=true resta=0.00 one_shot=true)","quadro":60}],"vel_final":0.0}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 29, rev 362)
+[TerrainService] reset: geração 30 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=363 1.271ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=364 0.047ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 30, rev 364)
+[TerrainService] reset: geração 31 pronta=true em 390 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 31, rev 364)
+[TerrainService] reset: geração 32 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=365 0.773ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=366 0.056ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 32, rev 366)
+[TerrainService] reset: geração 33 pronta=true em 427 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 33, rev 366)
+[TerrainService] reset: geração 34 pronta=true em 430 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=367 0.675ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=368 0.072ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 34, rev 368)
+[TerrainService] reset: geração 35 pronta=true em 412 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 35, rev 368)
+[TerrainService] reset: geração 36 pronta=true em 429 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=369 0.827ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=370 0.073ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 36, rev 370)
+[TerrainService] reset: geração 37 pronta=true em 411 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 37, rev 370)
+[TerrainService] reset: geração 38 pronta=true em 446 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=371 1.061ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=372 0.074ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 38, rev 372)
+[TerrainService] reset: geração 39 pronta=true em 495 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 39, rev 372)
+[TerrainService] reset: geração 40 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=373 1.098ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=374 0.091ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 40, rev 374)
+[TerrainService] reset: geração 41 pronta=true em 412 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 41, rev 374)
+[TerrainService] reset: geração 42 pronta=true em 412 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=375 2.112ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=376 0.065ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 42, rev 376)
+[TerrainService] reset: geração 43 pronta=true em 425 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 43, rev 376)
+[TerrainService] reset: geração 44 pronta=true em 429 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=377 0.639ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=378 0.091ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 44, rev 378)
+[TerrainService] reset: geração 45 pronta=true em 409 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 45, rev 378)
+[TerrainService] reset: geração 46 pronta=true em 430 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=379 1.176ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=380 0.061ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 46, rev 380)
+[TerrainService] reset: geração 47 pronta=true em 411 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 47, rev 380)
+[TerrainService] reset: geração 48 pronta=true em 430 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=381 0.993ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=382 0.058ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 48, rev 382)
+[TerrainService] reset: geração 49 pronta=true em 429 ms
+[P35TEST] T25 PASS — 10 ciclos meia torre caída → reset: torre idêntica (36 peças no lugar, congeladas), sem destroços, nós = baseline | {"duracao_reset_ms":{"max":495.0,"media":422.1,"min":390.0,"n":10,"p95":495.0},"falhas":[],"nos_baseline":199,"soltas_por_ciclo":[17,17,17,17,17,17,17,17,17,17]}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 49, rev 382)
+[TerrainService] reset: geração 50 pronta=true em 460 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=383 0.699ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=384 0.093ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 16.5) r=2.00 rev=385 0.275ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 16.5) r=2.00 rev=386 0.048ms
+[TerrainService] save selftest_p2: ok=true { "slot": "selftest_p2", "ok": true, "ms": 430.0, "flush_ms": 13.0, "blocks_tasks": 14, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 61440, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_p2.sqlite" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 50, rev 386)
+[TerrainService] reset: geração 51 pronta=true em 446 ms
+[TerrainService] load selftest_p2: ok=true { "slot": "selftest_p2", "ok": true, "ms": 463.0, "copy": "OK", "bytes": 61440 }
+[TerrainService] load selftest: ok=true { "slot": "selftest", "ok": true, "ms": 426.0, "copy": "OK", "bytes": 147456 }
+[P35TEST] T26 PASS — Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não | {"A_salvar_com_torre_caida":{"cena_parada_antes":true,"controle_sem_save_2s_m":0.174048647284508,"espera_collider":{"bodies":36,"frames":0,"ms":1,"timeout":false},"maior_deslocamento_m":0.030380567535758,"ok":true,"pecas_ainda_congeladas_pelo_save":0,"pior_peca":{"antes":"(19.3861, 1.373884, 14.54353)","depois_1_5s":"(19.39887, 1.347205, 14.55048)","logo_apos_save":"(19.3861, 1.373884, 14.54353)","mudou_durante_save_m":0.0,"peca":"P29_coroa","vel_antes":0.0},"salvar":{"blocks_tasks":14,"bytes":61440,"copy":"OK","flush_ms":13.0,"ms":430.0,"ok":true,"path":"C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_p2.sqlite","save_anterior_em_voo":"nenhum","slot":"selftest_p2"},"salvo":true,"soltas":36},"B_carregar_slot_escavado":{"carregado":true,"intacta_apos_reset":true,"ms_ate_36_soltas":102,"ok":true,"soltas":36},"C_carregar_slot_sem_escavacao":{"carregado":true,"ok":true,"soltas":0,"stats":{"broken":0,"builds":53,"checks":32,"confirm_timeouts":0,"consumed":0,"invalid_feet":32,"last_break":"","last_check":"âncoras ok","last_confirm_ms":0.0,"max_released_in_frame":6,"pending_confirm":0,"pieces":36,"queued":0,"released":278,"released_now":0}}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 53, rev 386)
+[TerrainService] reset: geração 54 pronta=true em 429 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 54, rev 386)
+[TerrainService] reset: geração 55 pronta=true em 414 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=387 0.684ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=388 0.029ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 16.5) r=2.00 rev=389 0.330ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 16.5) r=2.00 rev=390 0.032ms
+[P35TEST] T27 PASS — Benchmark do colapso total (4 pés no mesmo quadro): quadro e física por 6 s; critério de FPS em janela | {"abaixo_do_chao":[],"criterio":"p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms","criterio_fps_aplicado":true,"intervalo_entre_quadros_ms":{"max":18.93,"media":16.67,"min":14.74,"n":359,"p50":16.67,"p95":17.59,"p99":18.08},"modo":"window-export","orcamento":{"active":36,"checks":562,"max_active_seen":152,"max_park_speed":0.0111373038962483,"over_budget_moving":4,"parked":0,"parked_budget":122,"parked_distance":0,"tracked":36,"unparked_distance":0},"pico_pecas_dinamicas":36,"poeira":{"bursts":136,"skipped":178},"soltas":36,"time_physics_process_ms":{"max":10.53,"media":1.73,"min":1.09,"n":360,"p95":2.13,"p99":10.53}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 55, rev 390)
+[TerrainService] reset: geração 56 pronta=true em 411 ms
+[P35TEST] --- testes P3 ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 56, rev 390)
+[TerrainService] reset: geração 57 pronta=true em 413 ms
+[P35TEST] T38 PASS — Estados de material: ignição, pedra só aquece, molhada resiste, água e vento apagam, queima consome, impacto solta | {"a_madeira_acende_no_limiar":{"acesa_apos_200":false,"acesa_apos_350":true,"ok":true,"temp_apos_200":220.0},"b_pedra_so_aquece":{"estado":"PEDRA • 353 °C","ok":true},"c_molhada_resiste_1a_rajada":{"apos_1a":"MADEIRA • 100 °C","apos_2a":"MADEIRA • 420 °C • EM CHAMAS 40%","ok":true},"d_agua_apaga":{"estado":"MADEIRA • 150 °C • molhada 40%","ok":true},"e_vento_apaga_fraco_aviva_forte":{"forte_intensidade":0.84,"fraco_apagou":true,"ok":true},"f_queima_ate_consumir":{"ok":true,"removida":true},"g_impacto_solta_peca_acima_do_limiar":{"ok":true,"solta_com_3":false,"solta_com_7":true,"stats":"P28_coroa (impacto)"}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 57, rev 390)
+[TerrainService] reset: geração 58 pronta=true em 410 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 58, rev 390)
+[TerrainService] reset: geração 59 pronta=true em 446 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 59, rev 390)
+[TerrainService] reset: geração 60 pronta=true em 430 ms
+[P35TEST] T28 PASS — 1–4 escolhem o elemento; LMB chega ao poder; clique de recaptura não age; nada age no reset | {"agiu_durante_reset":false,"clique_sem_mouse_capturado_ignorado":true,"lmb_roteado":["earth_lift_throw:press","earth_lift_throw:release"],"mouse_estava_preso":true,"poderes":["earth/earth_lift_throw/hold","water/water_jet/hold","fire/fire_burst/tap","air/air_gust/tap"],"selecionados_por_1_4":[0,1,2,3]}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 60, rev 390)
+[TerrainService] reset: geração 61 pronta=true em 430 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=391 14.003ms
+[P35TEST] T29 PASS — Terra: rocha real extraída, suspensa só por forças e arremessada; acerta a caixa e a desloca | {"caixa_deslocada_m":4.18396949768066,"caixa_pos":"(-34.0, 0.519997, 53.99997)","contatos":1,"erro_suspensao_m":0.0152394538745284,"maior_desvio_de_teleporte_m":0.00337795028463006,"maior_impulso_Ns":1263.69598706534,"maior_passo_por_quadro_m":0.575381100177765,"mira_acertou":"TestCrate:<RigidBody3D#3343665598218>","mira_ponto":"(-34.0, 0.555708, 54.49997)","ms_ate_suspensa_a_1m":384,"pronta_ms":366,"rocha_t":6.97317041015625,"trajetoria":["(-34.0, 1.6, 57.0) v=23.6","(-33.9, 2.3, 52.2) v=15.6","(-33.8, 3.8, 48.1) v=14.1","(-33.7, 4.2, 44.8) v=13.2","(-33.6, 4.7, 41.6) v=12.8","(-33.5, 4.1, 37.8) v=12.9"],"vel_no_lancamento":23.9621849060059}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 61, rev 391)
+[TerrainService] reset: geração 62 pronta=true em 410 ms
+[TerrainService] extract_rock OK c=(19.5, -1.5, 25.5) r=1.20 corpos=1 rev=392 13.263ms
+[P35TEST] T30 PASS — Terra × torre: rocha arremessada solta bloco(s) de pilar por impacto e o grafo derruba o bloco de cima | {"alvo_pos":"(16.5, 0.8, 16.5)","bloco_de_cima":"P08_pilar0","bloco_de_cima_solto":true,"maior_impulso_Ns":149146.494724081,"mira_acertou":"P06_pilar0:<RigidBody3D#3394366343774>","pe_mirado":"P06_pilar0","pe_solto":false,"quebras_por_impacto":1,"soltas_no_total":2,"soltas_por_impacto":1,"soltas_total":2,"suspensa":true,"trajetoria":["(18.4, 2.0, 23.3) v=23.9","(17.3, 1.6, 19.6) v=23.6","(17.0, 1.1, 18.3) v=0.3","(17.0, 1.1, 18.4) v=0.1","(17.0, 1.1, 18.3) v=0.0","(17.0, 1.1, 18.3) v=0.0"],"ultima_quebra":"P07_pilar0 (impacto)"}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 62, rev 392)
+[TerrainService] reset: geração 63 pronta=true em 392 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 63, rev 392)
+[TerrainService] reset: geração 64 pronta=true em 395 ms
+[TerrainService] add_sphere OK c=(-36.5, 1.4, 64.4) r=1.40 rev=393 1.625ms
+[P35TEST] T31 PASS — Água: jato empurra a caixa por força contínua e a molha; caixa atrás de terreno não é atingida | {"caixa_deslocada_m":7.35684680938721,"caixa_estado":"MADEIRA • 20 °C • molhada 65%","escondida_deslocada_m":0.0,"escondida_umidade":0.0,"morro_bloqueia_visada":true,"morro_criado":true,"quadros_na_caixa":90,"quadros_na_escondida":0,"quadros_no_terreno":60}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 64, rev 393)
+[TerrainService] reset: geração 65 pronta=true em 426 ms
+[TerrainService] extract_rock OK c=(-27.5, -1.5, 56.5) r=1.20 corpos=1 rev=394 12.041ms
+[P35TEST] T32 PASS — Fogo: rajada acende madeira, queima, carboniza e espalha; molhada resiste à 1ª; rocha só aquece | {"a_rocha_so_aquece":{"estado":"SOLO • 245 °C","massa_kg":6973.17041015625,"ok":true},"b_molhada_resiste_1a_rajada":{"apos_1a":"MADEIRA • 237 °C","apos_2a":"MADEIRA • 684 °C • EM CHAMAS 40%","ok":true},"c_acende_espalha_carboniza":{"acesa":true,"chamas_fx":7,"combustivel":5.72208333333333,"estado":"MADEIRA • 711 °C • EM CHAMAS 100% • carbonizada • integridade 50%","ok":true,"s_ate_vizinha":4.717,"tocou":true,"vizinha_acesa":true}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 65, rev 394)
+[TerrainService] reset: geração 66 pronta=true em 411 ms
+[P35TEST] T33 PASS — Água × Fogo: o jato apaga a caixa em chamas em ≤ 3 s (causa: água) e solta vapor | {"acesa":true,"causas":["água"],"estado":"MADEIRA • 150 °C • molhada 7% • integridade 79%","intensidade_antes":1.0,"s_ate_apagar":1.4,"vapor":1}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 66, rev 394)
+[TerrainService] reset: geração 67 pronta=true em 430 ms
+[TerrainService] add_sphere OK c=(-35.6, 1.2, 64.2) r=1.20 rev=395 0.699ms
+[TerrainService] extract_rock OK c=(-28.5, -1.5, 56.5) r=1.20 corpos=1 rev=396 10.753ms
+[P35TEST] T34 PASS — Ar: rajada lança a caixa, mal mexe a rocha, não passa terreno; apaga fogo fraco e aviva o forte | {"bloqueados_por_terreno":1,"caixa_deslocada_m":7.40949869155884,"caixa_vel":9.27007484436035,"corpos_na_rajada":3,"escondida_deslocada_m":0.0,"escondida_vel":0.0,"fogo_forte_intensidade":0.876324248922017,"fogo_fraco_apagou":true,"morro_bloqueia_visada":true,"rocha_kg":6973.17041015625,"rocha_na_rajada":true,"rocha_vel":0.222350001335144}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 67, rev 396)
+[TerrainService] reset: geração 68 pronta=true em 428 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 68, rev 396)
+[TerrainService] reset: geração 69 pronta=true em 446 ms
+[P35TEST] T35 PASS — Fogo × torre: queimar os 2 pilares de madeira da frente derruba as placas de cima pelo grafo; reset remonta | {"acesos":true,"blocos_de_madeira":8,"carbonizadas_fx":4,"chamas_fx":4,"consumidas":2,"placas_da_frente_caidas":true,"reset_torre_intacta_sem_estados":true,"s_ate_cair":12.8,"soltas":9,"tras_intactas":true,"ultima_quebra":"P22_pilar1 (queimada)"}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 69, rev 396)
+[TerrainService] reset: geração 70 pronta=true em 412 ms
+[TerrainService] extract_rock OK c=(19.5, -1.5, 25.5) r=1.20 corpos=1 rev=397 7.854ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 70, rev 397)
+[TerrainService] reset: geração 71 pronta=true em 447 ms
+[P35TEST] T36 PASS — Sequência transversal (Terra → Fogo → Água → Ar diante da torre, ~20 s) e reset devolve tudo ao início | {"antes_do_reset":{"chamas_fx":1,"destrocos":5,"em_chamas":1,"soltas":2},"depois_do_reset":{"chamas_fx":0,"destrocos":0,"em_chamas":0,"estados":0,"fora_do_lugar":0,"nos":199,"nos_baseline":199,"pecas":36,"poderes_parados":true,"reset":true},"duracao_s":15.966,"passos":{"1_terra":{"ok":true,"quebras_por_impacto":1,"soltas":2,"suspensa":true},"2_fogo":{"caixa_acesa":true,"madeira_acesa":true,"ok":true},"3_agua":{"caixa":"MADEIRA • 150 °C • molhada 3% • integridade 89%","madeira_segue_acesa":true,"ok":true},"4_ar":{"caixa_deslocada_m":4.52999496459961,"corpos_na_rajada":2,"destrocos_na_rajada":0,"ok":true},"5_agua_no_pilar":{"acesa_antes":true,"andou":true,"ate":"(4.962355, 0.020202, 9.71228)","de":"(0.0, 0.020202, 16.0)","ok":true,"pilar":"MADEIRA • 150 °C • molhada 8% • carbonizada • integridade 25%"},"6_ar_nos_destrocos":{"bloqueados_por_terreno":0,"com_visada":2,"destrocos":2,"destrocos_na_rajada":2,"distancia_m":5.68310022354126,"ok":true}}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 71, rev 397)
+[TerrainService] reset: geração 72 pronta=true em 411 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=398 0.579ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=399 0.024ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 16.5) r=2.00 rev=400 0.243ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 16.5) r=2.00 rev=401 0.029ms
+[TerrainService] extract_rock OK c=(19.5, -1.5, 25.5) r=1.20 corpos=1 rev=402 14.790ms
+[P35TEST] T37 PASS — Benchmark: colapso total + 12 caixas em chamas + os 4 poderes; critério de FPS em janela | {"criterio":"p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms","criterio_fps_aplicado":true,"duracao_s":7.617,"fx":{"blasts":14,"charred":18,"flames_active":12,"flames_created":29,"flames_skipped":0,"gusts":8,"steam":5},"intervalo_entre_quadros_ms":{"max":31.04,"media":16.67,"min":4.01,"n":456,"p50":16.67,"p95":17.85,"p99":19.23},"materiais":{"burned_out":3,"burning":12,"events":614,"extinguished":7,"ignitions":29,"ignitions_skipped":0,"kinetic_breaks":3,"tracked":30},"modo":"window-export","pico_em_chamas":12,"pico_pecas_dinamicas":36,"poderes_usados":{"agua_quadros_em_corpo":120,"ar_rajadas":4,"fogo_bolas":5,"terra_arremessos":1},"soltas":36,"time_physics_process_ms":{"max":16.03,"media":4.61,"min":1.38,"n":457,"p95":16.03,"p99":16.03}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 72, rev 402)
+[TerrainService] reset: geração 73 pronta=true em 428 ms
+[P35TEST] --- testes P3.5 (Terra) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 73, rev 402)
+[TerrainService] reset: geração 74 pronta=true em 445 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=403 8.353ms
+[TerrainService] dig_sphere OK c=(-33.9, 0.0, 60.3) r=0.70 rev=404 0.061ms
+[P35TEST] T39 PASS — Terra em fases: antecipação (chão intacto) → desprendimento (rocha congelada, cavidade aberta) → levantamento → pronta em ≤ 400 ms | {"alvo":{"dist":4.50284242630005,"jogador":"(-34.0, 0.020201, 68.0)","motivo":"","ok":true,"ponto":"(-33.83014, 0.02, 63.50036)","ultimo":"arremessada a 24 m/s"},"cavidade_aberta_no_desprendimento":true,"chao_intacto_na_antecipacao":true,"congelada_no_desprendimento":true,"dinamica_no_levantamento":true,"espera_extra_pela_cavidade_quadros":0,"esperado":{"anticipation":6,"detach":7,"rise":10},"fx_eventos":["anticipation","detach","rise","hold","windup","launch","recovery","impact_ground"],"fx_na_fase":{"cracks":"anticipation","impacts":"recovery","mesh_shakes":"detach","rock_pebbles":"rise","telegraphs":"anticipation","trails":"recovery"},"pronta_ms":367,"pronta_ms_relogio_teste":384,"quadros_observados":{"anticipation":5,"detach":7,"rise":10},"quadros_por_fase":{"anticipation":5,"detach":7,"rise":10},"rocha_antes_do_desprendimento":false,"sequencia":["anticipation","detach","rise","hold"]}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 74, rev 404)
+[TerrainService] reset: geração 75 pronta=true em 428 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=405 12.482ms
+[P35TEST] T40 PASS — Toque curto: soltar na antecipação guarda o arremesso, que sai ao ficar pronta na direção da mira do instante; recuperação bloqueia novo clique | {"angulo_com_a_mira_graus":-1.50171783431756,"clique_na_recuperacao_ignorado":true,"fase_apos_lancar":"recovery","lancamento_ms":434,"limite_ms":510,"livre_apos_recuperacao":true,"soltou_na_fase":"anticipation"}
+[TerrainService] dig_sphere OK c=(-33.7, 0.0, 54.8) r=0.70 rev=406 0.043ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 75, rev 406)
+[TerrainService] reset: geração 76 pronta=true em 412 ms
+[P35TEST] T41 PASS — Alvo inválido (céu, longe, perto, sobre o jogador): nenhuma extração, nenhuma edição, evento 'invalid' com motivo | {"a_ceu":{"edicoes":0,"extraidas":0,"fase":"","motivo":"sem chão na mira","ok":true},"b_longe_9m":{"edicoes":0,"extraidas":0,"fase":"","motivo":"longe demais (9.0 m > 7.0)","ok":true},"c_perto_1_5m":{"edicoes":0,"extraidas":0,"fase":"","motivo":"perto demais (1.5 m < 2.5)","ok":true},"d_sobre_o_jogador":{"edicoes":0,"extraidas":0,"fase":"","motivo":"overlaps_player","ok":true}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 76, rev 406)
+[TerrainService] reset: geração 77 pronta=true em 412 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=407 14.174ms
+[P35TEST] T42 PASS — Peso no hold: giro de 90° faz a rocha atrasar e assentar sem oscilar; balanço vertical; jogador mais lento só enquanto carrega | {"atraso_100ms_m":6.17705726623535,"balanco_amplitude_m":0.0411025285720825,"ms_ate_0_3m":1212,"sobressinal_m":0.0,"velocidade_depois":1.0,"velocidade_jogador_no_hold":0.8}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 77, rev 407)
+[TerrainService] reset: geração 78 pronta=true em 413 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=408 14.094ms
+[TerrainService] dig_sphere OK c=(-32.0, 0.0, 55.0) r=0.70 rev=409 0.042ms
+[TerrainService] extract_rock OK c=(-30.5, -1.5, 63.5) r=1.20 corpos=1 rev=410 13.936ms
+[P35TEST] T43 PASS — Impacto no chão a ≥ 12 m/s abre cratera real pela fila (uma por arremesso); arremesso lento não abre | {"A_crateras":1,"A_ponto":"(-31.95181, 0.02, 55.03226)","A_sdf_no_ponto":0.686666429042816,"A_velocidade_no_chao":23.5229568481445,"B_arremessos":1,"B_crateras":0,"B_impactos_no_chao":["8.6 m/s"],"B_pronta":true}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 78, rev 410)
+[TerrainService] reset: geração 79 pronta=true em 496 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=411 13.568ms
+[TerrainService] dig_sphere OK c=(-33.8, 0.0, 60.6) r=0.70 rev=412 0.069ms
+[P35TEST] T44 PASS — Tuning em uso: antecipação de 140 ms e velocidade 0,5 no hold mudam o que é medido | {"clique_aceito":true,"esperado":9,"fase_apos_clique":"anticipation","livre_antes":true,"quadros_de_antecipacao":8,"resultado":"erguendo rocha","velocidade_jogador_no_hold":0.5}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 79, rev 412)
+[TerrainService] reset: geração 80 pronta=true em 463 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=413 12.626ms
+[TerrainService] dig_sphere OK c=(-32.5, 0.0, 54.1) r=0.70 rev=414 0.042ms
+[P35TEST] T45 PASS — Capturas da Terra durante cada fase (janela); em headless só confere que as fases aconteceram | {"capturas":0,"capturas_ativas":false,"fases_vistas":["anticipation","detach","rise","hold","windup","launch","recovery","impact_ground"]}
+[P35TEST] relatório: C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a/docs/evidence/p35/p35_selftest_export_window.json
+[P35TEST] erros do motor durante o teste: 0 | avisos: 0
+[P35TEST] RESULTADO GERAL: PASS (51/51) em 284.6 s

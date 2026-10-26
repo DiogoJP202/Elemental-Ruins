@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2 + P3)
+# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2 + P3 + P3.5)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -6,6 +6,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P1 (ferramentas, materiais e persistência):** resultado e gate em [`docs/p1_results.md`](docs/p1_results.md).
 **P2 (sustentação, destroços e extração):** resultado e gate em [`docs/p2_results.md`](docs/p2_results.md).
 **P3 (quatro elementos iniciais):** resultado e gate em [`docs/p3_results.md`](docs/p3_results.md).
+**P3.5 (Terra polida: fases, peso, telegraph):** resultado e parâmetros em [`docs/p35_earth_polish.md`](docs/p35_earth_polish.md).
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -63,7 +64,7 @@ de fluidos.
 | Tecla | Ação |
 |---|---|
 | **1 / 2 / 3 / 4** | escolher o elemento: Terra / Água / Fogo / Ar (P3; o HUD mostra o poder atual) |
-| **LMB** | usar o poder do elemento. Terra (segurar): ergue uma rocha do chão mirado e a mantém à frente; soltar arremessa no ponto mirado. Água (segurar): jato até 14 m que empurra, molha e apaga. Fogo (toque): bola de fogo até 30 m que aquece; madeira acende. Ar (toque): rajada em cone de 10 m que empurra pela massa e apaga fogo fraco |
+| **LMB** | usar o poder do elemento. Terra (segurar; P3.5): mire o chão a 2,5–7 m. O chão racha (~0,1 s), a rocha se solta (~0,1 s) e sobe (~0,16 s), pronta em ~0,37 s (o anel da retícula enche); soltar arremessa no ponto mirado. Um toque curto arranca e lança assim que fica pronta; impacto forte no chão abre cratera. Água (segurar): jato até 14 m que empurra, molha e apaga. Fogo (toque): bola de fogo até 30 m que aquece; madeira acende. Ar (toque): rajada em cone de 10 m que empurra pela massa e apaga fogo fraco |
 | WASD | andar, relativo à câmera |
 | Shift | correr |
 | Espaço | pular |
@@ -131,7 +132,29 @@ O LMB só age com o mouse preso (o clique que prende o mouse não lança poder).
    de um morro (**H**) não é atingida. Fogo fraco apaga; fogo forte cresce.
 6. **Z**: torre de pé, sem fogo nem estados, poderes parados.
 
+### Roteiro manual do P3.5 — Terra (≈ 3 min)
+Parâmetros em `data/abilities/earth_tuning.tres` (abra no inspetor da Godot; ver `docs/p35_earth_polish.md`).
+1. **1** (Terra) e mire o chão a ~4–5 m: o anel verde no chão mostra de onde a rocha sai (vermelho = inválido).
+2. **Segure LMB**: anel âmbar + rachadura e poeira (antecipação); o chão abre e pedrinhas saltam (desprendimento); a
+   rocha sobe e para à frente (levantamento). O anel em volta da retícula enche e fica branco quando pronta.
+3. Ainda segurando, gire a câmera rápido: a rocha acompanha com atraso e balança de leve (peso). Ande: você fica mais lento.
+4. Mire o chão a ~12 m e **solte**: a rocha recua, sai com giro, deixa rastro e abre uma cratera onde bate.
+5. **Toque curto** no LMB mirando o chão: a rocha é arrancada e lançada sozinha assim que fica pronta.
+6. Mire o céu, o chão a 1 m ou a 10 m e clique: X vermelho na retícula, nada acontece.
+7. Mude `anticipation_s`, `rise_s` ou `throw_speed` no `.tres`, rode de novo e compare a sensação.
+
 ## Testes automatizados
+
+### P3.5 — Terra polida (inclui as regressões do P0 ao P3)
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools/run_p35_tests.ps1 -Window -Export
+```
+
+Grava em `docs/evidence/p35/`: import, `check_env`, dump da API, spike da Terra (`tools/spike_p35_earth.gd`:
+Timer do Voxel Tools, cavidade, levantamento e separação sub-voxel; custo de GPU só em janela), selftest P0 sozinho,
+selftest P3.5 (P0–P3 + T39–T45) e a persistência entre processos; `-Window` inclui as capturas de cada fase da Terra
+(T45). Direto: `... -- --p35-selftest` (opções `--only=T39,T43`, `--p35-screenshots`, `--report=`).
 
 ### P3 (inclui as regressões do P0, P1 e P2)
 
@@ -221,7 +244,7 @@ O selftest também roda no executável: `build/elemental_ruins.exe --headless --
 
 ```
 project.godot, export_presets.cfg (template custom com caminho absoluto desta máquina)
-scenes/main.tscn                  Main → World (voxel_lab) + Player + TerrainEditController + AbilityController + ElementalFx + HUD
+scenes/main.tscn                  Main → World (voxel_lab) + Player + TerrainEditController + AbilityController + ElementalFx + EarthFx + HUD
 scenes/world/voxel_lab.tscn       ambiente, sol, TerrainService, TerrainBrushQueue, TerrainRoot, SpawnPoint, Props, Structures, StructureService, ContactWaker, DebrisBudget, DustFx, MaterialResponseSystem
 scenes/player/player.tscn         CharacterBody3D + VoxelViewer + CameraRig (SpringArm3D + Camera3D)
 scenes/ui/debug_hud.tscn          overlay de engenharia (montado em código)
@@ -237,12 +260,15 @@ scripts/dev/p0_selftest.gd        roteiro automatizado de aceite do P0
 scripts/dev/p1_selftest.gd        P0 + testes do P1 (herda o anterior)
 scripts/dev/p2_selftest.gd        P0 + P1 + testes do P2 (herda o anterior)
 scripts/dev/p3_selftest.gd        P0 + P1 + P2 + testes do P3 (herda o anterior)
-scripts/abilities/*.gd            AbilityController (1–4 + LMB), base Ability e os 4 poderes (Terra, Água, Fogo, Ar)
-scripts/elements/*.gd             ElementalEvent, BodyMaterial(+biblioteca), MaterialState, MaterialResponseSystem, ElementalFx
+scripts/dev/p35_selftest.gd       P0–P3 + testes do P3.5 (fases da Terra; herda o anterior)
+scripts/abilities/*.gd            AbilityController (1–4 + LMB), base Ability, os 4 poderes e EarthTuning (parâmetros da Terra)
+data/abilities/earth_tuning.tres  valores da Terra polida (tempos, forças, alcance, cratera)
+scripts/elements/*.gd             ElementalEvent, BodyMaterial(+biblioteca), MaterialState, MaterialResponseSystem, ElementalFx, EarthFx, CrackTexture
+scripts/ui/ready_ring.gd          anel de prontidão da Terra em volta da retícula
 scripts/structures/*.gd           peça, fábrica da torre, grafo de apoio e StructureService (âncoras, soltura em etapas)
 scripts/physics/*.gd              TerrainContactWaker, DebrisBudget (teto de corpos, culling) e DustFx
 materials/terrain_lab.gdshader    cor do material (CUSTOM1) + grade 1 m/4 m + costura LOD oficial do Transvoxel
-tools/                            check_env, probe_voxel_api, spike_p1_api, spike_p2_api, spike_p3_physics, run_p0/p1/p2/p3_tests.ps1
+tools/                            check_env, probe_voxel_api, spike_p1_api, spike_p2_api, spike_p3_physics, spike_p35_earth, run_p0/p1/p2/p3/p35_tests.ps1
 docs/                             decisões, resultados e evidências (logs, JSON, PNG); ignorada pela Godot (.gdignore)
 ```
 
@@ -257,3 +283,6 @@ P2: `TerrainService.extract_rock(p, normal, raio, pai, direção)`; `StructureSe
 P3: `AbilityController.select(i)/use_pressed()/use_released()`, sinais `element_changed` e `ability_used`;
 `MaterialResponseSystem.apply(ElementalEvent)`, `state_of(corpo)`, sinais `ignited`, `extinguished`, `burned_out`,
 `kinetic_break`; `StructureService.break_piece(peça, impulso, motivo)` e `consume_piece(peça, motivo)`.
+P3.5: `Ability.fx_event(kind, data)` (ganchos de FX/áudio); `EarthLiftThrow.phase`, `is_ready()`, `ready_progress()`,
+`validate_target()`; `TerrainService.can_extract_rock(p, normal, raio)`, `cavity_confirmed(p)` e
+`extract_rock(..., hold_kinematic)`; `ThirdPersonCamera.add_trauma(x)`.

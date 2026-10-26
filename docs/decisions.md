@@ -328,3 +328,75 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. 
 - **Não reproduzido:** em 5 rodadas isoladas do T26 (editor headless e janela, 3× no `.exe` em janela) a espera foi de
   0 quadros, e a peça que mais andou se moveu 0,003–0,05 m. A causa não está provada. Outra hipótese plausível são peças
   em equilíbrio precário que acordam todas juntas ao descongelar. A mudança não piora nada e fica.
+
+## D35. P3.5: Terra em fases, parâmetros num recurso e ganchos de FX
+- Fase aberta pelo usuário (26/10) só para game feel, peso, clareza e legibilidade em PvP da Terra, sem poderes novos.
+- `EarthLiftThrow` virou máquina de fases: clique (valida o alvo) → antecipação → desprendimento → levantamento →
+  hold → windup → recuperação; impacto separado por rocha em voo. Todos os tempos e forças ficam em `EarthTuning`
+  (`data/abilities/earth_tuning.tres`), editável no inspetor.
+- A base `Ability` ganhou o sinal `fx_event(kind, data)`: o poder anuncia o que JÁ fez, e `EarthFx`, câmera e HUD só
+  leem (mesma regra do `ElementalFx`). O gancho também serve para áudio futuro.
+- Decisões do usuário: alcance perto (2,5–7 m) com a rocha subindo no lugar; soltar antes de pronta guarda o
+  lançamento; a rocha fica como destroço; impacto forte no chão abre cratera real.
+- Sem hitstop e sem `time_scale`: em PvP isso é global. Os tempos são determinísticos a partir do clique.
+
+## D36. Desprendimento: o Voxel Tools não decide quando a rocha solta
+- O `separate_floating_chunks` cria o corpo com um `Timer` de 0,2 s ligado a `set_freeze_enabled` (spike P3.5 E1).
+  `extract_rock(..., hold_kinematic = true)` para esse Timer: a rocha fica congelada no buraco até o fim do
+  desprendimento.
+- A confirmação de que o collider já tem a cavidade é um **raio no centro do buraco** que passa a ver o fundo
+  (`TerrainService.cavity_confirmed`; 2 quadros, 23–26 ms). Uma consulta de forma não serve: o collider do terreno é
+  uma casca, e uma rocha dentro do sólido não "sobrepõe" nada.
+- O tremor e a subida de 0,35 m do desprendimento são de uma **cópia** da malha (a original fica escondida e parada).
+  Mexer na malha original mudaria `body_center`, que a física usa.
+
+## D37. Levantamento planejado e hold com peso
+- Levantamento: trajetória vertical smoothstep até `hold_height` (2,0 m), seguida por PD (ω = 30) com aceleração de
+  alimentação direta e teto de 600 m/s² (spike E3: sem sobressinal até 23 t em 160 ms). Giro leve por impulso angular.
+- Hold: mola criticamente amortecida mais lenta que a do P3 (ω = 4,5, alimentação direta 0,6, teto 40 m/s²), balanço
+  de ±5 cm a 0,7 Hz e amortecimento angular. Um giro de câmera de 90° leva ~1,2 s para a rocha assentar, sem
+  sobressinal (T42). Jogador a 0,8× da velocidade enquanto ergue, segura ou lança.
+- Tempos independentes da massa por padrão (justiça em PvP); `mass_time_scale` fica disponível.
+
+## D38. Lançamento e impacto
+- Windup de 60 ms (a rocha recua 0,3 m), impulso até 24 m/s com a compensação de arco e a mira consciente do chão do
+  P3, e topspin. Recuperação de 200 ms antes de aceitar outro clique.
+- Soltar o LMB antes de pronta guarda o lançamento, que sai ao entrar no hold com a mira daquele instante (toque curto
+  = "arrancar e lançar" em ~440 ms).
+- Contato com o terreno no primeiro 1,2 m de voo não conta como impacto: a rocha (malha de até ~3 m) raspava a
+  borda do próprio buraco e a cratera saía ao lado do jogador (capturas do T45). Carência por distância, não por
+  tempo: com 150 ms, um arremesso curto no chão à frente batia dentro da carência e o impacto se perdia (T39).
+- Impacto no chão a ≥ 12 m/s abre cratera real de 0,7 m pela `TerrainBrushQueue` (D17), uma por arremesso. A cratera
+  pode derrubar a torre se for sob um pé (consistente com o P2).
+
+## D39. Centro do núcleo extraído alinhado ao meio do voxel
+- Achado no selftest do P3.5 e medido no spike E5: com o centro em certas posições sub-voxel, a folga de 0,9 m (menor
+  que um voxel) deixava uma ponte, o núcleo não se separava e ficava uma cavidade sem rocha (4 de 36 posições).
+- `TerrainService._check_extract` alinha o centro do núcleo ao meio do voxel: 36/36 posições separam. A rocha muda até
+  0,5 m por eixo. Vale para a Terra e para a extração de laboratório do P2 (R); T23/T24 seguem passando.
+
+## D40. Telegraph e legibilidade
+- **Visível a todos:** anel âmbar no chão e rachadura (decal procedural, sem assets) durante a antecipação e o
+  desprendimento, antes de existir rocha (~210 ms de aviso). Depois vêm poeira e pedrinhas na cor do material, a
+  rocha subindo e o windup.
+- **Local (só o jogador):**
+  - anel de prontidão em volta da retícula;
+  - X vermelho em alvo inválido;
+  - preview verde/vermelho do ponto de arranque;
+  - tremor de câmera por trauma, que **não** mexe na mira (`get_aim_ray` usa o transform sem `h_offset`/`v_offset`)
+    e é desligável (`shake_scale`).
+- O marcador do pincel G/H fica escondido enquanto a Terra age (`marker_suppressed`): a esfera verde cobria a
+  rachadura, o telegraph e a rocha.
+
+## D41. Testes do P3.5 e dois achados de teste
+- `scripts/dev/p35_selftest.gd` estende o do P3 (P0–P3 + T39–T45); `tools/run_p35_tests.ps1` roda o spike do P3.5
+  e a bateria em `docs/evidence/p35/`.
+- **Raio de 22 m do Jolt exatamente sobre uma aresta não acha nada.** Com x = −34,0 (inteiro) e direção x = −0,0, o
+  raio de 22 m passa sobre a aresta compartilhada de dois triângulos e falhou em parte das rodadas, enquanto o mesmo
+  raio com 200 m acertava. Os testes miram 0,17 m fora da grade. Um jogador quase nunca mira exatamente sobre uma
+  aresta, então o jogo não muda.
+- Depois de um teleporte de ~80 m, os dados ficam editáveis antes de o collider chegar: `_p3_lab` passou a esperar o
+  collider sob e à frente do jogador.
+- T29: o "só forças" virou detecção de teleporte (|Δx − v·dt| < 0,05 m, porque o Jolt integra x += v_nova·dt) no lugar
+  do limite de passo de 0,5 m (o levantamento chega a 0,6 m/quadro). A caixa deslocada passou de > 2,0 para > 0,5 m:
+  o choque às vezes é de raspão (medido 0,85–6,3 m), e o contato continua exigido.
