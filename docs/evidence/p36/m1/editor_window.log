@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.323 - Forward+ - Using Device #0: Intel - Intel(R) Iris(R) Xe Graphics
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=window | screenshots=true | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 1220 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":1220.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] captura spawn_vista_colina -> OK
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[P36TEST] --- testes P3 ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 534 ms
+[TerrainService] add_sphere OK c=(-36.5, 1.4, 64.4) r=1.40 rev=1 1.271ms
+[P36TEST] T31 PASS — Água: jato empurra a caixa por força contínua e a molha; caixa atrás de terreno não é atingida | {"caixa_deslocada_m":2.78624415397644,"caixa_estado":"MADEIRA • 20 °C • molhada 50%","escondida_deslocada_m":0.0,"escondida_umidade":0.0,"morro_bloqueia_visada":true,"morro_criado":true,"quadros_na_caixa":39,"quadros_na_escondida":0,"quadros_no_terreno":28}
+[P36TEST] captura t31_jato_dagua -> OK
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 1)
+[TerrainService] reset: geração 3 pronta=true em 468 ms
+[P36TEST] T33 PASS — Água × Fogo: o jato apaga a caixa em chamas em ≤ 3 s (causa: água) e solta vapor | {"acesa":true,"causas":["água"],"estado":"MADEIRA • 150 °C • molhada 7% • integridade 78%","intensidade_antes":0.995833333333334,"s_ate_apagar":1.749,"vapor":1}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 1)
+[TerrainService] reset: geração 4 pronta=true em 427 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=2 0.995ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=3 0.039ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 16.5) r=2.00 rev=4 0.322ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 16.5) r=2.00 rev=5 0.032ms
+[TerrainService] extract_rock OK c=(19.5, -1.5, 25.5) r=1.20 corpos=1 rev=6 14.958ms
+[P36TEST] T37 PASS — Benchmark: colapso total + 12 caixas em chamas + os 4 poderes; critério de FPS em janela | {"criterio":"p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms","criterio_fps_aplicado":true,"duracao_s":7.618,"fx":{"blasts":6,"charred":12,"flames_active":12,"flames_created":13,"flames_skipped":0,"gusts":4,"steam":1,"water_instances":0,"water_spray":false},"intervalo_entre_quadros_ms":{"max":38.37,"media":16.67,"min":2.54,"n":456,"p50":16.61,"p95":18.92,"p99":19.91},"materiais":{"burned_out":0,"burning":12,"events":224,"extinguished":1,"ignitions":13,"ignitions_skipped":0,"kinetic_breaks":0,"tracked":30},"modo":"window","pico_em_chamas":12,"pico_pecas_dinamicas":36,"poderes_usados":{"agua_quadros_em_corpo":54,"ar_rajadas":4,"fogo_bolas":5,"terra_arremessos":1},"soltas":36,"time_physics_process_ms":{"max":22.41,"media":5.77,"min":1.68,"n":457,"p95":22.41,"p99":22.41}}
+[P36TEST] captura t37_benchmark_poderes -> OK
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 6)
+[TerrainService] reset: geração 5 pronta=true em 391 ms
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 6)
+[TerrainService] reset: geração 6 pronta=true em 444 ms
+[P36TEST] captura p36_water_contact -> OK
+[P36TEST] captura p36_water_after_turn -> OK
+[P36TEST] captura p36_water_start -> OK
+[P36TEST] T46 PASS — Água transporta pacotes e pressão; virar 90° não acerta alvo distante instantaneamente | {"forward":{"arrived_on_time":true,"deadline_s":0.246693912808553,"distance_m":4.90081739425659,"earliest_s":0.13002724647522,"first_contact_s":0.166666666666667,"max_packets":32,"no_early_contact":true,"peak_packets":5,"pressure_on_time":true,"pressure_ready_s":0.133333333333333},"method":"physics ticks; distances to actual collider contact","pressed":true,"turn_90_deg":{"arrived_on_time":true,"deadline_s":0.246694151227132,"distance_m":4.90082454681396,"earliest_s":0.130027484893799,"first_contact_s":0.183333333333333,"max_packets":32,"no_early_contact":true,"peak_packets":5,"pressure_on_time":true,"pressure_ready_s":0.0}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 6)
+[TerrainService] reset: geração 7 pronta=true em 365 ms
+[P36TEST] T47 PASS — Água usa Resource variante, limita pacotes e descarta simulação ao soltar/cancelar/limpar | {"arrival":{"arrived_on_time":true,"deadline_s":0.475068116188049,"distance_m":4.90081739425659,"earliest_s":0.375068116188049,"first_contact_s":0.416666666666667,"max_packets":2,"no_early_contact":true,"peak_packets":2,"pressure_on_time":true,"pressure_ready_s":0.25},"pressure_at_7_ticks":0.479172025034294,"stops":[{"clean_in_command":true,"contacts_after_2_ticks":174,"contacts_before":174,"kind":"release","live_before":2,"ok":true},{"clean_in_command":true,"contacts_after_2_ticks":174,"contacts_before":174,"kind":"cancel","live_before":2,"ok":true},{"clean_in_command":true,"contacts_after_2_ticks":174,"contacts_before":174,"kind":"clear","live_before":2,"ok":true}],"variant":{"force_N":0.0,"max_packets":2,"rise_s":0.24,"speed_mps":12.0},"zero_force_observed":true}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 6)
+[TerrainService] reset: geração 8 pronta=true em 445 ms
+[P36TEST] captura p36_water_thin_wall_splash -> OK
+[TerrainService] reset: liberando VoxelLodTerrain (geração 8, rev 6)
+[TerrainService] reset: geração 9 pronta=true em 414 ms
+[P36TEST] captura p36_water_origin_inside_prop -> OK
+[TerrainService] reset: liberando VoxelLodTerrain (geração 9, rev 6)
+[TerrainService] reset: geração 10 pronta=true em 398 ms
+[P36TEST] T48 PASS — Água respeita parede fina e origem dentro de prop; respingo resfria e impulso depende da massa | {"heavy":{"expected_delta_v":0.0869004217684269,"impulse_Ns":173.800843536854,"mass_kg":2000.0,"ok":true,"relative_tolerance":0.12,"speed_mps":0.0869004279375076},"legacy_extinction":"T33 conserva o limite de 3 s","light":{"expected_delta_v":7.6933046489954,"impulse_Ns":153.866092979908,"mass_kg":20.0,"ok":true,"relative_tolerance":0.12,"speed_mps":7.69330453872681},"origin_inside_prop":{"blocked_wetness":0.0,"body_contacts":0,"camera_sees_target_behind":true,"contact_normal":"(0.000001, -0.032012, 0.999488)","contact_point":"(-34.0, 1.320201, 67.4)","hand":"(-34.0, 1.320201, 67.4)","ok":true,"origin_inside_convex_prop":true,"wall_contacts":16},"splash":{"blocked_temperature":80.5,"blocked_wetness":0.0,"exposed_temperature":58.7267183004675,"exposed_wetness":0.0605714143893236,"impact_normal":"(0.0, 0.0, 1.0)","impact_origin":"(-34.0, 1.397797, 64.0205)","los_blocked":false,"los_exposed":true,"physical_wall_contacts":40,"pressed":true,"wall_thickness_m":0.001}}
+[P36TEST] relatório: C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a/docs/evidence/p36/m1/editor_window.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (7/7) em 40.0 s

@@ -26,7 +26,10 @@ var _steam: Array[GPUParticles3D] = []
 var _blasts: Array[GPUParticles3D] = []
 var _gusts: Array[GPUParticles3D] = []
 var _next := {"steam": 0, "blast": 0, "gust": 0}
-var _beam: MeshInstance3D
+var _beam: MultiMeshInstance3D
+var _water_snapshot: Array = []
+var _water_tail := 0.0
+var _water_clock := 0.0
 var _spray: GPUParticles3D
 var _balls: Array[MeshInstance3D] = []
 var _last_gust_ms := -1
@@ -46,6 +49,8 @@ func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) 
 func get_stats() -> Dictionary:
 	var d := _stats.duplicate()
 	d["flames_active"] = _flames.size()
+	d["water_instances"] = _beam.multimesh.visible_instance_count if _beam != null else 0
+	d["water_spray"] = _spray.emitting if _spray != null else false
 	return d
 
 
@@ -62,19 +67,27 @@ func _ready() -> void:
 		_blasts.append(_burst_emitter("Blast%d" % i, _process_material(Vector3.UP, 180.0, 3.0, 6.0, Vector3(0, -2.0, 0), Color("#FFB347")), 0.5, 0.6))
 	for i in 2:
 		_gusts.append(_burst_emitter("Gust%d" % i, _process_material(Vector3.FORWARD, 35.0, 8.0, 14.0, Vector3.ZERO, Color("#DDE6EA")), 0.35, 0.7))
-	_beam = MeshInstance3D.new()
-	_beam.name = "WaterBeam"
-	var cyl := CylinderMesh.new()
-	cyl.top_radius = 0.08
-	cyl.bottom_radius = 0.12
-	cyl.height = 1.0
-	cyl.radial_segments = 8
-	cyl.material = _unshaded(Color(0.45, 0.7, 1.0, 0.6))
-	_beam.mesh = cyl
+	_beam = MultiMeshInstance3D.new()
+	_beam.name = "WaterStream"
+	var volume := SphereMesh.new()
+	volume.radius = 0.1
+	volume.height = 0.2
+	volume.radial_segments = 6
+	volume.rings = 2
+	var water_material := _unshaded(Color(1, 1, 1, 0.8))
+	water_material.vertex_color_use_as_albedo = true
+	volume.material = water_material
+	var stream := MultiMesh.new()
+	stream.transform_format = MultiMesh.TRANSFORM_3D
+	stream.use_colors = true
+	stream.mesh = volume
+	stream.instance_count = 24
+	stream.visible_instance_count = 0
+	_beam.multimesh = stream
 	_beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_beam.visible = false
 	add_child(_beam)
-	_spray = _burst_emitter("Spray", _process_material(Vector3.UP, 60.0, 1.0, 3.0, Vector3(0, -6.0, 0), Color("#9CC8F0")), 0.3, 0.6)
+	_spray = _burst_emitter("Spray", _process_material(Vector3.UP, 60.0, 1.0, 3.0, Vector3(0, -6.0, 0), Color("#C7E9EE")), 0.3, 0.16)
 	_spray.one_shot = false
 	for i in FireBurst.MAX_PROJECTILES:
 		var ball := MeshInstance3D.new()
@@ -95,7 +108,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if abilities == null or materials == null:
 		return
-	_update_jet()
+	_update_jet(delta)
 	_update_fireballs()
 	_update_gust()
 	_char_accum += delta
@@ -181,20 +194,44 @@ func _darken_if_charred(body: Node3D) -> void:
 
 # --- Poderes --------------------------------------------------------------------------------
 
-func _update_jet() -> void:
+func _update_jet(delta := 0.0) -> void:
 	var jet := abilities.get_ability(&"water_jet") as WaterJet
-	var on := jet != null and jet.active and jet.beam_from.distance_to(jet.beam_to) > 0.1
-	_beam.visible = on
-	if _spray.emitting != on:
-		_spray.emitting = on
-	if not on:
+	if jet == null:
 		return
-	var axis := jet.beam_to - jet.beam_from
-	var y := axis.normalized()
-	var x := y.cross(Vector3.UP if absf(y.y) < 0.99 else Vector3.RIGHT).normalized()
-	var z := x.cross(y)
-	_beam.global_transform = Transform3D(Basis(x, y * axis.length(), z), (jet.beam_from + jet.beam_to) * 0.5)
-	_spray.global_position = jet.beam_to
+	_water_clock += delta
+	var records: Array
+	if jet.active:
+		_water_snapshot = jet.packets.duplicate(true)
+		_water_tail = jet.tuning.tail_s
+		records = jet.packets
+	else:
+		_water_tail = maxf(0.0, _water_tail - delta)
+		records = _water_snapshot if _water_tail > 0.0 else []
+	var count := mini(records.size(), clampi(jet.tuning.visual_segments, 4, 24))
+	_beam.visible = count > 0
+	_beam.multimesh.visible_instance_count = count
+	var alpha := 1.0 if jet.active else _water_tail / maxf(jet.tuning.tail_s, 0.001)
+	for i in count:
+		# Inclui a frente e a emissão perto da mão mesmo com tuning acima do teto visual.
+		var sample_index := roundi(float(i) * float(records.size() - 1) / maxf(float(count - 1), 1.0))
+		var p: Dictionary = records[sample_index]
+		var axis: Vector3 = p.dir
+		var side := axis.cross(Vector3.UP if absf(axis.y) < 0.99 else Vector3.RIGHT).normalized()
+		var across := side.cross(axis)
+		var length := maxf(0.01, minf(float(p.traveled), jet.tuning.stream_speed * jet.tuning.emission_interval_s * 1.15))
+		var radius := jet.tuning.stream_radius / 0.1 * lerpf(0.4, 1.0, float(p.pressure))
+		var wobble := jet.tuning.visual_turbulence * sin(_water_clock * 17.0 + float(i) * 2.1)
+		var stream_position: Vector3 = p.pos - axis * length * 0.5 + side * wobble
+		var basis := Basis(side * radius, axis * length / 0.2, across * radius)
+		_beam.multimesh.set_instance_transform(i, Transform3D(basis, stream_position))
+		var tint := jet.tuning.stream_color.lerp(Color.WHITE, 0.35 if i % 4 == 0 else 0.0)
+		tint.a = 0.75 * alpha
+		_beam.multimesh.set_instance_color(i, tint)
+	_spray.emitting = jet.active and jet.contact_age < jet.tuning.emission_interval_s * 2.5
+	if _spray.emitting:
+		_spray.global_position = jet.contact_point
+		(_spray.process_material as ParticleProcessMaterial).direction = jet.contact_normal
+		_spray.amount_ratio = clampf(jet.pressure, 0.1, 1.0)
 
 
 func _update_fireballs() -> void:

@@ -1,0 +1,88 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-26T16:48:33",
+  "duracao_s": 9.829,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 665.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 665.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "heavy": {
+          "expected_delta_v": 0.0869004224836826,
+          "impulse_Ns": 173.800844967365,
+          "mass_kg": 2000.0,
+          "ok": true,
+          "relative_tolerance": 0.12,
+          "speed_mps": 0.086900420486927
+        },
+        "legacy_extinction": "T33 conserva o limite de 3 s",
+        "light": {
+          "expected_delta_v": 7.69330452978611,
+          "impulse_Ns": 153.866090595722,
+          "mass_kg": 20.0,
+          "ok": true,
+          "relative_tolerance": 0.12,
+          "speed_mps": 7.69330501556396
+        },
+        "origin_inside_prop": {
+          "blocked_wetness": 0.0,
+          "body_contacts": 0,
+          "camera_sees_target_behind": true,
+          "contact_normal": "(0.0, -0.032016, 0.999487)",
+          "contact_point": "(-34.0, 1.320201, 67.4)",
+          "hand": "(-34.0, 1.320201, 67.4)",
+          "ok": true,
+          "origin_inside_convex_prop": true,
+          "wall_contacts": 16
+        },
+        "splash": {
+          "blocked_temperature": 77.25,
+          "blocked_wetness": 0.0,
+          "exposed_temperature": 55.4767183004675,
+          "exposed_wetness": 0.0568664084976625,
+          "impact_normal": "(0.0, 0.0, 1.0)",
+          "impact_origin": "(-34.0, 1.39781, 64.0205)",
+          "los_blocked": false,
+          "los_exposed": true,
+          "physical_wall_contacts": 40,
+          "pressed": true,
+          "wall_thickness_m": 0.001
+        }
+      },
+      "id": "T48",
+      "status": "PASS",
+      "titulo": "Água respeita parede fina e origem dentro de prop; respingo resfria e impulso depende da massa"
+    }
+  ],
+  "run_id": "",
+  "testes_ids": [
+    "T1",
+    "T48"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": ""
+}

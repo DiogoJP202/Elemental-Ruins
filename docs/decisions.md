@@ -420,3 +420,7 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. 
 ## D45. P3.6 M0: transporte e limites por elemento
 Arquitetura, alternativas, medições, riscos, compatibilidade e critérios numéricos estão em docs/p36_m0.md. Água por pacotes evita transporte instantâneo ao girar; fogo mantém varredura com antecipação; ar usa frente/casca e exposição parcial. Nenhuma habilidade nova. GPU isolada e playtest humano não foram comprovados pelos spikes.
 
+
+## D46. Água por pacotes e pressão (P3.6 M1)
+Transporte captura direção por emissão, varre segmentos e transfere impulso proporcional à duração/pressão. Resource independente, cancelamento imediato, respingos com LOS do lado livre do contato e volumes visuais limitados. Detalhes, testes e métricas em docs/p36_water_polish.md. Origem dentro de prop bloqueia o pacote; máscara/inside e normal foram corrigidos com cenário dedicado.
+

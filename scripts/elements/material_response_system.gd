@@ -101,6 +101,8 @@ func apply(event: ElementalEvent) -> Array[Node3D]:
 		var falloff := 1.0 - clampf(body_center(body).distance_to(event.origin) / maxf(event.radius, 0.01), 0.0, 1.0)
 		if falloff <= 0.0:
 			continue
+		if event.kind in [ElementalEvent.Kind.WET, ElementalEvent.Kind.HEAT] and not line_of_sight(event.origin, body):
+			continue
 		_apply_to(event, body, falloff)
 		hit.append(body)
 	return hit
@@ -122,6 +124,31 @@ func bodies_in_sphere(center: Vector3, radius: float, max_results := 64) -> Arra
 		if b != null and not out.has(b):
 			out.append(b)
 	return out
+
+
+## Consulta do lado livre de um impacto. Só fontes físicas explícitas são excluídas;
+## um corpo atingido não dá permissão para molhar/aquecer através dele.
+func line_of_sight(from: Vector3, body: Node3D, source: Node3D = null) -> bool:
+	if not is_instance_valid(body):
+		return false
+	return line_of_sight_to(from, body_center(body), body, source)
+
+
+func line_of_sight_to(from: Vector3, to: Vector3, target: Node3D, source: Node3D = null) -> bool:
+	var world := get_viewport().get_world_3d()
+	if world == null:
+		return false
+	if from.distance_to(to) < 0.001:
+		return true
+	var exclude: Array[RID] = []
+	if is_instance_valid(target) and target is CollisionObject3D:
+		exclude.append((target as CollisionObject3D).get_rid())
+	if is_instance_valid(source) and source is CollisionObject3D:
+		exclude.append((source as CollisionObject3D).get_rid())
+	var q := PhysicsRayQueryParameters3D.create(from, to, Layers.TERRAIN | Layers.PROPS, exclude)
+	q.hit_from_inside = true
+	q.hit_back_faces = true
+	return PhysicsRayHelper.intersect(world.direct_space_state, q).is_empty()
 
 
 ## Centro da malha no mundo. Rochas de separate_floating_chunks têm a origem no canto da caixa

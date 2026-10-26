@@ -26,6 +26,8 @@ var dust: DustFx
 var abilities: Array[Ability] = []
 var current := 0
 var holding := false
+var session_id := 1
+var _next_event_id := 1
 
 
 func setup(p_terrain: TerrainService, p_materials: MaterialResponseSystem, p_structures: StructureService,
@@ -90,10 +92,18 @@ func use_released() -> void:
 
 
 func cancel_all() -> void:
+	session_id += 1
 	holding = false
 	for a in abilities:
 		a.cancel()
 		a.clear()
+
+
+func next_event_context() -> Dictionary:
+	var context := {"event_id": _next_event_id, "session_id": session_id,
+		"world_generation": terrain_service.get_world_generation(), "tick": Engine.get_physics_frames()}
+	_next_event_id += 1
+	return context
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -175,6 +185,7 @@ func hand_position() -> Vector3:
 ## Primeiro terreno ou corpo (PROPS) no segmento `from` → `to` ({} se nada).
 func cast_segment(from: Vector3, to: Vector3) -> Dictionary:
 	var q := PhysicsRayQueryParameters3D.create(from, to, Layers.TERRAIN | Layers.PROPS)
+	q.hit_from_inside = true
 	return player.get_world_3d().direct_space_state.intersect_ray(q)
 
 

@@ -286,3 +286,7 @@ P3: `AbilityController.select(i)/use_pressed()/use_released()`, sinais `element_
 P3.5: `Ability.fx_event(kind, data)` (ganchos de FX/áudio); `EarthLiftThrow.phase`, `is_ready()`, `ready_progress()`,
 `validate_target()`; `TerrainService.can_extract_rock(p, normal, raio)`, `cavity_confirmed(p)` e
 `extract_rock(..., hold_kinematic)`; `ThirdPersonCamera.add_trauma(x)`.
+
+## P3.6 — polimento incremental
+M0 e M1 Água concluídos; baseline corrigido em docs/p36_baseline_corrected.md, arquitetura em docs/p36_m0.md e implementação/testes da Água em docs/p36_water_polish.md. M2 Fogo, M3 Ar e M4 integração seguem em andamento. Capturas e automação não são playtest humano.
+

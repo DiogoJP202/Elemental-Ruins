@@ -22,3 +22,6 @@ Etapa B concluída: commit medido 8c4beaf, 51/51 nos quatro modos, zero erros/av
 
 M0 concluído: auditoria de seis sistemas, revisão independente, consultas comparativas, força/massa, parede fina e controles visuais. Zero erros/avisos nos spikes válidos. Arquitetura: água por pacotes, fogo varrido com antecipação, ar por casca temporal; Resources independentes e limites em docs/p36_m0.md. Próximo: M1 Água.
 
+
+M1 Água concluído: T1/T31/T33/T37/T46/T47/T48, 7/7 headless e janela, zero erros/avisos. T37 janela p95/p99/máx 18,92/19,91/38,37 ms. Resource, transporte, pressão, virada90°, parede fina e origem interna validados. Ver docs/p36_water_polish.md. Próximo M2 Fogo.
+

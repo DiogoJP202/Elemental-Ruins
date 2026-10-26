@@ -62,9 +62,15 @@ func move_speed_scale() -> float:
 
 
 func emit_fx(kind: StringName, data := {}) -> void:
+	if controller != null:
+		data.merge(controller.next_event_context())
 	data["ability"] = id
 	fx_event.emit(kind, data)
 
 
 func emit_event(event: ElementalEvent) -> Array[Node3D]:
+	var context: Dictionary = controller.next_event_context()
+	event.event_id = context.event_id
+	event.session_id = context.session_id
+	event.world_generation = context.world_generation
 	return controller.materials.apply(event)
