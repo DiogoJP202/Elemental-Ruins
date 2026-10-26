@@ -14,6 +14,9 @@
             (tempo de quadro, FPS e os critérios do T27 e do T37 só valem neste modo)
   -Export : exporta build/elemental_ruins.exe (template custom do preset) e roda nele o selftest P3.5
             e a persistência entre processos (headless; com -Window, também o selftest em janela)
+  Passos de selftest só contam como OK com exit 0 E um relatório JSON novo desta execução (run_id), completo,
+  com a contagem de testes esperada e todos PASS; senão saem com exit 3 (RELATÓRIO INVÁLIDO). Ex.: fechar a janela
+  da Godot no meio do selftest encerra o processo com exit 0, mas sem relatório: o passo falha (P3.6).
   -StepTimeoutSec : limite de cada passo, em segundos (padrão 900; 0 = sem limite). Estourou: o processo é
             encerrado, o log ganha uma linha TIMEOUT e o passo sai com exit 124.
   Feche o editor deste projeto antes de rodar.
@@ -59,14 +62,14 @@ try {
     Invoke-Step 'check_env' '02_check_env.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/check_env.gd')
     Invoke-Step 'probe_voxel_api' '03_probe_run.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/probe_voxel_api.gd')
     Invoke-Step 'spike_p35_earth' '04_spike_p35_earth.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/spike_p35_earth.gd')
-    Invoke-Step 'p0_regressao_headless' '05_p0_regressao_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest', "--report=$(Report 'p0_regressao_headless.json')")
-    Invoke-Step 'p35_selftest_headless' '06_p35_selftest_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p35-selftest', "--report=$(Report 'p35_selftest_headless.json')")
-    Invoke-Step 'persist_write' '07_persist_write.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p35-selftest', '--p1-persist=write', "--report=$(Report 'persist_write_headless.json')")
-    Invoke-Step 'persist_read' '08_persist_read.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p35-selftest', '--p1-persist=read', "--report=$(Report 'persist_read_headless.json')")
+    Invoke-SelftestStep 'p0_regressao_headless' '05_p0_regressao_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p0-selftest') (Report 'p0_regressao_headless.json') 12
+    Invoke-SelftestStep 'p35_selftest_headless' '06_p35_selftest_headless.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p35-selftest') (Report 'p35_selftest_headless.json') 51
+    Invoke-SelftestStep 'persist_write' '07_persist_write.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p35-selftest', '--p1-persist=write') (Report 'persist_write_headless.json') 2
+    Invoke-SelftestStep 'persist_read' '08_persist_read.log' $Godot @('--headless', '--path', '.', $scene, '--', '--p35-selftest', '--p1-persist=read') (Report 'persist_read_headless.json') 2
 
     if ($Window) {
         Remove-Item (Join-Path $evidence 'screens\*.png') -ErrorAction SilentlyContinue
-        Invoke-Step 'p35_selftest_window' '09_p35_selftest_window.log' $Godot @('--path', '.', $scene, '--', '--p35-selftest', '--p35-screenshots', "--report=$(Report 'p35_selftest_window.json')")
+        Invoke-SelftestStep 'p35_selftest_window' '09_p35_selftest_window.log' $Godot @('--path', '.', $scene, '--', '--p35-selftest', '--p35-screenshots') (Report 'p35_selftest_window.json') 51
     }
 
     if ($Export) {
@@ -74,11 +77,11 @@ try {
         New-Item -ItemType Directory -Force (Join-Path $root 'build') | Out-Null
         Invoke-Step 'export_release' '10_export_release.log' $Godot @('--headless', '--path', '.', '--export-release', 'Windows Desktop', 'build/elemental_ruins.exe')
         $exe = Join-Path $root 'build\elemental_ruins.exe'
-        Invoke-Step 'export_p35_headless' '11_export_p35_headless.log' $exe @('--headless', '--', '--p35-selftest', "--report=$(Report 'p35_selftest_export_headless.json')")
-        Invoke-Step 'export_persist_write' '12_export_persist_write.log' $exe @('--headless', '--', '--p35-selftest', '--p1-persist=write', "--report=$(Report 'persist_write_export.json')")
-        Invoke-Step 'export_persist_read' '13_export_persist_read.log' $exe @('--headless', '--', '--p35-selftest', '--p1-persist=read', "--report=$(Report 'persist_read_export.json')")
+        Invoke-SelftestStep 'export_p35_headless' '11_export_p35_headless.log' $exe @('--headless', '--', '--p35-selftest') (Report 'p35_selftest_export_headless.json') 51
+        Invoke-SelftestStep 'export_persist_write' '12_export_persist_write.log' $exe @('--headless', '--', '--p35-selftest', '--p1-persist=write') (Report 'persist_write_export.json') 2
+        Invoke-SelftestStep 'export_persist_read' '13_export_persist_read.log' $exe @('--headless', '--', '--p35-selftest', '--p1-persist=read') (Report 'persist_read_export.json') 2
         if ($Window) {
-            Invoke-Step 'export_p35_window' '14_export_p35_window.log' $exe @('--', '--p35-selftest', "--report=$(Report 'p35_selftest_export_window.json')")
+            Invoke-SelftestStep 'export_p35_window' '14_export_p35_window.log' $exe @('--', '--p35-selftest') (Report 'p35_selftest_export_window.json') 51
         }
     }
 }
@@ -90,7 +93,7 @@ Write-Host ''
 Write-Host 'Resumo (exit code 0 = OK):'
 $failed = $false
 foreach ($k in $results.Keys) {
-    Write-Host ("  {0,-26} {1}{2}" -f $k, $results[$k], $(if ($results[$k] -eq $script:TimeoutExitCode) { ' TIMEOUT' } else { '' }))
+    Write-Host ("  {0,-26} {1}{2}" -f $k, $results[$k], $(if ($results[$k] -eq $script:TimeoutExitCode) { ' TIMEOUT' } elseif ($results[$k] -eq $script:InvalidReportExitCode) { ' RELATÓRIO INVÁLIDO' } else { '' }))
     if ($results[$k] -ne 0) { $failed = $true }
 }
 if ($failed) { exit 1 } else { exit 0 }

@@ -14,6 +14,9 @@
   -Window : também roda o selftest em janela, com capturas PNG em docs/evidence/screens/
   -Export : também exporta build/elemental_ruins.exe (release, template custom do preset) e roda o
             selftest nele (headless; com -Window, também em janela)
+  Passos de selftest só contam como OK com exit 0 E um relatório JSON novo desta execução (run_id), completo,
+  com a contagem de testes esperada e todos PASS; senão saem com exit 3 (RELATÓRIO INVÁLIDO). Ex.: fechar a janela
+  da Godot no meio do selftest encerra o processo com exit 0, mas sem relatório: o passo falha (P3.6).
   -StepTimeoutSec : limite de cada passo, em segundos (padrão 600; 0 = sem limite). Estourou: o processo é
             encerrado, o log ganha uma linha TIMEOUT e o passo sai com exit 124.
   A bateria do P1 (que inclui estes 12 testes) é tools/run_p1_tests.ps1.
@@ -51,11 +54,11 @@ try {
 
     Invoke-Step 'check_env' '02_check_env.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/check_env.gd')
     Invoke-Step 'probe_voxel_api' '03_probe_run.log' $Godot @('--headless', '--path', '.', '--script', 'res://tools/probe_voxel_api.gd')
-    Invoke-Step 'selftest_headless' '05_selftest_headless.log' $Godot @('--headless', '--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest')
+    Invoke-SelftestStep 'selftest_headless' '05_selftest_headless.log' $Godot @('--headless', '--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest') ((Join-Path $evidence 'p0_selftest_headless.json') -replace '\\', '/') 12
 
     if ($Window) {
         Remove-Item (Join-Path $evidence 'screens\*.png') -ErrorAction SilentlyContinue
-        Invoke-Step 'selftest_window' '06_selftest_window.log' $Godot @('--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest', '--p0-screenshots')
+        Invoke-SelftestStep 'selftest_window' '06_selftest_window.log' $Godot @('--path', '.', 'res://scenes/main.tscn', '--', '--p0-selftest', '--p0-screenshots') ((Join-Path $evidence 'p0_selftest_window.json') -replace '\\', '/') 12
     }
 
     if ($Export) {
@@ -64,10 +67,10 @@ try {
         Invoke-Step 'export_release' '07_export_release.log' $Godot @('--headless', '--path', '.', '--export-release', 'Windows Desktop', 'build/elemental_ruins.exe')
         $exe = Join-Path $root 'build\elemental_ruins.exe'
         $report = (Join-Path $evidence 'p0_selftest_export_headless.json') -replace '\\', '/'
-        Invoke-Step 'export_selftest_headless' '08_export_selftest_headless.log' $exe @('--headless', '--', '--p0-selftest', "--report=$report")
+        Invoke-SelftestStep 'export_selftest_headless' '08_export_selftest_headless.log' $exe @('--headless', '--', '--p0-selftest') $report 12
         if ($Window) {
             $reportWin = (Join-Path $evidence 'p0_selftest_export_window.json') -replace '\\', '/'
-            Invoke-Step 'export_selftest_window' '09_export_selftest_window.log' $exe @('--', '--p0-selftest', "--report=$reportWin")
+            Invoke-SelftestStep 'export_selftest_window' '09_export_selftest_window.log' $exe @('--', '--p0-selftest') $reportWin 12
         }
     }
 }
@@ -79,7 +82,7 @@ Write-Host ''
 Write-Host 'Resumo (exit code 0 = OK):'
 $failed = $false
 foreach ($k in $results.Keys) {
-    Write-Host ("  {0,-26} {1}{2}" -f $k, $results[$k], $(if ($results[$k] -eq $script:TimeoutExitCode) { ' TIMEOUT' } else { '' }))
+    Write-Host ("  {0,-26} {1}{2}" -f $k, $results[$k], $(if ($results[$k] -eq $script:TimeoutExitCode) { ' TIMEOUT' } elseif ($results[$k] -eq $script:InvalidReportExitCode) { ' RELATÓRIO INVÁLIDO' } else { '' }))
     if ($results[$k] -ne 0) { $failed = $true }
 }
 if ($failed) { exit 1 } else { exit 0 }
