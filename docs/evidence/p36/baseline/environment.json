@@ -1,0 +1,40 @@
+﻿{
+    "commit":  "8c4beafea376f5a79760a6057177b76e3422825d",
+    "git_status":  [
+
+                   ],
+    "date":  "2026-10-26T16:03:38.7357938-03:00",
+    "cpu":  {
+                "Name":  "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+                "NumberOfCores":  4,
+                "NumberOfLogicalProcessors":  8
+            },
+    "gpu":  [
+                {
+                    "Name":  "Intel(R) Iris(R) Xe Graphics",
+                    "DriverVersion":  "32.0.101.7085"
+                }
+            ],
+    "os":  {
+               "Caption":  "Microsoft Windows 11 Pro",
+               "Version":  "10.0.26200",
+               "TotalVisibleMemorySize":  16489528
+           },
+    "resolution":  "1600x900",
+    "renderer":  "Forward+",
+    "physics":  "Jolt Physics",
+    "vsync":  "project default (enabled)",
+    "scenario":  "P0-P3.5 full suite: T27 collapse, T37 collapse + 12 fires + four abilities",
+    "methodology":  "Sequential processes; real physics ticks; window frame intervals sampled during T27/T37; headless not a rendering gate",
+    "gates_ms":  {
+                     "p99":  33,
+                     "max":  50,
+                     "p95":  20
+                 },
+    "existing_godot_processes":  [
+                                     {
+                                         "ProcessId":  3732,
+                                         "CommandLine":  "C:\\Users\\dsoares\\Tools\\Godot\\4.7.2-voxel1.7\\godot.windows.editor.x86_64.exe --path C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a --editor"
+                                     }
+                                 ]
+}

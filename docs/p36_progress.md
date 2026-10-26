@@ -16,3 +16,6 @@ Gates em janela: p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms nos cenários e
 B: baseline corrigido. M0: investigação comparativa e arquitetura. M1 Água, M2 Fogo, M3 Ar, M4 integração. Resources independentes; física e materiais separados dos VFX. Nenhuma habilidade nova, rede ou push.
 
 Resultados: 26/26 casos de contrato/log; integração do runner 3/3 (normal 0, encerramento precoce 3, contrato errado 3); preparação 18/18; T1/T8/T8b 3/3. Zero erros/avisos nos cenários reais. Baseline histórico preservado.
+
+Etapa B concluída: commit medido 8c4beaf, 51/51 nos quatro modos, zero erros/avisos. T37 janela: editor p95/p99/máx 19,67/21,23/30,13 ms; export 18,16/19,37/30,80 ms. Ver docs/p36_baseline_corrected.md. Próximo marco M0.
+
