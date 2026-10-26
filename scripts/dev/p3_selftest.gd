@@ -127,32 +127,44 @@ func _t29_earth_lift_throw() -> void:
 	ab.select(0)
 	ab.require_captured_mouse = false
 	player.input_enabled = true
-	player.camera_rig.set_view(0.0, deg_to_rad(-35.0))
-	await _seconds(0.4)
+	# P3.5: a rocha sai do chão a 2,5–7 m do jogador; mira o chão a 4,5 m.
+	await _aim_settle(_ground_at(base + Vector3(0.17, 0, -4.5)))
 	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var t0 := Time.get_ticks_msec()
 	var pressed := ab.use_pressed()
+	# A rocha só existe a partir do desprendimento (a antecipação é só telegraph).
+	await _wait_until(func(): return earth.rock != null, 1.0)
 	var rock := earth.rock
 	var max_step := 0.0
+	# "Só forças": a cada quadro, o deslocamento do centro tem de bater com a velocidade nova × dt
+	# (o Jolt integra x += v_nova·dt; um teleporte por posição apareceria como desvio grande).
+	var max_teleport := 0.0
+	var dt := 1.0 / Engine.physics_ticks_per_second
 	var prev := EarthLiftThrow.center_of(rock) if rock != null else Vector3.ZERO
-	var t0 := Time.get_ticks_msec()
+	var prev_v := rock.linear_velocity if rock != null else Vector3.ZERO
 	var held_ms := -1
 	while rock != null and Time.get_ticks_msec() - t0 < 3000:
 		await get_tree().physics_frame
 		if not is_instance_valid(rock):
 			break
-		max_step = maxf(max_step, EarthLiftThrow.center_of(rock).distance_to(prev))
-		prev = EarthLiftThrow.center_of(rock)
-		if held_ms < 0 and earth.phase == "held" and EarthLiftThrow.center_of(rock).distance_to(earth.hold_target()) < 1.0:
+		var p := EarthLiftThrow.center_of(rock)
+		max_step = maxf(max_step, p.distance_to(prev))
+		max_teleport = maxf(max_teleport, (p - prev).distance_to(rock.linear_velocity * dt))
+		prev = p
+		prev_v = rock.linear_velocity
+		if held_ms < 0 and earth.phase == "hold" and p.distance_to(earth.hold_target()) < 1.0:
 			held_ms = Time.get_ticks_msec() - t0
+		if held_ms >= 0 and Time.get_ticks_msec() - t0 > held_ms + 1000:
+			break
 	var hold_err := EarthLiftThrow.center_of(rock).distance_to(earth.hold_target()) if rock != null else INF
 	# Alvo: caixa 10 m à frente, sobre o chão.
 	var crate := DebugProps.spawn_crate(props, base + Vector3(0, 0.0, -14))
 	await _seconds(1.0)
 	var c0 := crate.global_position
-	_aim_at(crate.global_position)
-	await get_tree().physics_frame
+	await _aim_settle(crate.global_position)
 	var aim_hit: Dictionary = ab.aim_any(60.0, [rock.get_rid()] as Array[RID])
 	ab.use_released()
+	await _wait_until(func(): return earth.phase != "hold" and earth.phase != "windup", 1.0)
 	await get_tree().physics_frame
 	var launch_speed := rock.linear_velocity.length() if rock != null and is_instance_valid(rock) else 0.0
 	var trace := []
@@ -164,11 +176,16 @@ func _t29_earth_lift_throw() -> void:
 	var moved := crate.global_position.distance_to(c0)
 	player.input_enabled = false
 	var st := earth.get_stats()
-	var ok: bool = pressed and rock != null and held_ms >= 0 and hold_err < 1.0 and max_step < 0.5 \
-		and launch_speed >= 18.0 and st.hits >= 1 and moved > 2.0
+	# Sem limite fixo de passo: o levantamento do P3.5 sobe ~3 m em 160 ms (até 0,6 m/quadro);
+	# "só forças" é o desvio de teleporte acima.
+	# Caixa deslocada > 0,5 m (era 2,0 no P3): no P3.5 o ponto de arranque e a rocha mudam a cada
+	# rodada e o choque às vezes é de raspão (medido 0,85–6,3 m); o contato com a caixa é exigido.
+	var ok: bool = pressed and rock != null and held_ms >= 0 and hold_err < 1.0 \
+		and max_teleport < 0.05 and launch_speed >= 18.0 and st.hits >= 1 and moved > 0.5
 	_record("T29", "Terra: rocha real extraída, suspensa só por forças e arremessada; acerta a caixa e a desloca", ok, {
 		"rocha_t": rock.mass / 1000.0 if rock != null and is_instance_valid(rock) else 0.0,
 		"ms_ate_suspensa_a_1m": held_ms, "erro_suspensao_m": hold_err, "maior_passo_por_quadro_m": max_step,
+		"maior_desvio_de_teleporte_m": max_teleport, "pronta_ms": st.last_ready_ms,
 		"vel_no_lancamento": launch_speed, "contatos": st.hits, "maior_impulso_Ns": st.max_impulse,
 		"caixa_deslocada_m": moved, "mira_acertou": str(aim_hit.get("collider", "nada")), "mira_ponto": str(aim_hit.get("position", "")),
 		"caixa_pos": str(c0), "trajetoria": trace})
@@ -186,8 +203,7 @@ func _t30_earth_breaks_tower() -> void:
 	ab.select(0)
 	ab.require_captured_mouse = false
 	player.input_enabled = true
-	player.camera_rig.set_view(0.0, deg_to_rad(-32.0))
-	await _seconds(0.4)
+	await _aim_settle(_ground_at(player.global_position + Vector3(0.17, 0, -4.5)))
 	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
 	# Mira no PÉ do pilar da frente à esquerda: a rocha (centro 1 meia altura acima do ponto
 	# mirado) acerta o pé e/ou o bloco do meio; o bloco de cima só pode cair pelo grafo.
@@ -203,11 +219,10 @@ func _t30_earth_breaks_tower() -> void:
 	var s0 := structures.get_stats()
 	var m0: Dictionary = main.materials.get_stats()
 	ab.use_pressed()
+	var held := await _wait_until(func(): return earth.phase == "hold", 4.0)
 	var rock := earth.rock
-	var held := await _wait_until(func(): return earth.phase == "held", 4.0)
 	await _seconds(0.5)
-	_aim_at(target.global_position)
-	await get_tree().physics_frame
+	await _aim_settle(target.global_position)
 	var aim_hit: Dictionary = ab.aim_any(60.0, [rock.get_rid()] as Array[RID]) if is_instance_valid(rock) else {}
 	ab.use_released()
 	var trace := []
@@ -524,10 +539,9 @@ func _t36_cross_sequence() -> void:
 	await get_tree().physics_frame
 	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
 	var foot := _foot_at(Vector2(-1, 1))
-	player.camera_rig.set_view(0.0, deg_to_rad(-32.0))
-	await _seconds(0.3)
+	await _aim_settle(_ground_at(player.global_position + Vector3(0.17, 0, -4.5)))
 	_send_action(&"ability_use", true)
-	var held := await _wait_until(func(): return earth.phase == "held", 4.0)
+	var held := await _wait_until(func(): return earth.phase == "hold", 4.0)
 	await _seconds(0.4)
 	await _aim_settle(foot.global_position)
 	_send_action(&"ability_use", false)
@@ -599,6 +613,8 @@ func _t36_cross_sequence() -> void:
 		< b.global_position.distance_to(player.global_position))
 	var fallen_hit := 0
 	var debris_dist := -1.0
+	var debris_clear := -1
+	var debris_blocked := -1
 	if not fallen.is_empty():
 		var target: StructurePiece = fallen[0]
 		var flat := func(): return Vector2(target.global_position.x - player.global_position.x,
@@ -610,12 +626,22 @@ func _t36_cross_sequence() -> void:
 			player.clear_scripted_move()
 			await _seconds(0.3)
 		debris_dist = (flat.call() as Vector2).length()
+		# P3.5: o arremesso abre cratera real perto do pé da torre; um destroço dentro ou na
+		# borda dela fica sem visada (o Ar é bloqueado por terreno, de propósito). Mira um com
+		# visada livre, se houver (medido: 0 na rajada na 1ª regressão do P3.5).
+		var hand: Vector3 = ab.hand_position()
+		var clear := fallen.filter(func(p): return svc.raycast_terrain(hand, MaterialResponseSystem.body_center(p)).is_empty())
+		debris_clear = clear.size()
+		if not clear.is_empty():
+			target = clear[0]
 		await _tap_at(MaterialResponseSystem.body_center(target))
 		await get_tree().physics_frame
 		var blown2: Array = gust.last_gust.get("hit", [])
 		fallen_hit = fallen.filter(func(p): return blown2.has(p)).size()
+		debris_blocked = gust.last_gust.get("blocked", -1)
 	await _seconds(1.0)
-	steps["6_ar_nos_destrocos"] = {"destrocos": fallen.size(), "distancia_m": debris_dist, "destrocos_na_rajada": fallen_hit,
+	steps["6_ar_nos_destrocos"] = {"destrocos": fallen.size(), "com_visada": debris_clear, "bloqueados_por_terreno": debris_blocked,
+		"distancia_m": debris_dist, "destrocos_na_rajada": fallen_hit,
 		"ok": fallen_hit >= 1}
 	var seq_s := (Time.get_ticks_msec() - t0) / 1000.0
 	player.input_enabled = false
@@ -708,9 +734,9 @@ func _t37_powers_benchmark() -> void:
 	# Terra: ergue uma rocha do chão à frente do jogador e arremessa na torre caída.
 	_send_key(0)
 	await get_tree().physics_frame
-	await _aim_settle(player.global_position + Vector3(0, 0, -4.5))
+	await _aim_settle(_ground_at(player.global_position + Vector3(0.17, 0, -4.5)))
 	ab.use_pressed()
-	await _wait_until(func(): return earth.phase == "held", 3.0)
+	await _wait_until(func(): return earth.phase == "hold", 3.0)
 	await _aim_settle(o + Vector3(0, 1.0, 1.0))
 	ab.use_released()
 	await _seconds(1.5)
@@ -744,6 +770,13 @@ func _t37_powers_benchmark() -> void:
 
 # --- Utilidades P3 -------------------------------------------------------------------------
 
+## Ponto do chão sob `p` (mirar num ponto 0,6 m acima do chão faz o raio da câmera seguir e
+## bater no chão metros adiante; medido no P3.5: 9 m viraram 14,7 m).
+func _ground_at(p: Vector3) -> Vector3:
+	var hit := svc.raycast_terrain(p + Vector3.UP * 5.0, p + Vector3.DOWN * 10.0)
+	return hit.position if not hit.is_empty() else p
+
+
 ## Tecla 1–4 (índice 0–3) pelo mesmo evento de input do teclado.
 func _send_key(index: int) -> void:
 	_send_action(ElementalKeys.ACTIONS[index], true)
@@ -756,6 +789,10 @@ func _p3_lab(index: int) -> Vector3:
 	await main.request_world_reset()
 	var base := LAB_P3 + Vector3(0, 0, 8)
 	await _prepare_area(base, AABB(LAB_P3 - Vector3(8, 4, 16), Vector3(16, 10, 30)))
+	# Dados editáveis não garantem collider: vindo da torre (~80 m), o raio da mira ainda não
+	# achava chão em 1 de 2 rodadas do T39 ("sem chão na mira").
+	await _wait_until(func(): return [Vector3.ZERO, Vector3(0, 0, -6), Vector3(0, 0, -14)].all(
+		func(o): return not svc.raycast_terrain(base + o + Vector3.UP * 5.0, base + o + Vector3.DOWN * 10.0).is_empty()), 5.0)
 	ab.select(index)
 	ab.require_captured_mouse = false
 	player.input_enabled = true

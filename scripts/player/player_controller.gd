@@ -14,6 +14,8 @@ extends CharacterBody3D
 @export var turn_speed := 12.0
 
 var input_enabled := true
+## Multiplicador de velocidade aplicado pelos poderes (ex.: segurar uma rocha; P3.5). 1 = normal.
+var speed_scale := 1.0
 
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _frozen := false
@@ -55,7 +57,7 @@ func _physics_process(delta: float) -> void:
 	elif jump:
 		velocity.y = jump_velocity
 
-	var target := move_dir * (sprint_speed if sprint else walk_speed)
+	var target := move_dir * (sprint_speed if sprint else walk_speed) * speed_scale
 	var accel := ground_acceleration if is_on_floor() else air_acceleration
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z).move_toward(target, accel * delta)
 	velocity.x = horizontal.x

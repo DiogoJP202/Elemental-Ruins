@@ -8,8 +8,19 @@ extends Node3D
 @export var min_pitch_deg := -75.0
 @export var max_pitch_deg := 55.0
 
+@export_group("Tremor (P3.5)")
+## Tremor de câmera LOCAL por "trauma" (0–1, decai): deslocamento ∝ trauma². Só visual: a mira
+## (get_aim_ray) não treme. 0 desliga (acessibilidade).
+@export var shake_scale := 1.0
+@export var shake_max_offset := 0.22
+@export var shake_max_roll_deg := 1.2
+@export var shake_decay_per_s := 1.8
+@export var shake_frequency := 22.0
+
 var _yaw := 0.0
 var _pitch := deg_to_rad(-12.0)
+var _trauma := 0.0
+var _shake_t := 0.0
 
 @onready var _pitch_node: Node3D = $Pitch
 @onready var _spring: SpringArm3D = $Pitch/SpringArm3D
@@ -50,9 +61,36 @@ func set_view(yaw_rad: float, pitch_rad: float) -> void:
 
 
 ## Raio de mira saindo do centro da tela. Retorna [origem, direção].
+## Calculado pelo transform da câmera SEM o tremor: project_ray_* usa get_camera_transform(),
+## que inclui h_offset/v_offset (o tremor); a rolagem não muda o raio do centro.
 func get_aim_ray() -> Array:
-	var center := camera.get_viewport().get_visible_rect().size * 0.5
-	return [camera.project_ray_origin(center), camera.project_ray_normal(center)]
+	var t := camera.global_transform
+	return [t.origin, -t.basis.z]
+
+
+## Soma trauma (0–1) ao tremor; quem chama escala pela proximidade do evento.
+func add_trauma(amount: float) -> void:
+	_trauma = clampf(_trauma + amount * shake_scale, 0.0, 1.0)
+
+
+func get_trauma() -> float:
+	return _trauma
+
+
+func _process(delta: float) -> void:
+	if _trauma <= 0.0:
+		return
+	_trauma = maxf(0.0, _trauma - shake_decay_per_s * delta)
+	_shake_t += delta
+	var s := _trauma * _trauma
+	var f := shake_frequency * _shake_t
+	camera.h_offset = shake_max_offset * s * (sin(f * 1.0) * 0.6 + sin(f * 2.3 + 1.7) * 0.4)
+	camera.v_offset = shake_max_offset * s * (sin(f * 1.3 + 0.5) * 0.6 + sin(f * 2.9 + 2.1) * 0.4)
+	camera.rotation.z = deg_to_rad(shake_max_roll_deg) * s * sin(f * 0.9 + 0.3)
+	if _trauma <= 0.0:
+		camera.h_offset = 0.0
+		camera.v_offset = 0.0
+		camera.rotation.z = 0.0
 
 
 func _apply() -> void:

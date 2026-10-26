@@ -16,6 +16,7 @@ extends SceneTree
 ##      heightfield, sem vsync; captura para conferir que o shader do terreno recebe decal
 
 const OUT_PATH := "res://docs/evidence/p35/00_spike_p35.txt"
+const OUT_PATH_WINDOW := "res://docs/evidence/p35/00_spike_p35_window.txt"
 const SHOT_PATH := "res://docs/evidence/p35/spike_decal.png"
 const LAB := Vector3(-34, 0.6, 60)
 const HOLD_HEIGHT := 1.4
@@ -56,8 +57,13 @@ func _run() -> void:
 		_finish()
 		return
 	await _seconds(0.5)
+	if OS.get_cmdline_user_args().has("--e5-only"):
+		await _e5_subvoxel_separation()
+		_finish()
+		return
 	await _e1_e2_timer_and_confirm()
 	await _e3_rise()
+	await _e5_subvoxel_separation()
 	if DisplayServer.get_name() != "headless":
 		await _e4_gpu_cost()
 	else:
@@ -243,6 +249,45 @@ func _rise_once(spot: Vector3, core: float, T: float) -> Dictionary:
 	return res
 
 
+# --- E5 -------------------------------------------------------------------------------------
+
+## A rocha se separa do terreno em qualquer posição sub-voxel do ponto de arranque? Achado no
+## selftest P3.5 (T45): extract_rock OK com 0 corpos em x = −33,83 — cavidade aberta, núcleo
+## preso. Mede a taxa de separação numa grade de deslocamentos (0, 0,17, …, 0,83 m em x e z).
+func _e5_subvoxel_separation() -> void:
+	_out("")
+	_out("## E5 separação do núcleo por deslocamento sub-voxel (núcleo 1,2 m; folga %.2f m)" % svc.extract_gap)
+	await main.request_world_reset()
+	player.teleport_to(LAB + Vector3(0, 0, 14))
+	await _until(func(): return svc.can_edit_area(AABB(LAB - Vector3(12, 4, 12), Vector3(24, 10, 26))), 15.0)
+	await _seconds(0.3)
+	var offsets := [0.0, 0.17, 0.33, 0.5, 0.67, 0.83]
+	var fails := []
+	var total := 0
+	var i := 0
+	for ox in offsets:
+		for oz in offsets:
+			# Pontos a 6 m uns dos outros (cavidade de ~2,2 m de raio), numa grade 6×6 em volta de LAB.
+			var spot := LAB + Vector3(-15.0 + (i % 6) * 6.0 + ox, 0.0, -15.0 + floorf(i / 6.0) * 6.0 + oz)
+			i += 1
+			var hit := svc.raycast_terrain(spot + Vector3.UP * 5.0, spot + Vector3.DOWN * 10.0)
+			if hit.is_empty():
+				continue
+			var out := svc.extract_rock(hit.position, Vector3.UP, 1.2, props)
+			var res: TerrainEditResult = out.result
+			if res == null or not res.ok:
+				continue
+			total += 1
+			if out.bodies.is_empty():
+				fails.append("(%.2f, %.2f)" % [ox, oz])
+			for b in out.bodies:
+				(b as Node).queue_free()
+			await physics_frame
+	_out("E5 %d extrações; %d sem corpo (núcleo preso) nos deslocamentos x,z: %s" % [total, fails.size(), fails])
+	_check("E5 o núcleo se separa em todas as posições sub-voxel", fails.is_empty() and total > 0,
+		"%d/%d separaram" % [total - fails.size(), total])
+
+
 # --- E4 -------------------------------------------------------------------------------------
 
 func _e4_gpu_cost() -> void:
@@ -405,7 +450,7 @@ func _finish() -> void:
 	_out("")
 	_out("RESULTADO: %s (%d falha(s))" % ["OK" if _fails == 0 else "FALHOU", _fails])
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://docs/evidence/p35"))
-	var f := FileAccess.open(OUT_PATH, FileAccess.WRITE)
+	var f := FileAccess.open(OUT_PATH if DisplayServer.get_name() == "headless" else OUT_PATH_WINDOW, FileAccess.WRITE)
 	if f:
 		f.store_string("\n".join(_lines) + "\n")
 		f.close()

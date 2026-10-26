@@ -9,12 +9,14 @@ extends Node3D
 ##   --p1-persist=write|read  fases do teste de persistência entre processos (ver p1_selftest.gd)
 ##   --p2-selftest        P0 + P1 + testes do P2 (capturas com --p2-screenshots em docs/evidence/p2/screens)
 ##   --p3-selftest        P0 + P1 + P2 + testes do P3 (capturas com --p3-screenshots em docs/evidence/p3/screens)
+##   --p35-selftest       P0–P3 + testes do P3.5, Terra polida (capturas com --p35-screenshots em docs/evidence/p35/screens)
 ##   --report=<caminho>   caminho do relatório JSON do selftest
 
 const SELFTEST_SCRIPT := "res://scripts/dev/p0_selftest.gd"
 const P1_SELFTEST_SCRIPT := "res://scripts/dev/p1_selftest.gd"
 const P2_SELFTEST_SCRIPT := "res://scripts/dev/p2_selftest.gd"
 const P3_SELFTEST_SCRIPT := "res://scripts/dev/p3_selftest.gd"
+const P35_SELFTEST_SCRIPT := "res://scripts/dev/p35_selftest.gd"
 ## Slot único do laboratório (F5 salva, F9 carrega).
 const SAVE_SLOT := "slot1"
 
@@ -31,6 +33,7 @@ const SAVE_SLOT := "slot1"
 @onready var edit_controller: TerrainEditController = $TerrainEditController
 @onready var abilities: AbilityController = $AbilityController
 @onready var fx: ElementalFx = $ElementalFx
+@onready var earth_fx: EarthFx = $EarthFx
 @onready var hud: DebugHud = $HUD
 
 var reset_count := 0
@@ -44,8 +47,9 @@ func _ready() -> void:
 		ProjectSettings.get_setting("physics/3d/physics_engine"),
 		RenderingServer.get_current_rendering_method()])
 	edit_controller.setup(terrain_service, brush_queue, player, props_root)
-	abilities.setup(terrain_service, materials, structures, player, props_root, dust)
+	abilities.setup(terrain_service, materials, structures, player, props_root, dust, brush_queue)
 	fx.setup(abilities, materials)
+	earth_fx.setup(abilities, player.camera_rig, edit_controller)
 	hud.setup(terrain_service, brush_queue, player, edit_controller, structures, debris, abilities, materials)
 	edit_controller.reset_requested.connect(request_world_reset)
 	edit_controller.save_requested.connect(func(): request_world_save(SAVE_SLOT))
@@ -60,7 +64,9 @@ func _ready() -> void:
 	for a in args:
 		p1 = p1 or a.begins_with("--p1-persist=")
 	var script := ""
-	if args.has("--p3-selftest"):
+	if args.has("--p35-selftest"):
+		script = P35_SELFTEST_SCRIPT
+	elif args.has("--p3-selftest"):
 		script = P3_SELFTEST_SCRIPT
 	elif args.has("--p2-selftest"):
 		script = P2_SELFTEST_SCRIPT

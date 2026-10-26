@@ -15,6 +15,8 @@ const ELEMENT_NAMES := {&"earth": "TERRA", &"water": "ÁGUA", &"fire": "FOGO", &
 var require_captured_mouse := true
 
 var terrain_service: TerrainService
+## Edições de terreno feitas por poderes passam pela fila (D17): cratera da Terra (P3.5).
+var brush_queue: TerrainBrushQueue
 var materials: MaterialResponseSystem
 var structures: StructureService
 var player: PlayerController
@@ -27,8 +29,9 @@ var holding := false
 
 
 func setup(p_terrain: TerrainService, p_materials: MaterialResponseSystem, p_structures: StructureService,
-		p_player: PlayerController, p_props: Node3D, p_dust: DustFx) -> void:
+		p_player: PlayerController, p_props: Node3D, p_dust: DustFx, p_queue: TerrainBrushQueue = null) -> void:
 	terrain_service = p_terrain
+	brush_queue = p_queue
 	materials = p_materials
 	structures = p_structures
 	player = p_player
@@ -115,8 +118,12 @@ func _physics_process(delta: float) -> void:
 		cancel_all()
 	elif holding:
 		current_ability().on_hold(delta)
+	var speed := 1.0
 	for a in abilities:
 		a.physics_tick(delta)
+		speed = minf(speed, a.move_speed_scale())
+	if player != null:
+		player.speed_scale = speed
 
 
 func _can_act() -> bool:

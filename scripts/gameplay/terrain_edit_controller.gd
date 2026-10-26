@@ -45,6 +45,9 @@ var _add_material_index := 0
 var _strokes := {}
 var _marker: MeshInstance3D
 var _marker_mat: StandardMaterial3D
+## Esconde o marcador do pincel sem desligar G/H (P3.5: enquanto a Terra age, a esfera verde
+## cobria a rachadura, o telegraph e a rocha).
+var marker_suppressed := false
 
 
 func setup(p_service: TerrainService, p_queue: TerrainBrushQueue, p_player: PlayerController, p_props_root: Node3D) -> void:
@@ -195,7 +198,7 @@ func _update_aim() -> void:
 	else:
 		_aim_editable = false
 		_aim_material = null
-	_marker.visible = _aim_hit
+	_marker.visible = _aim_hit and not marker_suppressed
 	aim_changed.emit(_aim_hit, _aim_point, _aim_editable)
 
 

@@ -24,6 +24,7 @@ var materials: MaterialResponseSystem
 
 var _status: Label
 var _last_edit: Label
+var _ready_ring: ReadyRing
 var _accum := 0.0
 var _frame_dts := PackedFloat32Array()
 var _frame_stamps := PackedFloat64Array()
@@ -44,6 +45,8 @@ func setup(p_service: TerrainService, p_queue: TerrainBrushQueue, p_player: Play
 	debris = p_debris
 	abilities = p_abilities
 	materials = p_materials
+	if abilities != null:
+		_ready_ring.setup(abilities)
 	edit_controller.edit_performed.connect(_on_edit_performed)
 	terrain_service.world_reset_started.connect(func(): _set_last("RESET DO MUNDO em andamento...", Color.YELLOW))
 	terrain_service.world_reset_finished.connect(_on_reset_finished)
@@ -86,6 +89,9 @@ func _ready() -> void:
 	reticle.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(reticle)
 	reticle.position -= reticle.size * 0.5
+
+	_ready_ring = ReadyRing.new()
+	root.add_child(_ready_ring)
 
 
 func _process(delta: float) -> void:

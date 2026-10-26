@@ -3,20 +3,21 @@ extends RefCounted
 ## Textura de rachadura gerada em runtime (sem assets): ramos que saem do centro, ficam mais
 ## finos e se bifurcam. Canal alfa = rachadura; cor escura. Usada por decals (P3.5).
 
-const COLOR := Color(0.12, 0.09, 0.07, 1.0)
+const COLOR := Color(0.07, 0.05, 0.04, 1.0)
 
 
-## `seed` muda o desenho; `branches` = ramos principais.
-static func make(size := 256, seed := 1, branches := 7) -> ImageTexture:
+## `seed` muda o desenho; `branches` = ramos principais; `width` em pixels (0 = size / 40: com
+## size / 70 as rachaduras sumiam a 15 m na captura do spike P3.5).
+static func make(size := 256, seed := 1, branches := 7, width := 0.0) -> ImageTexture:
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
 	img.fill(Color(COLOR.r, COLOR.g, COLOR.b, 0.0))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var c := Vector2(size, size) * 0.5
+	var w := width if width > 0.0 else maxf(2.0, size / 40.0)
 	for i in branches:
 		var ang := TAU * (float(i) + rng.randf_range(-0.3, 0.3)) / branches
-		_branch(img, rng, c + Vector2.from_angle(ang) * size * 0.04, ang, size * rng.randf_range(0.32, 0.46),
-			maxf(2.0, size / 70.0), 2)
+		_branch(img, rng, c + Vector2.from_angle(ang) * size * 0.04, ang, size * rng.randf_range(0.32, 0.46), w, 2)
 	return ImageTexture.create_from_image(img)
 
 

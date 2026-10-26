@@ -8,6 +8,10 @@ extends RefCounted
 ##   - ElementalEvent no MaterialResponseSystem (estado dos materiais),
 ## e só depois pede VFX.
 
+## Ganchos para VFX, câmera, HUD e (futuro) áudio: o que o poder JÁ fez (P3.5). Quem ouve não
+## muda física nem estado.
+signal fx_event(kind: StringName, data: Dictionary)
+
 var id: StringName
 var element: StringName
 var display_name := ""
@@ -50,6 +54,16 @@ func clear() -> void:
 ## Linha curta para o HUD.
 func status() -> String:
 	return last_result
+
+
+## Multiplicador da velocidade do jogador enquanto o poder age (1 = normal).
+func move_speed_scale() -> float:
+	return 1.0
+
+
+func emit_fx(kind: StringName, data := {}) -> void:
+	data["ability"] = id
+	fx_event.emit(kind, data)
 
 
 func emit_event(event: ElementalEvent) -> Array[Node3D]:

@@ -282,37 +282,27 @@ func smooth_area(world_point: Vector3, radius: float, blur_voxels := 2) -> Terra
 ## ~1,9 m de raio para uma rocha de ~1,3 m de meia-largura), então a rocha ficaria presa no
 ## fundo (medido no T24). Com `place_dir` horizontal, a rocha é posicionada UMA vez, ainda
 ## cinemática, sobre o chão ao lado do buraco nessa direção; com Vector3.ZERO fica no buraco.
+## Com `hold_kinematic`, o Timer que o Voxel Tools cria para descongelar o corpo em 0,2 s é
+## parado: o corpo fica congelado até quem chamou descongelar (P3.5, Terra: desprendimento;
+## spike P3.5 E1).
 ## Retorna {"result": TerrainEditResult, "bodies": Array[RigidBody3D]}.
 func extract_rock(world_point: Vector3, normal: Vector3, core_radius: float, parent: Node,
-		place_dir := Vector3.ZERO) -> Dictionary:
+		place_dir := Vector3.ZERO, hold_kinematic := false) -> Dictionary:
 	const OP := "extract_rock"
 	var t0 := Time.get_ticks_usec()
 	var out := {"result": null, "bodies": []}
-	if not _is_finite_vec(world_point) or not _is_finite_vec(normal) or normal.length() < 0.5 or parent == null:
+	if parent == null:
 		out.result = _reject(OP, "invalid_input")
 		return out
-	if core_radius < min_extract_radius or core_radius > max_extract_radius:
-		out.result = _reject(OP, "radius_out_of_range")
+	var check := _check_extract(world_point, normal, core_radius)
+	var aabb: AABB = check.aabb
+	if check.reason != "":
+		out.result = _reject(OP, check.reason, aabb)
 		return out
-	var center := world_point - normal.normalized() * core_radius
-	var cavity := core_radius + extract_gap + remove_radius_padding
-	var aabb := AABB(center - Vector3.ONE * (cavity + material_paint_margin), Vector3.ONE * (cavity + material_paint_margin) * 2.0)
-	var reason := _validate_area(aabb)
-	if reason != "":
-		out.result = _reject(OP, reason, aabb)
-		return out
-	var local := _terrain.to_local(center)
-	if _tool.get_voxel_f(Vector3i(local.round())) > 0.0:
-		out.result = _reject(OP, "no_solid_core", aabb)
-		return out
-	var mat := TerrainMaterialLibrary.get_by_index(_material_index_local(local))
-	var policy := TerrainBrushQueue.material_policy(TerrainBrushRequest.Op.REMOVE, mat)
-	if policy != "":
-		out.result = _reject(OP, policy, aabb)
-		return out
-	if _overlaps_protected_body(center, cavity):
-		out.result = _reject(OP, "overlaps_player", aabb)
-		return out
+	var center: Vector3 = check.center
+	var cavity: float = check.cavity
+	var local: Vector3 = check.local
+	var mat: TerrainMaterial = check.mat
 	if not _consume_budget():
 		out.result = _reject(OP, "frame_budget_exceeded", aabb)
 		return out
@@ -348,12 +338,67 @@ func extract_rock(world_point: Vector3, normal: Vector3, core_radius: float, par
 		rb.add_to_group(DebrisBudget.GROUP)
 		total_volume += volume
 		out.bodies.append(rb)
+		if hold_kinematic:
+			for ch in rb.get_children():
+				if ch is Timer:
+					(ch as Timer).stop()
 		var flat := Vector3(place_dir.x, 0.0, place_dir.z)
 		if flat.length() > 0.01:
 			_place_beside_hole(rb, world_point, flat.normalized(), cavity)
 	var result := _commit(OP, aabb, t0, "c=%s r=%.2f corpos=%d" % [_fmt(center), core_radius, bodies.size()])
 	_set_estimate(result, mat, total_volume)
 	out.result = result
+	return out
+
+
+## As mesmas checagens do extract_rock, sem editar nada: "" se a extração seria aceita agora,
+## senão o motivo (a Terra valida o alvo no clique, antes da antecipação; P3.5).
+func can_extract_rock(world_point: Vector3, normal: Vector3, core_radius: float) -> String:
+	return _check_extract(world_point, normal, core_radius).reason
+
+
+## O collider já mostra a cavidade aberta em `world_point` (boca do buraco)? Raio vertical no
+## centro chega mais de `depth` abaixo da boca. O collider do terreno é uma casca: uma consulta
+## de forma não detecta uma rocha dentro do sólido (spike P3.5 E1/E2).
+func cavity_confirmed(world_point: Vector3, depth := 1.0) -> bool:
+	var hit := raycast_terrain(world_point + Vector3.UP * 1.0, world_point + Vector3.DOWN * (depth + 6.0))
+	return not hit.is_empty() and hit.position.y < world_point.y - depth
+
+
+func _check_extract(world_point: Vector3, normal: Vector3, core_radius: float) -> Dictionary:
+	var out := {"reason": "", "aabb": AABB(), "center": Vector3.ZERO, "cavity": 0.0, "local": Vector3.ZERO, "mat": null}
+	if not _is_finite_vec(world_point) or not _is_finite_vec(normal) or normal.length() < 0.5:
+		out.reason = "invalid_input"
+		return out
+	if core_radius < min_extract_radius or core_radius > max_extract_radius:
+		out.reason = "radius_out_of_range"
+		return out
+	var center := world_point - normal.normalized() * core_radius
+	# Centro no MEIO do voxel: a folga (0,9 m) é menor que um voxel, e com o centro em certas
+	# posições sub-voxel a cavidade deixava uma ponte e o núcleo não se separava (cavidade aberta,
+	# 0 corpos: 4 de 36 posições no spike P3.5 E5). Alinhado, a rasterização é sempre a mesma.
+	if _terrain != null:
+		center = _terrain.to_global(_terrain.to_local(center).floor() + Vector3.ONE * 0.5)
+	var cavity := core_radius + extract_gap + remove_radius_padding
+	out.center = center
+	out.cavity = cavity
+	out.aabb = AABB(center - Vector3.ONE * (cavity + material_paint_margin), Vector3.ONE * (cavity + material_paint_margin) * 2.0)
+	out.reason = _validate_area(out.aabb)
+	if out.reason != "":
+		return out
+	var local := _terrain.to_local(center)
+	out.local = local
+	if _tool.get_voxel_f(Vector3i(local.round())) > 0.0:
+		out.reason = "no_solid_core"
+		return out
+	var mat := TerrainMaterialLibrary.get_by_index(_material_index_local(local))
+	out.mat = mat
+	var policy := TerrainBrushQueue.material_policy(TerrainBrushRequest.Op.REMOVE, mat)
+	if policy != "":
+		out.reason = policy
+		return out
+	if _overlaps_protected_body(center, cavity):
+		out.reason = "overlaps_player"
 	return out
 
 
