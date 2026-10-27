@@ -1,0 +1,489 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T16:55:48",
+  "duracao_s": 56.625,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 61.0,
+      "media": 58.09,
+      "min": 7.0,
+      "n": 110,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 1225.0,
+    "p36_custos_cpu_us": {
+      "fogo_avanco_us_max_acumulado": 388,
+      "fogo_avanco_us_medio": 45.392,
+      "fogo_consultas": 105,
+      "fogo_testemunhas_1mm": 0,
+      "fogo_ticks_ativos": 125,
+      "propagacao_bloqueadas": 124,
+      "propagacao_consultas": 2021,
+      "propagacao_us_medio": 2068.88571428571,
+      "termico_ticks": 35,
+      "termico_us_max_acumulado": 3715,
+      "termico_us_medio": 2161.71428571429,
+      "vfx_fogo_ar_us_max_acumulado": 2491,
+      "vfx_fogo_ar_us_medio_quadro": 49.8993435448578
+    },
+    "p3_poderes_fisica_ms": {
+      "max": 19.29,
+      "media": 8.36,
+      "min": 3.03,
+      "n": 457,
+      "p95": 19.29,
+      "p99": 19.29
+    },
+    "p3_poderes_quadro_ms": {
+      "max": 33.38,
+      "media": 16.63,
+      "min": 2.79,
+      "n": 456,
+      "p50": 16.69,
+      "p95": 18.97,
+      "p99": 21.02
+    },
+    "p4b_reuse_frame_ms": {
+      "max": 23.74,
+      "media": 16.57,
+      "min": 5.27,
+      "n": 156,
+      "p95": 17.7,
+      "p99": 18.44
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1225.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
+        "criterio_fps_aplicado": true,
+        "custos_cpu_us": {
+          "fogo_avanco_us_max_acumulado": 388,
+          "fogo_avanco_us_medio": 45.392,
+          "fogo_consultas": 105,
+          "fogo_testemunhas_1mm": 0,
+          "fogo_ticks_ativos": 125,
+          "propagacao_bloqueadas": 124,
+          "propagacao_consultas": 2021,
+          "propagacao_us_medio": 2068.88571428571,
+          "termico_ticks": 35,
+          "termico_us_max_acumulado": 3715,
+          "termico_us_medio": 2161.71428571429,
+          "vfx_fogo_ar_us_max_acumulado": 2491,
+          "vfx_fogo_ar_us_medio_quadro": 49.8993435448578
+        },
+        "duracao_s": 7.601,
+        "fx": {
+          "air_dust_contacts": 23,
+          "air_dust_front": 16,
+          "air_rings_live": 0,
+          "air_rings_missing": 0,
+          "blasts": 4,
+          "charred": 12,
+          "fire_anticipations": 5,
+          "fire_balls_visible": 0,
+          "fire_dissipations": 1,
+          "fire_launches": 5,
+          "fire_slots_live": 0,
+          "fire_slots_missing": 0,
+          "fire_steam": 0,
+          "fire_trail_pool": 8,
+          "fire_vfx_frames": 777,
+          "fire_vfx_usec": 28810,
+          "fire_vfx_usec_max": 2491,
+          "flames_active": 12,
+          "flames_created": 12,
+          "flames_skipped": 0,
+          "gusts": 4,
+          "steam": 0,
+          "water_instances": 0,
+          "water_spray": false
+        },
+        "intervalo_entre_quadros_ms": {
+          "max": 33.38,
+          "media": 16.63,
+          "min": 2.79,
+          "n": 456,
+          "p50": 16.69,
+          "p95": 18.97,
+          "p99": 21.02
+        },
+        "materiais": {
+          "burned_out": 0,
+          "burning": 12,
+          "events": 94,
+          "events_rejected_busy": 0,
+          "extinguished": 0,
+          "ignitions": 12,
+          "ignitions_skipped": 0,
+          "kinetic_breaks": 0,
+          "spread_blocked": 124,
+          "spread_queries": 2021,
+          "spread_usec": 72457,
+          "thermal_ticks": 57,
+          "thermal_usec": 75917,
+          "thermal_usec_max": 3715,
+          "tracked": 28
+        },
+        "modo": "window",
+        "pico_em_chamas": 12,
+        "pico_pecas_dinamicas": 36,
+        "poderes_usados": {
+          "agua_quadros_em_corpo": 54,
+          "ar_rajadas": 4,
+          "fogo_concluidos": 5,
+          "fogo_disparos_aceitos": 5,
+          "fogo_dissipacoes": 1,
+          "fogo_impactos": 4,
+          "fogo_lancamentos": 5,
+          "terra_arremessos": 1
+        },
+        "soltas": 36,
+        "time_physics_process_ms": {
+          "max": 19.29,
+          "media": 8.36,
+          "min": 3.03,
+          "n": 457,
+          "p95": 19.29,
+          "p99": 19.29
+        }
+      },
+      "id": "T37",
+      "status": "PASS",
+      "titulo": "Benchmark: colapso total + 12 caixas em chamas + os 4 poderes; critério de FPS em janela"
+    },
+    {
+      "detalhes": {
+        "1_fogo_seca_e_acende": {
+          "acesa_apos_1a": false,
+          "acesa_apos_2a": true,
+          "ok": true,
+          "umidade_apos_1a": 0.0,
+          "vapor_do_fogo": 1
+        },
+        "2_ar_empurra_e_aviva": {
+          "chama_no_corpo": true,
+          "deslocada_m": 4.44416952133179,
+          "intensidade_antes": 0.5625,
+          "intensidade_no_contato": 0.827265525903747,
+          "ok": true,
+          "segue_acesa": true
+        },
+        "3_agua_apaga": {
+          "apagada": true,
+          "causas": [
+            "água"
+          ],
+          "ok": true,
+          "umidade": 0.0828116632592304,
+          "vapor": 1
+        },
+        "4_agua_esfria": {
+          "acesa": false,
+          "ok": true,
+          "temperatura_antes": 220.0,
+          "temperatura_depois": 152.397978054748
+        },
+        "5_ar_seca": {
+          "na_rajada": true,
+          "ok": true,
+          "umidade_antes": 0.274666666666667,
+          "umidade_depois": 0.224265291329093
+        }
+      },
+      "id": "T55",
+      "status": "PASS",
+      "titulo": "Interações cruzadas: fogo seca e acende, ar empurra e aviva em chamas, água apaga e esfria, ar seca"
+    },
+    {
+      "detalhes": {
+        "flames": {
+          "burning": 30,
+          "cap": 24,
+          "flames_active": 24,
+          "ok": true,
+          "skipped": 6
+        },
+        "no_leak": {
+          "air_rings": 0,
+          "burning": 0,
+          "fire_slots": 0,
+          "flames_active": 0,
+          "fx_children_after": 42,
+          "fx_children_before": 42,
+          "ok": true
+        },
+        "stress": {
+          "caps": {
+            "air": 4,
+            "fire": 8,
+            "water": 24
+          },
+          "frame_ms": {
+            "max": 21.23,
+            "media": 16.08,
+            "min": 0.65,
+            "n": 30,
+            "p95": 19.81
+          },
+          "missing_slots": {
+            "air": 0,
+            "fire": 0
+          },
+          "note": "amostra informativa; o gate de quadro é o T27/T37",
+          "ok": true,
+          "peak": {
+            "air_live": 4,
+            "air_rings": 4,
+            "fire_balls": 8,
+            "fire_live": 8,
+            "fire_slots": 8,
+            "water_instances": 11
+          }
+        }
+      },
+      "id": "T58",
+      "status": "PASS",
+      "titulo": "VFX limitados sob estresse (24 chamas, 8 projéteis, 4 frentes, 24 volumes de água) e sem vazamento após reset"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "air_load_during_front": {
+            "air_contacts_after": 0,
+            "command": "load",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "air_front"
+            ],
+            "session_changed": true,
+            "wave": 13
+          },
+          "air_reset_during_front": {
+            "air_contacts_after": 0,
+            "command": "reset",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "air_front"
+            ],
+            "session_changed": true,
+            "wave": 11
+          },
+          "air_save_during_front": {
+            "air_contacts_after": 0,
+            "command": "save",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "crate_survived": true,
+            "crate_velocity": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "air_front"
+            ],
+            "session_changed": true,
+            "wave": 12
+          },
+          "fire_load_flight_and_anticipation": {
+            "air_contacts_after": 0,
+            "command": "load",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 2,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "flight",
+              "anticipation"
+            ],
+            "session_changed": true
+          },
+          "fire_reset_during_anticipation": {
+            "air_contacts_after": 0,
+            "command": "reset",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "anticipation"
+            ],
+            "session_changed": true
+          },
+          "fire_save_during_flight": {
+            "air_contacts_after": 0,
+            "command": "save",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "flight"
+            ],
+            "session_changed": true,
+            "target_survived": true,
+            "target_temperature": 20.0
+          }
+        },
+        "slot": "p36_lifecycle"
+      },
+      "id": "T57",
+      "status": "PASS",
+      "titulo": "Reset/save/load descartam antecipações, voos e frentes de ar no próprio comando, sem eventos ou FX tardios"
+    },
+    {
+      "detalhes": {
+        "callbacks_clean": true,
+        "capture_without_position_velocity_reset": true,
+        "controls": true,
+        "flight_speed_m_s": 23.9771995544434,
+        "frame_gate_applied": true,
+        "frame_ms": {
+          "max": 23.74,
+          "media": 16.57,
+          "min": 5.27,
+          "n": 156,
+          "p95": 17.7,
+          "p99": 18.44
+        },
+        "mass_kg": 6973.17041015625,
+        "moved_m": 0.686363339424133,
+        "no_terrain_edit_or_new_body": true,
+        "one_new_impact": true,
+        "previous_flight_disconnected": true,
+        "recaptured_in_flight": true,
+        "reused_twice": true,
+        "same_body": true,
+        "teleport_error_m": 0.00056034600129351
+      },
+      "id": "T61",
+      "status": "PASS",
+      "titulo": "Mesma rocha e massa: captura por LMB, controles físicos, recaptura em voo e novo impacto sem callbacks duplicados"
+    },
+    {
+      "detalhes": {
+        "crate_not_earth": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        },
+        "distance_3d": {
+          "ok": true,
+          "reason": "rocha longe demais (máx. 7.0 m)"
+        },
+        "load": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "near_parked_rock": {
+          "awakened": true,
+          "budget_protected": true,
+          "minimum_distance": true,
+          "ok": true
+        },
+        "reset": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "save": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "select": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "tower_not_earth": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        }
+      },
+      "id": "T62",
+      "status": "PASS",
+      "titulo": "Reutilização respeita oclusão/tipo/alcance; acorda rocha estacionada e limpa propriedade em seleção/reset/save/load"
+    }
+  ],
+  "run_id": "95aafbf21b38",
+  "testes_ids": [
+    "T1",
+    "T37",
+    "T55",
+    "T58",
+    "T57",
+    "T61",
+    "T62"
+  ],
+  "testes_pass": 7,
+  "testes_total": 7,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

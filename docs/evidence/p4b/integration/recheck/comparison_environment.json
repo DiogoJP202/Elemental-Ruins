@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-27T17:06:53.5300906-03:00",
+  "reason": "Comparar T27 curto com mesmo editor custom, sem consultas CIM durante medição",
+  "base_commit": "9103bee",
+  "base_pack_sha256": "309E44515A7A8971701EC04AD830A6BA17965F2CE9132E57B11A7003347866AE",
+  "feature_commit": "ca3aff194968ad4bab01c1cbe9dc47905dcb4c22",
+  "power_line": "Online",
+  "power_plan": "Balanced",
+  "renderer": "Forward+",
+  "resolution": "1600x900",
+  "note": "Base usa PCK P4A com o mesmo editor, feature usa projeto; comparação descritiva, sem atribuição causal",
+  "frame_gates_ms": {
+    "p95": 20,
+    "p99": 33,
+    "max": 50
+  }
+}
