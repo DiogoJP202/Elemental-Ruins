@@ -2,11 +2,12 @@
 
 > Leia este arquivo no início de toda sessão. Este repositório será um **jogo Godot 4**, não uma aplicação web. Idioma das explicações: português brasileiro; nomes de classes, nós, funções e arquivos em inglês quando fizer sentido.
 
-## Estado vigente: P4A — manipulação livre de Terra (27/10/2026)
+## Estado vigente: P4B — reutilizar rochas existentes (27/10/2026)
 - P0–P3.6.1 implementados. Base `codex/p36-t26-stabilization`, referência `180ec59`: salvar preserva terreno, colisores e física viva. Não reiniciar fases anteriores.
-- P4A com checkpoint fechado em 27/10/2026: 66/66 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos; resultados no README e evidências em `docs/evidence/p4a/integration/`. Playtest dos controles recebeu feedback positivo do usuário na mesma data. Próximo passo: revisar a PR, sem ampliar o escopo automaticamente.
-- Trabalho autorizado: uma rocha suspensa com câmera horizontal, Q/E para altura e roda contextual para distância; preservar mola, arremesso e cancelamentos. Sem novas habilidades, múltiplas rochas, multiplayer ou arquitetura genérica.
-- Branch de trabalho: `feat/p4a-earth-free-control`. Conferir repositório, worktree e Git antes de editar; preservar alterações locais. Não modificar a main, fazer reset destrutivo, merge ou push sem autorização.
+- P4A fechado: 66/66 nos quatro modos, export e persistência aprovados, zero erros/avisos e feedback humano positivo; integrado à main em `9103bee`. Histórico no README e em `docs/evidence/p4a/integration/`.
+- Trabalho autorizado P4B: capturar a mesma rocha extraída já existente, preservando massa/inércia e reutilizando hold, câmera, Q/E, roda, lançamento e cancelamentos. Seleção respeita obstáculos; sem novas habilidades, múltiplas rochas, multiplayer ou arquitetura genérica. Playtest P4B NÃO TESTADO.
+- P4B implementado: 18/18 headless e 5/5 em janela, zero erros/avisos; T27/T37/T61 dentro de 20/33/50 ms. Evidências em `docs/evidence/p4b/`; próximo passo é playtest humano antes do checkpoint de integração.
+- Branch de trabalho: `codex/p4b-earth-reuse`, base main `9103bee`. Conferir repositório, worktree e Git antes de editar; preservar alterações locais. Não modificar a main, fazer reset destrutivo, merge ou push sem autorização.
 - Stack vigente: Godot 4.7.2 custom + Voxel Tools 1.7 como módulo (D13). Editor e template release compatíveis. Não reintroduzir a GDExtension.
 - Referências atuais: README.md e PROJETO_ROADMAP.md; contratos existentes em docs/decisions.md, docs/p35_earth_polish.md e docs/p36_t26_stabilization.md. O prompt inicial e o escopo da primeira entrega abaixo são históricos.
 - Gates: zero erros e zero avisos. Nenhuma exceção ativa. Allowlist futura só com identificação exata, justificativa e documentação. Sem relaxar critérios para obter PASS.

@@ -1,0 +1,178 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T12:59:19",
+  "duracao_s": 14.317,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 60.0,
+      "media": 56.7,
+      "min": 1.0,
+      "n": 27,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 1955.0,
+    "p36_custos_cpu_us": {
+      "fogo_avanco_us_max_acumulado": 573,
+      "fogo_avanco_us_medio": 50.768,
+      "fogo_consultas": 105,
+      "fogo_testemunhas_1mm": 0,
+      "fogo_ticks_ativos": 125,
+      "propagacao_bloqueadas": 142,
+      "propagacao_consultas": 1972,
+      "propagacao_us_medio": 2044.62857142857,
+      "termico_ticks": 35,
+      "termico_us_max_acumulado": 4757,
+      "termico_us_medio": 2139.2,
+      "vfx_fogo_ar_us_max_acumulado": 3131,
+      "vfx_fogo_ar_us_medio_quadro": 48.9387308533917
+    },
+    "p3_poderes_fisica_ms": {
+      "max": 19.65,
+      "media": 8.81,
+      "min": 3.04,
+      "n": 457,
+      "p95": 19.65,
+      "p99": 19.65
+    },
+    "p3_poderes_quadro_ms": {
+      "max": 34.49,
+      "media": 16.62,
+      "min": 6.94,
+      "n": 456,
+      "p50": 16.71,
+      "p95": 18.53,
+      "p99": 20.84
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1955.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
+        "criterio_fps_aplicado": true,
+        "custos_cpu_us": {
+          "fogo_avanco_us_max_acumulado": 573,
+          "fogo_avanco_us_medio": 50.768,
+          "fogo_consultas": 105,
+          "fogo_testemunhas_1mm": 0,
+          "fogo_ticks_ativos": 125,
+          "propagacao_bloqueadas": 142,
+          "propagacao_consultas": 1972,
+          "propagacao_us_medio": 2044.62857142857,
+          "termico_ticks": 35,
+          "termico_us_max_acumulado": 4757,
+          "termico_us_medio": 2139.2,
+          "vfx_fogo_ar_us_max_acumulado": 3131,
+          "vfx_fogo_ar_us_medio_quadro": 48.9387308533917
+        },
+        "duracao_s": 7.598,
+        "fx": {
+          "air_dust_contacts": 23,
+          "air_dust_front": 16,
+          "air_rings_live": 0,
+          "air_rings_missing": 0,
+          "blasts": 4,
+          "charred": 12,
+          "fire_anticipations": 5,
+          "fire_balls_visible": 0,
+          "fire_dissipations": 1,
+          "fire_launches": 5,
+          "fire_slots_live": 0,
+          "fire_slots_missing": 0,
+          "fire_steam": 0,
+          "fire_trail_pool": 8,
+          "fire_vfx_frames": 812,
+          "fire_vfx_usec": 29134,
+          "fire_vfx_usec_max": 3131,
+          "flames_active": 13,
+          "flames_created": 13,
+          "flames_skipped": 0,
+          "gusts": 4,
+          "steam": 0,
+          "water_instances": 0,
+          "water_spray": false
+        },
+        "intervalo_entre_quadros_ms": {
+          "max": 34.49,
+          "media": 16.62,
+          "min": 6.94,
+          "n": 456,
+          "p50": 16.71,
+          "p95": 18.53,
+          "p99": 20.84
+        },
+        "materiais": {
+          "burned_out": 0,
+          "burning": 13,
+          "events": 94,
+          "events_rejected_busy": 0,
+          "extinguished": 0,
+          "ignitions": 13,
+          "ignitions_skipped": 0,
+          "kinetic_breaks": 0,
+          "spread_blocked": 142,
+          "spread_queries": 1972,
+          "spread_usec": 71616,
+          "thermal_ticks": 57,
+          "thermal_usec": 75151,
+          "thermal_usec_max": 4757,
+          "tracked": 31
+        },
+        "modo": "window",
+        "pico_em_chamas": 13,
+        "pico_pecas_dinamicas": 36,
+        "poderes_usados": {
+          "agua_quadros_em_corpo": 54,
+          "ar_rajadas": 4,
+          "fogo_concluidos": 5,
+          "fogo_disparos_aceitos": 5,
+          "fogo_dissipacoes": 1,
+          "fogo_impactos": 4,
+          "fogo_lancamentos": 5,
+          "terra_arremessos": 1
+        },
+        "soltas": 36,
+        "time_physics_process_ms": {
+          "max": 19.65,
+          "media": 8.81,
+          "min": 3.04,
+          "n": 457,
+          "p95": 19.65,
+          "p99": 19.65
+        }
+      },
+      "id": "T37",
+      "status": "PASS",
+      "titulo": "Benchmark: colapso total + 12 caixas em chamas + os 4 poderes; critério de FPS em janela"
+    }
+  ],
+  "run_id": "d737c1cf716b",
+  "testes_ids": [
+    "T1",
+    "T37"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

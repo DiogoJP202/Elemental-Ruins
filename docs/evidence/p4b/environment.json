@@ -1,0 +1,45 @@
+{
+  "base": "9103bee",
+  "branch": "codex/p4b-earth-reuse",
+  "date": "2026-10-27T13:09:28.9894815-03:00",
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "gpu": [
+    {
+      "Name": "Intel(R) Iris(R) Xe Graphics",
+      "DriverVersion": "32.0.101.7085"
+    }
+  ],
+  "resolution": "1600x900",
+  "renderer": "Forward+",
+  "physics": "Jolt Physics",
+  "godot": "4.7.2.stable.custom_build.ed1daf0bf + Voxel Tools 1.7 module",
+  "frame_gates_ms": {
+    "max": 50,
+    "p99": 33,
+    "p95": 20
+  },
+  "baseline_test": "T37 window --p3-selftest before production edits",
+  "human_playtest": "P4B NAO TESTADO",
+  "source_hashes": [
+    {
+      "Path": "C:\\Users\\dsoares\\Documents\\Projetos\\game\\scripts\\abilities\\earth_lift_throw.gd",
+      "Hash": "0C6118F9CEE13F1C509FE9D8C5540AD2B5EB1A054542B79BB6B1AF589DE715BF"
+    },
+    {
+      "Path": "C:\\Users\\dsoares\\Documents\\Projetos\\game\\scripts\\abilities\\earth_tuning.gd",
+      "Hash": "C9DB8FB8AC0C477D23AA9841AE2936678F47D62D55311054D7873BEFED5AAF47"
+    },
+    {
+      "Path": "C:\\Users\\dsoares\\Documents\\Projetos\\game\\scripts\\physics\\debris_budget.gd",
+      "Hash": "DA06745E4E4574BB01742D42C13CD1FEC45BA0A58E0E22BDF55F9EE66B64663F"
+    },
+    {
+      "Path": "C:\\Users\\dsoares\\Documents\\Projetos\\game\\scripts\\ui\\debug_hud.gd",
+      "Hash": "E511C84A37688D3D4A45BB65A0DB759CBD07E87BB1363959BF27956D628E79E9"
+    },
+    {
+      "Path": "C:\\Users\\dsoares\\Documents\\Projetos\\game\\scripts\\dev\\p36_selftest.gd",
+      "Hash": "793C1E5E7E7088340D6BD743EC3D0A19FA69F9A7F1A53FE0180549E80DEB52A3"
+    }
+  ]
+}

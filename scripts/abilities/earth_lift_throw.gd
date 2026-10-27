@@ -2,8 +2,8 @@ class_name EarthLiftThrow
 extends Ability
 ## Terra — erguer e arremessar rocha (atlas te-001; P3, polida no P3.5).
 ## Máquina de fases; tempos e forças em EarthTuning (data/abilities/earth_tuning.tres):
-##   clique        valida o alvo (2,5–7 m do jogador, chão, área editável, material, sem prender
-##                 o jogador). Inválido → fx "invalid" e nada acontece
+##   clique        primeiro alvo visível: rocha extraída existente → hold (P4B);
+##                 chão válido a 2,5–7 m → extração em fases. Inválido → fx "invalid"
 ##   anticipation  terreno intacto; só telegraph (FX: rachadura, poeira, pedrinhas)
 ##   detach        extract_rock com o Timer do Voxel Tools parado: a rocha fica congelada no buraco
 ##                 até o fim da fase E o collider da cavidade confirmado (spike P3.5 E1/E2);
@@ -48,13 +48,13 @@ var _rng := RandomNumberGenerator.new()
 var _thrown := []
 var _stats := {"extracted": 0, "thrown": 0, "hits": 0, "max_impulse": 0.0, "invalid": 0, "failed": 0,
 	"ground_impacts": 0, "craters": 0, "craters_rejected": 0, "buffered_throws": 0, "cancelled": 0,
-	"last_ready_ms": -1, "last_cavity_wait_frames": -1}
+	"last_ready_ms": -1, "last_cavity_wait_frames": -1, "reused": 0}
 
 
 func _init() -> void:
 	id = &"earth_lift_throw"
 	element = &"earth"
-	display_name = "Erguer e arremessar rocha"
+	display_name = "Extrair ou reutilizar rocha"
 	input_mode = "hold"
 	tuning = load(TUNING_PATH) as EarthTuning
 	if tuning == null:
@@ -130,6 +130,30 @@ func on_press() -> void:
 	_release_buffered = false
 	_time_scale = 1.0
 	_cycle_start_ms = Time.get_ticks_msec()
+	if check.has("rock"):
+		rock = check.rock
+		# Cada captura encerra o voo anterior, incluindo contatos ainda não despachados.
+		for i in range(_thrown.size() - 1, -1, -1):
+			if is_instance_valid(_thrown[i].body) and _thrown[i].body == rock:
+				_untrack_throw(_thrown[i])
+				_thrown.remove_at(i)
+		if rock.has_meta(DebrisBudget.PARKED_META):
+			DebrisBudget.unpark(rock)
+		rock.freeze = false
+		rock.sleeping = false
+		rock.continuous_cd = true
+		rock.gravity_scale = 0.0
+		rock.angular_damp = tuning.hold_angular_damp
+		rock.set_meta(DebrisBudget.EARTH_HELD_META, true)
+		# A mesma transição de hold parte do centro atual, sem zerar a velocidade.
+		_rise_to = center_of(rock)
+		_prev_target = _rise_to
+		_hold_t = 0.0
+		_stats.reused += 1
+		_stats.last_ready_ms = 0
+		_set_phase("hold", {"rock": rock, "ready_ms": 0, "reused": true})
+		last_result = "rocha reutilizada"
+		return
 	_set_phase("anticipation", {"point": _point, "color": _color, "radius": tuning.rock_radius,
 		"duration": tuning.anticipation_s})
 	last_result = "erguendo rocha"
@@ -162,10 +186,12 @@ func adjust_hold_distance(delta: float) -> void:
 		_hold_dist = clampf(_hold_dist + delta, tuning.min_range, tuning.max_range)
 
 
-## O ponto sob a mira serve de origem para uma rocha? {ok, reason, point, normal, dist, color}.
+## Primeiro alvo visível: {ok, reason, point, normal, dist, color, rock?}.
+## `rock` só existe no resultado de uma captura válida; caixas e paredes bloqueiam a mira.
 ## Também usado pelo HUD para o preview (verde/vermelho).
 func validate_target() -> Dictionary:
-	var aim: Dictionary = controller.aim_terrain(tuning.max_range + 15.0)
+	var ray: Array = controller.aim_ray()
+	var aim: Dictionary = controller.cast_segment(ray[0], ray[0] + ray[1] * (tuning.max_range + 15.0), true)
 	if aim.is_empty():
 		return {"ok": false, "reason": "sem chão na mira"}
 	var p: Vector3 = aim.position
@@ -173,6 +199,24 @@ func validate_target() -> Dictionary:
 	var pl: Vector3 = controller.player.global_position
 	var dist := Vector2(p.x - pl.x, p.z - pl.z).length()
 	var r := {"ok": false, "reason": "", "point": p, "normal": n, "dist": dist, "color": Color.GRAY}
+	if not aim.collider is VoxelLodTerrain:
+		var body := aim.collider as RigidBody3D
+		if body == null or not body.has_meta("volume_m3"):
+			r.reason = "mire no chão ou em uma rocha extraída"
+			return r
+		var center := center_of(body)
+		r.point = center
+		r.normal = Vector3.UP
+		r.dist = Vector2(center.x - pl.x, center.z - pl.z).length()
+		if center.distance_to(pl) > tuning.max_range:
+			r.reason = "rocha longe demais (máx. %.1f m)" % tuning.max_range
+			return r
+		r.ok = true
+		r.rock = body
+		var material := TerrainMaterialLibrary.get_by_id(body.get_meta("material_id", &""))
+		if material != null:
+			r.color = material.surface_color
+		return r
 	if n.y < tuning.min_floor_normal_y:
 		r.reason = "não é chão"
 	elif dist > tuning.max_range:
@@ -196,6 +240,9 @@ func cancel() -> void:
 
 
 func clear() -> void:
+	cancel()
+	for entry in _thrown:
+		_untrack_throw(entry)
 	_thrown.clear()
 	rock = null
 	phase = ""
@@ -250,6 +297,7 @@ func _begin_detach() -> void:
 		return
 	rock = out.bodies[0]
 	rock.continuous_cd = true
+	rock.set_meta(DebrisBudget.EARTH_HELD_META, true)
 	_stats.extracted += 1
 	_time_scale = tuning.time_scale_for(rock.mass)
 	_set_phase("detach", {"rock": rock, "point": _point, "color": _color, "duration": tuning.detach_s * _time_scale,
@@ -362,6 +410,7 @@ func _launch() -> void:
 		launch = to.normalized() * tuning.throw_speed + Vector3.UP * (9.8 * flight * 0.5)
 	rock.gravity_scale = 1.0
 	rock.angular_damp = 0.0
+	rock.remove_meta(DebrisBudget.EARTH_HELD_META)
 	rock.contact_monitor = true
 	rock.max_contacts_reported = 8
 	rock.apply_central_impulse((launch - rock.linear_velocity) * rock.mass)
@@ -394,11 +443,22 @@ func _tick_thrown() -> void:
 		if e.hit and not e.sent:
 			_dispatch_impact(e)
 		if now > e.until_ms or e.hit:
-			b.contact_monitor = false
+			_untrack_throw(e)
 			continue
 		e.prev_vel = b.linear_velocity
 		keep.append(e)
 	_thrown = keep
+
+
+## O mesmo corpo pode ser relançado: nenhum callback do voo anterior deve sobreviver.
+func _untrack_throw(entry: Dictionary) -> void:
+	if not is_instance_valid(entry.body):
+		return
+	var body: RigidBody3D = entry.body
+	var callback := _on_rock_contact.bind(entry)
+	if body.body_entered.is_connected(callback):
+		body.body_entered.disconnect(callback)
+	body.contact_monitor = false
 
 
 ## 1º passo de física com contato em CORPOS: impulso estimado = massa × velocidade perdida nesse
@@ -490,6 +550,7 @@ func _abort(reason: String) -> void:
 			rock.freeze = false
 		rock.gravity_scale = 1.0
 		rock.angular_damp = 0.0
+		rock.remove_meta(DebrisBudget.EARTH_HELD_META)
 	rock = null
 	_stats.cancelled += 1
 	last_result = reason

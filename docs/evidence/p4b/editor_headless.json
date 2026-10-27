@@ -1,0 +1,631 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T13:10:29",
+  "duracao_s": 102.942,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 943.0,
+    "p4a_hold_frame_ms": {
+      "max": 10.12,
+      "media": 6.9,
+      "min": 3.69,
+      "n": 1139,
+      "p95": 7.8,
+      "p99": 7.99
+    },
+    "p4b_reuse_frame_ms": {
+      "max": 11.93,
+      "media": 6.9,
+      "min": 1.78,
+      "n": 378,
+      "p95": 7.56,
+      "p99": 8.08
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 943.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "coroa_apoiada_em_2_placas": 4,
+        "moveram": [],
+        "pecas": 36,
+        "pes": 4,
+        "placas": 8,
+        "placas_1_embaixo_2_laterais": true,
+        "segundos": 5.006,
+        "soltas": [],
+        "todas_apoiadas": true
+      },
+      "id": "T19",
+      "status": "PASS",
+      "titulo": "Torre modular intacta: 36 peças congeladas paradas 5 s; grafo de apoio como montado"
+    },
+    {
+      "detalhes": {
+        "confirmacao_collider_ms": 9.0,
+        "demais_no_lugar": true,
+        "esperadas": [
+          "P02_pilar0",
+          "P01_pilar0",
+          "P00_pilar0"
+        ],
+        "pe": "P00_pilar0",
+        "pilar_caiu": true,
+        "soltas": [
+          "P02_pilar0",
+          "P01_pilar0",
+          "P00_pilar0"
+        ],
+        "soltas_no_teste": 3,
+        "timeouts_confirmacao": 0,
+        "ultima_checagem": "pés sem apoio: [&\"P00_pilar0\"]"
+      },
+      "id": "T20",
+      "status": "PASS",
+      "titulo": "Escavar sob 1 pilar solta só esse pilar (laje fica: 2 placas vizinhas a sustentam)"
+    },
+    {
+      "detalhes": {
+        "abaixo_do_chao": [],
+        "ainda_em_movimento_apos_6s": 3,
+        "duracao_s": 6.183,
+        "longe_mais_de_15m": [],
+        "max_por_quadro": 6,
+        "quadros_com_soltura": 7,
+        "quadros_entre_primeira_e_ultima": 7,
+        "soltas": 33,
+        "stats": {
+          "broken": 0,
+          "builds": 2,
+          "checks": 4,
+          "confirm_timeouts": 0,
+          "consumed": 0,
+          "invalid_feet": 4,
+          "last_break": "",
+          "last_check": "pés sem apoio: [&\"P09_pilar0\"]",
+          "last_confirm_ms": 0.0,
+          "max_released_in_frame": 6,
+          "pending_confirm": 0,
+          "pieces": 36,
+          "queued": 0,
+          "released": 36,
+          "released_now": 36
+        },
+        "todas_soltas": true
+      },
+      "id": "T21",
+      "status": "PASS",
+      "titulo": "Escavar sob os outros 3 pilares: colapso total em etapas, peças sobre o terreno"
+    },
+    {
+      "detalhes": {
+        "antes": {
+          "active": 36,
+          "checks": 69,
+          "max_active_seen": 36,
+          "max_park_speed": 0.0,
+          "over_budget_moving": 0,
+          "parked": 0,
+          "parked_budget": 0,
+          "parked_distance": 0,
+          "tracked": 36,
+          "unparked_distance": 0
+        },
+        "caixas_abaixo_do_chao": 0,
+        "depois": {
+          "active": 64,
+          "checks": 107,
+          "max_active_seen": 154,
+          "max_park_speed": 0.0243755113333464,
+          "over_budget_moving": 4,
+          "parked": 122,
+          "parked_budget": 122,
+          "parked_distance": 0,
+          "tracked": 186,
+          "unparked_distance": 0
+        },
+        "pico_ativos_amostrado": 154,
+        "teto": 64
+      },
+      "id": "T22",
+      "status": "PASS",
+      "titulo": "Orçamento: 150 caixas + 36 peças → corpos ativos ≤ teto; só corpos parados são estacionados"
+    },
+    {
+      "detalhes": {
+        "agiu_durante_reset": false,
+        "clique_sem_mouse_capturado_ignorado": true,
+        "lmb_roteado": [
+          "earth_lift_throw:press",
+          "earth_lift_throw:release"
+        ],
+        "mouse_estava_preso": false,
+        "poderes": [
+          "earth/earth_lift_throw/hold",
+          "water/water_jet/hold",
+          "fire/fire_burst/tap",
+          "air/air_gust/tap"
+        ],
+        "selecionados_por_1_4": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "id": "T28",
+      "status": "PASS",
+      "titulo": "1–4 escolhem o elemento; LMB chega ao poder; clique de recaptura não age; nada age no reset"
+    },
+    {
+      "detalhes": {
+        "caixa_deslocada_m": 3.66843700408936,
+        "caixa_pos": "(-34.0, 0.519997, 53.99997)",
+        "contatos": 1,
+        "erro_suspensao_m": 0.0152408573776484,
+        "maior_desvio_de_teleporte_m": 0.00337795028463006,
+        "maior_impulso_Ns": 1263.74149891664,
+        "maior_passo_por_quadro_m": 0.575381100177765,
+        "mira_acertou": "TestCrate:<RigidBody3D#200890388539>",
+        "mira_ponto": "(-34.0, 0.555715, 54.49997)",
+        "ms_ate_suspensa_a_1m": 392,
+        "pronta_ms": 372,
+        "rocha_t": 6.97317041015625,
+        "trajetoria": [
+          "(-34.0, 1.6, 57.0) v=23.6",
+          "(-33.9, 2.3, 52.2) v=15.5",
+          "(-33.8, 3.8, 48.1) v=14.1",
+          "(-33.7, 4.2, 44.8) v=13.1",
+          "(-33.6, 4.7, 41.7) v=12.7",
+          "(-33.5, 4.2, 37.9) v=12.8"
+        ],
+        "vel_no_lancamento": 23.9621849060059
+      },
+      "id": "T29",
+      "status": "PASS",
+      "titulo": "Terra: rocha real extraída, suspensa só por forças e arremessada; acerta a caixa e a desloca"
+    },
+    {
+      "detalhes": {
+        "alvo_pos": "(16.5, 0.8, 16.5)",
+        "bloco_de_cima": "P08_pilar0",
+        "bloco_de_cima_solto": true,
+        "maior_impulso_Ns": 149146.428222746,
+        "mira_acertou": "P06_pilar0:<RigidBody3D#210101077694>",
+        "pe_mirado": "P06_pilar0",
+        "pe_solto": false,
+        "quebras_por_impacto": 1,
+        "soltas_no_total": 2,
+        "soltas_por_impacto": 1,
+        "soltas_total": 2,
+        "suspensa": true,
+        "trajetoria": [
+          "(18.4, 2.0, 23.3) v=23.9",
+          "(17.3, 1.6, 19.6) v=23.6",
+          "(17.0, 1.1, 18.3) v=1.4",
+          "(17.0, 1.1, 18.3) v=0.0",
+          "(17.0, 1.1, 18.3) v=0.0",
+          "(17.0, 1.1, 18.3) v=0.0"
+        ],
+        "ultima_quebra": "P07_pilar0 (impacto)"
+      },
+      "id": "T30",
+      "status": "PASS",
+      "titulo": "Terra × torre: rocha arremessada solta bloco(s) de pilar por impacto e o grafo derruba o bloco de cima"
+    },
+    {
+      "detalhes": {
+        "alvo": {
+          "dist": 4.50290727615356,
+          "jogador": "(-34.0, 0.020201, 68.0)",
+          "motivo": "",
+          "ok": true,
+          "ponto": "(-33.83014, 0.02, 63.5003)",
+          "ultimo": "arremessada a 24 m/s"
+        },
+        "cavidade_aberta_no_desprendimento": true,
+        "chao_intacto_na_antecipacao": true,
+        "congelada_no_desprendimento": true,
+        "dinamica_no_levantamento": true,
+        "espera_extra_pela_cavidade_quadros": 0,
+        "esperado": {
+          "anticipation": 6,
+          "detach": 7,
+          "rise": 10
+        },
+        "fx_eventos": [
+          "anticipation",
+          "detach",
+          "rise",
+          "hold",
+          "windup",
+          "launch",
+          "recovery",
+          "impact_ground"
+        ],
+        "fx_na_fase": {
+          "cracks": "anticipation",
+          "impacts": "recovery",
+          "mesh_shakes": "detach",
+          "rock_pebbles": "rise",
+          "telegraphs": "anticipation",
+          "trails": "recovery"
+        },
+        "pronta_ms": 366,
+        "pronta_ms_relogio_teste": 379,
+        "quadros_observados": {
+          "anticipation": 5,
+          "detach": 7,
+          "rise": 10
+        },
+        "quadros_por_fase": {
+          "anticipation": 5,
+          "detach": 7,
+          "rise": 10
+        },
+        "rocha_antes_do_desprendimento": false,
+        "sequencia": [
+          "anticipation",
+          "detach",
+          "rise",
+          "hold"
+        ]
+      },
+      "id": "T39",
+      "status": "PASS",
+      "titulo": "Terra em fases: antecipação (chão intacto) → desprendimento (rocha congelada, cavidade aberta) → levantamento → pronta em ≤ 400 ms"
+    },
+    {
+      "detalhes": {
+        "angulo_com_a_mira_graus": -1.48822020657885,
+        "clique_na_recuperacao_ignorado": true,
+        "fase_apos_lancar": "recovery",
+        "lancamento_ms": 436,
+        "limite_ms": 510,
+        "livre_apos_recuperacao": true,
+        "soltou_na_fase": "anticipation"
+      },
+      "id": "T40",
+      "status": "PASS",
+      "titulo": "Toque curto: soltar na antecipação guarda o arremesso, que sai ao ficar pronta na direção da mira do instante; recuperação bloqueia novo clique"
+    },
+    {
+      "detalhes": {
+        "a_ceu": {
+          "edicoes": 0,
+          "extraidas": 0,
+          "fase": "",
+          "motivo": "sem chão na mira",
+          "ok": true
+        },
+        "b_longe_9m": {
+          "edicoes": 0,
+          "extraidas": 0,
+          "fase": "",
+          "motivo": "longe demais (9.0 m > 7.0)",
+          "ok": true
+        },
+        "c_perto_1_5m": {
+          "edicoes": 0,
+          "extraidas": 0,
+          "fase": "",
+          "motivo": "perto demais (1.5 m < 2.5)",
+          "ok": true
+        },
+        "d_sobre_o_jogador": {
+          "edicoes": 0,
+          "extraidas": 0,
+          "fase": "",
+          "motivo": "overlaps_player",
+          "ok": true
+        }
+      },
+      "id": "T41",
+      "status": "PASS",
+      "titulo": "Alvo inválido (céu, longe, perto, sobre o jogador): nenhuma extração, nenhuma edição, evento 'invalid' com motivo"
+    },
+    {
+      "detalhes": {
+        "atraso_100ms_m": 6.17715358734131,
+        "balanco_amplitude_m": 0.0432745218276978,
+        "ms_ate_0_3m": 1214,
+        "sobressinal_m": 0.0,
+        "velocidade_depois": 1.0,
+        "velocidade_jogador_no_hold": 0.8
+      },
+      "id": "T42",
+      "status": "PASS",
+      "titulo": "Peso no hold: giro de 90° faz a rocha atrasar e assentar sem oscilar; balanço vertical; jogador mais lento só enquanto carrega"
+    },
+    {
+      "detalhes": {
+        "A_crateras": 1,
+        "A_ponto": "(-31.98711, 0.02, 54.99863)",
+        "A_sdf_no_ponto": 0.717184901237488,
+        "A_velocidade_no_chao": 23.5228519439697,
+        "B_arremessos": 1,
+        "B_crateras": 0,
+        "B_impactos_no_chao": [
+          "8.6 m/s"
+        ],
+        "B_pronta": true
+      },
+      "id": "T43",
+      "status": "PASS",
+      "titulo": "Impacto no chão a ≥ 12 m/s abre cratera real pela fila (uma por arremesso); arremesso lento não abre"
+    },
+    {
+      "detalhes": {
+        "clique_aceito": true,
+        "esperado": 9,
+        "fase_apos_clique": "anticipation",
+        "livre_antes": true,
+        "quadros_de_antecipacao": 8,
+        "resultado": "erguendo rocha",
+        "velocidade_jogador_no_hold": 0.5
+      },
+      "id": "T44",
+      "status": "PASS",
+      "titulo": "Tuning em uso: antecipação de 140 ms e velocidade 0,5 no hold mudam o que é medido"
+    },
+    {
+      "detalhes": {
+        "brush_unchanged": true,
+        "distance_min_max_m": [
+          3.0,
+          6.5
+        ],
+        "farthest_rock_m": 3.64456939697266,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 10.12,
+          "media": 6.9,
+          "min": 3.69,
+          "n": 1139,
+          "p95": 7.8,
+          "p99": 7.99
+        },
+        "height_min_max_m": [
+          1.8,
+          3.8
+        ],
+        "horizontal_m": 6.996018409729,
+        "launches": [
+          {
+            "origin_error_m": 0.0,
+            "speed": 23.3986511230469
+          }
+        ],
+        "lowered_m": 1.92228245735168,
+        "opposite_keys_neutral": true,
+        "raised_m": 1.72534775733948,
+        "release_without_teleport": true,
+        "teleport_error_m": 0.000255156541243196,
+        "wall_blocked": true,
+        "wall_distance_m": 5.0,
+        "wheel_step_m": 0.75
+      },
+      "id": "T59",
+      "status": "PASS",
+      "titulo": "Q/E e roda reposicionam uma rocha por física, respeitam Resource e obstáculo e mantêm o arremesso"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01261138916016,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01261138916016,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99407, 0.02, 63.50568)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01259517669678,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01259517669678,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99406, 0.02, 63.50569)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01430797576904,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01430797576904,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99519, 0.02, 63.50441)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01429748535156,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01429748535156,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99519, 0.02, 63.50442)",
+              "reason": ""
+            },
+            "ok": true
+          }
+        },
+        "slot": "p4a_lifecycle",
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T60",
+      "status": "PASS",
+      "titulo": "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais"
+    },
+    {
+      "detalhes": {
+        "callbacks_clean": true,
+        "capture_without_position_velocity_reset": true,
+        "controls": true,
+        "flight_speed_m_s": 23.9872207641602,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 11.93,
+          "media": 6.9,
+          "min": 1.78,
+          "n": 378,
+          "p95": 7.56,
+          "p99": 8.08
+        },
+        "mass_kg": 6973.17041015625,
+        "moved_m": 0.689273774623871,
+        "no_terrain_edit_or_new_body": true,
+        "one_new_impact": true,
+        "previous_flight_disconnected": true,
+        "recaptured_in_flight": true,
+        "reused_twice": true,
+        "same_body": true,
+        "teleport_error_m": 0.000609391659963876
+      },
+      "id": "T61",
+      "status": "PASS",
+      "titulo": "Mesma rocha e massa: captura por LMB, controles físicos, recaptura em voo e novo impacto sem callbacks duplicados"
+    },
+    {
+      "detalhes": {
+        "crate_not_earth": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        },
+        "distance_3d": {
+          "ok": true,
+          "reason": "rocha longe demais (máx. 7.0 m)"
+        },
+        "load": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "near_parked_rock": {
+          "awakened": true,
+          "budget_protected": true,
+          "minimum_distance": true,
+          "ok": true
+        },
+        "reset": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "save": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "select": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "tower_not_earth": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        }
+      },
+      "id": "T62",
+      "status": "PASS",
+      "titulo": "Reutilização respeita oclusão/tipo/alcance; acorda rocha estacionada e limpa propriedade em seleção/reset/save/load"
+    }
+  ],
+  "run_id": "53bb9fb4812b",
+  "testes_ids": [
+    "T1",
+    "T19",
+    "T20",
+    "T21",
+    "T22",
+    "T28",
+    "T29",
+    "T30",
+    "T39",
+    "T40",
+    "T41",
+    "T42",
+    "T43",
+    "T44",
+    "T59",
+    "T60",
+    "T61",
+    "T62"
+  ],
+  "testes_pass": 18,
+  "testes_total": 18,
+  "video_adapter": ""
+}
