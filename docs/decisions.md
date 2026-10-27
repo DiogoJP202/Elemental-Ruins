@@ -433,3 +433,63 @@ O clique captura origem e direção; a casca avança a 30 m/s até 10 m e decide
 
 ## D49. Integração do P3.6 (M4) e T26 em aberto
 T55 (interações cruzadas Água/Fogo/Ar) e T58 (limites de VFX sob estresse e ausência de vazamento após reset) entram no contrato `p36` (64 testes). Bateria completa: 64/64 em editor janela, export headless e export janela; editor headless 63/64 por falha do T26 (P2, save com torre caída: peça caiu 0,59 m). Isolado, o T26 falha 1 em 8 no mesmo HEAD; historicamente o pior deslocamento já chegava a 0,072 m. O critério de 0,1 m não foi relaxado e a causa não foi isolada; o gate final do P3.6 fica pendente dessa correção. Detalhes em docs/p36_elemental_polish.md.
+
+## D50. P3.6.1: salvar não troca o modo físico dos destroços
+O experimento B (freeze/thaw SEM salvar ou reconstruir terreno) reproduziu pico de 0,532618 m,
+com os apoios intactos. Os 36 corpos dormiam antes; a volta de Static para Dynamic os acordava.
+A peça P16 estava em equilíbrio precário sobre uma aresta e se reacomodou gradualmente; não
+foi necessário contato peça–peça nem novo collider. A hipótese anterior de perda de apoio
+na reconstrução não explica sozinha o problema. Não se atribui defeito ao solver Jolt.
+
+Salvar agora conserva o nó do terreno, mapas, malhas e colliders. Pausa-se somente o
+processamento do terreno para impedir novos pedidos; save_modified_blocks espera o update
+atual e agenda suas tarefas diretamente. Após o tracker, drenam-se streaming e geração
+(inclusive tarefas antigas de unload) até dois ticks consecutivos sem I/O. Só então o
+database_path fecha/copía/reabre a sessão, sem await nesse trecho. O updater global do Voxel
+Tools continua funcionando. O setter não reseta mapas e não é usado como barreira de workers.
+
+Nenhum corpo tem transform, sleeping, freeze, velocidade, atrito ou contatos alterados pelo
+save. Corpos ativos seguem a física normal; corpos dormindo não ganham um despertar artificial.
+Falha de flush/drenagem retorna false, restaura o process_mode anterior e conserva o mundo e
+stream. Não há colisores removidos para recuperar nem descongelamento sobre chão ausente.
+Os contadores são globais: outro terreno com I/O contínuo pode causar timeout seguro.
+Reset/load continuam recriando o terreno; cancelamento dos poderes no sinal de início é mantido.
+
+## D51. Publicação do slot com backup e rollback no Windows
+O rename do backend Windows da Godot ed1daf0bf remove um destino existente antes de mover.
+Por isso não tratamos rename(temp,slot) como substituição atômica: a cópia completa vai para
+temporário único; o slot anterior é movido para backup, depois o temporário é publicado sobre
+um nome ausente. Falha de publicação tenta restaurar o backup; se isso também falhar, o
+caminho recuperável fica em last_save.publication.recovery_file. O stream original é reaberto
+mesmo se a cópia/publicação falhar. Não é transação resistente a queda de energia/processo.
+Diagnóstico, comandos, repetições e resultado do gate em docs/p36_t26_stabilization.md.
+
+## D52. T26: comprovar a premissa de repouso antes de medir o efeito do save
+Após D50, uma série de 60 intervenções manteve 59 casos imóveis, mas uma torre já tombava
+antes do save: controle sem salvar de 0,512439 m e velocidade de 1,438 m/s na intervenção.
+O T26 original também reproduziu deslocamento de 0,206406 m com velocidade de 0,085586 m/s
+antes do save. Seu teste pontual de velocidade era feito dois segundos antes da intervenção
+e não detectava retomada de rotação/queda nesse intervalo. Essas falhas permanecem nos dados;
+não são convertidas retrospectivamente em passes.
+
+A preparação do T26 exige agora 60 ticks consecutivos de sono NATURAL, sem freeze, dentro
+dos mesmos 15 s de prazo, e confere cada um dos 120 ticks de controle anteriores ao save.
+Repouso que não se confirma gera FAIL sem retentativa nem uso de slot antigo. Não se escreve
+sleeping, velocidade ou transform. A posição de referência continua sendo a anterior ao save,
+há snapshot imediato e a medição continua 1,5 s após o retorno, estritamente < 0,1 m.
+O probe ampliado também registra o pico em todos os primeiros 90 ticks e possui protocolo
+prospectivo NaturalRest explícito; mantém o protocolo antigo para reproduzir as falhas.
+Os testes de corpos ativos com gêmeo de controle, impulso e escavação são independentes:
+repouso no cenário do T26 não autoriza suprimir movimento físico normal durante o save.
+
+## D53. Validação do P3.6.1 em 27/10/2026
+Protocolo prospectivo NaturalRest: 30/30 processos independentes, oito ordens de colapso,
+zero falhas de preparação, zero mudanças de modo/sono/velocidades e pico de deslocamento
+0 m em cada repetição. P0–P3.6: 64/64 nos quatro modos, zero erros/avisos; T26 = 0 m;
+T27/T37 nas janelas abaixo dos limites originais de 20/33/50 ms. Persistência entre processos
+passou 2/2 em cada uma das quatro fases; sete casos reais de borda passaram. A pose isolada
+provou que wake-only e freeze/thaw produzem a mesma queda de 0,533 m (controle imóvel).
+Dados anteriores 59/60 e série legada interrompida 10/11 não são reclassificados; o CSV
+consolida 130 casos incluindo todos os FAIL. Aprovação dos protocolos corrigidos, sem
+relaxar tolerância ou deslocar a referência/observação pós-save. Máquina nova AMD, não
+comparação causal de desempenho. Detalhes e hashes em docs/p36_t26_stabilization.md.

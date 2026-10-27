@@ -1,0 +1,59 @@
+{
+  "commit": "657ccb38cfcc516d38474aca0d40eae390aadfe1",
+  "changes": [
+    " M scripts/main.gd",
+    " M scripts/world/terrain_save_files.gd",
+    " M scripts/world/terrain_service.gd",
+    "?? docs/evidence/p36/t26_stabilization/",
+    "?? scripts/dev/t26_physics_probe.gd",
+    "?? tools/run_p361_tests.ps1",
+    "?? tools/run_t26_probe.ps1",
+    "?? tools/run_t26_reference.ps1",
+    "?? tools/spike_t26_save.gd",
+    "?? tools/spike_t26_wake.gd"
+  ],
+  "date": "2026-10-26T22:43:25.0491585-03:00",
+  "runtime": "C:\\Users\\diogo\\Tools\\Godot\\4.7.2-voxel1.7\\godot.windows.editor.x86_64.exe",
+  "repetitions": 30,
+  "scenarios": [
+    "C"
+  ],
+  "layouts": [
+    "tower",
+    "stack"
+  ],
+  "mode": "headless",
+  "restore_sleeping_and_velocities_in_B": false,
+  "contacts_enabled": false,
+  "pause_frames": 15,
+  "trace_enabled": true,
+  "compress_traces": true,
+  "keep_raw_traces": false,
+  "independent_process_per_intervention": true,
+  "source_hashes": [
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\main.gd",
+      "Hash": "9B5B47D4B587799F5F1F1C61122259114B1435C6DE0547E964CB87EBDB9DF4B7"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\structures\\structure_service.gd",
+      "Hash": "EEBA26E97125C8CA605E035D7F9663EE933A675ADE6CE4FA8F3BBA771508BB82"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_service.gd",
+      "Hash": "91DE32CC51E7088CDAA1E20F468642B088ABA9F23DFD04E973DCCBF109DD8C94"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_save_files.gd",
+      "Hash": "6C97AE439DB7FF83619A9B4753D13B1A0A38004DDB6F0AA06ECAA2428EAB834C"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\t26_physics_probe.gd",
+      "Hash": "43587DA088B93C2EFDDC3CFA228AEF128FF9A0ADB8E21F4C1051882CF1C4BBD2"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\tools\\run_t26_probe.ps1",
+      "Hash": "A8626C7D9585650F59A49667141E3EF5343BCF7738B2EAEC3CF9F2F00B93B4AE"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "commit": "657ccb38cfcc516d38474aca0d40eae390aadfe1",
+  "changes": [
+    " M scripts/main.gd",
+    "?? docs/evidence/p36/t26_stabilization/",
+    "?? scripts/dev/t26_physics_probe.gd",
+    "?? tools/run_t26_probe.ps1",
+    "?? tools/run_t26_reference.ps1"
+  ],
+  "date": "2026-10-26T22:31:09.2993956-03:00",
+  "runtime": "C:\\Users\\diogo\\Tools\\Godot\\4.7.2-voxel1.7\\godot.windows.editor.x86_64.exe",
+  "repetitions": 2,
+  "scenarios": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "layouts": [
+    "tower",
+    "stack"
+  ],
+  "mode": "headless",
+  "restore_sleeping_and_velocities_in_B": false,
+  "contacts_enabled": false,
+  "pause_frames": 15,
+  "independent_process_per_intervention": true,
+  "source_hashes": [
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\main.gd",
+      "Hash": "716E5B218A49960B4BFD4D02A62A97992776348965D61CEDA32DE9665005CF6D"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\structures\\structure_service.gd",
+      "Hash": "EEBA26E97125C8CA605E035D7F9663EE933A675ADE6CE4FA8F3BBA771508BB82"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\t26_physics_probe.gd",
+      "Hash": "991731C22D86980FDC7BF2FEA0A58D49E606B4239DAB017808D459D3FE26F876"
+    }
+  ]
+}

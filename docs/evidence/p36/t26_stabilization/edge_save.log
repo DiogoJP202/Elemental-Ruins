@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+
+----- stderr -----
+SCRIPT ERROR: Parse Error: Cannot infer the type of "preserved" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tools/spike_t26_save.gd:152)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "ready_after_failure" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tools/spike_t26_save.gd:261)
+ERROR: Failed to load script "res://tools/spike_t26_save.gd" with error "Parse error".
+   at: ResourceFormatLoaderGDScript::load (modules\gdscript\gdscript_resource_format.cpp:46)

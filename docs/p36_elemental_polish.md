@@ -4,6 +4,11 @@ Concluído em 26/10/2026 na worktree `charming-mendel-4b469a`, branch `claude/ch
 na `main`. Nenhuma habilidade nova; Terra (P3.5) intacta. Avaliação humana de controles, legibilidade e game feel:
 **NÃO TESTADO**.
 
+**Continuação P3.6.1:** a investigação do T26 e a correção do salvamento estão em
+[`p36_t26_stabilization.md`](p36_t26_stabilization.md). Os resultados abaixo preservam a
+rodada original de `657ccb3`. A validação posterior passou: 30/30 torres no protocolo
+prospectivo, 64/64 nos quatro modos, zero erros/avisos e limites de desempenho preservados.
+
 ## Commits
 | Etapa | Commit | Conteúdo |
 |---|---|---|
@@ -13,7 +18,7 @@ na `main`. Nenhuma habilidade nova; Terra (P3.5) intacta. Avaliação humana de 
 | M1 Água | `1670325` | Pacotes, pressão, respingos com visada (`docs/p36_water_polish.md`) |
 | M2 Fogo | `33d26ba` | Antecipação, varredura recortada, impacto único, propagação com visada (`docs/p36_fire_polish.md`) |
 | M3 Ar | `6167e97` | Casca de pressão, exposição, resposta por massa (`docs/p36_air_polish.md`) |
-| M4 | este commit | T55/T58, bateria completa nos quatro modos, este relatório, README |
+| M4 | `657ccb3` | T55/T58, bateria completa nos quatro modos, este relatório, README |
 
 ## Arquitetura resultante
 ```
@@ -99,7 +104,7 @@ Amostras sem falha não provam correção universal.
 - Campos legados mantidos: `exploded` (= impactos), `last_gust.hit/blocked`; `body_ticks/terrain_ticks` da Água contam
   contatos de pacotes.
 
-## Situação
+## Situação na entrega original (`657ccb3`)
 - **Implementado e testado (automação):** tudo listado acima; T46–T58 PASS nos quatro modos. A bateria completa passou em 3 de 4 modos; o editor headless falhou no T26 (intermitente, pré-P3.6 em origem, causa não isolada).
 - **Implementado e não testado por pessoas:** controles, legibilidade das antecipações/frentes, game feel e leitura em PvP.
   A antecipação do Fogo fica atrás do capsule na câmera do próprio jogador (retorno local pelo HUD); para observadores ela é
@@ -115,5 +120,35 @@ Amostras sem falha não provam correção universal.
 - Exposição do Ar por 5 amostras e visibilidade centro→centro do calor são aproximações conservadoras.
 
 ## Próximo passo recomendado
-Investigar e corrigir a causa do T26 intermitente (apoio entre peças ao descongelar depois do save) e repetir a bateria nos
-quatro modos; em seguida, playtest humano pelo roteiro do P3.6 no README.
+O bloqueio técnico foi tratado no P3.6.1; a hipótese de apoio entre peças foi substituída pelo diagnóstico abaixo.
+Próximo passo: playtest humano pelo roteiro do P3.6 no README, sem iniciar P4 automaticamente.
+
+## P3.6.1 — bloqueio T26 tratado em 27/10/2026
+
+Freeze/thaw sem reconstruir o terreno reproduziu 0,533 m de deslocamento. Na pose isolada,
+somente acordar a peça produziu a mesma queda: o save trocava Static→Dynamic e acordava
+destroços em equilíbrio precário. O salvamento mantém agora terreno/colliders/corpos vivos;
+fecha/copia/reabre somente o SQLite após flush e drenagem de I/O. Nenhum poder, tuning ou VFX foi alterado.
+
+Havia também uma pré-condição inválida no T26: a velocidade era consultada antes de um
+controle de dois segundos e não era revalidada. Um ensaio posterior começou a 1,438 m/s e
+continuou caindo; outro T26 legado começou a 0,086 m/s. A preparação exige agora sono natural
+sustentado e controle estável, sem forçar o corpo a parar. O limite de 0,1 m, a referência
+antes do save e a medição após 1,5 s permanecem. Ensaios reprovados continuam preservados.
+
+| Modo | Testes | Erros/avisos | T26 m | T27 p95/p99/máx ms | T37 p95/p99/máx ms |
+|---|---:|---:|---:|---|---|
+| Editor headless | 64/64 | 0/0 | 0 | sem render | sem render |
+| Editor janela | 64/64 | 0/0 | 0 | 17,50/18,18/19,59 | 18,57/19,60/26,42 |
+| Export headless | 64/64 | 0/0 | 0 | sem render | sem render |
+| Export janela | 64/64 | 0/0 | 0 | 17,42/17,94/18,61 | 18,46/18,98/26,66 |
+
+Além da bateria: 30/30 torres com oito ordens de colapso e pico por tick = 0 m; 30/30 pilhas
+da série inicial passaram, enquanto essa série conjunta mantém seu FAIL 59/60. Sete testes
+de borda reais passaram, incluindo conservação de momento e falhas/timeouts de I/O; as
+quatro fases de persistência entre processos passaram 2/2 cada. Nova máquina: Ryzen 7 5825U
+e AMD Radeon, 1600×900; não comparar desempenho causalmente com a rodada i5/Iris Xe.
+
+**Gate técnico do P3.6 cumprido após P3.6.1**, pelos protocolos corrigidos. Diagnóstico completo,
+limitações, CSV com máximos individuais, dados reprovados e comandos em
+[`p36_t26_stabilization.md`](p36_t26_stabilization.md). Playtest humano continua NÃO TESTADO.

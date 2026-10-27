@@ -75,7 +75,7 @@ de fluidos.
 | **J** | abrir túnel de 10 m na direção horizontal da câmera, na altura da mira |
 | **K** | erguer rampa de 8 m que sobe 3 m na direção da câmera, com o material atual |
 | **M** | trocar o material do H/K: solo → areia → pedra |
-| **F5** | salvar as edições do terreno no slot `slot1` (o terreno é recarregado do disco; ~0,5 s congelado) |
+| **F5** | salvar as edições do terreno no slot `slot1`, mantendo terreno, colisores e estados dos corpos vivos (P3.6.1) |
 | **F9** | carregar o slot `slot1` (jogador volta ao spawn; caixas somem) |
 | **Z** | **reset do mundo**: recria o terreno do gerador, apaga todas as edições, devolve o jogador ao spawn e remove as caixas (o slot salvo fica intacto) |
 | Roda do mouse ou `[` `]` | raio do pincel (0,5–6 m; padrão 2 m) |
@@ -318,4 +318,9 @@ P3.5: `Ability.fx_event(kind, data)` (ganchos de FX/áudio); `EarthLiftThrow.pha
 
 ## P3.6 — polimento incremental
 M0–M4 concluídos (relatório final em docs/p36_elemental_polish.md); baseline corrigido em docs/p36_baseline_corrected.md, arquitetura em docs/p36_m0.md, Água em docs/p36_water_polish.md, Fogo em docs/p36_fire_polish.md e Ar em docs/p36_air_polish.md (parâmetros em data/abilities/*_tuning.tres; testes por marco: `tools/run_p36_tests.ps1 -Stage m2|m3 -Window`). Capturas e automação não são playtest humano.
+
+P3.6.1: save preserva o mundo físico e o T26 confirma repouso natural antes da medição.
+30/30 repetições prospectivas (pico 0 m), bateria 64/64 nos quatro modos, zero erros/avisos
+e limites de desempenho preservados. Diagnóstico, falhas exploratórias mantidas e comandos
+em [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md).
 

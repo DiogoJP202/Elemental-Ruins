@@ -1,0 +1,511 @@
+{
+  "generated_utc": "2026-10-27T10:20:39.3136356Z",
+  "evidence_directory": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization",
+  "overall_status": "PASS",
+  "passed": true,
+  "overall_scope": "four full modes + four persistence phases + prospective natural-rest 30 + E1-E7 + wake diagnostic validity",
+  "historical_failures_are_retained": true,
+  "historical_or_interrupted_series_are_not_reclassified_by_later_passes": true,
+  "thresholds": {
+    "displacement_m": 0.1,
+    "window_frame_ms": {
+      "p95": 20,
+      "p99": 33,
+      "max": 50
+    }
+  },
+  "repetition_rows": 130,
+  "series": [
+    {
+      "name": "causal_v1",
+      "role": "historical causal groups; failures retained",
+      "status": "COMPLETE",
+      "expected": 16,
+      "observed": 16,
+      "passed": 15,
+      "failed": 1,
+      "other": 0,
+      "max_endpoint_m": 0.523726582527161,
+      "max_peak_m": 0.532618403434753,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    },
+    {
+      "name": "contacts",
+      "role": "historical contacts diagnostic",
+      "status": "COMPLETE",
+      "expected": 2,
+      "observed": 2,
+      "passed": 2,
+      "failed": 0,
+      "other": 0,
+      "max_endpoint_m": 0.0209669917821884,
+      "max_peak_m": 0.0214938279241323,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\contacts\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    },
+    {
+      "name": "post_fix_30",
+      "role": "first expanded series; includes its FAIL",
+      "status": "COMPLETE",
+      "expected": 60,
+      "observed": 60,
+      "passed": 59,
+      "failed": 1,
+      "other": 0,
+      "max_endpoint_m": 2.13132333755493,
+      "max_peak_m": 2.13629412651062,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\post_fix_30\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    },
+    {
+      "name": "stationary_post_fix_30",
+      "role": "prospective natural-rest series; required",
+      "status": "COMPLETE",
+      "expected": 30,
+      "observed": 30,
+      "passed": 30,
+      "failed": 0,
+      "other": 0,
+      "max_endpoint_m": 0.0,
+      "max_peak_m": 0.0,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\stationary_post_fix_30\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    },
+    {
+      "name": "baseline_t26",
+      "role": "baseline reference",
+      "status": "COMPLETE",
+      "expected": 8,
+      "observed": 8,
+      "passed": 8,
+      "failed": 0,
+      "other": 0,
+      "max_endpoint_m": 0.0741436332464218,
+      "max_peak_m": null,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\baseline_t26\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    },
+    {
+      "name": "candidate_smoke",
+      "role": "candidate smoke",
+      "status": "COMPLETE",
+      "expected": 2,
+      "observed": 2,
+      "passed": 2,
+      "failed": 0,
+      "other": 0,
+      "max_endpoint_m": 0.0,
+      "max_peak_m": null,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\candidate_smoke\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    },
+    {
+      "name": "original_post_fix_30",
+      "role": "interrupted legacy protocol; partial stays partial",
+      "status": "PARTIAL_OR_PENDING",
+      "expected": 30,
+      "observed": 11,
+      "passed": 10,
+      "failed": 1,
+      "other": 0,
+      "max_endpoint_m": 0.206406086683273,
+      "max_peak_m": null,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\original_post_fix_30\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    },
+    {
+      "name": "corrected_t26_smoke",
+      "role": "natural-rest protocol smoke",
+      "status": "COMPLETE",
+      "expected": 1,
+      "observed": 1,
+      "passed": 1,
+      "failed": 0,
+      "other": 0,
+      "max_endpoint_m": 0.0,
+      "max_peak_m": null,
+      "source": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\corrected_t26_smoke\\summary.json",
+      "read_state": "AVAILABLE",
+      "reason": ""
+    }
+  ],
+  "prospective_natural_rest_status": "PASS",
+  "full_gate_status": "PASS",
+  "full_modes": [
+    {
+      "name": "editor_headless",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "49ac129eedb7",
+      "report_date": "2026-10-27T07:02:00",
+      "complete": true,
+      "expected_count": 64,
+      "total": 64,
+      "passed_count": 64,
+      "individual_count": 64,
+      "t26_max_m": 0.0,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [
+        {
+          "id": "T27",
+          "status": "PASS",
+          "criterio_fps_aplicado": false,
+          "p95_ms": 8.12,
+          "p99_ms": 8.43,
+          "max_ms": 9.76,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": null,
+          "flag_matches_mode": true,
+          "reason": ""
+        },
+        {
+          "id": "T37",
+          "status": "PASS",
+          "criterio_fps_aplicado": false,
+          "p95_ms": 8.0,
+          "p99_ms": 9.63,
+          "max_ms": 13.53,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": null,
+          "flag_matches_mode": true,
+          "reason": ""
+        }
+      ],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\editor_headless.json"
+    },
+    {
+      "name": "editor_window",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "ea3210293a2f",
+      "report_date": "2026-10-27T07:08:04",
+      "complete": true,
+      "expected_count": 64,
+      "total": 64,
+      "passed_count": 64,
+      "individual_count": 64,
+      "t26_max_m": 0.0,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [
+        {
+          "id": "T27",
+          "status": "PASS",
+          "criterio_fps_aplicado": true,
+          "p95_ms": 17.5,
+          "p99_ms": 18.18,
+          "max_ms": 19.59,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": true,
+          "flag_matches_mode": true,
+          "reason": ""
+        },
+        {
+          "id": "T37",
+          "status": "PASS",
+          "criterio_fps_aplicado": true,
+          "p95_ms": 18.57,
+          "p99_ms": 19.6,
+          "max_ms": 26.42,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": true,
+          "flag_matches_mode": true,
+          "reason": ""
+        }
+      ],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\editor_window.json"
+    },
+    {
+      "name": "export_headless",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "36ba5f648044",
+      "report_date": "2026-10-27T07:13:43",
+      "complete": true,
+      "expected_count": 64,
+      "total": 64,
+      "passed_count": 64,
+      "individual_count": 64,
+      "t26_max_m": 0.0,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [
+        {
+          "id": "T27",
+          "status": "PASS",
+          "criterio_fps_aplicado": false,
+          "p95_ms": 7.56,
+          "p99_ms": 7.71,
+          "max_ms": 8.65,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": null,
+          "flag_matches_mode": true,
+          "reason": ""
+        },
+        {
+          "id": "T37",
+          "status": "PASS",
+          "criterio_fps_aplicado": false,
+          "p95_ms": 7.97,
+          "p99_ms": 9.51,
+          "max_ms": 12.85,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": null,
+          "flag_matches_mode": true,
+          "reason": ""
+        }
+      ],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\export_headless.json"
+    },
+    {
+      "name": "export_window",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "e615f9ef742a",
+      "report_date": "2026-10-27T07:19:41",
+      "complete": true,
+      "expected_count": 64,
+      "total": 64,
+      "passed_count": 64,
+      "individual_count": 64,
+      "t26_max_m": 0.0,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [
+        {
+          "id": "T27",
+          "status": "PASS",
+          "criterio_fps_aplicado": true,
+          "p95_ms": 17.42,
+          "p99_ms": 17.94,
+          "max_ms": 18.61,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": true,
+          "flag_matches_mode": true,
+          "reason": ""
+        },
+        {
+          "id": "T37",
+          "status": "PASS",
+          "criterio_fps_aplicado": true,
+          "p95_ms": 18.46,
+          "p99_ms": 18.98,
+          "max_ms": 26.66,
+          "limits_ms": {
+            "p95": 20.0,
+            "p99": 33.0,
+            "max": 50.0
+          },
+          "within_window_limits": true,
+          "flag_matches_mode": true,
+          "reason": ""
+        }
+      ],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\export_window.json"
+    }
+  ],
+  "persistence": [
+    {
+      "name": "editor_persist_write",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "285fa29f733f",
+      "report_date": "2026-10-27T07:19:48",
+      "complete": true,
+      "expected_count": 2,
+      "total": 2,
+      "passed_count": 2,
+      "individual_count": 2,
+      "t26_max_m": null,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\editor_persist_write.json"
+    },
+    {
+      "name": "editor_persist_read",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "d58463afad52",
+      "report_date": "2026-10-27T07:19:54",
+      "complete": true,
+      "expected_count": 2,
+      "total": 2,
+      "passed_count": 2,
+      "individual_count": 2,
+      "t26_max_m": null,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\editor_persist_read.json"
+    },
+    {
+      "name": "export_persist_write",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "ad3c826488a9",
+      "report_date": "2026-10-27T07:20:00",
+      "complete": true,
+      "expected_count": 2,
+      "total": 2,
+      "passed_count": 2,
+      "individual_count": 2,
+      "t26_max_m": null,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\export_persist_write.json"
+    },
+    {
+      "name": "export_persist_read",
+      "status": "PASS",
+      "reason": "",
+      "run_id": "201423c75f09",
+      "report_date": "2026-10-27T07:20:05",
+      "complete": true,
+      "expected_count": 2,
+      "total": 2,
+      "passed_count": 2,
+      "individual_count": 2,
+      "t26_max_m": null,
+      "errors": 0,
+      "warnings": 0,
+      "log_errors": 0,
+      "log_warnings": 0,
+      "runner_exit_code": 0,
+      "contract_validation": "",
+      "freshness_validation": "owned by runner Invoke-SelftestStep(t0, run_id)",
+      "benchmarks": [],
+      "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\full\\export_persist_read.json"
+    }
+  ],
+  "edge_cases": {
+    "status": "PASS",
+    "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\edge_save_7.json",
+    "total": 7,
+    "failed": 0,
+    "log_errors": 0,
+    "log_warnings": 0,
+    "ids": [
+      "E1",
+      "E2",
+      "E3",
+      "E4",
+      "E5",
+      "E6",
+      "E7"
+    ]
+  },
+  "wake_diagnostic": {
+    "status": "PASS",
+    "role": "diagnostic experiment, not a gameplay gate",
+    "report": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\wake_pose_final.json",
+    "experiment_valid": true,
+    "hypothesis_supported": true,
+    "errors_warnings": {
+      "errors": 0,
+      "samples": [],
+      "warnings": 0
+    },
+    "cases": [
+      {
+        "intervention": "control",
+        "initial_state_ok": true,
+        "elapsed_physics_frames": 90,
+        "final_shift_m": 0.0,
+        "peak_shift_m": 0.0,
+        "moved_over_t26_limit": false
+      },
+      {
+        "intervention": "wake",
+        "initial_state_ok": true,
+        "elapsed_physics_frames": 90,
+        "final_shift_m": 0.523893654346466,
+        "peak_shift_m": 0.532663524150848,
+        "moved_over_t26_limit": true
+      },
+      {
+        "intervention": "freeze_thaw",
+        "initial_state_ok": true,
+        "elapsed_physics_frames": 90,
+        "final_shift_m": 0.523893654346466,
+        "peak_shift_m": 0.532663524150848,
+        "moved_over_t26_limit": true
+      }
+    ]
+  },
+  "source_steps_state": "AVAILABLE",
+  "note": "Absent/in-progress outputs remain PENDING. Null CSV metrics were not measured in that source. Static report validation does not replace runner freshness validation."
+}

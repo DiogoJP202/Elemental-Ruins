@@ -1,0 +1,66 @@
+[
+  {
+    "group": "stack, A, False",
+    "runs": 2,
+    "pass": 2,
+    "max_shift_m": 0.0,
+    "max_peak_shift_m": 0.0,
+    "mean_shift_m": 0.0
+  },
+  {
+    "group": "stack, B, False",
+    "runs": 2,
+    "pass": 2,
+    "max_shift_m": 0.00218990398570895,
+    "max_peak_shift_m": 0.00299371755681932,
+    "mean_shift_m": 0.00218990398570895
+  },
+  {
+    "group": "stack, C, False",
+    "runs": 2,
+    "pass": 2,
+    "max_shift_m": 0.00274377851746976,
+    "max_peak_shift_m": 0.00393652869388461,
+    "mean_shift_m": 0.0024637985043227647
+  },
+  {
+    "group": "stack, D, False",
+    "runs": 2,
+    "pass": 2,
+    "max_shift_m": 0.0,
+    "max_peak_shift_m": 0.0,
+    "mean_shift_m": 0.0
+  },
+  {
+    "group": "tower, A, False",
+    "runs": 2,
+    "pass": 2,
+    "max_shift_m": 0.0,
+    "max_peak_shift_m": 0.0,
+    "mean_shift_m": 0.0
+  },
+  {
+    "group": "tower, B, False",
+    "runs": 2,
+    "pass": 1,
+    "max_shift_m": 0.523726582527161,
+    "max_peak_shift_m": 0.532618403434753,
+    "mean_shift_m": 0.2665296704508366
+  },
+  {
+    "group": "tower, C, False",
+    "runs": 2,
+    "pass": 2,
+    "max_shift_m": 0.0135644376277924,
+    "max_peak_shift_m": 0.0135677810758352,
+    "mean_shift_m": 0.00928208511322739
+  },
+  {
+    "group": "tower, D, False",
+    "runs": 2,
+    "pass": 2,
+    "max_shift_m": 0.0,
+    "max_peak_shift_m": 0.0,
+    "mean_shift_m": 0.0
+  }
+]

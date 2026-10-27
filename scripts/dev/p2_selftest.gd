@@ -154,8 +154,9 @@ func _t25_collapse_reset_cycles() -> void:
 
 func _t26_save_load_structures() -> void:
 	const SLOT := "selftest_p2"
+	const TITLE := "Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não"
 	var details := {}
-	# A) Torre derrubada; salvar congela as peças soltas durante a recarga do terreno e as devolve.
+	# A) Torre derrubada e naturalmente parada antes de comparar o efeito do save.
 	await main.request_world_reset()
 	await _go_to_tower()
 	for corner in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
@@ -163,20 +164,34 @@ func _t26_save_load_structures() -> void:
 	await _wait_structures_idle(5.0)
 	await _seconds(4.0)
 	var pieces := structures.get_pieces()
-	# Só compara posições com a cena parada: 4 s depois do colapso total ainda havia peça
-	# deslizando a 0,56 m/s (medido), e o deslocamento seria do assentamento, não do save.
-	var settled := await _wait_until(func(): return pieces.all(func(p): return p.freeze or p.linear_velocity.length() < 0.05), 15.0)
-	# Controle: quanto as peças ainda andam sozinhas (sem save) num intervalo de 2 s.
-	var ctrl0 := pieces.map(func(p): return p.global_position)
-	await _seconds(2.0)
-	var ctrl_shift := 0.0
-	for i in pieces.size():
-		ctrl_shift = maxf(ctrl_shift, pieces[i].global_position.distance_to(ctrl0[i]))
+	# Uma velocidade linear pequena em um instante não prova repouso: o corpo pode
+	# estar girando/tombando e acelerar durante os 2 s de controle (P3.6.1, C024).
+	# Não forçamos sleeping, velocidades, freeze ou transform. O prazo original de
+	# 15 s vale para obter 60 ticks consecutivos de sono NATURAL; depois o controle
+	# de 2 s precisa permanecer parado. Controle inválido falha, sem nova tentativa.
+	var rest := await _t26_wait_natural_rest(pieces, 15.0, 60)
+	var control := {"ok": false, "reason": "rest_not_reached", "endpoint_shift_m": 0.0}
+	if rest.ok:
+		control = await _t26_observe_rest(pieces, 2.0)
+	var settled: bool = rest.ok and control.ok
+	if not settled:
+		var reason := "natural_rest_timeout" if not rest.ok else "control_not_at_rest"
+		details["A_salvar_com_torre_caida"] = {"salvo": false, "cena_parada_antes": false,
+			"erro": reason, "repouso_natural": rest, "controle_fisico_2s": control, "ok": false}
+		details["B_carregar_slot_escavado"] = {"executado": false, "motivo": reason}
+		details["C_carregar_slot_sem_escavacao"] = {"executado": false, "motivo": reason}
+		_record("T26", TITLE, false, details)
+		await main.request_world_reset()
+		return
+	var ctrl_shift: float = control.endpoint_shift_m
 	var before := pieces.map(func(p): return p.global_position)
 	var vel_before := pieces.map(func(p): return p.linear_velocity.length())
+	var physical_before := _t26_rest_sample(pieces)
 	var ok_save: bool = await main.request_world_save(SLOT)
 	var right_after := pieces.map(func(p): return p.global_position)
+	var physical_immediate := _t26_rest_sample(pieces)
 	await _seconds(1.5)
+	var physical_final := _t26_rest_sample(pieces)
 	var max_shift := 0.0
 	var worst := {}
 	for i in pieces.size():
@@ -190,6 +205,8 @@ func _t26_save_load_structures() -> void:
 	var a_ok: bool = settled and ok_save and max_shift < 0.1 and still_frozen == 0 and structures.released_count() == 36
 	details["A_salvar_com_torre_caida"] = {"salvo": ok_save, "cena_parada_antes": settled, "maior_deslocamento_m": max_shift, "pior_peca": worst,
 		"controle_sem_save_2s_m": ctrl_shift, "salvar": svc.get_debug_stats().last_save, "espera_collider": main.last_thaw,
+		"repouso_natural": rest, "controle_fisico_2s": control, "fisica_antes": physical_before,
+		"fisica_logo_apos_save": physical_immediate, "fisica_depois_1_5s": physical_final,
 		"pecas_ainda_congeladas_pelo_save": still_frozen, "soltas": structures.released_count(), "ok": a_ok}
 
 	# B) Reset (torre de pé) → carregar o slot com o apoio escavado → a torre cai de novo.
@@ -216,9 +233,83 @@ func _t26_save_load_structures() -> void:
 			"stats": structures.get_stats(), "ok": c_ok}
 	else:
 		details["C_carregar_slot_sem_escavacao"] = {"erro": "slot %s ausente (o T14 não rodou)" % PERSIST_SLOT}
-	_record("T26", "Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não",
-		a_ok and b_ok and c_ok, details)
+	_record("T26", TITLE, a_ok and b_ok and c_ok, details)
 	await main.request_world_reset()
+
+
+## Somente leitura. Sono do servidor físico, peças soltas e nenhum freeze artificial.
+func _t26_rest_sample(pieces: Array[StructurePiece]) -> Dictionary:
+	var all_rest := pieces.size() == 36
+	var max_linear := 0.0
+	var max_angular := 0.0
+	var bodies: Array[Dictionary] = []
+	for piece: StructurePiece in pieces:
+		var state := PhysicsServer3D.body_get_direct_state(piece.get_rid())
+		if state == null:
+			all_rest = false
+			bodies.append({"peca": str(piece.name), "erro": "no_direct_state"})
+			continue
+		var linear := state.linear_velocity
+		var angular := state.angular_velocity
+		var speed := linear.length()
+		var spin := angular.length()
+		max_linear = maxf(max_linear, speed)
+		max_angular = maxf(max_angular, spin)
+		all_rest = all_rest and piece.released and not piece.freeze and state.sleeping \
+			and linear.is_finite() and angular.is_finite() and speed <= 0.000001 and spin <= 0.000001
+		var position := state.transform.origin
+		bodies.append({"peca": str(piece.name), "sleeping": state.sleeping, "freeze": piece.freeze,
+			"released": piece.released, "parked": str(piece.get_meta(DebrisBudget.PARKED_META, "")),
+			"posicao": [position.x, position.y, position.z], "velocidade": [linear.x, linear.y, linear.z],
+			"velocidade_angular": [angular.x, angular.y, angular.z], "speed_m_s": speed, "spin_rad_s": spin})
+	return {"at_rest": all_rest, "max_linear_m_s": max_linear, "max_angular_rad_s": max_angular,
+		"physics_frame": Engine.get_physics_frames(), "bodies": bodies}
+
+
+func _t26_wait_natural_rest(pieces: Array[StructurePiece], timeout_s: float, required_ticks: int) -> Dictionary:
+	var t0 := Time.get_ticks_msec()
+	var deadline := t0 + int(timeout_s * 1000.0)
+	var consecutive := 0
+	var longest := 0
+	var last := _t26_rest_sample(pieces)
+	while Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+		last = _t26_rest_sample(pieces)
+		consecutive = consecutive + 1 if last.at_rest else 0
+		longest = maxi(longest, consecutive)
+		if consecutive >= required_ticks:
+			return {"ok": true, "ms": Time.get_ticks_msec() - t0, "timeout_s": timeout_s,
+				"required_ticks": required_ticks, "consecutive_ticks": consecutive, "last": last}
+	return {"ok": false, "ms": Time.get_ticks_msec() - t0, "timeout_s": timeout_s,
+		"required_ticks": required_ticks, "consecutive_ticks": consecutive, "longest_streak_ticks": longest, "last": last}
+
+
+func _t26_observe_rest(pieces: Array[StructurePiece], duration_s: float) -> Dictionary:
+	var ticks := ceili(duration_s * Engine.physics_ticks_per_second)
+	var starts := pieces.map(func(p): return p.global_position)
+	var max_shift := 0.0
+	var endpoint_shift := 0.0
+	var max_linear := 0.0
+	var max_angular := 0.0
+	var violations := 0
+	var first_violation := {}
+	var last := _t26_rest_sample(pieces)
+	for tick in ticks:
+		await get_tree().physics_frame
+		last = _t26_rest_sample(pieces)
+		max_linear = maxf(max_linear, last.max_linear_m_s)
+		max_angular = maxf(max_angular, last.max_angular_rad_s)
+		if not last.at_rest:
+			violations += 1
+			if first_violation.is_empty():
+				first_violation = {"tick": tick + 1, "state": last}
+		endpoint_shift = 0.0
+		for i in pieces.size():
+			endpoint_shift = maxf(endpoint_shift, pieces[i].global_position.distance_to(starts[i]))
+		max_shift = maxf(max_shift, endpoint_shift)
+	return {"ok": violations == 0 and last.at_rest, "duration_s": duration_s, "physics_ticks": ticks,
+		"violation_ticks": violations, "first_violation": first_violation, "peak_shift_m": max_shift,
+		"endpoint_shift_m": endpoint_shift, "max_linear_m_s": max_linear, "max_angular_rad_s": max_angular, "last": last}
 
 
 # --- T23: extração de rocha ----------------------------------------------------------------
