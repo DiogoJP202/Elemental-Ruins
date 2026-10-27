@@ -10,7 +10,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
 **P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
 **P4B — checkpoint fechado e integrado à main (`266627d`) em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando").
-**P4C — fase atual:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. Playtest humano: **NÃO TESTADO**.
+**P4C — fase atual:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. Playtest com feedback positivo do usuário em 27/10/2026 ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário. Checkpoint de integração pendente.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -177,7 +177,7 @@ Os limites restringem o alvo da mola: a posição real pode atrasar ou apresenta
 4. Durante prévia do pilar, LMB não inicia extração. Durante o ciclo da rocha, RMB não cria pilar. Troca de elemento, perda de captura do mouse, input desabilitado, reset/save/load cancelam a prévia e o pedido ainda pendente, sem apagar edições já aplicadas.
 5. **F5/Z/F9** salva/remove/restaura o pilar pelo sistema existente. Ele permanece até escavar ou resetar; não há temporizador de desaparecimento. O material vem do chão mirado, independentemente do material do pincel **M**.
 
-Playtest humano do P4C: **NÃO TESTADO**.
+Playtest humano do P4C em 27/10/2026: feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário.
 
 O raio padrão de 2 m usa a mesma escala já validada pela coluna do laboratório. Com 1,1 m, a caixa escorregou do topo arredondado nos testes; os critérios de apoio foram mantidos.
 
@@ -217,7 +217,7 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 As [duas primeiras](docs/evidence/p4c/pillar_headless.json) [execuções headless](docs/evidence/p4c/pillar_recheck_headless.json) ficaram em 2/3 por a caixa escorregar do topo com raio 1,1 m, inclusive com 3 s de assentamento. Raio padrão ajustado para 2 m; mesmos critérios de apoio e sem mudança nos limites de desempenho.
 
-Não executados nesta fatia: bateria integral de 70 IDs nos quatro modos, persistência entre processos e playtest humano. O gate de integração fica para depois do playtest. Para repetir os testes novos, usar `--p36-selftest --only=T63,T64`; T1 é obrigatório e incluído automaticamente. Reutilizar `Invoke-SelftestStep` com pasta/relatório novos para preservar evidências.
+Não executados nesta fatia: bateria integral de 70 IDs nos quatro modos e persistência entre processos. O playtest recebeu feedback positivo do usuário depois dessa validação; o próximo passo é o checkpoint de integração. O campo de playtest no ambiente de teste preserva o estado histórico da execução automatizada. Para repetir os testes novos, usar `--p36-selftest --only=T63,T64`; T1 é obrigatório e incluído automaticamente. Reutilizar `Invoke-SelftestStep` com pasta/relatório novos para preservar evidências.
 
 ### P4B — validação direcionada e checkpoint de integração
 
