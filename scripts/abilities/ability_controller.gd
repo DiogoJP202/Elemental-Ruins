@@ -2,8 +2,8 @@ class_name AbilityController
 extends Node
 ## Poderes elementais (P3): 1–4 escolhem Terra / Água / Fogo / Ar e o LMB usa o poder do
 ## elemento (segurar ou tocar, conforme o poder). Um poder por elemento (roadmap: no máximo 4).
-## Modo Criativo: recurso infinito e sem recarga. Nada age enquanto o terreno é recriado
-## (reset/salvar/carregar) nem com o input do jogador desligado.
+## Modo Criativo: recurso infinito e sem recarga. Reset/salvar/carregar cancelam poderes;
+## salvar preserva a física viva. Não aceita comandos com o input do jogador desligado.
 
 signal element_changed(element: StringName)
 signal ability_used(ability_id: StringName, phase: String)
@@ -104,6 +104,30 @@ func next_event_context() -> Dictionary:
 		"world_generation": terrain_service.get_world_generation(), "tick": Engine.get_physics_frames()}
 	_next_event_id += 1
 	return context
+
+
+## A roda é consumida antes de qualquer _unhandled_input do pincel, independentemente
+## da ordem dos nós. Teclas [ ] continuam chegando ao TerrainEditController.
+func _input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton or not event.pressed or not can_manipulate_earth():
+		return
+	var step := 0.0
+	if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		step = -1.0
+	elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		step = 1.0
+	else:
+		return
+	var earth := current_ability() as EarthLiftThrow
+	earth.adjust_hold_distance(step * event.factor * earth.tuning.hold_distance_step)
+	get_viewport().set_input_as_handled()
+
+
+func can_manipulate_earth() -> bool:
+	if not holding or not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
+		return false
+	var earth := current_ability() as EarthLiftThrow
+	return earth != null and earth.can_manipulate()
 
 
 func _unhandled_input(event: InputEvent) -> void:

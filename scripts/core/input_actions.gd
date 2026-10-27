@@ -1,10 +1,10 @@
 extends Node
-## Registra as ações de input do protótipo (P0/P1) em um único lugar.
+## Registra as ações de input do protótipo em um único lugar.
 ##
 ## Usa physical_keycode (posição física da tecla), então WASD/G/H/J/K/N/M/Z/B ficam
 ## no mesmo lugar em teclados US e ABNT2. Idempotente: não duplica eventos se a
 ## ação já existir (por exemplo, se alguém a definir depois no editor).
-## Atalhos são provisórios (CLAUDE.md) e não são o sistema de 4 elementos (sem 1–4).
+## Inclui elementos e manipulação contextual da Terra (P4A).
 
 const KEY_ACTIONS := {
 	&"move_forward": [KEY_W],
@@ -21,6 +21,8 @@ const KEY_ACTIONS := {
 	&"brush_cycle_material": [KEY_M],
 	&"terrain_extract": [KEY_R],
 	&"debug_push": [KEY_T],
+	&"earth_lower": [KEY_Q],
+	&"earth_raise": [KEY_E],
 	# P3: elementos (GDD §4: 1 2 3 4 = Terra / Água / Fogo / Ar).
 	&"element_earth": [KEY_1],
 	&"element_water": [KEY_2],
