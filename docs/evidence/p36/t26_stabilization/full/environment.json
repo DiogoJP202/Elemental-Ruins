@@ -1,0 +1,315 @@
+{
+  "commit": "657ccb38cfcc516d38474aca0d40eae390aadfe1",
+  "changes": [
+    " M .gitignore",
+    " M README.md",
+    " M docs/decisions.md",
+    " M docs/p36_elemental_polish.md",
+    " M scripts/dev/p2_selftest.gd",
+    " M scripts/main.gd",
+    " M scripts/world/terrain_save_files.gd",
+    " M scripts/world/terrain_service.gd",
+    "?? docs/evidence/p36/t26_stabilization/",
+    "?? docs/p36_t26_stabilization.md",
+    "?? scripts/dev/t26_physics_probe.gd",
+    "?? tools/run_p361_tests.ps1",
+    "?? tools/run_t26_probe.ps1",
+    "?? tools/run_t26_reference.ps1",
+    "?? tools/spike_t26_save.gd",
+    "?? tools/spike_t26_wake.gd"
+  ],
+  "date": "2026-10-27T06:56:19.0654122-03:00",
+  "expected_ids": [
+    "T1",
+    "T0",
+    "T1b",
+    "T2",
+    "T3a",
+    "T3b",
+    "T4",
+    "T5",
+    "T5b",
+    "T6",
+    "T7",
+    "T7b",
+    "T8",
+    "T8b",
+    "T9",
+    "T10",
+    "T11",
+    "T12",
+    "T13",
+    "T14",
+    "T15",
+    "T16",
+    "T17",
+    "T18",
+    "T19",
+    "T20",
+    "T21",
+    "T22",
+    "T23",
+    "T24",
+    "T25",
+    "T26",
+    "T27",
+    "T38",
+    "T28",
+    "T29",
+    "T30",
+    "T31",
+    "T32",
+    "T33",
+    "T34",
+    "T35",
+    "T36",
+    "T37",
+    "T39",
+    "T40",
+    "T41",
+    "T42",
+    "T43",
+    "T44",
+    "T45",
+    "T46",
+    "T47",
+    "T48",
+    "T49",
+    "T50",
+    "T51",
+    "T52",
+    "T53",
+    "T54",
+    "T56",
+    "T55",
+    "T58",
+    "T57"
+  ],
+  "runtime": "C:\\Users\\diogo\\Tools\\Godot\\4.7.2-voxel1.7\\godot.windows.editor.x86_64.exe",
+  "template": "C:\\Users\\diogo\\Tools\\Godot\\4.7.2-voxel1.7\\godot.windows.template_release.x86_64.exe",
+  "cpu": "AMD Ryzen 7 5825U with Radeon Graphics         ",
+  "gpu": [
+    {
+      "Name": "AMD Radeon (TM) Graphics",
+      "DriverVersion": "31.0.21925.1001"
+    }
+  ],
+  "resolution": "1600x900",
+  "renderer": "Forward+",
+  "physics": "Jolt Physics",
+  "frame_gates_ms": {
+    "p99": 33,
+    "max": 50,
+    "p95": 20
+  },
+  "source_hashes": [
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\main.gd",
+      "Hash": "9B5B47D4B587799F5F1F1C61122259114B1435C6DE0547E964CB87EBDB9DF4B7"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\ability_controller.gd",
+      "Hash": "1877769D89C6EE37DB1ADCB2ECC7F0C6E820C618530B8B26D60D6683D2E6B4FC"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\ability.gd",
+      "Hash": "7656647BE9717E950559A6BB1C000EF97EB0CAD3D90685E5162C01201A64A1A4"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\air_gust.gd",
+      "Hash": "041F8CC9F488F4E0DFB8F27FF0958F5825A00BF6E9B94FEE7330519877709E5C"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\air_tuning.gd",
+      "Hash": "A709F3E887F6758910E12593CC643104C3657AAB76EB51E405749E91CA666A42"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\earth_lift_throw.gd",
+      "Hash": "D9BA7483423FC81E5E77073B28CD7D6E5E7BE12A0E8001A3DC954EB879D165BF"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\earth_tuning.gd",
+      "Hash": "59742672EA2D0D609EE3A7605E892E3B64EBF3B75F6122BF4133126AAAB3BB6A"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\elemental_keys.gd",
+      "Hash": "E6E923491EF164735DD2978F3720275DAC704FB7AF31FC6F233E48439ED83352"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\fire_burst.gd",
+      "Hash": "7C16D8DC22D74E5C7F903B43983787AA48328DD9F3BD4740650DC9CF7057F9A2"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\fire_tuning.gd",
+      "Hash": "D3E7EA0335281757F485C4B83406EED49677EDFB396705F802BB47096E1EFEAB"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\water_jet.gd",
+      "Hash": "AC22716B5ECE421EF59CBB2ABB69B5FDF320A531485C13CC778DD700739CD5C5"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\abilities\\water_tuning.gd",
+      "Hash": "76C2FDA6057240DAAD8B931DA3AB0CF774F96F3F400092077FA39150C3662D61"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\core\\input_actions.gd",
+      "Hash": "05718AB96E9964F8129E72D7A8573C69D56E92A393E7594AF3AA9AD7B7C3ED0B"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\core\\layers.gd",
+      "Hash": "3ED2D3A99C22D0BF943B1281A3ECFFFD92EE90187D41B239BDBC0F1AB01816FE"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\core\\physics_ray_helper.gd",
+      "Hash": "4FADE325651CFB41ED85851892ED7090BB07ED80A22C860FCA8C1F863D939926"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\error_counter_logger.gd",
+      "Hash": "C34E969264F851CD1B70E6AD4429CC4BCDCC1C8CEB767A13EB485E63663E8B9F"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\p0_selftest.gd",
+      "Hash": "418770DD28F3DBF60DA7F105780C15AB4839D8E8561BD7744B9D23E892CD2638"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\p1_selftest.gd",
+      "Hash": "398FCAFF4C305F73C06A6E6B5456F2366F52807EB02251F074C343313E37987E"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\p2_selftest.gd",
+      "Hash": "1A1213F0826D9A74950B8E7BE3F76D7CB7075D92C9BEAC37666C3101E8F78A74"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\p3_selftest.gd",
+      "Hash": "950DF860C708C5D38A958CFC09C4C091846BDFAAECEA549CE38B6EDFCD9E1D56"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\p35_selftest.gd",
+      "Hash": "B5AFC9F35C3D38F23CB717F7634B6CFBDC617DBF71F52614A5796E064A239375"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\p36_selftest.gd",
+      "Hash": "41CBDD2420C55D6BB29755874A52E50FBA3860756371071AB1080D4D1AFA40F6"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\dev\\t26_physics_probe.gd",
+      "Hash": "5FA314A4943065FC808E0DEB98E909AF11D63AF8BBD561EAF7787440360612AF"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\body_material_library.gd",
+      "Hash": "535093694596110DDCEE6096807C1C0B6C153F1B26835613DA2D2D3916413BE6"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\body_material.gd",
+      "Hash": "F8C2C9C7161F4C755F80A16CFB34E359DB25381C7CA7D1D10533E29B3736CC50"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\crack_texture.gd",
+      "Hash": "236CFA2247DB2F98A76C258917728C77061637ED5BCEF48A29FB7ABA86542A96"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\earth_fx.gd",
+      "Hash": "6741F1E043F1E7F2E06CAEB8D1FFD3A74472A72E765A158F16F56BDCB007C146"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\elemental_event.gd",
+      "Hash": "606911F31DDA3C200536C4AAEAB6ACAAA054F874A8FA7DC2466E0BD1D7E65785"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\elemental_fx.gd",
+      "Hash": "3F4C0BDA12EC9CBCD19F006C4EE12575350D7C889A54750EF9C8008898982413"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\material_response_system.gd",
+      "Hash": "51C572878C300F22E8DB2769A9560F4E0AA6BE03D0B90D1CE0053DEF47FD6849"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\elements\\material_state.gd",
+      "Hash": "0A61796187CA744835904AB3AC1D375452F1819595F399DCA35CFBA7CDA48D61"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\gameplay\\debug_props.gd",
+      "Hash": "387E77A4B6BBF79927D7AC3E3779C4901170FC67F0577BA31C222823508C3822"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\gameplay\\terrain_edit_controller.gd",
+      "Hash": "A3BEB0AA800346EB3F54A000620B4CFDAB565F762F56D35B98C4DE272100F8EC"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\physics\\debris_budget.gd",
+      "Hash": "66057B15A1F51BD27EF5E833DB51E19FE0679CC9D134BAFCB6CEE273FFB69482"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\physics\\dust_fx.gd",
+      "Hash": "AAD3613AABBD27E6A87B633749F424C752B87747098254FAC95F00B3F59090C8"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\physics\\terrain_contact_waker.gd",
+      "Hash": "9AB209E852C5527504FEFEB3855C8E6FFD08094295E5140B53956EC6B7972C9D"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\player\\player_controller.gd",
+      "Hash": "95DDA1867028B3E4AEB6C3570408E432915E4221F12DFCBBA72D9C4BD596324A"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\player\\third_person_camera.gd",
+      "Hash": "59923C69E6C3A21570713C59EFEE3DD4E373AAA3428E679A61D4451B69FA94E0"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\structures\\structure_piece.gd",
+      "Hash": "B3046BBEE765EE42BAF9B4E9BD49092AD885158E1D5AC1429116302AB03D9EE4"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\structures\\structure_service.gd",
+      "Hash": "EEBA26E97125C8CA605E035D7F9663EE933A675ADE6CE4FA8F3BBA771508BB82"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\structures\\support_graph.gd",
+      "Hash": "5BF0C5308955F58F70737B7393D6D5977C7D56AFE722611EDCE0400833D74635"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\structures\\tower_factory.gd",
+      "Hash": "FCD6EDF6AA0F8214822C09C9FC60E160BD7C09D2CC3B48AC1CC590859BC22642"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\ui\\debug_hud.gd",
+      "Hash": "732C30F6789471351E062C2AB8A97F4754D3C00F3E6263277C99ED2D71C8B27C"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\ui\\ready_ring.gd",
+      "Hash": "C2BA28D8A0D406DD3882258A077C31FEE6068591993A87396B97A81EC9556323"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\lab_terrain_factory.gd",
+      "Hash": "BD0CB18B827F5AE2154BE2B3E34B4E4AF3487BCFBC3563272871227CBB737AAF"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_brush_queue.gd",
+      "Hash": "C63EDC41CDF0F33B1FB18AEACEB28BEF3D7E352AF87C621572792BC777182AD2"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_brush_request.gd",
+      "Hash": "EB0CB7C0AB41D27E418929DF6FAA3D110F901E54F227789E91CCD64E58ADF614"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_edit_result.gd",
+      "Hash": "D602E766FC8620A5C150949D29864D1835E6D07DB48C590123FF340A48FF4260"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_material_library.gd",
+      "Hash": "7912755F61E53E6005ED69F26E4D3E00E55360011867C22DB6667DEE594D0197"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_material.gd",
+      "Hash": "FDBC1CD878F2F0B0A2FD27011C51D19F14F81F400AF97B034C6C760FC406C6A0"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_save_files.gd",
+      "Hash": "6C97AE439DB7FF83619A9B4753D13B1A0A38004DDB6F0AA06ECAA2428EAB834C"
+    },
+    {
+      "Path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\scripts\\world\\terrain_service.gd",
+      "Hash": "91DE32CC51E7088CDAA1E20F468642B088ABA9F23DFD04E973DCCBF109DD8C94"
+    }
+  ]
+}

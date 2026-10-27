@@ -1,4 +1,4 @@
-# Decisões e trade-offs — P0, P1 e P2
+# Decisões e trade-offs — P0–P3.6
 
 Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. D21+: P2 (23/10/2026). Formato: decisão → motivo → consequência.
 
@@ -400,3 +400,96 @@ Registro das escolhas técnicas. D1–D14: P0 (22–23/10/2026). D15–D20: P1. 
 - T29: o "só forças" virou detecção de teleporte (|Δx − v·dt| < 0,05 m, porque o Jolt integra x += v_nova·dt) no lugar
   do limite de passo de 0,5 m (o levantamento chega a 0,6 m/quadro). A caixa deslocada passou de > 2,0 para > 0,5 m:
   o choque às vezes é de raspão (medido 0,85–6,3 m), e o contato continua exigido.
+
+## D42. P3.6: contrato de execução completo nos cinco runners
+- `9788e7b` introduziu run_id, frescor e conclusão; a retomada completa isso com IDs explícitos por bateria, comparação dos resultados individuais, contadores tipados e coerentes, zero erros/avisos e diagnósticos de startup/shutdown no log. Nenhuma exceção ativa.
+- Contratos em `tools/lib_selftest_contract.ps1`; testes negativos em `tools/test_selftest_contract.ps1`. Encerrar a janela com exit 0 continua sendo falha (exit 3). Evidências novas em `docs/evidence/p36/preparation/`, sem substituir as históricas.
+
+## D43. Fechamento, interrupção e época das edições
+- O T8 tinha causa geométrica real: `end_stroke` não cobria o resto até a última mira válida (corrigido em `08b6c6e`). A retomada também fecha restos menores que o espaçamento normal de carimbos.
+- Perder o alvo encerra o segmento válido e quebra a continuidade. Segmentos separados não se fundem no backlog. Trocar ferramenta fecha explicitamente a anterior; reset/save/load cancelam sem segmento final e invalidam a época da fila. Pedido capturado antes da transição é rejeitado se reapresentado.
+- Entrada mantida durante a transição fica bloqueada até soltar. A fila não aceita pedidos enquanto o serviço está indisponível.
+- Teste direcionado T1/T8/T8b: 3/3, zero erros/avisos. Casos de perda da mira, cancelamento, troca e transições reais constam do relatório de preparação.
+
+## D44. Raycast de arestas com testemunhas simétricas de 1 mm
+- `08b6c6e` usava uma segunda consulta deslocada. Um único raio pode selecionar o colisor vizinho na silhueta. Agora `PhysicsRayHelper` compartilha o comportamento entre terreno e `aim_any`: primeiro o raio original; apenas se falhar, duas testemunhas transversais a ±1 mm.
+- Fallback só aceito com mesmo RID, normais compatíveis (dot ≥ 0,95) e contatos a até 4 mm entre si. Máscara, exclusões e alcance preservados; ponto retornado é contato físico testemunha, até 1 mm fora do eixo.
+- Amostra: 90/90 raios inclinados sobre coordenadas inteiras (6 recuperados pelo fallback), 100/100 através de parede de 1 mm e 100/100 seleções corretas em colisores adjacentes. Testes negativos rejeitam testemunhas de RIDs diferentes e contato unilateral; exclusão preservada.
+- Não é prova universal. Em quinas de normais incompatíveis, fronteiras de RIDs ou detalhes menores que 1 mm, o fallback conserva a ausência de acerto. Custo máximo: duas consultas extras por raio que falha; comparar no baseline corrigido.
+
+## D45. P3.6 M0: transporte e limites por elemento
+Arquitetura, alternativas, medições, riscos, compatibilidade e critérios numéricos estão em docs/p36_m0.md. Água por pacotes evita transporte instantâneo ao girar; fogo mantém varredura com antecipação; ar usa frente/casca e exposição parcial. Nenhuma habilidade nova. GPU isolada e playtest humano não foram comprovados pelos spikes.
+
+
+## D46. Água por pacotes e pressão (P3.6 M1)
+Transporte captura direção por emissão, varre segmentos e transfere impulso proporcional à duração/pressão. Resource independente, cancelamento imediato, respingos com LOS do lado livre do contato e volumes visuais limitados. Detalhes, testes e métricas em docs/p36_water_polish.md. Origem dentro de prop bloqueia o pacote; máscara/inside e normal foram corrigidos com cenário dedicado.
+
+
+## D47. Fogo com antecipação, varredura recortada e impacto único (P3.6 M2)
+Origem e direção são capturadas no clique; a antecipação de 80 ms já ocupa um slot do limite e não consulta nem aquece. Na emissão, o resto do tick voa; cada tick faz uma varredura de segmento, recortada no alcance de 30 m. Impacto aquece uma vez (origem no lado livre); alcance esgotado só dissipa, sem calor remoto. Troca de elemento cancela antecipações e preserva voos; reset/save/load limpam tudo no sinal de início. O raio do fogo usa as testemunhas de ±1 mm (D44) só em falha; a Água mantém o raio único do M1. Propagação exige linha de visada centro→centro excluindo fonte e alvo. FireTuning é compartilhado com o MaterialResponseSystem (reações térmicas). VFX por slot estável, com casca de chamas, trilha chama→brasa→fumaça, vapor ao secar alvo e fumaça na dissipação. Detalhes e medições em docs/p36_fire_polish.md.
+
+## D48. Ar como casca de pressão com exposição amostrada (P3.6 M3)
+O clique captura origem e direção; a casca avança a 30 m/s até 10 m e decide cada corpo uma única vez, no tick em que alcança o seu centro (tratado inclusive se bloqueado ou fora do cone; sem efeito retroativo na esteira). Exposição = fração de 5 raios livres (centro + silhueta a 70% da menor meia-extensão), TERRAIN|PROPS, alvo excluído, testemunhas de ±1 mm só em falha. Impulso = min(massa × 12, 1500) × força × exposição; AIRFLOW com força × exposição. Obstáculos estáticos bloqueiam, mas não reagem. Até 4 ondas, recuperação de 0,15 s; troca de elemento não cancela a frente; reset/save/load limpam. T34 foi separado em duas rajadas porque as caixas em chamas do P3 bloqueavam a caixa de massa (exposição zero medida) — limiares inalterados. Cooldowns de Fogo e Ar comparam com tolerância de 1 µs: um cooldown múltiplo exato do tick custava um tick extra por resíduo de ponto flutuante. Detalhes em docs/p36_air_polish.md.
+
+## D49. Integração do P3.6 (M4) e T26 em aberto
+T55 (interações cruzadas Água/Fogo/Ar) e T58 (limites de VFX sob estresse e ausência de vazamento após reset) entram no contrato `p36` (64 testes). Bateria completa: 64/64 em editor janela, export headless e export janela; editor headless 63/64 por falha do T26 (P2, save com torre caída: peça caiu 0,59 m). Isolado, o T26 falha 1 em 8 no mesmo HEAD; historicamente o pior deslocamento já chegava a 0,072 m. O critério de 0,1 m não foi relaxado e a causa não foi isolada; o gate final do P3.6 fica pendente dessa correção. Detalhes em docs/p36_elemental_polish.md.
+
+## D50. P3.6.1: salvar não troca o modo físico dos destroços
+O experimento B (freeze/thaw SEM salvar ou reconstruir terreno) reproduziu pico de 0,532618 m,
+com os apoios intactos. Os 36 corpos dormiam antes; a volta de Static para Dynamic os acordava.
+A peça P16 estava em equilíbrio precário sobre uma aresta e se reacomodou gradualmente; não
+foi necessário contato peça–peça nem novo collider. A hipótese anterior de perda de apoio
+na reconstrução não explica sozinha o problema. Não se atribui defeito ao solver Jolt.
+
+Salvar agora conserva o nó do terreno, mapas, malhas e colliders. Pausa-se somente o
+processamento do terreno para impedir novos pedidos; save_modified_blocks espera o update
+atual e agenda suas tarefas diretamente. Após o tracker, drenam-se streaming e geração
+(inclusive tarefas antigas de unload) até dois ticks consecutivos sem I/O. Só então o
+database_path fecha/copía/reabre a sessão, sem await nesse trecho. O updater global do Voxel
+Tools continua funcionando. O setter não reseta mapas e não é usado como barreira de workers.
+
+Nenhum corpo tem transform, sleeping, freeze, velocidade, atrito ou contatos alterados pelo
+save. Corpos ativos seguem a física normal; corpos dormindo não ganham um despertar artificial.
+Falha de flush/drenagem retorna false, restaura o process_mode anterior e conserva o mundo e
+stream. Não há colisores removidos para recuperar nem descongelamento sobre chão ausente.
+Os contadores são globais: outro terreno com I/O contínuo pode causar timeout seguro.
+Reset/load continuam recriando o terreno; cancelamento dos poderes no sinal de início é mantido.
+
+## D51. Publicação do slot com backup e rollback no Windows
+O rename do backend Windows da Godot ed1daf0bf remove um destino existente antes de mover.
+Por isso não tratamos rename(temp,slot) como substituição atômica: a cópia completa vai para
+temporário único; o slot anterior é movido para backup, depois o temporário é publicado sobre
+um nome ausente. Falha de publicação tenta restaurar o backup; se isso também falhar, o
+caminho recuperável fica em last_save.publication.recovery_file. O stream original é reaberto
+mesmo se a cópia/publicação falhar. Não é transação resistente a queda de energia/processo.
+Diagnóstico, comandos, repetições e resultado do gate em docs/p36_t26_stabilization.md.
+
+## D52. T26: comprovar a premissa de repouso antes de medir o efeito do save
+Após D50, uma série de 60 intervenções manteve 59 casos imóveis, mas uma torre já tombava
+antes do save: controle sem salvar de 0,512439 m e velocidade de 1,438 m/s na intervenção.
+O T26 original também reproduziu deslocamento de 0,206406 m com velocidade de 0,085586 m/s
+antes do save. Seu teste pontual de velocidade era feito dois segundos antes da intervenção
+e não detectava retomada de rotação/queda nesse intervalo. Essas falhas permanecem nos dados;
+não são convertidas retrospectivamente em passes.
+
+A preparação do T26 exige agora 60 ticks consecutivos de sono NATURAL, sem freeze, dentro
+dos mesmos 15 s de prazo, e confere cada um dos 120 ticks de controle anteriores ao save.
+Repouso que não se confirma gera FAIL sem retentativa nem uso de slot antigo. Não se escreve
+sleeping, velocidade ou transform. A posição de referência continua sendo a anterior ao save,
+há snapshot imediato e a medição continua 1,5 s após o retorno, estritamente < 0,1 m.
+O probe ampliado também registra o pico em todos os primeiros 90 ticks e possui protocolo
+prospectivo NaturalRest explícito; mantém o protocolo antigo para reproduzir as falhas.
+Os testes de corpos ativos com gêmeo de controle, impulso e escavação são independentes:
+repouso no cenário do T26 não autoriza suprimir movimento físico normal durante o save.
+
+## D53. Validação do P3.6.1 em 27/10/2026
+Protocolo prospectivo NaturalRest: 30/30 processos independentes, oito ordens de colapso,
+zero falhas de preparação, zero mudanças de modo/sono/velocidades e pico de deslocamento
+0 m em cada repetição. P0–P3.6: 64/64 nos quatro modos, zero erros/avisos; T26 = 0 m;
+T27/T37 nas janelas abaixo dos limites originais de 20/33/50 ms. Persistência entre processos
+passou 2/2 em cada uma das quatro fases; sete casos reais de borda passaram. A pose isolada
+provou que wake-only e freeze/thaw produzem a mesma queda de 0,533 m (controle imóvel).
+Dados anteriores 59/60 e série legada interrompida 10/11 não são reclassificados; o CSV
+consolida 130 casos incluindo todos os FAIL. Aprovação dos protocolos corrigidos, sem
+relaxar tolerância ou deslocar a referência/observação pós-save. Máquina nova AMD, não
+comparação causal de desempenho. Detalhes e hashes em docs/p36_t26_stabilization.md.

@@ -1,0 +1,110 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-26T20:00:37",
+  "duracao_s": 23.748,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 771.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 771.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "A_salvar_com_torre_caida": {
+          "cena_parada_antes": true,
+          "controle_sem_save_2s_m": 0.0154832080006599,
+          "espera_collider": {
+            "bodies": 36,
+            "frames": 0,
+            "ms": 2,
+            "timeout": false
+          },
+          "maior_deslocamento_m": 0.0162785593420267,
+          "ok": true,
+          "pecas_ainda_congeladas_pelo_save": 0,
+          "pior_peca": {
+            "antes": "(17.70397, 2.517392, 15.32554)",
+            "depois_1_5s": "(17.69331, 2.513488, 15.33721)",
+            "logo_apos_save": "(17.70397, 2.517392, 15.32554)",
+            "mudou_durante_save_m": 0.0,
+            "peca": "P21_pilar1",
+            "vel_antes": 0.0
+          },
+          "salvar": {
+            "blocks_tasks": 14,
+            "bytes": 57344,
+            "copy": "OK",
+            "flush_ms": 12.0,
+            "ms": 229.0,
+            "ok": true,
+            "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_p2.sqlite",
+            "save_anterior_em_voo": "nenhum",
+            "slot": "selftest_p2"
+          },
+          "salvo": true,
+          "soltas": 36
+        },
+        "B_carregar_slot_escavado": {
+          "carregado": true,
+          "intacta_apos_reset": true,
+          "ms_ate_36_soltas": 81,
+          "ok": true,
+          "soltas": 36
+        },
+        "C_carregar_slot_sem_escavacao": {
+          "carregado": true,
+          "ok": true,
+          "soltas": 0,
+          "stats": {
+            "broken": 0,
+            "builds": 5,
+            "checks": 6,
+            "confirm_timeouts": 0,
+            "consumed": 0,
+            "invalid_feet": 8,
+            "last_break": "",
+            "last_check": "âncoras ok",
+            "last_confirm_ms": 0.0,
+            "max_released_in_frame": 6,
+            "pending_confirm": 0,
+            "pieces": 36,
+            "queued": 0,
+            "released": 72,
+            "released_now": 0
+          }
+        }
+      },
+      "id": "T26",
+      "status": "PASS",
+      "titulo": "Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não"
+    }
+  ],
+  "run_id": "",
+  "testes_ids": [
+    "T1",
+    "T26"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": ""
+}

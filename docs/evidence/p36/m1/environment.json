@@ -1,0 +1,47 @@
+﻿{
+    "commit":  "32fdf182bcf39b3aa7f95390ef5c6bbd3aa336cd",
+    "changes":  [
+                    " M scripts/abilities/ability.gd",
+                    " M scripts/abilities/ability_controller.gd",
+                    " M scripts/abilities/water_jet.gd",
+                    " M scripts/elements/elemental_event.gd",
+                    " M scripts/elements/elemental_fx.gd",
+                    " M scripts/elements/material_response_system.gd",
+                    " M scripts/main.gd",
+                    " M tools/lib_selftest_contract.ps1",
+                    "?? data/abilities/water_tuning.tres",
+                    "?? docs/evidence/p36/m1/",
+                    "?? scripts/abilities/water_tuning.gd",
+                    "?? scripts/abilities/water_tuning.gd.uid",
+                    "?? scripts/dev/p36_selftest.gd",
+                    "?? tools/run_p36_tests.ps1",
+                    "?? tools/spike_p36_elements.gd.uid"
+                ],
+    "date":  "2026-10-26T16:44:13.3516345-03:00",
+    "stage":  "m1",
+    "expected_ids":  [
+                         "T1",
+                         "T31",
+                         "T33",
+                         "T37",
+                         "T46",
+                         "T47",
+                         "T48"
+                     ],
+    "cpu":  "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "gpu":  [
+                {
+                    "Name":  "Intel(R) Iris(R) Xe Graphics",
+                    "DriverVersion":  "32.0.101.7085"
+                }
+            ],
+    "resolution":  "1600x900 configured",
+    "renderer":  "Forward+",
+    "physics":  "Jolt Physics",
+    "frame_gates_ms":  {
+                           "p99":  33,
+                           "max":  50,
+                           "p95":  20
+                       },
+    "human_playtest":  "NAO TESTADO"
+}

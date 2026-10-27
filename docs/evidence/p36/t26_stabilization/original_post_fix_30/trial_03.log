@@ -1,0 +1,56 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 738 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":738.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 227 ms
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=1 0.895ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=2 1.014ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=3 1.180ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=4 0.031ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=5 0.446ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=6 0.506ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=7 0.061ms
+[TerrainService] add_sphere OK c=(-14.0, 0.5, 22.0) r=2.00 mat=sand rev=8 0.182ms
+[TerrainService] add_sphere OK c=(-14.0, 2.5, 22.0) r=2.00 mat=sand rev=9 0.097ms
+[TerrainService] add_sphere OK c=(-14.0, 4.5, 22.0) r=2.00 mat=sand rev=10 0.037ms
+[TerrainService] add_path OK pontos=9 comp=8.5m mat=stone rev=11 0.571ms
+[TerrainService] save_modified_blocks não concluiu em 0.0 s: restantes=57 abortado=false
+[TerrainService] save selftest_abort: ok=false { "slot": "selftest_abort", "ok": false, "ms": 1.0, "flush_ms": 1.0, "blocks_tasks": 58, "save_anterior_em_voo": "nenhum", "copy": "Busy", "bytes": -1, "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_abort.sqlite", "terrain_recreated": false, "publication": { "error": 44, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": false, "ms": 0.0, "tasks": {  } }, "reason": "flush_incomplete" }
+[TerrainService] save selftest: ok=true { "slot": "selftest", "ok": true, "ms": 51.0, "flush_ms": 30.0, "blocks_tasks": 0, "save_anterior_em_voo": "esperado", "copy": "OK", "bytes": 147456, "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 13.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 11)
+[TerrainService] reset: geração 3 pronta=true em 261 ms
+[TerrainService] load selftest: ok=true { "slot": "selftest", "ok": true, "ms": 221.0, "copy": "OK", "bytes": 147456 }
+[TerrainService] load selftest: ok=true { "slot": "selftest", "ok": true, "ms": 215.0, "copy": "OK", "bytes": 147456 }
+[P36TEST] T14 PASS — Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar | {"amostras_sdf_material":108,"arquivos_de_sessao":1,"carregar_1":{"bytes":147456,"copy":"OK","ms":221.0,"ok":true,"slot":"selftest"},"diferencas_apos_salvar":[],"diferencas_carga_1":[],"diferencas_carga_2":[],"diferencas_reset":[],"edicoes":["OK dig_sphere OK rev=1 0.90ms soil ~169646 kg","OK dig_path OK rev=2 1.01ms soil ~195432 kg","OK dig_path OK rev=3 1.18ms soil ~195432 kg","OK dig_path OK rev=4 0.03ms stone ~201132 kg","OK dig_path OK rev=5 0.45ms stone ~338749 kg","OK dig_path OK rev=6 0.51ms stone ~338749 kg","OK dig_path OK rev=7 0.06ms soil ~116038 kg","OK add_sphere OK rev=8 0.18ms sand ~53617 kg","OK add_sphere OK rev=9 0.10ms sand ~53617 kg","OK add_sphere OK rev=10 0.04ms sand ~53617 kg","OK add_path OK rev=11 0.57ms stone ~366281 kg"],"nos":{"apos_salvar":229,"carga_1":229,"carga_2":229,"editado":229},"probes_alteradas_pelas_edicoes":5,"reset_volta_ao_baseline":true,"salvar":{"blocks_tasks":0,"bytes":147456,"copy":"OK","flush_ms":30.0,"io_drain":{"idle":true,"ms":13.0,"tasks":{"generation":0,"gpu":0,"main_thread":0,"meshing":0,"streaming":0}},"ms":51.0,"ok":true,"path":"C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite","publication":{"error":0,"recovery_file":"","rollback":0},"reason":"","save_anterior_em_voo":"esperado","slot":"selftest","terrain_recreated":false},"save_abortado":{"exercitado":true,"resultado":{"blocks_tasks":58,"bytes":-1,"copy":"Busy","flush_ms":1.0,"io_drain":{"idle":false,"ms":0.0,"tasks":{}},"ms":1.0,"ok":false,"path":"C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_abort.sqlite","publication":{"error":44,"recovery_file":"","rollback":0},"reason":"flush_incomplete","save_anterior_em_voo":"nenhum","slot":"selftest_abort","terrain_recreated":false},"save_seguinte_imediato":{"blocks_tasks":0,"bytes":147456,"copy":"OK","flush_ms":30.0,"io_drain":{"idle":true,"ms":13.0,"tasks":{"generation":0,"gpu":0,"main_thread":0,"meshing":0,"streaming":0}},"ms":51.0,"ok":true,"path":"C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite","publication":{"error":0,"recovery_file":"","rollback":0},"reason":"","save_anterior_em_voo":"esperado","slot":"selftest","terrain_recreated":false},"terreno_pronto_sem_slot":true},"topo_coluna_carga_2_y":6.5,"topo_coluna_salvo_y":6.5}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 11)
+[TerrainService] reset: geração 6 pronta=true em 221 ms
+[P36TEST] --- testes P2 ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 11)
+[TerrainService] reset: geração 7 pronta=true em 250 ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=12 0.923ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=13 0.050ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 16.5) r=2.00 rev=14 0.369ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 16.5) r=2.00 rev=15 0.059ms
+[TerrainService] save selftest_p2: ok=true { "slot": "selftest_p2", "ok": true, "ms": 54.0, "flush_ms": 13.0, "blocks_tasks": 14, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 61440, "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_p2.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 35.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 15)
+[TerrainService] reset: geração 8 pronta=true em 243 ms
+[TerrainService] load selftest_p2: ok=true { "slot": "selftest_p2", "ok": true, "ms": 205.0, "copy": "OK", "bytes": 61440 }
+[TerrainService] load selftest: ok=true { "slot": "selftest", "ok": true, "ms": 229.0, "copy": "OK", "bytes": 147456 }
+[P36TEST] T26 FAIL — Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não | {"A_salvar_com_torre_caida":{"cena_parada_antes":true,"controle_sem_save_2s_m":0.044245395809412,"espera_collider":{"bodies":0,"frames":0,"ms":0,"strategy":"preserve_live_colliders","timeout":false},"maior_deslocamento_m":0.206406086683273,"ok":false,"pecas_ainda_congeladas_pelo_save":0,"pior_peca":{"antes":"(17.46649, 0.654189, 14.90679)","depois_1_5s":"(17.33988, 0.587915, 14.75785)","logo_apos_save":"(17.46247, 0.653283, 14.90414)","mudou_durante_save_m":0.00489697698503733,"peca":"P28_coroa","vel_antes":0.0855863466858864},"salvar":{"blocks_tasks":14,"bytes":61440,"copy":"OK","flush_ms":13.0,"io_drain":{"idle":true,"ms":35.0,"tasks":{"generation":0,"gpu":0,"main_thread":0,"meshing":0,"streaming":0}},"ms":54.0,"ok":true,"path":"C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_p2.sqlite","publication":{"error":0,"recovery_file":"","rollback":0},"reason":"","save_anterior_em_voo":"nenhum","slot":"selftest_p2","terrain_recreated":false},"salvo":true,"soltas":36},"B_carregar_slot_escavado":{"carregado":true,"intacta_apos_reset":true,"ms_ate_36_soltas":88,"ok":true,"soltas":36},"C_carregar_slot_sem_escavacao":{"carregado":true,"ok":true,"soltas":0,"stats":{"broken":0,"builds":10,"checks":8,"confirm_timeouts":0,"consumed":0,"invalid_feet":8,"last_break":"","last_check":"âncoras ok","last_confirm_ms":0.0,"max_released_in_frame":6,"pending_confirm":0,"pieces":36,"queued":0,"released":72,"released_now":0}}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 10, rev 15)
+[TerrainService] reset: geração 11 pronta=true em 219 ms
+[P36TEST] --- testes P3 ---
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] relatório: C:/Users/diogo/.codex/worktrees/p36-t26-stabilization/Elemental-Ruins/docs/evidence/p36/t26_stabilization/original_post_fix_30/trial_03.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: FAIL (2/3) em 24.1 s

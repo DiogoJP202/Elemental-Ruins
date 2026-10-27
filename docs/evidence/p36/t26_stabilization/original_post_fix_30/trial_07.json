@@ -1,0 +1,251 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "AMD Ryzen 7 5825U with Radeon Graphics",
+  "data": "2026-10-27T06:41:57",
+  "duracao_s": 24.623,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 738.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 738.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "amostras_sdf_material": 108,
+        "arquivos_de_sessao": 1,
+        "carregar_1": {
+          "bytes": 143360,
+          "copy": "OK",
+          "ms": 225.0,
+          "ok": true,
+          "slot": "selftest"
+        },
+        "diferencas_apos_salvar": [],
+        "diferencas_carga_1": [],
+        "diferencas_carga_2": [],
+        "diferencas_reset": [],
+        "edicoes": [
+          "OK dig_sphere OK rev=1 0.99ms soil ~169646 kg",
+          "OK dig_path OK rev=2 1.04ms soil ~195432 kg",
+          "OK dig_path OK rev=3 1.50ms soil ~195432 kg",
+          "OK dig_path OK rev=4 0.03ms stone ~201132 kg",
+          "OK dig_path OK rev=5 0.35ms stone ~338749 kg",
+          "OK dig_path OK rev=6 0.48ms stone ~338749 kg",
+          "OK dig_path OK rev=7 0.06ms soil ~116038 kg",
+          "OK add_sphere OK rev=8 0.25ms sand ~53617 kg",
+          "OK add_sphere OK rev=9 0.08ms sand ~53617 kg",
+          "OK add_sphere OK rev=10 0.04ms sand ~53617 kg",
+          "OK add_path OK rev=11 0.65ms stone ~366281 kg"
+        ],
+        "nos": {
+          "apos_salvar": 229,
+          "carga_1": 229,
+          "carga_2": 229,
+          "editado": 229
+        },
+        "probes_alteradas_pelas_edicoes": 5,
+        "reset_volta_ao_baseline": true,
+        "salvar": {
+          "blocks_tasks": 0,
+          "bytes": 143360,
+          "copy": "OK",
+          "flush_ms": 16.0,
+          "io_drain": {
+            "idle": true,
+            "ms": 34.0,
+            "tasks": {
+              "generation": 0,
+              "gpu": 0,
+              "main_thread": 0,
+              "meshing": 0,
+              "streaming": 0
+            }
+          },
+          "ms": 57.0,
+          "ok": true,
+          "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite",
+          "publication": {
+            "error": 0,
+            "recovery_file": "",
+            "rollback": 0
+          },
+          "reason": "",
+          "save_anterior_em_voo": "esperado",
+          "slot": "selftest",
+          "terrain_recreated": false
+        },
+        "save_abortado": {
+          "exercitado": true,
+          "resultado": {
+            "blocks_tasks": 57,
+            "bytes": -1,
+            "copy": "Busy",
+            "flush_ms": 1.0,
+            "io_drain": {
+              "idle": false,
+              "ms": 0.0,
+              "tasks": {}
+            },
+            "ms": 1.0,
+            "ok": false,
+            "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_abort.sqlite",
+            "publication": {
+              "error": 44,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "flush_incomplete",
+            "save_anterior_em_voo": "nenhum",
+            "slot": "selftest_abort",
+            "terrain_recreated": false
+          },
+          "save_seguinte_imediato": {
+            "blocks_tasks": 0,
+            "bytes": 143360,
+            "copy": "OK",
+            "flush_ms": 16.0,
+            "io_drain": {
+              "idle": true,
+              "ms": 34.0,
+              "tasks": {
+                "generation": 0,
+                "gpu": 0,
+                "main_thread": 0,
+                "meshing": 0,
+                "streaming": 0
+              }
+            },
+            "ms": 57.0,
+            "ok": true,
+            "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite",
+            "publication": {
+              "error": 0,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "",
+            "save_anterior_em_voo": "esperado",
+            "slot": "selftest",
+            "terrain_recreated": false
+          },
+          "terreno_pronto_sem_slot": true
+        },
+        "topo_coluna_carga_2_y": 6.5,
+        "topo_coluna_salvo_y": 6.5
+      },
+      "id": "T14",
+      "status": "PASS",
+      "titulo": "Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar"
+    },
+    {
+      "detalhes": {
+        "A_salvar_com_torre_caida": {
+          "cena_parada_antes": true,
+          "controle_sem_save_2s_m": 0.00415398646146059,
+          "espera_collider": {
+            "bodies": 0,
+            "frames": 0,
+            "ms": 0,
+            "strategy": "preserve_live_colliders",
+            "timeout": false
+          },
+          "maior_deslocamento_m": 0.0,
+          "ok": true,
+          "pecas_ainda_congeladas_pelo_save": 0,
+          "pior_peca": {},
+          "salvar": {
+            "blocks_tasks": 14,
+            "bytes": 61440,
+            "copy": "OK",
+            "flush_ms": 21.0,
+            "io_drain": {
+              "idle": true,
+              "ms": 13.0,
+              "tasks": {
+                "generation": 0,
+                "gpu": 0,
+                "main_thread": 0,
+                "meshing": 0,
+                "streaming": 0
+              }
+            },
+            "ms": 41.0,
+            "ok": true,
+            "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_p2.sqlite",
+            "publication": {
+              "error": 0,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "",
+            "save_anterior_em_voo": "nenhum",
+            "slot": "selftest_p2",
+            "terrain_recreated": false
+          },
+          "salvo": true,
+          "soltas": 36
+        },
+        "B_carregar_slot_escavado": {
+          "carregado": true,
+          "intacta_apos_reset": true,
+          "ms_ate_36_soltas": 86,
+          "ok": true,
+          "soltas": 36
+        },
+        "C_carregar_slot_sem_escavacao": {
+          "carregado": true,
+          "ok": true,
+          "soltas": 0,
+          "stats": {
+            "broken": 0,
+            "builds": 10,
+            "checks": 8,
+            "confirm_timeouts": 0,
+            "consumed": 0,
+            "invalid_feet": 8,
+            "last_break": "",
+            "last_check": "âncoras ok",
+            "last_confirm_ms": 0.0,
+            "max_released_in_frame": 6,
+            "pending_confirm": 0,
+            "pieces": 36,
+            "queued": 0,
+            "released": 72,
+            "released_now": 0
+          }
+        }
+      },
+      "id": "T26",
+      "status": "PASS",
+      "titulo": "Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não"
+    }
+  ],
+  "run_id": "original_post_fix_30-trial_07",
+  "testes_ids": [
+    "T1",
+    "T14",
+    "T26"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": ""
+}

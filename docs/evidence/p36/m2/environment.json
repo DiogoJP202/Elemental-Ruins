@@ -1,0 +1,53 @@
+{
+  "commit": "16703257bf918ac064b9195ec68678311e582f73",
+  "changes": [
+    " M docs/decisions.md",
+    " M scripts/abilities/ability_controller.gd",
+    " M scripts/abilities/fire_burst.gd",
+    " M scripts/dev/p36_selftest.gd",
+    " M scripts/dev/p3_selftest.gd",
+    " M scripts/elements/elemental_fx.gd",
+    " M scripts/elements/material_response_system.gd",
+    " M tools/lib_selftest_contract.ps1",
+    "?? data/abilities/fire_tuning.tres",
+    "?? docs/evidence/p36/m2/",
+    "?? docs/p36_fire_polish.md",
+    "?? scripts/abilities/fire_tuning.gd",
+    "?? scripts/abilities/fire_tuning.gd.uid"
+  ],
+  "date": "2026-10-26T19:08:49.1392353-03:00",
+  "stage": "m2",
+  "expected_ids": [
+    "T1",
+    "T31",
+    "T32",
+    "T33",
+    "T34",
+    "T35",
+    "T36",
+    "T37",
+    "T46",
+    "T47",
+    "T48",
+    "T49",
+    "T50",
+    "T51",
+    "T57"
+  ],
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "gpu": [
+    {
+      "Name": "Intel(R) Iris(R) Xe Graphics",
+      "DriverVersion": "32.0.101.7085"
+    }
+  ],
+  "resolution": "1600x900 configured",
+  "renderer": "Forward+",
+  "physics": "Jolt Physics",
+  "frame_gates_ms": {
+    "p95": 20,
+    "max": 50,
+    "p99": 33
+  },
+  "human_playtest": "NAO TESTADO"
+}

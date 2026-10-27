@@ -34,6 +34,7 @@ var phase_log: Array[Dictionary] = []
 var _phase_t := 0.0
 var _point := Vector3.ZERO
 var _hold_dist := 4.0
+var _hold_height := 2.0
 var _color := Color.GRAY
 var _button := false
 var _release_buffered := false
@@ -101,7 +102,12 @@ func move_speed_scale() -> float:
 func status() -> String:
 	if PHASE_NAMES.has(phase):
 		var mass := rock.mass / 1000.0 if rock != null and is_instance_valid(rock) else 0.0
-		return "%s%s" % [PHASE_NAMES[phase], (" (%.1f t)" % mass) if mass > 0.0 else ""]
+		var text := "%s%s" % [PHASE_NAMES[phase], (" (%.1f t)" % mass) if mass > 0.0 else ""]
+		if phase == "hold":
+			text += " · Q/E altura %.1f m%s · roda distância %.1f m%s" % [
+				_hold_height, " (limite)" if _hold_height <= tuning.hold_min_height or _hold_height >= tuning.hold_max_height else "",
+				_hold_dist, " (limite)" if _hold_dist <= tuning.min_range or _hold_dist >= tuning.max_range else ""]
+		return text
 	return last_result
 
 
@@ -119,6 +125,7 @@ func on_press() -> void:
 		return
 	_point = check.point
 	_hold_dist = clampf(check.dist, tuning.min_range, tuning.max_range)
+	_hold_height = clampf(tuning.hold_height, tuning.hold_min_height, tuning.hold_max_height)
 	_color = check.color
 	_release_buffered = false
 	_time_scale = 1.0
@@ -138,6 +145,21 @@ func on_release() -> void:
 				_abort("soltou antes de a rocha ficar pronta")
 		"hold":
 			_begin_windup()
+
+
+func can_manipulate() -> bool:
+	return phase == "hold" and _button and is_instance_valid(rock)
+
+
+func on_hold(delta: float) -> void:
+	if controller.can_manipulate_earth():
+		_hold_height = clampf(_hold_height + Input.get_axis(&"earth_lower", &"earth_raise")
+			* tuning.hold_height_speed * delta, tuning.hold_min_height, tuning.hold_max_height)
+
+
+func adjust_hold_distance(delta: float) -> void:
+	if can_manipulate():
+		_hold_dist = clampf(_hold_dist + delta, tuning.min_range, tuning.max_range)
 
 
 ## O ponto sob a mira serve de origem para uma rocha? {ok, reason, point, normal, dist, color}.
@@ -177,7 +199,10 @@ func clear() -> void:
 	_thrown.clear()
 	rock = null
 	phase = ""
+	_button = false
 	_release_buffered = false
+	_hold_dist = 4.0
+	_hold_height = tuning.hold_height
 
 
 # --- Fases ------------------------------------------------------------------------------------
@@ -296,13 +321,13 @@ func hold_point() -> Vector3:
 	return p
 
 
-## Ponto de suspensão relativo ao jogador: à frente (direção horizontal da câmera), na distância
-## em que a rocha foi arrancada, a hold_height acima dos pés.
+## Alvo relativo aos pés: yaw da câmera, distância pela roda e altura por Q/E.
+## Somente o alvo muda; a rocha segue por forças, inclusive contra obstáculos.
 func hold_target() -> Vector3:
 	var fwd: Vector3 = controller.aim_direction()
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
-	return controller.player.global_position + fwd * _hold_dist + Vector3.UP * tuning.hold_height
+	return controller.player.global_position + fwd * _hold_dist + Vector3.UP * _hold_height
 
 
 func _push_to(target: Vector3, omega: float, feedforward: float, max_accel: float) -> void:
@@ -476,6 +501,9 @@ func _end_quietly() -> void:
 	phase = ""
 	_phase_t = 0.0
 	_release_buffered = false
+	_button = false
+	_hold_dist = 4.0
+	_hold_height = tuning.hold_height
 	_log_phase("")
 
 

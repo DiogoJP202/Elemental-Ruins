@@ -10,6 +10,7 @@ extends Node3D
 ##   --p2-selftest        P0 + P1 + testes do P2 (capturas com --p2-screenshots em docs/evidence/p2/screens)
 ##   --p3-selftest        P0 + P1 + P2 + testes do P3 (capturas com --p3-screenshots em docs/evidence/p3/screens)
 ##   --p35-selftest       P0–P3 + testes do P3.5, Terra polida (capturas com --p35-screenshots em docs/evidence/p35/screens)
+##   --p36-selftest       P0–P3.5 + testes P3.6 (capturas com --p36-screenshots em docs/evidence/p36/screens)
 ##   --report=<caminho>   caminho do relatório JSON do selftest
 
 const SELFTEST_SCRIPT := "res://scripts/dev/p0_selftest.gd"
@@ -17,6 +18,8 @@ const P1_SELFTEST_SCRIPT := "res://scripts/dev/p1_selftest.gd"
 const P2_SELFTEST_SCRIPT := "res://scripts/dev/p2_selftest.gd"
 const P3_SELFTEST_SCRIPT := "res://scripts/dev/p3_selftest.gd"
 const P35_SELFTEST_SCRIPT := "res://scripts/dev/p35_selftest.gd"
+const P36_SELFTEST_SCRIPT := "res://scripts/dev/p36_selftest.gd"
+const T26_PROBE_SCRIPT := "res://scripts/dev/t26_physics_probe.gd"
 ## Slot único do laboratório (F5 salva, F9 carrega).
 const SAVE_SLOT := "slot1"
 
@@ -64,7 +67,11 @@ func _ready() -> void:
 	for a in args:
 		p1 = p1 or a.begins_with("--p1-persist=")
 	var script := ""
-	if args.has("--p35-selftest"):
+	if args.has("--t26-probe"):
+		script = T26_PROBE_SCRIPT
+	elif args.has("--p36-selftest"):
+		script = P36_SELFTEST_SCRIPT
+	elif args.has("--p35-selftest"):
 		script = P35_SELFTEST_SCRIPT
 	elif args.has("--p3-selftest"):
 		script = P3_SELFTEST_SCRIPT
@@ -108,33 +115,14 @@ func request_world_reset() -> bool:
 	return ok
 
 
-## Salva as edições do terreno no slot. O terreno é recriado do disco durante o save:
-## jogador, caixas e peças soltas ficam congelados (sem chão por alguns quadros) e voltam
-## no mesmo lugar. Caixas, rochas e destroços NÃO são salvos (só o terreno).
+## Salva somente o terreno. O serviço mantém os mesmos dados, meshes e colliders vivos:
+## não troca MotionType, sleeping ou velocidades de jogador, props e destroços (T26).
 func request_world_save(slot: String) -> bool:
 	if terrain_service.is_resetting():
 		return false
-	player.set_frozen(true)
-	var frozen := _freeze_props()
-	structures.suspend()
-	var bodies: Array[Node3D] = []
-	for b in frozen:
-		bodies.append(b)
-	for p in structures.get_suspended():
-		bodies.append(p)
-	# Antes de recriar o terreno: quais raios curtos sob cada corpo tocam o chão que o apoia.
-	var support := {}
-	for b in bodies:
-		support[b] = _support_hits(b)
 	var ok: bool = await terrain_service.save_world(slot)
-	# save_world só espera o terreno em volta do ponto de prontidão; em outros trechos o
-	# collider pode chegar alguns quadros depois, e um corpo descongelado antes cairia.
-	await _wait_terrain_under(bodies, support, 3.0)
-	structures.resume()
-	for body in frozen:
-		if is_instance_valid(body):
-			body.freeze = false
-	player.set_frozen(false)
+	last_thaw = {"bodies": 0, "frames": 0, "ms": 0, "timeout": false,
+		"strategy": "preserve_live_colliders"}
 	return ok
 
 

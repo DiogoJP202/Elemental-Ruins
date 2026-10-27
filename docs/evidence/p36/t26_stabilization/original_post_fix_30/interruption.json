@@ -1,0 +1,7 @@
+{
+  "complete": false,
+  "planned": 30,
+  "completed": 11,
+  "failed": 1,
+  "reason": "Diagnostic series deliberately interrupted after reproducing the stale rest precondition; completed failures retained. No runtime change; prospective fixture correction and a new complete series follow."
+}

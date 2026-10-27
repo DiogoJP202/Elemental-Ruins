@@ -6,7 +6,7 @@ extends Resource
 ## = ~383 ms do clique até a rocha pronta.
 
 @export_group("Alvo")
-## Distância horizontal do jogador ao ponto de arranque (fora disso: alvo inválido).
+## Distância horizontal do jogador ao arranque e ao alvo do hold.
 @export var min_range := 2.5
 @export var max_range := 7.0
 ## Raio do núcleo extraído (o TerrainService aceita 1–2 m; 1,2 m de solo ≈ 4–5 t).
@@ -36,6 +36,12 @@ extends Resource
 @export var rise_spin := 0.8
 
 @export_group("Hold")
+## Altura do alvo relativa aos pés; o corpo continua sujeito à mola e às colisões.
+@export var hold_min_height := 1.0
+@export var hold_max_height := 6.0
+@export var hold_height_speed := 2.0
+## Metros por passo da roda; distância limitada por min_range/max_range.
+@export var hold_distance_step := 0.5
 ## Mola mais lenta que a do P3 (ω = 6) e alimentação direta parcial: atrasa ao girar (peso).
 @export var hold_omega := 4.5
 @export var hold_feedforward := 0.6

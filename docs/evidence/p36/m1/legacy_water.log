@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P35TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 698 ms
+[P35TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":698.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P35TEST] baseline: 14 probes, sem chão em []
+[P35TEST] --- testes P1 ---
+[P35TEST] --- testes P2 ---
+[P35TEST] --- testes P3 ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 260 ms
+[TerrainService] add_sphere OK c=(-36.5, 1.4, 64.4) r=1.40 rev=1 10.805ms
+[P35TEST] T31 PASS — Água: jato empurra a caixa por força contínua e a molha; caixa atrás de terreno não é atingida | {"caixa_deslocada_m":2.78624415397644,"caixa_estado":"MADEIRA • 20 °C • molhada 50%","escondida_deslocada_m":0.0,"escondida_umidade":0.0,"morro_bloqueia_visada":true,"morro_criado":true,"quadros_na_caixa":39,"quadros_na_escondida":0,"quadros_no_terreno":28}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 1)
+[TerrainService] reset: geração 3 pronta=true em 255 ms
+[P35TEST] T33 PASS — Água × Fogo: o jato apaga a caixa em chamas em ≤ 3 s (causa: água) e solta vapor | {"acesa":true,"causas":["água"],"estado":"MADEIRA • 150 °C • molhada 8% • integridade 78%","intensidade_antes":0.995833333333334,"s_ate_apagar":1.745,"vapor":1}
+[P35TEST] --- testes P3.5 (Terra) ---
+[P35TEST] relatório: C:/Users/dsoares/Documents/Projetos/game/.claude/worktrees/charming-mendel-4b469a/docs/evidence/p36/m1/legacy_water.json
+[P35TEST] erros do motor durante o teste: 0 | avisos: 0
+[P35TEST] RESULTADO GERAL: PASS (3/3) em 16.1 s

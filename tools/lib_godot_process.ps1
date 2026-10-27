@@ -6,6 +6,13 @@
 # Exit code devolvido quando um passo estoura o limite de tempo (mesma convenção do `timeout` do GNU).
 $script:TimeoutExitCode = 124
 
+# Exit code de um passo de selftest cujo relatório NÃO comprova uma execução completa e aprovada
+# (P3.6): sem relatório novo, outro run_id, contagem diferente da esperada ou resultado FAIL.
+# Motivo: fechar a janela da Godot no meio do selftest encerra o processo com exit 0 sem rodar
+# os testes (bateria do P3.5, passos em janela: exit 0 em 3,5 s e 10,4 s).
+$script:InvalidReportExitCode = 3
+. (Join-Path $PSScriptRoot 'lib_selftest_contract.ps1')
+
 # Usa System.Diagnostics.Process em vez de `&`/`*>` porque: (1) o Windows PowerShell 5.1
 # grava redirecionamentos em UTF-16; (2) o editor custom e o executável exportado são de
 # subsistema GUI e `&` não espera eles terminarem, o que devolveria um exit code falso. Aqui
@@ -67,6 +74,31 @@ function Invoke-Import([string]$Godot, [string]$Evidence, [string]$Root, [int]$T
         $attempts = 2
     }
     return @{ Code = $code; Attempts = $attempts; Log = $importLog }
+}
+
+# Confere o relatório JSON de um selftest. Devolve '' se ele comprova uma execução COMPLETA e
+# APROVADA desta chamada (gravado depois de $NotBefore, mesmo run_id, completo=true, contagem igual
+# à esperada, todos os testes PASS); senão, o motivo.
+
+# Roda um selftest com um run_id novo e só o aceita se o exit code for 0 E o relatório validar
+# (Test-SelftestReport). O relatório antigo é apagado antes. Usa as variáveis do runner que a
+# carregou por dot-source: $evidence, $root, $results e $StepTimeoutSec.
+function Invoke-SelftestStep([string]$Name, [string]$LogFile, [string]$Exe, [string[]]$Arguments, [string]$ReportPath, [string[]]$ExpectedIds) {
+    Write-Host "==> $Name"
+    $log = Join-Path $evidence $LogFile
+    $runId = [guid]::NewGuid().ToString('N').Substring(0, 12)
+    Remove-Item $ReportPath -ErrorAction SilentlyContinue
+    $t0 = Get-Date
+    $code = Invoke-Native $Exe ($Arguments + @("--report=$ReportPath", "--run-id=$runId")) $log $root $StepTimeoutSec
+    $reason = Test-SelftestReport $ReportPath $runId $ExpectedIds $t0
+    if ($reason -eq '') { $reason = Test-GodotLog $log }
+    if ($reason -ne '') {
+        Add-Content -Path $log -Encoding UTF8 -Value "`n----- RELATÓRIO INVÁLIDO (run_id $runId): $reason; exit do processo=$code -----"
+        if ($code -eq 0) { $code = $script:InvalidReportExitCode }
+    }
+    $results[$Name] = $code
+    $note = if ($code -eq $script:TimeoutExitCode) { ' (TIMEOUT)' } elseif ($reason -ne '') { " (RELATÓRIO INVÁLIDO: $reason)" } else { " ($($ExpectedIds.Count)/$($ExpectedIds.Count) PASS, run_id $runId)" }
+    Write-Host ("    exit={0}{1}  {2:N1} s  log={3}" -f $code, $note, ((Get-Date) - $t0).TotalSeconds, $log)
 }
 
 function Resolve-Godot([string]$Godot) {

@@ -1,0 +1,72 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-26T16:40:50",
+  "duracao_s": 16.104,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 698.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 698.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "caixa_deslocada_m": 2.78624415397644,
+        "caixa_estado": "MADEIRA • 20 °C • molhada 50%",
+        "escondida_deslocada_m": 0.0,
+        "escondida_umidade": 0.0,
+        "morro_bloqueia_visada": true,
+        "morro_criado": true,
+        "quadros_na_caixa": 39,
+        "quadros_na_escondida": 0,
+        "quadros_no_terreno": 28
+      },
+      "id": "T31",
+      "status": "PASS",
+      "titulo": "Água: jato empurra a caixa por força contínua e a molha; caixa atrás de terreno não é atingida"
+    },
+    {
+      "detalhes": {
+        "acesa": true,
+        "causas": [
+          "água"
+        ],
+        "estado": "MADEIRA • 150 °C • molhada 8% • integridade 78%",
+        "intensidade_antes": 0.995833333333334,
+        "s_ate_apagar": 1.745,
+        "vapor": 1
+      },
+      "id": "T33",
+      "status": "PASS",
+      "titulo": "Água × Fogo: o jato apaga a caixa em chamas em ≤ 3 s (causa: água) e solta vapor"
+    }
+  ],
+  "run_id": "",
+  "testes_ids": [
+    "T1",
+    "T31",
+    "T33"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": ""
+}

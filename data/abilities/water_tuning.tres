@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WaterTuning" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/abilities/water_tuning.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+max_range = 14.0
+stream_speed = 30.0
+emission_interval_s = 0.033333333
+max_packets = 32
+pressure_rise_s = 0.12
+force = 300.0
+wet_per_s = 0.5
+splash_radius = 1.2
+pressure_turbulence = 0.04

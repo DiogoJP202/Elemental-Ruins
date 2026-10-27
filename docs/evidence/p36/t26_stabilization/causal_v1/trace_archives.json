@@ -1,0 +1,146 @@
+[
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_A_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_A_001_trace.zip",
+    "original_bytes": 4478455,
+    "archive_bytes": 310206,
+    "original_sha256": "7389DAA1CB2DBEDAA54131F99423C5E347DEC8BBBCEA4C0F091908C9F32C8E9D",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_A_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_A_002_trace.zip",
+    "original_bytes": 4469127,
+    "archive_bytes": 319746,
+    "original_sha256": "76579CC2A2698855D351D5D9FFA9FB46F3B829626595CCB264E728822211D2EF",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_B_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_B_001_trace.zip",
+    "original_bytes": 4610095,
+    "archive_bytes": 341021,
+    "original_sha256": "6BD0ACF0CE8015022C2BEA94D099975D1A950BA34EB43FC298E243A0FFF3E821",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_B_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_B_002_trace.zip",
+    "original_bytes": 4610095,
+    "archive_bytes": 341113,
+    "original_sha256": "2B16132EF1872CD6E11C4C7678906E69B592FB7ABF2CF40A45830CBF75742DC1",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_C_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_C_001_trace.zip",
+    "original_bytes": 4350921,
+    "archive_bytes": 331970,
+    "original_sha256": "037608A4EED0D9F5279E4B6CB4C52505B0DAB1DCA24F11A4050B9C36970517FF",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_C_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_C_002_trace.zip",
+    "original_bytes": 4266925,
+    "archive_bytes": 328046,
+    "original_sha256": "BDE8A29AB752329892D024DB7DBD085EFD032D96F099EFB02F4F3A28F69B4E85",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_D_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_D_001_trace.zip",
+    "original_bytes": 4131062,
+    "archive_bytes": 298666,
+    "original_sha256": "564CC9A8743D58215F0AEED973CF90774FDB837EB09E7A208D849D08650AA286",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_D_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_stack_D_002_trace.zip",
+    "original_bytes": 4222631,
+    "archive_bytes": 295136,
+    "original_sha256": "D6F376EA704890266A665B61A8DC4BA796C2ECBEBEE0B68B4D328B42D606B890",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_A_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_A_001_trace.zip",
+    "original_bytes": 18974662,
+    "archive_bytes": 1489162,
+    "original_sha256": "C73815260B9AB6B21B69C742EA8D7A8ADB39A0ACD2A53FA928412D5E3A818624",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_A_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_A_002_trace.zip",
+    "original_bytes": 18201881,
+    "archive_bytes": 1448814,
+    "original_sha256": "33A4F80BE71EAA4FDA666BAE410B17378378DB4960F5F0073A0A61C216675C8B",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_B_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_B_001_trace.zip",
+    "original_bytes": 18655975,
+    "archive_bytes": 1576698,
+    "original_sha256": "F1098437D3EB868CA62BDB1778CC2DCD7BD804C7B743F47F8463E5AC5D9ECC51",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_B_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_B_002_trace.zip",
+    "original_bytes": 18569411,
+    "archive_bytes": 1520907,
+    "original_sha256": "077A7D0DE2294CEE2836D9441D43A992DF8CD40658602D15FE4706ECD4B5686B",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_C_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_C_001_trace.zip",
+    "original_bytes": 19283254,
+    "archive_bytes": 1693811,
+    "original_sha256": "687A1660C8C587146E43CD4BAFE0BD3468365A98BD4439BFCBFBCBC5AD2AF9CF",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_C_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_C_002_trace.zip",
+    "original_bytes": 19077325,
+    "archive_bytes": 1602674,
+    "original_sha256": "7A044F20159CCB9A8B098E0E950DE6DF20FAA4188BFA90A804307379E71C2649",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_D_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_D_001_trace.zip",
+    "original_bytes": 17598467,
+    "archive_bytes": 1358551,
+    "original_sha256": "05136DF4023C9AB91EE9D2BF58BD845A05A9BE563412EA413F41D7DF80BDCBB2",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_D_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\causal_v1\\headless_tower_D_002_trace.zip",
+    "original_bytes": 18252313,
+    "archive_bytes": 1450246,
+    "original_sha256": "0D2080F424727AD0D69711A810EDEBC768DE4FC463DE1C1A193BD2E679225F72",
+    "verified": true,
+    "raw_retained": false
+  }
+]

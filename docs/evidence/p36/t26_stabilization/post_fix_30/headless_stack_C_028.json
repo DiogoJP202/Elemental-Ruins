@@ -1,0 +1,471 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "AMD Ryzen 7 5825U with Radeon Graphics",
+  "data": "2026-10-26T22:57:26",
+  "duracao_s": 13.009,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "initial_terrain_ready_ms": 543.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 543.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "after_1_5s": {
+          "max_m": 0.0,
+          "per_body_m": {
+            "ProbeStack_0_0": 0.0,
+            "ProbeStack_0_1": 0.0,
+            "ProbeStack_0_2": 0.0,
+            "ProbeStack_0_3": 0.0,
+            "ProbeStack_1_0": 0.0,
+            "ProbeStack_1_1": 0.0,
+            "ProbeStack_1_2": 0.0,
+            "ProbeStack_1_3": 0.0
+          },
+          "worst_body": ""
+        },
+        "body_count": 8,
+        "box_geometry_after": {
+          "boxes": 8,
+          "max_penetration_m": 0.00130123135055715,
+          "near_pairs": [
+            {
+              "a": "ProbeStack_0_0",
+              "axis": [
+                0.000218123765080236,
+                0.99999988079071,
+                -0.000442345830379054
+              ],
+              "b": "ProbeStack_0_1",
+              "sat_signed_gap_m": -0.00130123135055715
+            },
+            {
+              "a": "ProbeStack_0_1",
+              "axis": [
+                0.000195134154637344,
+                0.999999940395355,
+                -0.000351648661307991
+              ],
+              "b": "ProbeStack_0_2",
+              "sat_signed_gap_m": -0.000180345599682274
+            },
+            {
+              "a": "ProbeStack_0_2",
+              "axis": [
+                0.000330692157149315,
+                0.99999988079071,
+                -0.000371290865587071
+              ],
+              "b": "ProbeStack_0_3",
+              "sat_signed_gap_m": -0.000149601037110259
+            },
+            {
+              "a": "ProbeStack_1_0",
+              "axis": [
+                0.0000553842510271352,
+                1.0,
+                -0.0000397804069507401
+              ],
+              "b": "ProbeStack_1_1",
+              "sat_signed_gap_m": -0.000312330594172239
+            },
+            {
+              "a": "ProbeStack_1_1",
+              "axis": [
+                0.000362334278179333,
+                0.999999940395355,
+                -0.000274726131465286
+              ],
+              "b": "ProbeStack_1_2",
+              "sat_signed_gap_m": -0.000337627673218321
+            },
+            {
+              "a": "ProbeStack_1_2",
+              "axis": [
+                0.000215533829759806,
+                1.0,
+                -0.000274728168733418
+              ],
+              "b": "ProbeStack_1_3",
+              "sat_signed_gap_m": -0.000255865914157383
+            }
+          ],
+          "pairs_penetrating_over_1mm": 1,
+          "penetrating_pairs": 6
+        },
+        "box_geometry_before": {
+          "boxes": 8,
+          "max_penetration_m": 0.00130123135055715,
+          "near_pairs": [
+            {
+              "a": "ProbeStack_0_0",
+              "axis": [
+                0.000218123765080236,
+                0.99999988079071,
+                -0.000442345830379054
+              ],
+              "b": "ProbeStack_0_1",
+              "sat_signed_gap_m": -0.00130123135055715
+            },
+            {
+              "a": "ProbeStack_0_1",
+              "axis": [
+                0.000195134154637344,
+                0.999999940395355,
+                -0.000351648661307991
+              ],
+              "b": "ProbeStack_0_2",
+              "sat_signed_gap_m": -0.000180345599682274
+            },
+            {
+              "a": "ProbeStack_0_2",
+              "axis": [
+                0.000330692157149315,
+                0.99999988079071,
+                -0.000371290865587071
+              ],
+              "b": "ProbeStack_0_3",
+              "sat_signed_gap_m": -0.000149601037110259
+            },
+            {
+              "a": "ProbeStack_1_0",
+              "axis": [
+                0.0000553842510271352,
+                1.0,
+                -0.0000397804069507401
+              ],
+              "b": "ProbeStack_1_1",
+              "sat_signed_gap_m": -0.000312330594172239
+            },
+            {
+              "a": "ProbeStack_1_1",
+              "axis": [
+                0.000362334278179333,
+                0.999999940395355,
+                -0.000274726131465286
+              ],
+              "b": "ProbeStack_1_2",
+              "sat_signed_gap_m": -0.000337627673218321
+            },
+            {
+              "a": "ProbeStack_1_2",
+              "axis": [
+                0.000215533829759806,
+                1.0,
+                -0.000274728168733418
+              ],
+              "b": "ProbeStack_1_3",
+              "sat_signed_gap_m": -0.000255865914157383
+            }
+          ],
+          "pairs_penetrating_over_1mm": 1,
+          "penetrating_pairs": 6
+        },
+        "box_geometry_immediate": {
+          "boxes": 8,
+          "max_penetration_m": 0.00130123135055715,
+          "near_pairs": [
+            {
+              "a": "ProbeStack_0_0",
+              "axis": [
+                0.000218123765080236,
+                0.99999988079071,
+                -0.000442345830379054
+              ],
+              "b": "ProbeStack_0_1",
+              "sat_signed_gap_m": -0.00130123135055715
+            },
+            {
+              "a": "ProbeStack_0_1",
+              "axis": [
+                0.000195134154637344,
+                0.999999940395355,
+                -0.000351648661307991
+              ],
+              "b": "ProbeStack_0_2",
+              "sat_signed_gap_m": -0.000180345599682274
+            },
+            {
+              "a": "ProbeStack_0_2",
+              "axis": [
+                0.000330692157149315,
+                0.99999988079071,
+                -0.000371290865587071
+              ],
+              "b": "ProbeStack_0_3",
+              "sat_signed_gap_m": -0.000149601037110259
+            },
+            {
+              "a": "ProbeStack_1_0",
+              "axis": [
+                0.0000553842510271352,
+                1.0,
+                -0.0000397804069507401
+              ],
+              "b": "ProbeStack_1_1",
+              "sat_signed_gap_m": -0.000312330594172239
+            },
+            {
+              "a": "ProbeStack_1_1",
+              "axis": [
+                0.000362334278179333,
+                0.999999940395355,
+                -0.000274726131465286
+              ],
+              "b": "ProbeStack_1_2",
+              "sat_signed_gap_m": -0.000337627673218321
+            },
+            {
+              "a": "ProbeStack_1_2",
+              "axis": [
+                0.000215533829759806,
+                1.0,
+                -0.000274728168733418
+              ],
+              "b": "ProbeStack_1_3",
+              "sat_signed_gap_m": -0.000255865914157383
+            }
+          ],
+          "pairs_penetrating_over_1mm": 1,
+          "penetrating_pairs": 6
+        },
+        "contacts_enabled": false,
+        "control_without_save_2s": {
+          "max_m": 0.0,
+          "per_body_m": {
+            "ProbeStack_0_0": 0.0,
+            "ProbeStack_0_1": 0.0,
+            "ProbeStack_0_2": 0.0,
+            "ProbeStack_0_3": 0.0,
+            "ProbeStack_1_0": 0.0,
+            "ProbeStack_1_1": 0.0,
+            "ProbeStack_1_2": 0.0,
+            "ProbeStack_1_3": 0.0
+          },
+          "worst_body": ""
+        },
+        "coverage_ok": true,
+        "immediate_shift": {
+          "max_m": 0.0,
+          "per_body_m": {
+            "ProbeStack_0_0": 0.0,
+            "ProbeStack_0_1": 0.0,
+            "ProbeStack_0_2": 0.0,
+            "ProbeStack_0_3": 0.0,
+            "ProbeStack_1_0": 0.0,
+            "ProbeStack_1_1": 0.0,
+            "ProbeStack_1_2": 0.0,
+            "ProbeStack_1_3": 0.0
+          },
+          "worst_body": ""
+        },
+        "immediate_state_changes": {
+          "count": 0,
+          "max_angular_velocity_delta": 0.0,
+          "max_linear_velocity_delta": 0.0,
+          "observed_terrain_rids_preserved": true,
+          "sleeping_or_freeze_changes": [],
+          "terrain_node_preserved": true
+        },
+        "last_thaw": {
+          "bodies": 0,
+          "frames": 0,
+          "ms": 0,
+          "strategy": "preserve_live_colliders",
+          "timeout": false
+        },
+        "layout": "stack",
+        "layout_variant": {
+          "alternating_offset_amplitude_m": 0.02,
+          "offset_direction": -1.0,
+          "offsets": [
+            {
+              "column": 0,
+              "level": 0,
+              "offset_m": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "column": 0,
+              "level": 1,
+              "offset_m": [
+                0.0199999995529652,
+                0.0,
+                -0.0199999995529652
+              ]
+            },
+            {
+              "column": 0,
+              "level": 2,
+              "offset_m": [
+                -0.0199999995529652,
+                0.0,
+                0.0199999995529652
+              ]
+            },
+            {
+              "column": 0,
+              "level": 3,
+              "offset_m": [
+                0.0199999995529652,
+                0.0,
+                -0.0199999995529652
+              ]
+            },
+            {
+              "column": 1,
+              "level": 0,
+              "offset_m": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "column": 1,
+              "level": 1,
+              "offset_m": [
+                -0.0199999995529652,
+                0.0,
+                0.0199999995529652
+              ]
+            },
+            {
+              "column": 1,
+              "level": 2,
+              "offset_m": [
+                0.0199999995529652,
+                0.0,
+                -0.0199999995529652
+              ]
+            },
+            {
+              "column": 1,
+              "level": 3,
+              "offset_m": [
+                -0.0199999995529652,
+                0.0,
+                0.0199999995529652
+              ]
+            }
+          ]
+        },
+        "max_shift_limit_m": 0.1,
+        "operation_frames": 1,
+        "operation_ms": 20,
+        "operation_ok": true,
+        "pause_frames_requested": 15,
+        "peak_after_1_5s": {
+          "max_m": 0.0,
+          "per_body_m": {
+            "ProbeStack_0_0": 0.0,
+            "ProbeStack_0_1": 0.0,
+            "ProbeStack_0_2": 0.0,
+            "ProbeStack_0_3": 0.0,
+            "ProbeStack_1_0": 0.0,
+            "ProbeStack_1_1": 0.0,
+            "ProbeStack_1_2": 0.0,
+            "ProbeStack_1_3": 0.0
+          },
+          "tick_after_operation": 0,
+          "worst_body": ""
+        },
+        "repeat": 28,
+        "restore_state": false,
+        "sampling_note": "contacts disabled by default; five support rays; unsigned collide_shape distances; signed 15-axis OBB SAT gap excludes collision margins; position peak sampled at every tick through tick90",
+        "scenario": "C",
+        "settled": true,
+        "still_frozen": 0,
+        "support_coverage": {
+          "body_supported_bodies": 6,
+          "terrain_supported_bodies": 2
+        },
+        "support_ok": true,
+        "terrain_identity_after": {
+          "instance_id": 78701922442,
+          "support_collider_rids": [
+            14705968021620
+          ]
+        },
+        "terrain_identity_before": {
+          "instance_id": 78701922442,
+          "support_collider_rids": [
+            14705968021620
+          ]
+        },
+        "terrain_identity_immediate": {
+          "instance_id": 78701922442,
+          "support_collider_rids": [
+            14705968021620
+          ]
+        },
+        "terrain_save": {
+          "blocks_tasks": 0,
+          "bytes": 20480,
+          "copy": "OK",
+          "flush_ms": 0.0,
+          "io_drain": {
+            "idle": true,
+            "ms": 12.0,
+            "tasks": {
+              "generation": 0,
+              "gpu": 0,
+              "main_thread": 0,
+              "meshing": 0,
+              "streaming": 0
+            }
+          },
+          "ms": 17.0,
+          "ok": true,
+          "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/t26_probe_stack_28.sqlite",
+          "publication": {
+            "error": 0,
+            "recovery_file": "",
+            "rollback": 0
+          },
+          "reason": "",
+          "save_anterior_em_voo": "nenhum",
+          "slot": "t26_probe_stack_28",
+          "terrain_recreated": false
+        },
+        "trace_enabled": true,
+        "trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\post_fix_30\\headless_stack_C_028_trace.json",
+        "trace_ticks": 36,
+        "trace_written": true
+      },
+      "id": "PROBE",
+      "status": "PASS",
+      "titulo": "T26 causal intervention and support trace"
+    }
+  ],
+  "run_id": "11bb7f87ee33",
+  "testes_ids": [
+    "T1",
+    "PROBE"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": ""
+}

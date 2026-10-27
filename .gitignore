@@ -38,6 +38,8 @@ build/
 !docs/evidence/*.log
 !docs/evidence/p1/*.log
 !docs/evidence/p2/*.log
+!docs/evidence/p36/t26_stabilization/**/*.log
+!docs/evidence/p36/**/*.log
 
 # Preset de export é versionado (sem segredos; credenciais ficam em .godot/export_credentials.cfg)
 !export_presets.cfg

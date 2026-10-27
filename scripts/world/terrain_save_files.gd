@@ -30,7 +30,10 @@ static func is_valid_slot(slot: String) -> bool:
 
 
 static func ensure_dir(dir: String) -> Error:
-	return DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
+	var absolute := ProjectSettings.globalize_path(dir)
+	if FileAccess.file_exists(absolute):
+		return ERR_ALREADY_EXISTS
+	return DirAccess.make_dir_recursive_absolute(absolute)
 
 
 static func exists(path: String) -> bool:
@@ -53,6 +56,33 @@ static func copy(src: String, dst: String) -> Error:
 		if err != OK:
 			return err
 	return DirAccess.copy_absolute(src, dst)
+
+
+## Publica uma cópia completa com rollback. No Windows, rename SOBRE arquivo existente
+## remove o destino antes de mover: nunca o usamos assim. O backup é mantido se até o
+## rollback falhar. Não é transação resistente a queda de energia; ver relatório P3.6.1.
+static func publish_snapshot(src: String, dst: String) -> Dictionary:
+	var suffix := ".%d_%d" % [OS.get_process_id(), Time.get_ticks_usec()]
+	var temporary := dst + suffix + ".tmp"
+	var backup := dst + suffix + ".previous"
+	var result := {"error": OK, "rollback": OK, "recovery_file": ""}
+	var err := DirAccess.copy_absolute(src, temporary)
+	var had_previous := exists(dst)
+	if err == OK and had_previous:
+		err = DirAccess.rename_absolute(dst, backup)
+	if err == OK:
+		err = DirAccess.rename_absolute(temporary, dst)
+		if err != OK and had_previous:
+			result.rollback = DirAccess.rename_absolute(backup, dst)
+			if result.rollback != OK:
+				result.recovery_file = backup
+		elif had_previous:
+			# Publicação confirmada: só agora o backup deixa de ser necessário.
+			DirAccess.remove_absolute(backup)
+	if exists(temporary):
+		DirAccess.remove_absolute(temporary)
+	result.error = err
+	return result
 
 
 ## Apaga o arquivo. No Windows falha enquanto um stream o mantém aberto.

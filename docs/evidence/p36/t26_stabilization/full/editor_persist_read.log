@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 955 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":955.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[TerrainService] load selftest_xproc: ok=true { "slot": "selftest_xproc", "ok": true, "ms": 222.0, "copy": "OK", "bytes": 147456 }
+[P36TEST] T14x-read PASS — Fase 2: processo novo carrega o slot e reproduz o estado salvo | {"amostras_sdf_material":108,"carregar":{"bytes":147456,"copy":"OK","ms":222.0,"ok":true,"slot":"selftest_xproc"},"diferencas":[],"esperado_de":"2026-10-27T07:19:48","mundo_novo_difere_do_salvo_em_probes":5,"nos":{"esperado":229,"obtido":229},"slot":"selftest_xproc"}
+[P36TEST] relatório: C:\Users\diogo\.codex\worktrees\p36-t26-stabilization\Elemental-Ruins\docs\evidence\p36\t26_stabilization\full\editor_persist_read.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (2/2) em 4.5 s

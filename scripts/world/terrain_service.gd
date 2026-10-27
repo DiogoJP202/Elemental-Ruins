@@ -11,8 +11,8 @@ extends Node
 ##
 ## Persistência (P1): o terreno vivo usa um VoxelStreamSQLite num arquivo de SESSÃO
 ## novo a cada recriação (TerrainSaveFiles). Salvar = save_modified_blocks → esperar o
-## tracker → liberar o nó → fechar o stream → copiar a sessão para o slot → reabrir a
-## mesma sessão. Carregar = copiar o slot para uma sessão nova e recriar o nó. Reset =
+## tracker → drenar I/O → fechar/copiar/reabrir stream, mantendo o terreno vivo (P3.6.1).
+## Carregar = copiar o slot para uma sessão nova e recriar o nó. Reset =
 ## sessão nova e vazia (só o gerador). O slot fica intacto no reset.
 
 signal terrain_ready
@@ -187,7 +187,7 @@ func raycast_terrain(from: Vector3, to: Vector3) -> Dictionary:
 	var query := PhysicsRayQueryParameters3D.create(from, to, Layers.TERRAIN)
 	query.collide_with_areas = false
 	query.hit_back_faces = false
-	return world.direct_space_state.intersect_ray(query)
+	return PhysicsRayHelper.intersect(world.direct_space_state, query)
 
 
 ## Valor SDF dos DADOS (negativo = sólido). Não reflete a colisão.
@@ -462,10 +462,12 @@ func reset_world() -> bool:
 	return ok
 
 
-## Grava todas as edições no slot. O terreno é liberado e recriado a partir da mesma
-## sessão (o mundo volta do disco), então o jogador deve ficar congelado durante a chamada.
+## Snapshot do SQLite sem reconstruir terreno nem alterar modos dos corpos físicos.
+## O scheduler do terreno fica parado enquanto drenamos workers. Só depois de não haver
+## I/O em voo fechamos/copiamos/reabrimos o stream, SEM await nesse trecho crítico.
+## Flush ou drenagem que exceda o prazo aborta mantendo terreno, colisões e stream vivos.
 func save_world(slot: String) -> bool:
-	if _resetting or not persistence_enabled or not TerrainSaveFiles.is_valid_slot(slot):
+	if _resetting or not _ready_flag or not persistence_enabled or not TerrainSaveFiles.is_valid_slot(slot):
 		_last_save = {"slot": slot, "ok": false, "reason": "busy" if _resetting else "unavailable"}
 		world_saved.emit(slot, false, 0.0)
 		return false
@@ -474,31 +476,58 @@ func save_world(slot: String) -> bool:
 	var t0 := Time.get_ticks_msec()
 	var session := _session_path
 	var dst := TerrainSaveFiles.slot_path(saves_dir, slot)
+	var previous_process_mode := _terrain.process_mode
+	_terrain.process_mode = Node.PROCESS_MODE_DISABLED
 	var flushed: Dictionary = await _flush_modified_blocks()
-	if not flushed.saved:
-		# Sem a gravação completa, liberar o nó perderia as edições: aborta e mantém o terreno.
-		_last_save = {"slot": slot, "ok": false, "reason": "flush_incomplete", "flush_ms": flushed.ms,
-			"blocks_tasks": flushed.tasks}
-		_ready_flag = true
-		_end_busy()
-		_log("save %s ABORTADO: %s" % [slot, _last_save])
-		world_saved.emit(slot, false, float(Time.get_ticks_msec() - t0))
-		return false
-	await _release_terrain()
-	TerrainSaveFiles.ensure_dir(saves_dir)
-	var copy_err := TerrainSaveFiles.copy(session, dst)
-	_spawn_terrain(session)
-	var ready := await _wait_until_ready()
+	var drained := {"idle": false, "ms": 0.0, "tasks": {}}
+	if flushed.saved:
+		drained = await _wait_stream_idle()
+	var copy_err: Error = ERR_BUSY
+	var publication := {"error": ERR_BUSY, "rollback": OK, "recovery_file": ""}
+	if flushed.saved and drained.idle:
+		copy_err = TerrainSaveFiles.ensure_dir(saves_dir)
+		if copy_err == OK:
+			# A troca de database_path NÃO reseta os mapas. Não é barreira de I/O:
+			# workers emprestam conexões; por isso drenagem obrigatória acima (VT 1.7).
+			# O setter também faz flush do cache residual de saves de unload já drenados.
+			_stream.database_path = ""
+			publication = TerrainSaveFiles.publish_snapshot(session, dst)
+			copy_err = publication.error
+			_stream.database_path = session
+	_terrain.process_mode = previous_process_mode
 	var ms := float(Time.get_ticks_msec() - t0)
-	var ok: bool = copy_err == OK and ready
+	var ok: bool = flushed.saved and drained.idle and copy_err == OK
 	_last_save = {"slot": slot, "ok": ok, "ms": ms, "flush_ms": flushed.ms, "blocks_tasks": flushed.tasks,
 		"save_anterior_em_voo": flushed.inflight, "copy": error_string(copy_err),
-		"bytes": TerrainSaveFiles.file_size(dst), "path": dst}
+		"bytes": TerrainSaveFiles.file_size(dst), "path": dst, "terrain_recreated": false,
+		"publication": publication, "io_drain": drained, "reason": "" if ok else ("flush_incomplete" if not flushed.saved else
+			("io_timeout" if not drained.idle else "copy_failed"))}
 	_last_ready_ms = ms
+	_ready_flag = true
 	_end_busy()
 	_log("save %s: ok=%s %s" % [slot, ok, _last_save])
 	world_saved.emit(slot, ok, ms)
 	return ok
+
+
+## O contador do VoxelEngine inclui tarefas enfileiradas e respostas ainda não destruídas.
+## O tracker sozinho não cobre loads/saves de unload anteriores. Sem novos updates do nó,
+## dois ticks consecutivos sem streaming/geração formam a barreira antes de fechar o SQLite.
+func _wait_stream_idle() -> Dictionary:
+	var t0 := Time.get_ticks_msec()
+	var deadline := t0 + int(save_timeout_s * 1000.0)
+	var quiet_ticks := 0
+	var tasks := {}
+	while Time.get_ticks_msec() < deadline:
+		tasks = Engine.get_singleton("VoxelEngine").call("get_stats").get("tasks", {})
+		if tasks.get("streaming", -1) == 0 and tasks.get("generation", -1) == 0:
+			quiet_ticks += 1
+			if quiet_ticks >= 2:
+				return {"idle": true, "ms": float(Time.get_ticks_msec() - t0), "tasks": tasks}
+		else:
+			quiet_ticks = 0
+		await get_tree().physics_frame
+	return {"idle": false, "ms": float(Time.get_ticks_msec() - t0), "tasks": tasks}
 
 
 ## Substitui o mundo atual pelo slot salvo (sessão nova copiada do slot).

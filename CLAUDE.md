@@ -2,6 +2,28 @@
 
 > Leia este arquivo no início de toda sessão. Este repositório será um **jogo Godot 4**, não uma aplicação web. Idioma das explicações: português brasileiro; nomes de classes, nós, funções e arquivos em inglês quando fizer sentido.
 
+## Estado vigente: P4A — manipulação livre de Terra (27/10/2026)
+- P0–P3.6.1 implementados. Base `codex/p36-t26-stabilization`, referência `180ec59`: salvar preserva terreno, colisores e física viva. Não reiniciar fases anteriores.
+- P4A com checkpoint fechado em 27/10/2026: 66/66 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos; resultados no README e evidências em `docs/evidence/p4a/integration/`. Playtest dos controles recebeu feedback positivo do usuário na mesma data. Próximo passo: revisar a PR, sem ampliar o escopo automaticamente.
+- Trabalho autorizado: uma rocha suspensa com câmera horizontal, Q/E para altura e roda contextual para distância; preservar mola, arremesso e cancelamentos. Sem novas habilidades, múltiplas rochas, multiplayer ou arquitetura genérica.
+- Branch de trabalho: `feat/p4a-earth-free-control`. Conferir repositório, worktree e Git antes de editar; preservar alterações locais. Não modificar a main, fazer reset destrutivo, merge ou push sem autorização.
+- Stack vigente: Godot 4.7.2 custom + Voxel Tools 1.7 como módulo (D13). Editor e template release compatíveis. Não reintroduzir a GDExtension.
+- Referências atuais: README.md e PROJETO_ROADMAP.md; contratos existentes em docs/decisions.md, docs/p35_earth_polish.md e docs/p36_t26_stabilization.md. O prompt inicial e o escopo da primeira entrega abaixo são históricos.
+- Gates: zero erros e zero avisos. Nenhuma exceção ativa. Allowlist futura só com identificação exata, justificativa e documentação. Sem relaxar critérios para obter PASS.
+- Em janela: intervalo entre quadros p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms nos cenários T27/T37. Registrar hardware, resolução, renderer, cenário e metodologia. Headless não comprova renderização.
+- Água, Fogo e Ar: Resources independentes editáveis pelo inspetor, seguindo EarthTuning. Separar comandos, simulação, materiais e VFX. Não criar habilidades novas.
+- PvP nesta fase: timings configuráveis, eventos identificáveis, cancelamentos e telegraphs. Sem rede, rollback, servidores ou dano em jogadores; sem pausa/tempo global para impacto.
+- Capturas e automação não são playtest humano. P4A: feedback humano positivo dos controles em 27/10/2026; legibilidade PvP e avaliações dos demais elementos continuam NÃO TESTADO.
+- Raycasts: registrar tentativas, acertos e falhas por cenário, superfícies finas e corpos adjacentes. Amostra sem falhas não prova correção universal.
+- Testes proporcionais ao risco: `git diff --check` e parse/import quando necessário; IDs direcionados para o comportamento alterado e consumidores reais; benchmark em janela ao alterar o caminho físico. Bateria integral nos quatro modos somente no checkpoint de integração, alteração sistêmica de alto risco ou candidata a merge.
+
+## Engenharia — Senior Lazy, Not Junior Busy
+- Antes de criar código, buscar funções semelhantes e ler seus pontos reais de chamada. Estender os 20% faltantes quando o código existente já resolve os outros 80%.
+- Preferir ajustar função, reutilizar componente e estender classe pequena antes de criar responsabilidade nova. Sem managers, interfaces duplicadas, refatorações paralelas ou abstrações especulativas.
+- Reutilizar runners e IDs; novos testes somente para lacunas reais, sem executar a bateria completa a cada commit. Nunca alterar limites, desativar testes ou declarar PASS sem execução.
+- Documentar somente decisões não óbvias, contratos, limitações, uso e resultados executados. Preservar histórico; não criar relatórios, ferramentas ou evidências redundantes.
+- Perguntar internamente: já existe, há forma menor, resolve problema real, o jogador percebe o benefício? Preferir a solução mais simples que atende ao jogo.
+
 ## Visão do produto
 Sandbox **3D em terceira pessoa**, focado em controle expressivo de terra, água, fogo e ar, destruição física e modificações persistentes do ambiente. Estética original inspirada no cel-shading/cores e contornos de *Sable* e no low-poly/texturas retro de *Mouthwashing*. **Nunca copiar assets, personagens, marcas, símbolos ou código proprietário dessas obras, nem de Avatar.** O atlas de Avatar é referência mecânica, não material para reprodução de propriedade intelectual.
 
@@ -11,13 +33,13 @@ Sandbox **3D em terceira pessoa**, focado em controle expressivo de terra, água
 ## Stack e dependências
 - **Godot 4.7.2 estável (Windows)**, GDScript para gameplay e sistemas de protótipo.
 - **Jolt Physics integrado** da Godot; não instalar o addon legado Godot Jolt sem motivo comprovado.
-- Candidato prioritário: **Voxel Tools 1.7** com **SDF + Transvoxel**, edição runtime e colisões atualizáveis. Testar primeiro **GDExtension** na Godot oficial; se inviável, investigar **custom build da Godot 4.7.2 com Voxel Tools 1.7**, documentando troca e implicações para exportação. **Não confiar que classes/APIs existam sem verificar versão de verdade.**
+- **Voxel Tools 1.7 como módulo** na build custom da Godot 4.7.2, com **SDF + Transvoxel**, edição runtime e colisões atualizáveis (D13). A investigação de GDExtension é histórica; não repeti-la nem reinstalar o addon. **Não confiar que classes/APIs existam sem verificar a versão real.**
 - Se a versão exata não estiver disponível no ambiente, registrar bloqueio e perguntar/explicar; **não trocar de engine ou reduzir terreno a heightmap**.
 - Renderização inicial simples; pós-processamento, shaders e água volumétrica **não** devem bloquear P0.
 
 ## Precedência e ordem de leitura
 1. `CLAUDE.md` (este arquivo).
-2. `PROMPT_INICIAL_CLAUDE_CODE.txt` (escopo da primeira execução).
+2. `README.md` e `PROJETO_ROADMAP.md` (fase e instruções atuais); consultar `PROMPT_INICIAL_CLAUDE_CODE.txt` somente como histórico da primeira execução.
 3. `pesquisa_tecnica_elemental_ruins_godot_2026.md` (riscos, APIs candidatas, links e alternativas).
 4. `elemental_ruins_gdd_v02.md` (GDD atualizado e referência de longo prazo).
 5. `P0_CHECKLIST.md` (contrato de aceitação do protótipo).
@@ -27,7 +49,7 @@ Sandbox **3D em terceira pessoa**, focado em controle expressivo de terra, água
 
 Em caso de conflito: **requisito explícito do usuário > CLAUDE.md > P0_CHECKLIST.md > GDD v0.2 > pesquisa > documentos históricos**. Nunca trabalhar baseado no GDD antigo `elemental_ruins_gdd.md` nem no prompt antigo `prompt_claude_elemental_ruins.md`, que não estão neste pacote.
 
-## Escopo DA PRIMEIRA ENTREGA: apenas P0
+## Histórico: escopo da primeira entrega (P0 concluído)
 1. Inspecionar máquina/projeto, versões da Godot, Git, ferramentas e dependências sem instalar silenciosamente nada importante.
 2. Criar projeto nativo `.godot` e uma cena de laboratório técnico com personagem `CharacterBody3D`, câmera de terceira pessoa e WASD/Space/mouse.
 3. Integrar terreno SDF volumétrico com geração de malha e colisão.
@@ -51,11 +73,11 @@ Em caso de conflito: **requisito explícito do usuário > CLAUDE.md > P0_CHECKLI
 - Separar claramente: implementado+testado / implementado+não testado / não implementado / bloqueado.
 - Não inventar links, resultados de benchmark, logs, imagens ou evidência de execução.
 
-## Controles temporários do teste P0
+## Histórico: controles temporários do teste P0
 - WASD andar, mouse orbitar, Space pular, Shift correr.
 - `G`: escavar, `H`: acrescentar matéria, `Z`: reset.
 - Marcador de mira e raio configurável; `J` para perfurar caminho/túnel é opcional até o controle básico funcionar.
 - Esses atalhos são provisórios, diferentes do futuro sistema de 4 elementos do GDD. Não implementar seleção 1–4 antes de P3.
 
 ## Aceite e relatório ao fim da sessão
-Responder com: arquivos criados/alterados, instruções para abrir na Godot, versões reais, checkboxes de `P0_CHECKLIST.md` com PASSOU/FALHOU/NÃO TESTADO, provas/logs, riscos e **um único próximo passo recomendado**. Não dizer 'terminado' só porque criou `project.godot` ou scripts.
+Responder com: o que foi reutilizado/criado, controles, testes realmente executados e omitidos, desempenho quando medido, commit, limitações e **um único próximo passo recomendado**. Informar NÃO TESTADO quando aplicável; não refazer os checklists das fases anteriores por padrão.

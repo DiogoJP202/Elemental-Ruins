@@ -35,6 +35,9 @@ var props: Node3D
 var _screens := false
 var _only: PackedStringArray = []
 var _report_path := ""
+## Identificador da execução (--run-id=, dado pelo runner): vai no relatório para o runner provar
+## que o JSON é DESTA execução e não de uma anterior (P3.6).
+var _run_id := ""
 var _mode := ""
 var _results: Array[Dictionary] = []
 var _metrics := {}
@@ -57,6 +60,8 @@ func _ready() -> void:
 	for a: String in args:
 		if a.begins_with("--report="):
 			_report_path = a.trim_prefix("--report=")
+		elif a.begins_with("--run-id="):
+			_run_id = a.trim_prefix("--run-id=")
 		elif a.begins_with("--only="):
 			_only = a.trim_prefix("--only=").split(",", false)
 	_mode = "headless" if headless else "window"
@@ -604,9 +609,14 @@ func _finish(force_code := -1) -> void:
 			passed += 1
 	var all_pass := passed == _results.size() and not _results.is_empty()
 	var log_snapshot: Dictionary = _logger.snapshot()
+	all_pass = all_pass and log_snapshot.errors == 0 and log_snapshot.warnings == 0
 	if not _fps_samples.is_empty():
 		_metrics["fps_janela"] = _stats(_fps_samples)
 	var report := {
+		"run_id": _run_id,
+		# Só _finish grava o relatório; false se foi o watchdog que encerrou (código 2).
+		"completo": force_code != 2,
+		"testes_ids": _results.map(func(r): return r.id),
 		"data": Time.get_datetime_string_from_system(),
 		"modo": _mode,
 		"godot": Engine.get_version_info().string,

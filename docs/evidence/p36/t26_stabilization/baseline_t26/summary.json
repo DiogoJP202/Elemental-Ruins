@@ -1,0 +1,138 @@
+[
+  {
+    "trial": 1,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.073565199971199,
+    "worst": {
+      "antes": "(19.67367, 1.65757, 15.25627)",
+      "depois_1_5s": "(19.64521, 1.650411, 15.32373)",
+      "logo_apos_save": "(19.67367, 1.65757, 15.25627)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P18_pilar1",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.00352417794056237,
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "trial": 2,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.00402507465332747,
+    "worst": {
+      "antes": "(21.56071, 0.21907, 11.1861)",
+      "depois_1_5s": "(21.55997, 0.215137, 11.18569)",
+      "logo_apos_save": "(21.56071, 0.21907, 11.1861)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P13_laje1",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.0117760039865971,
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "trial": 3,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.00921252742409706,
+    "worst": {
+      "antes": "(17.27368, 1.774498, 14.06987)",
+      "depois_1_5s": "(17.27066, 1.768462, 14.0636)",
+      "logo_apos_save": "(17.27368, 1.774498, 14.06987)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P21_pilar1",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.00630641635507345,
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "trial": 4,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.0169853214174509,
+    "worst": {
+      "antes": "(17.66173, 0.644414, 11.47679)",
+      "depois_1_5s": "(17.66091, 0.635576, 11.49127)",
+      "logo_apos_save": "(17.66173, 0.644414, 11.47679)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P21_pilar1",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.00016782499733381,
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "trial": 5,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.0392926558852196,
+    "worst": {
+      "antes": "(15.23758, 0.016774, 16.65908)",
+      "depois_1_5s": "(15.23024, -0.015432, 16.6378)",
+      "logo_apos_save": "(15.23758, 0.016774, 16.65908)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P07_pilar0",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.0648042634129524,
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "trial": 6,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.00190513790585101,
+    "worst": {
+      "antes": "(20.41795, 0.782641, 10.63949)",
+      "depois_1_5s": "(20.41837, 0.780784, 10.63943)",
+      "logo_apos_save": "(20.41795, 0.782641, 10.63949)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P19_pilar1",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.00147898378781974,
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "trial": 7,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.0741436332464218,
+    "worst": {
+      "antes": "(19.87227, 1.681457, 15.41039)",
+      "depois_1_5s": "(19.81469, 1.64208, 15.38526)",
+      "logo_apos_save": "(19.87227, 1.681457, 15.41039)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P29_coroa",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.0494229644536972,
+    "errors": 0,
+    "warnings": 0
+  },
+  {
+    "trial": 8,
+    "exit": 0,
+    "status": "PASS",
+    "max_shift_m": 0.0282656643539667,
+    "worst": {
+      "antes": "(19.36896, 1.626694, 14.0647)",
+      "depois_1_5s": "(19.3619, 1.599882, 14.0702)",
+      "logo_apos_save": "(19.36896, 1.626694, 14.0647)",
+      "mudou_durante_save_m": 0.0,
+      "peca": "P19_pilar1",
+      "vel_antes": 0.0
+    },
+    "control_m": 0.000604387489147484,
+    "errors": 0,
+    "warnings": 0
+  }
+]

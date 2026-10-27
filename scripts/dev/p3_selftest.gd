@@ -395,14 +395,33 @@ func _t34_air_gust() -> void:
 	var ab: AbilityController = main.abilities
 	var base: Vector3 = await _p3_lab(3)
 	var gust: AirGust = ab.get_ability(&"air_gust")
-	# Leque à frente: caixa a ~5 m, fogo pequeno e grande, e uma caixa atrás de um morro.
+	# Massa e oclusão: caixa a ~5 m e uma caixa atrás de um morro.
+	# P3.6 M3: corpos agora também bloqueiam o ar. As caixas em chamas do P3 ficavam na linha
+	# da caixa de massa (medido: exposição zero) e passam a uma rajada separada; limiares iguais.
 	var hidden := DebugProps.spawn_crate(props, base + Vector3(-3, 0, -7))
 	var wall := svc.add_sphere(base + Vector3(-1.6, 0.6, -3.8), 1.2)
 	var crate := DebugProps.spawn_crate(props, base + Vector3(1.5, 0, -5))
-	var small := DebugProps.spawn_crate(props, base + Vector3(0.3, 0, -2.2))
-	var big := DebugProps.spawn_crate(props, base + Vector3(1.2, 0, -3.0))
 	var wall_up := await _wait_until(func(): return not svc.raycast_terrain(ab.hand_position(),
 		MaterialResponseSystem.body_center(hidden)).is_empty(), 3.0)
+	await _seconds(1.0)
+	var c0 := crate.global_position
+	var h0 := hidden.global_position
+	await _tap_at(base + Vector3(0, 0.5, -6))
+	# P3.6 M3: a frente avança a 30 m/s em vez de agir no clique. A velocidade é lida no início do
+	# tick seguinte ao impulso, como antes; prazo de chegada d/v + 2 ticks é exigido pelo T52.
+	var hit_list: Array = gust.last_gust.get("hit", [])
+	var arrived := await _wait_until(func(): return hit_list.has(crate), 1.0)
+	var crate_v := crate.linear_velocity.length()
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	var hidden_v := hidden.linear_velocity.length()
+	var g := gust.last_gust
+	await _seconds(1.5)
+	var crate_moved := crate.global_position.distance_to(c0)
+	var hidden_moved := hidden.global_position.distance_to(h0)
+	# Fogo fraco e forte (laboratório limpo, sem o morro): o forte fica fora da sombra do fraco.
+	base = await _p3_lab(3)
+	var small := DebugProps.spawn_crate(props, base + Vector3(0.3, 0, -2.2))
+	var big := DebugProps.spawn_crate(props, base + Vector3(-0.9, 0, -2.6))
 	await _seconds(1.0)
 	_apply_direct(ElementalEvent.Kind.HEAT, small, 400.0)
 	_apply_direct(ElementalEvent.Kind.HEAT, big, 400.0)
@@ -410,18 +429,10 @@ func _t34_air_gust() -> void:
 	var bs := materials.state_of(big)
 	ss.intensity = 0.2
 	bs.intensity = 0.6
-	var c0 := crate.global_position
-	var h0 := hidden.global_position
 	await _tap_at(base + Vector3(0, 0.5, -6))
-	await get_tree().physics_frame
-	var crate_v := crate.linear_velocity.length()
-	var hidden_v := hidden.linear_velocity.length()
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 	var small_out := not ss.burning
 	var big_i := bs.intensity
-	var g := gust.last_gust
-	await _seconds(1.5)
-	var crate_moved := crate.global_position.distance_to(c0)
-	var hidden_moved := hidden.global_position.distance_to(h0)
 	# Rocha real (extraída), à mesma faixa de distância: quase não se mexe.
 	var ground := svc.raycast_terrain(base + Vector3(5, 5, -12), base + Vector3(5, -10, -12))
 	var out: Dictionary = svc.extract_rock(ground.position, Vector3.UP, 1.2, props, Vector3.RIGHT) if not ground.is_empty() else {"bodies": []}
@@ -437,16 +448,18 @@ func _t34_air_gust() -> void:
 		player.teleport_to(Vector3(rc.x, rc.y, rc.z) + away * 4.5)
 		await _seconds(0.8)
 		await _tap_at(rc)
-		await get_tree().physics_frame
+		var rock_hits: Array = gust.last_gust.get("hit", [])
+		await _wait_until(func(): return rock_hits.has(rock) or gust.waves.is_empty(), 1.0)
 		rock_v = rock.linear_velocity.length()
 		rock_mass = rock.mass
-		rock_in_gust = (gust.last_gust.get("hit", []) as Array).has(rock)
+		rock_in_gust = rock_hits.has(rock)
+		await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 	player.input_enabled = false
-	var ok: bool = wall.ok and wall_up and crate_v >= 4.0 and crate_moved > 2.0 and hidden_v < 0.05 \
+	var ok: bool = wall.ok and wall_up and arrived and crate_v >= 4.0 and crate_moved > 2.0 and hidden_v < 0.05 \
 		and hidden_moved < 0.05 and small_out and bs.burning and big_i > 0.75 \
 		and rock != null and rock_in_gust and rock_v < crate_v / 10.0
 	_record("T34", "Ar: rajada lança a caixa, mal mexe a rocha, não passa terreno; apaga fogo fraco e aviva o forte", ok, {
-		"morro_bloqueia_visada": wall_up, "caixa_vel": crate_v, "caixa_deslocada_m": crate_moved,
+		"morro_bloqueia_visada": wall_up, "frente_chegou_na_caixa": arrived, "caixa_vel": crate_v, "caixa_deslocada_m": crate_moved,
 		"escondida_vel": hidden_v, "escondida_deslocada_m": hidden_moved,
 		"corpos_na_rajada": (g.get("hit", []) as Array).size(), "bloqueados_por_terreno": g.get("blocked", -1),
 		"fogo_fraco_apagou": small_out, "fogo_forte_intensidade": big_i, "rocha_kg": rock_mass, "rocha_vel": rock_v, "rocha_na_rajada": rock_in_gust})
@@ -578,7 +591,8 @@ func _t36_cross_sequence() -> void:
 	var debris := structures.get_pieces().filter(func(p): return p.released and not p.freeze)
 	var a0 := crate_air.global_position
 	await _tap_at(MaterialResponseSystem.body_center(crate_air))
-	await get_tree().physics_frame
+	# P3.6 M3: lista completa só depois que a frente percorre o alcance.
+	await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 	var blown: Array = gust.last_gust.get("hit", [])
 	var debris_hit := debris.filter(func(p): return blown.has(p)).size()
 	await _seconds(1.5)
@@ -635,7 +649,7 @@ func _t36_cross_sequence() -> void:
 		if not clear.is_empty():
 			target = clear[0]
 		await _tap_at(MaterialResponseSystem.body_center(target))
-		await get_tree().physics_frame
+		await _wait_until(func(): return gust.waves.is_empty(), 1.0)
 		var blown2: Array = gust.last_gust.get("hit", [])
 		fallen_hit = fallen.filter(func(p): return blown2.has(p)).size()
 		debris_blocked = gust.last_gust.get("blocked", -1)
@@ -696,6 +710,8 @@ func _t37_powers_benchmark() -> void:
 	var j0 := jet.get_stats()
 	var g0 := gust.get_stats()
 	var e0 := earth.get_stats()
+	var mat0 := materials.get_stats()
+	var fx0 := fx.get_stats()
 	var frame_ms := PackedFloat32Array()
 	var phys_ms := PackedFloat32Array()
 	var last := [Time.get_ticks_usec()]
@@ -753,9 +769,34 @@ func _t37_powers_benchmark() -> void:
 	ps["p99"] = _percentile(phys_ms, 0.99)
 	_metrics["p3_poderes_quadro_ms"] = fs
 	_metrics["p3_poderes_fisica_ms"] = ps
-	var used := {"fogo_bolas": fire.get_stats().exploded - f0.exploded, "agua_quadros_em_corpo": jet.get_stats().body_ticks - j0.body_ticks,
+	# P3.6 M2: atingir o alcance apenas dissipa, sem calor. O benchmark mantém
+	# os cinco disparos e exige voos/conclusões reais; T50 exige impacto com calor
+	# e dissipação sem calor separadamente. Nenhum limite de FPS foi alterado.
+	var f1 := fire.get_stats()
+	var used := {"fogo_disparos_aceitos": f1.fired - f0.fired, "fogo_lancamentos": f1.launched - f0.launched,
+		"fogo_impactos": f1.exploded - f0.exploded, "fogo_dissipacoes": f1.dissipated - f0.dissipated,
+		"fogo_concluidos": f1.exploded + f1.dissipated - f0.exploded - f0.dissipated,
+		"agua_quadros_em_corpo": jet.get_stats().body_ticks - j0.body_ticks,
 		"ar_rajadas": gust.get_stats().gusts - g0.gusts, "terra_arremessos": earth.get_stats().thrown - e0.thrown}
-	var all_used: bool = used.fogo_bolas >= 4 and used.agua_quadros_em_corpo > 0 and used.ar_rajadas >= 4 and used.terra_arremessos >= 1
+	var all_used: bool = used.fogo_disparos_aceitos >= 5 and used.fogo_lancamentos >= 4 and used.fogo_concluidos >= 4 \
+		and used.agua_quadros_em_corpo > 0 and used.ar_rajadas >= 4 and used.terra_arremessos >= 1
+	# P3.6: custos de CPU por sistema na janela do benchmark (médias; máximos são acumulados do processo).
+	var mat1 := materials.get_stats()
+	var fx1 := fx.get_stats()
+	var fire_ticks: int = f1.update_ticks - f0.update_ticks
+	var thermal_ticks: int = mat1.thermal_ticks - mat0.thermal_ticks
+	var vfx_frames: int = fx1.fire_vfx_frames - fx0.fire_vfx_frames
+	var costs := {"fogo_ticks_ativos": fire_ticks, "fogo_consultas": f1.queries - f0.queries,
+		"fogo_testemunhas_1mm": f1.ray_fallback_hits - f0.ray_fallback_hits,
+		"fogo_avanco_us_medio": float(f1.update_usec - f0.update_usec) / maxf(fire_ticks, 1),
+		"fogo_avanco_us_max_acumulado": f1.update_usec_max, "termico_ticks": thermal_ticks,
+		"termico_us_medio": float(mat1.thermal_usec - mat0.thermal_usec) / maxf(thermal_ticks, 1),
+		"termico_us_max_acumulado": mat1.thermal_usec_max,
+		"propagacao_us_medio": float(mat1.spread_usec - mat0.spread_usec) / maxf(thermal_ticks, 1),
+		"propagacao_consultas": mat1.spread_queries - mat0.spread_queries, "propagacao_bloqueadas": mat1.spread_blocked - mat0.spread_blocked,
+		"vfx_fogo_ar_us_medio_quadro": float(fx1.fire_vfx_usec - fx0.fire_vfx_usec) / maxf(vfx_frames, 1),
+		"vfx_fogo_ar_us_max_acumulado": fx1.fire_vfx_usec_max}
+	_metrics["p36_custos_cpu_us"] = costs
 	var windowed := not _mode.begins_with("headless")
 	var fps_ok: bool = (not windowed) or (fs.get("p95", 999.0) <= 20.0 and fs.get("p99", 999.0) <= 33.0 and fs.get("max", 999.0) <= 50.0)
 	var ok: bool = all_used and structures.released_count() == 36 and peak.burning >= 6 and fps_ok
@@ -763,7 +804,7 @@ func _t37_powers_benchmark() -> void:
 		"modo": _mode, "criterio_fps_aplicado": windowed, "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
 		"duracao_s": dur_s, "intervalo_entre_quadros_ms": fs, "time_physics_process_ms": ps, "poderes_usados": used,
 		"pico_em_chamas": peak.burning, "pico_pecas_dinamicas": peak.dynamic, "soltas": structures.released_count(),
-		"fx": fx.get_stats(), "materiais": materials.get_stats()})
+		"fx": fx1, "materiais": mat1, "custos_cpu_us": costs})
 	await _shot("t37_benchmark_poderes", o + Vector3(0, 0.5, 16), 0.0, -12.0)
 	await main.request_world_reset()
 

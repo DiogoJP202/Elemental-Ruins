@@ -1,0 +1,135 @@
+{
+  "checks": [
+    {
+      "details": {},
+      "id": "release_0.2m",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "release_20.0m",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "lost_aim_no_bridge",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "cancel_no_final_segment",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "stale_request_rejected",
+      "passed": true
+    },
+    {
+      "details": {
+        "queries": 3
+      },
+      "id": "fallback_agreement",
+      "passed": true
+    },
+    {
+      "details": {
+        "queries": 3
+      },
+      "id": "fallback_adjacent_colliders",
+      "passed": true
+    },
+    {
+      "details": {
+        "queries": 3
+      },
+      "id": "fallback_thin_edge",
+      "passed": true
+    },
+    {
+      "details": {
+        "attempts": 90,
+        "failures": 0,
+        "fallbacks": 6,
+        "hits": 90
+      },
+      "id": "terrain_slanted_vertices",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "tool_switch_explicit",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "held_action_latched_on_transition",
+      "passed": true
+    },
+    {
+      "details": {
+        "attempts": 100,
+        "failures": 0,
+        "hits": 100
+      },
+      "id": "thin_wall_1mm",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "ray_exclusion_preserved",
+      "passed": true
+    },
+    {
+      "details": {
+        "attempts": 100,
+        "correct_selection": 100,
+        "failures": 0
+      },
+      "id": "adjacent_native_colliders",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "transition_reset",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "transition_save",
+      "passed": true
+    },
+    {
+      "details": {},
+      "id": "transition_load",
+      "passed": true
+    },
+    {
+      "details": {
+        "errors": 0,
+        "samples": [],
+        "warnings": 0
+      },
+      "id": "motor_zero",
+      "passed": true
+    }
+  ],
+  "godot": {
+    "build": "custom_build",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (custom_build)",
+    "timestamp": 1786929518
+  },
+  "head_context": "P3.6 preparation",
+  "logger": {
+    "errors": 0,
+    "samples": [],
+    "warnings": 0
+  },
+  "passed": true
+}

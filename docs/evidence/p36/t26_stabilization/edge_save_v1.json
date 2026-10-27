@@ -1,0 +1,280 @@
+{
+	"display": "headless",
+	"failed": 0,
+	"godot": "4.7.2-stable (custom_build)",
+	"isolated_user_dir": "user://t26_save_edge_21716",
+	"passed": true,
+	"suite": "t26_save_edges",
+	"tests": [
+		{
+			"details": {
+				"base_fell_after_dig": true,
+				"before": [
+					{
+						"angular_velocity": "(0.0, 0.0, 0.0)",
+						"freeze": false,
+						"freeze_mode": 0,
+						"linear_velocity": "(0.0, 0.0, 0.0)",
+						"parked_meta": "",
+						"position": "(-34.16991, 0.519949, 60.23)",
+						"sleeping": true
+					},
+					{
+						"angular_velocity": "(0.0, 0.0, 0.0)",
+						"freeze": false,
+						"freeze_mode": 0,
+						"linear_velocity": "(0.0, 0.0, 0.0)",
+						"parked_meta": "",
+						"position": "(-34.16982, 1.519922, 60.23)",
+						"sleeping": true
+					},
+					{
+						"angular_velocity": "(0.0, 0.0, 0.0)",
+						"freeze": false,
+						"freeze_mode": 0,
+						"linear_velocity": "(0.0, 0.0, 0.0)",
+						"parked_meta": "",
+						"position": "(-34.16993, 2.519907, 60.23001)",
+						"sleeping": true
+					}
+				],
+				"dig_ok": true,
+				"immediate": [
+					{
+						"angular_velocity": "(0.0, 0.0, 0.0)",
+						"freeze": false,
+						"freeze_mode": 0,
+						"linear_velocity": "(0.0, 0.0, 0.0)",
+						"parked_meta": "",
+						"position": "(-34.16991, 0.519949, 60.23)",
+						"sleeping": true
+					},
+					{
+						"angular_velocity": "(0.0, 0.0, 0.0)",
+						"freeze": false,
+						"freeze_mode": 0,
+						"linear_velocity": "(0.0, 0.0, 0.0)",
+						"parked_meta": "",
+						"position": "(-34.16982, 1.519922, 60.23)",
+						"sleeping": true
+					},
+					{
+						"angular_velocity": "(0.0, 0.0, 0.0)",
+						"freeze": false,
+						"freeze_mode": 0,
+						"linear_velocity": "(0.0, 0.0, 0.0)",
+						"parked_meta": "",
+						"position": "(-34.16993, 2.519907, 60.23001)",
+						"sleeping": true
+					}
+				],
+				"max_shift_after_30_frames_m": 0.0,
+				"modes_preserved": true,
+				"saved": true,
+				"settled_naturally": true,
+				"terrain_instance_preserved": true,
+				"top_impulse_shift_x_m": 0.820541381835938
+			},
+			"id": "E1",
+			"passed": true
+		},
+		{
+			"details": {
+				"angular_error_rad_s": 0.0,
+				"body": {
+					"angular_velocity": "(0.3, 1.1, 0.2)",
+					"freeze": false,
+					"freeze_mode": 0,
+					"linear_velocity": "(3.0, 0.5, -1.0)",
+					"parked_meta": "",
+					"position": "(-32.97002, 12.2, 59.83001)",
+					"sleeping": false
+				},
+				"linear_error_m_s": 0.0,
+				"normal_twin": {
+					"angular_velocity": "(0.3, 1.1, 0.2)",
+					"freeze": false,
+					"freeze_mode": 0,
+					"linear_velocity": "(3.0, 0.5, -1.0)",
+					"parked_meta": "",
+					"position": "(-32.97002, 12.2, 67.82991)",
+					"sleeping": false
+				},
+				"position_error_vs_normal_m": 0.000091552734375,
+				"rotation_error_rad": 0.0,
+				"save_physics_frames": 4,
+				"saved": true
+			},
+			"id": "E2",
+			"passed": true
+		},
+		{
+			"details": {
+				"after_dig": {
+					"angular_velocity": "(0.0, 0.0, 0.0)",
+					"freeze": false,
+					"freeze_mode": 0,
+					"linear_velocity": "(0.0, -2.739951, 0.0)",
+					"parked_meta": "",
+					"position": "(-26.17, 0.109019, 60.23)",
+					"sleeping": false
+				},
+				"after_save": {
+					"angular_velocity": "(0.0, 0.0, 0.0)",
+					"freeze": true,
+					"freeze_mode": 0,
+					"linear_velocity": "(0.0, -0.326394, 0.0)",
+					"parked_meta": "budget",
+					"position": "(-26.17, 0.52184, 60.23)",
+					"sleeping": false
+				},
+				"before": {
+					"angular_velocity": "(0.0, 0.0, 0.0)",
+					"freeze": true,
+					"freeze_mode": 0,
+					"linear_velocity": "(0.0, -0.326394, 0.0)",
+					"parked_meta": "budget",
+					"position": "(-26.17, 0.52184, 60.23)",
+					"sleeping": false
+				},
+				"dig_ok": true,
+				"park_preserved": true,
+				"saved": true,
+				"unparked_and_fell": true
+			},
+			"id": "E3",
+			"passed": true
+		},
+		{
+			"details": {
+				"body": {
+					"angular_velocity": "(0.3, 1.1, 0.2)",
+					"freeze": false,
+					"freeze_mode": 0,
+					"linear_velocity": "(3.0, 0.5, -1.0)",
+					"parked_meta": "",
+					"position": "(-34.07, 12.01667, 60.19667)",
+					"sleeping": false
+				},
+				"last_save": {
+					"ok": false,
+					"reason": "unavailable",
+					"slot": "../invalid_edge_slot"
+				},
+				"player_frozen": false,
+				"ready": true,
+				"saved": false,
+				"terrain_instance_preserved": true
+			},
+			"id": "E4",
+			"passed": true
+		},
+		{
+			"details": {
+				"attempts": [
+					{
+						"attempt": 0,
+						"last_save": {
+							"blocks_tasks": 22,
+							"bytes": 32768,
+							"copy": "Busy",
+							"flush_ms": 0.0,
+							"io_drain": {
+								"idle": false,
+								"ms": 0.0,
+								"tasks": {}
+							},
+							"ms": 0.0,
+							"ok": false,
+							"path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/t26_save_edge_21716/saves/edge_save.sqlite",
+							"reason": "flush_incomplete",
+							"save_anterior_em_voo": "nenhum",
+							"slot": "edge_save",
+							"terrain_recreated": false
+						},
+						"saved": false
+					}
+				],
+				"initial_saved": true,
+				"loaded": true,
+				"mark": "(-26.17, -0.4, 68.23)",
+				"real_timeout_observed": true,
+				"reset": true,
+				"retry_last_save": {
+					"blocks_tasks": 0,
+					"bytes": 32768,
+					"copy": "OK",
+					"flush_ms": 49.0,
+					"io_drain": {
+						"idle": true,
+						"ms": 27.0,
+						"tasks": {
+							"generation": 0,
+							"gpu": 0,
+							"main_thread": 0,
+							"meshing": 0,
+							"streaming": 0
+						}
+					},
+					"ms": 81.0,
+					"ok": true,
+					"path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/t26_save_edge_21716/saves/edge_save.sqlite",
+					"reason": "",
+					"save_anterior_em_voo": "esperado",
+					"slot": "edge_save",
+					"terrain_recreated": false
+				},
+				"retry_saved": true,
+				"sdf_loaded": 1.05288851261139,
+				"sdf_saved": 1.05288851261139,
+				"world_and_old_slot_intact_on_failure": true
+			},
+			"id": "E5",
+			"passed": true
+		},
+		{
+			"details": {
+				"body": {
+					"angular_velocity": "(0.3, 1.1, 0.2)",
+					"freeze": false,
+					"freeze_mode": 0,
+					"linear_velocity": "(3.0, 0.5, -1.0)",
+					"parked_meta": "",
+					"position": "(-33.97, 12.03333, 60.16333)",
+					"sleeping": false
+				},
+				"failure": {
+					"blocks_tasks": 0,
+					"bytes": -1,
+					"copy": "File not found",
+					"flush_ms": 1.0,
+					"io_drain": {
+						"idle": true,
+						"ms": 9.0,
+						"tasks": {
+							"generation": 0,
+							"gpu": 0,
+							"main_thread": 662,
+							"meshing": 0,
+							"streaming": 0
+						}
+					},
+					"ms": 13.0,
+					"ok": false,
+					"path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/t26_save_edge_21716/destination_is_a_file/edge_save.sqlite",
+					"reason": "copy_failed",
+					"save_anterior_em_voo": "nenhum",
+					"slot": "edge_save",
+					"terrain_recreated": false
+				},
+				"ready_after_failure": true,
+				"retry_saved": true,
+				"saved_to_invalid_destination": false,
+				"world_and_previous_slot_intact": true
+			},
+			"id": "E6",
+			"passed": true
+		}
+	],
+	"total": 6
+}

@@ -1,0 +1,8 @@
+{
+  "group": "tower, B, False",
+  "runs": 2,
+  "pass": 2,
+  "max_shift_m": 0.0209669917821884,
+  "max_peak_shift_m": 0.0214938279241323,
+  "mean_shift_m": 0.0200779065489769
+}

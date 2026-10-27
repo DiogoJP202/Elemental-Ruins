@@ -1,0 +1,10 @@
+{
+  "group": "tower, C, False",
+  "runs": 30,
+  "pass": 30,
+  "setup_unstable": 0,
+  "interventions_executed": 30,
+  "max_shift_m": 0.0,
+  "max_peak_shift_m": 0.0,
+  "mean_shift_m": 0.0
+}

@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[TerrainService] terreno inicial pronto=true em 413 ms
+[T26WAKE] case=control valid_initial=true peak=0.000000000 m final=0.000000000 m
+[T26WAKE] case=wake valid_initial=true peak=0.532663524 m final=0.523893654 m
+[T26WAKE] case=freeze_thaw valid_initial=true peak=0.532663524 m final=0.523893654 m
+[T26WAKE] experiment_valid=true hypothesis_supported=true report=C:/Users/diogo/.codex/worktrees/p36-t26-stabilization/Elemental-Ruins/docs/evidence/p36/t26_stabilization/wake_pose_final.json

@@ -2,8 +2,8 @@ class_name AbilityController
 extends Node
 ## Poderes elementais (P3): 1–4 escolhem Terra / Água / Fogo / Ar e o LMB usa o poder do
 ## elemento (segurar ou tocar, conforme o poder). Um poder por elemento (roadmap: no máximo 4).
-## Modo Criativo: recurso infinito e sem recarga. Nada age enquanto o terreno é recriado
-## (reset/salvar/carregar) nem com o input do jogador desligado.
+## Modo Criativo: recurso infinito e sem recarga. Reset/salvar/carregar cancelam poderes;
+## salvar preserva a física viva. Não aceita comandos com o input do jogador desligado.
 
 signal element_changed(element: StringName)
 signal ability_used(ability_id: StringName, phase: String)
@@ -26,6 +26,8 @@ var dust: DustFx
 var abilities: Array[Ability] = []
 var current := 0
 var holding := false
+var session_id := 1
+var _next_event_id := 1
 
 
 func setup(p_terrain: TerrainService, p_materials: MaterialResponseSystem, p_structures: StructureService,
@@ -90,10 +92,42 @@ func use_released() -> void:
 
 
 func cancel_all() -> void:
+	session_id += 1
 	holding = false
 	for a in abilities:
 		a.cancel()
 		a.clear()
+
+
+func next_event_context() -> Dictionary:
+	var context := {"event_id": _next_event_id, "session_id": session_id,
+		"world_generation": terrain_service.get_world_generation(), "tick": Engine.get_physics_frames()}
+	_next_event_id += 1
+	return context
+
+
+## A roda é consumida antes de qualquer _unhandled_input do pincel, independentemente
+## da ordem dos nós. Teclas [ ] continuam chegando ao TerrainEditController.
+func _input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton or not event.pressed or not can_manipulate_earth():
+		return
+	var step := 0.0
+	if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		step = -1.0
+	elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		step = 1.0
+	else:
+		return
+	var earth := current_ability() as EarthLiftThrow
+	earth.adjust_hold_distance(step * event.factor * earth.tuning.hold_distance_step)
+	get_viewport().set_input_as_handled()
+
+
+func can_manipulate_earth() -> bool:
+	if not holding or not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
+		return false
+	var earth := current_ability() as EarthLiftThrow
+	return earth != null and earth.can_manipulate()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -150,7 +184,8 @@ func aim_terrain(max_distance: float) -> Dictionary:
 func aim_any(max_distance: float, exclude: Array[RID] = []) -> Dictionary:
 	var r := aim_ray()
 	var q := PhysicsRayQueryParameters3D.create(r[0], r[0] + r[1] * max_distance, Layers.TERRAIN | Layers.PROPS, exclude)
-	return player.get_world_3d().direct_space_state.intersect_ray(q)
+	var space := player.get_world_3d().direct_space_state
+	return PhysicsRayHelper.intersect(space, q)
 
 
 ## Ponto que a mira atinge (terreno ou corpo), ou o fim do raio se não atinge nada.
@@ -172,9 +207,12 @@ func hand_position() -> Vector3:
 
 
 ## Primeiro terreno ou corpo (PROPS) no segmento `from` → `to` ({} se nada).
-func cast_segment(from: Vector3, to: Vector3) -> Dictionary:
+## `robust` usa as testemunhas de ±1 mm do PhysicsRayHelper só quando o raio falha.
+func cast_segment(from: Vector3, to: Vector3, robust := false) -> Dictionary:
 	var q := PhysicsRayQueryParameters3D.create(from, to, Layers.TERRAIN | Layers.PROPS)
-	return player.get_world_3d().direct_space_state.intersect_ray(q)
+	q.hit_from_inside = true
+	var space := player.get_world_3d().direct_space_state
+	return PhysicsRayHelper.intersect(space, q) if robust else space.intersect_ray(q)
 
 
 ## Corpo físico sob a mira (para o HUD mostrar o estado do material).

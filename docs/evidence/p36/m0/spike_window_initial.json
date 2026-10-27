@@ -1,0 +1,132 @@
+{
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "force_models": {
+    "immediate": {
+      "heavy_mps": 0.0730933621525764,
+      "light_mps": 7.30933666229248,
+      "mass_ratio": 100.0,
+      "seconds": 0.5
+    },
+    "pressure_ramp": {
+      "heavy_mps": 0.0647426098585129,
+      "light_mps": 6.47425937652588,
+      "mass_ratio": 100.0,
+      "seconds": 0.5
+    }
+  },
+  "godot": {
+    "build": "custom_build",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (custom_build)",
+    "timestamp": 1786929518
+  },
+  "logger": {
+    "errors": 0,
+    "samples": [],
+    "warnings": 0
+  },
+  "methodology": "CPU: 7 batches, median microseconds per operation; render: 1.5s warmup + 3s frame intervals per candidate. Isolated effects, not aggregate gate.",
+  "mode": "Windows",
+  "propagation_models": {
+    "20.0": {
+      "far_9m_s": 0.45,
+      "near_3m_s": 0.15,
+      "spatial_solver": "front=min(range,speed*elapsed); once per target"
+    },
+    "30.0": {
+      "far_9m_s": 0.3,
+      "near_3m_s": 0.1,
+      "spatial_solver": "front=min(range,speed*elapsed); once per target"
+    },
+    "60.0": {
+      "far_9m_s": 0.15,
+      "near_3m_s": 0.05,
+      "spatial_solver": "front=min(range,speed*elapsed); once per target"
+    }
+  },
+  "query_cpu_us": {
+    "air_single_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 167.24,
+      "median_us": 119.14,
+      "min_us": 102.51
+    },
+    "air_three_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 345.17,
+      "median_us": 287.11,
+      "min_us": 183.82
+    },
+    "fire_single_sweep": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 3.028,
+      "median_us": 2.185,
+      "min_us": 2.062
+    },
+    "fire_three_substeps": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 6.681,
+      "median_us": 5.907,
+      "min_us": 5.39
+    },
+    "heat_area_with_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 152.32,
+      "median_us": 121.07,
+      "min_us": 101.65
+    },
+    "heat_area_without_visibility": {
+      "batches": 7,
+      "calls_per_batch": 100,
+      "max_us": 76.13,
+      "median_us": 63.29,
+      "min_us": 45.02
+    },
+    "water_single_ray": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 2.33,
+      "median_us": 2.16,
+      "min_us": 2.053
+    },
+    "water_three_rays": {
+      "batches": 7,
+      "calls_per_batch": 1000,
+      "max_us": 9.214,
+      "median_us": 6.389,
+      "min_us": 5.203
+    }
+  },
+  "renderer": "forward_plus",
+  "resolution": "(1600.0, 900.0)",
+  "visual_frame_ms": {
+    "legacy_cylinder": {
+      "max": 18.37,
+      "n": 180,
+      "p95": 18.083,
+      "p99": 18.359
+    },
+    "multimesh_24": {
+      "max": 19.623,
+      "n": 181,
+      "p95": 18.213,
+      "p99": 18.916
+    },
+    "none": {
+      "max": 106.959,
+      "n": 171,
+      "p95": 28.318,
+      "p99": 52.538
+    }
+  }
+}

@@ -25,6 +25,9 @@ var tags := PackedStringArray()
 ## Alvo único (contato direto); nulo = área.
 var target: Node3D
 var tick := 0
+var event_id := 0
+var session_id := 0
+var world_generation := 0
 
 
 static func make(p_kind: Kind, p_origin: Vector3, p_magnitude: float, p_radius: float,

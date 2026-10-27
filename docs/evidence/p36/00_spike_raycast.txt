@@ -1,0 +1,71 @@
+# Spike P3.6 — raycast em vértices/arestas — 2026-10-26T15:31:58
+# Godot 4.7.2-stable (custom_build) | física Jolt Physics
+
+## R1 chão plano (y ≈ 0,02), grade 20×20 a partir de x=-44, z=50
+R1 deslocamento (0.0, 0.0), raio 60 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.0, 0.0), raio 60 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.0, 0.0), raio 22 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.0, 0.0), raio 22 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.5), raio 60 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.5), raio 60 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.5), raio 22 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.5), raio 22 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.17, 0.17), raio 60 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.17, 0.17), raio 60 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.17, 0.17), raio 22 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.17, 0.17), raio 22 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.0, 0.5), raio 60 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.0, 0.5), raio 60 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.0, 0.5), raio 22 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.0, 0.5), raio 22 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.0), raio 60 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.0), raio 60 m, hit_back_faces=true:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.0), raio 22 m, hit_back_faces=false:   0/400 sem acerto []
+R1 deslocamento (0.5, 0.0), raio 22 m, hit_back_faces=true:   0/400 sem acerto []
+
+## R2 valas como a do T8 (dig_path de z=+8 a z=−8, raio 1,2) em 5 posições de x
+R2 x=-44.00 (inteiro): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-43.83 (deslocado): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-39.00 (inteiro): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-38.83 (deslocado): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-34.00 (inteiro): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-33.83 (deslocado): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-29.00 (inteiro): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-28.83 (deslocado): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-24.00 (inteiro): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 x=-23.83 (deslocado): 0/33 sem acerto em z-60=[]; 0 rasos (> −0,4) em []
+R2 total: x inteiro 0/165 sem acerto; x + 0,17: 0/165
+
+## R3 raios inclinados como a mira (origem 9 m atrás e 2,9 m acima), comprimento 22 m
+R3 alvo x,z inteiros: 4/90 sem acerto
+R3 alvo x inteiro, z+0,5: 0/90 sem acerto
+R3 alvo x+0,17: 0/90 sem acerto
+R3 alvo x,z inteiros pelo TerrainService.raycast_terrain: 0/90 sem acerto
+R3 caso do T39, dir.x=0.0: 22 m → (-34.0, -1.246154, 59.70262); 200 m → (-34.0, -1.246154, 59.70261)
+R3 caso do T39, dir.x=0.0: 22 m → (-34.0, -1.246154, 59.70262); 200 m → (-34.0, -1.246154, 59.70261)
+R3 caso do T39, dir.x=0.000001: 22 m → (-33.99998, -1.246148, 59.70263); 200 m → (-33.99999, -1.246149, 59.70263)
+
+## R4 repetição: o mesmo raio 10× no mesmo quadro
+R4 (-44.0, 50.0) raio 22 m: acertos [true, true, true, true, true, true, true, true, true, true]
+
+## R5 réplica do T8 (fila de brushes, 120 amostras, raio 1,2), 8 posições de x inteiro, close_stroke_on_end=false
+R5 x=-50: ["-10.0:raso y=-0.17"]; fundo em z−10 (raio deslocado) y=-0.30; 5002 ms
+R5 x=-46: OK; fundo em z−10 (raio deslocado) y=-0.94; 14 ms
+R5 x=-41: OK; fundo em z−10 (raio deslocado) y=-0.76; 14 ms
+R5 x=-36: OK; fundo em z−10 (raio deslocado) y=-0.94; 21 ms
+R5 x=-32: OK; fundo em z−10 (raio deslocado) y=-0.76; 14 ms
+R5 x=-28: OK; fundo em z−10 (raio deslocado) y=-0.94; 21 ms
+R5 x=-23: OK; fundo em z−10 (raio deslocado) y=-1.05; 14 ms
+R5 x=-18: OK; fundo em z−10 (raio deslocado) y=-0.94; 21 ms
+R5 total (close_stroke_on_end=false): 1/8 réplicas com ponto faltando
+
+## R5 réplica do T8 (fila de brushes, 120 amostras, raio 1,2), 8 posições de x inteiro, close_stroke_on_end=true
+R5 x=-50: OK; fundo em z−10 (raio deslocado) y=-1.15; 20 ms
+R5 x=-46: OK; fundo em z−10 (raio deslocado) y=-1.13; 21 ms
+R5 x=-41: OK; fundo em z−10 (raio deslocado) y=-1.15; 14 ms
+R5 x=-36: OK; fundo em z−10 (raio deslocado) y=-1.09; 14 ms
+R5 x=-32: OK; fundo em z−10 (raio deslocado) y=-1.15; 21 ms
+R5 x=-28: OK; fundo em z−10 (raio deslocado) y=-1.13; 16 ms
+R5 x=-23: OK; fundo em z−10 (raio deslocado) y=-1.15; 16 ms
+R5 x=-18: OK; fundo em z−10 (raio deslocado) y=-1.13; 15 ms
+R5 total (close_stroke_on_end=true): 0/8 réplicas com ponto faltando

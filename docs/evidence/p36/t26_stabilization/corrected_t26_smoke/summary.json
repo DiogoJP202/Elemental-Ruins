@@ -1,0 +1,10 @@
+{
+  "trial": 1,
+  "exit": 0,
+  "status": "PASS",
+  "max_shift_m": 0.0,
+  "worst": {},
+  "control_m": 0.0,
+  "errors": 0,
+  "warnings": 0
+}

@@ -1,0 +1,132 @@
+﻿[
+    {
+        "case":  "valido",
+        "passed":  true,
+        "reason":  ""
+    },
+    {
+        "case":  "erro_motor",
+        "passed":  true,
+        "reason":  "motor: 1 erros, 0 avisos (gate exige zero)"
+    },
+    {
+        "case":  "aviso_motor",
+        "passed":  true,
+        "reason":  "motor: 0 erros, 1 avisos (gate exige zero)"
+    },
+    {
+        "case":  "contador_ausente",
+        "passed":  true,
+        "reason":  "campo obrigatório ausente: erros_motor"
+    },
+    {
+        "case":  "contador_texto",
+        "passed":  true,
+        "reason":  "contador inválido: erros_motor"
+    },
+    {
+        "case":  "contador_negativo",
+        "passed":  true,
+        "reason":  "contador inválido: avisos_motor"
+    },
+    {
+        "case":  "contador_fracionario",
+        "passed":  true,
+        "reason":  "contador inválido: testes_total"
+    },
+    {
+        "case":  "execucao_errada",
+        "passed":  true,
+        "reason":  "run_id não corresponde à execução atual"
+    },
+    {
+        "case":  "incompleto",
+        "passed":  true,
+        "reason":  "execução incompleta"
+    },
+    {
+        "case":  "booleano_texto",
+        "passed":  true,
+        "reason":  "execução incompleta"
+    },
+    {
+        "case":  "total_errado",
+        "passed":  true,
+        "reason":  "contagem do resumo difere do contrato"
+    },
+    {
+        "case":  "resumo_falso",
+        "passed":  true,
+        "reason":  "contagem do resumo difere do contrato"
+    },
+    {
+        "case":  "resultado_individual_fail",
+        "passed":  true,
+        "reason":  "resultado individual inválido ou diferente de PASS"
+    },
+    {
+        "case":  "resultado_individual_sem_status",
+        "passed":  true,
+        "reason":  "resultado individual inválido ou diferente de PASS"
+    },
+    {
+        "case":  "id_duplicado",
+        "passed":  true,
+        "reason":  "ID duplicado: T3a"
+    },
+    {
+        "case":  "id_inesperado",
+        "passed":  true,
+        "reason":  "ID inesperado: T999"
+    },
+    {
+        "case":  "id_case_errado",
+        "passed":  true,
+        "reason":  "ID inesperado: t3b"
+    },
+    {
+        "case":  "id_omitido",
+        "passed":  true,
+        "reason":  "quantidade de resultados individuais inválida"
+    },
+    {
+        "case":  "lista_ids_falsa",
+        "passed":  true,
+        "reason":  "testes_ids não corresponde aos resultados individuais"
+    },
+    {
+        "case":  "sem_resultados",
+        "passed":  true,
+        "reason":  "resultados e testes_ids devem ser arrays"
+    },
+    {
+        "case":  "antigo",
+        "passed":  true,
+        "reason":  "relatório é anterior a esta execução"
+    },
+    {
+        "case":  "json_invalido",
+        "passed":  true,
+        "reason":  "relatório ilegível: Objeto inválido transmitido, \u0027:\u0027 ou \u0027}\u0027 esperado. (3): {\r\n"
+    },
+    {
+        "case":  "ausente",
+        "passed":  true,
+        "reason":  "relatório não foi gravado (C:\\Users\\dsoares\\Documents\\Projetos\\game\\.claude\\worktrees\\charming-mendel-4b469a\\docs\\evidence\\p36\\preparation\\contracts\\777856b1-4d9b-4e12-922f-72404075f1ff.json)"
+    },
+    {
+        "case":  "ERROR: shutdown failure",
+        "passed":  true,
+        "reason":  "log rejects motor diagnostic"
+    },
+    {
+        "case":  "WARNING: startup warning",
+        "passed":  true,
+        "reason":  "log rejects motor diagnostic"
+    },
+    {
+        "case":  "SCRIPT ERROR: parse failure",
+        "passed":  true,
+        "reason":  "log rejects motor diagnostic"
+    }
+]

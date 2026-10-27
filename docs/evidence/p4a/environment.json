@@ -1,0 +1,22 @@
+{
+  "base": "180ec59443a63f7498fad045b1f413a8cb4de75e",
+  "branch": "feat/p4a-earth-free-control",
+  "date": "2026-10-27T08:41:55.0635073-03:00",
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "gpu": [
+    {
+      "Name": "Intel(R) Iris(R) Xe Graphics",
+      "DriverVersion": "32.0.101.7085"
+    }
+  ],
+  "resolution": "1600x900 configured",
+  "renderer": "Forward+",
+  "physics": "Jolt Physics",
+  "godot": "4.7.2.stable.custom_build.ed1daf0bf + Voxel Tools 1.7 module",
+  "frame_gates_ms": {
+    "p99": 33,
+    "p95": 20,
+    "max": 50
+  },
+  "human_playtest": "NAO TESTADO"
+}

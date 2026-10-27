@@ -1,0 +1,10 @@
+run 1: T26 PASS "maior_deslocamento_m":0.0162785593420267
+run 2: T26 PASS "maior_deslocamento_m":0.00367569574154913
+run 3: T26 PASS "maior_deslocamento_m":0.0194812826812267
+run 4: T26 PASS "maior_deslocamento_m":0.006988734472543
+run 5: T26 PASS "maior_deslocamento_m":0.0194812826812267
+run 6: T26 FAIL "maior_deslocamento_m":0.15927791595459
+run 7: T26 PASS "maior_deslocamento_m":0.0125514222308993
+run 8: T26 PASS "maior_deslocamento_m":0.0103436075150967
+
+[exited with code 0]

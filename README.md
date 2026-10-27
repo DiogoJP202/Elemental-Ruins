@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0 + P1 + P2 + P3 + P3.5)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P3.6.1 + P4A)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -7,6 +7,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P2 (sustentação, destroços e extração):** resultado e gate em [`docs/p2_results.md`](docs/p2_results.md).
 **P3 (quatro elementos iniciais):** resultado e gate em [`docs/p3_results.md`](docs/p3_results.md).
 **P3.5 (Terra polida: fases, peso, telegraph):** resultado e parâmetros em [`docs/p35_earth_polish.md`](docs/p35_earth_polish.md).
+**P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
+**P4A — checkpoint fechado em 27/10/2026:** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom"). Pronto para revisão da PR. Sem novas habilidades ou multiplayer.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -64,27 +66,29 @@ de fluidos.
 | Tecla | Ação |
 |---|---|
 | **1 / 2 / 3 / 4** | escolher o elemento: Terra / Água / Fogo / Ar (P3; o HUD mostra o poder atual) |
-| **LMB** | usar o poder do elemento. Terra (segurar; P3.5): mire o chão a 2,5–7 m. O chão racha (~0,1 s), a rocha se solta (~0,1 s) e sobe (~0,16 s), pronta em ~0,37 s (o anel da retícula enche); soltar arremessa no ponto mirado. Um toque curto arranca e lança assim que fica pronta; impacto forte no chão abre cratera. Água (segurar): jato até 14 m que empurra, molha e apaga. Fogo (toque): bola de fogo até 30 m que aquece; madeira acende. Ar (toque): rajada em cone de 10 m que empurra pela massa e apaga fogo fraco |
+| **LMB** | usar o poder do elemento. Terra (segurar; P3.5): mire o chão a 2,5–7 m. O chão racha (~0,1 s), a rocha se solta (~0,1 s) e sobe (~0,16 s), pronta em ~0,37 s (o anel da retícula enche); soltar arremessa no ponto mirado. Um toque curto arranca e lança assim que fica pronta; impacto forte no chão abre cratera. Água (segurar): jato até 14 m que empurra, molha e apaga. Fogo (toque; P3.6): a bola se forma na mão por ~0,08 s com a mira do clique, voa a 35 m/s e aquece no primeiro contato; no fim dos 30 m só se dissipa; nova rajada após ~0,14 s; madeira acende e o fogo não atravessa paredes. Ar (toque; P3.6): uma frente de pressão sai da mão a 30 m/s em cone de 10 m e decide cada corpo uma vez; empurra pela massa, é bloqueada por terreno e corpos (exposição parcial reduz o empurrão), apaga fogo fraco e aviva o forte; nova rajada após ~0,15 s |
 | WASD | andar, relativo à câmera |
 | Shift | correr |
 | Espaço | pular |
-| Mouse | orbitar a câmera (Esc solta/prende o mouse; clique recaptura) |
+| Mouse | orbitar a câmera; em hold da Terra, desloca a rocha horizontalmente com massa e atraso (Esc solta/prende o mouse; clique recaptura) |
+| **Q / E**, durante hold da Terra | abaixar / elevar o alvo da rocha a 2 m/s; altura inicial 2 m, limites 1–6 m sobre os pés do jogador |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
 | **J** | abrir túnel de 10 m na direção horizontal da câmera, na altura da mira |
 | **K** | erguer rampa de 8 m que sobe 3 m na direção da câmera, com o material atual |
 | **M** | trocar o material do H/K: solo → areia → pedra |
-| **F5** | salvar as edições do terreno no slot `slot1` (o terreno é recarregado do disco; ~0,5 s congelado) |
+| **F5** | salvar as edições do terreno no slot `slot1`, mantendo terreno, colisores e física viva; cancela o poder e solta a rocha suspensa com gravidade (P3.6.1) |
 | **F9** | carregar o slot `slot1` (jogador volta ao spawn; caixas somem) |
 | **Z** | **reset do mundo**: recria o terreno do gerador, apaga todas as edições, devolve o jogador ao spawn e remove as caixas (o slot salvo fica intacto) |
-| Roda do mouse ou `[` `]` | raio do pincel (0,5–6 m; padrão 2 m) |
+| Roda do mouse | durante hold da Terra: subir aproxima / descer afasta o alvo 0,5 m, dentro de 2,5–7 m; fora do hold: raio do pincel (0,5–6 m; padrão 2 m) |
+| `[` `]` | raio do pincel, inclusive durante hold |
 | **R** | extrair uma rocha logo abaixo da mira (raio do pincel limitado a 1–2 m): o núcleo vira um corpo físico real, com a massa do material, e pousa ao lado do buraco |
 | **T** | impulso de teste (lançamento a 45°) no corpo físico mirado: rocha, caixa ou peça já caída da torre |
 | B | soltar uma caixa `RigidBody3D` de teste no ponto mirado (máx. 10) |
 
 > F5 dentro do **jogo** salva; F5 no **editor** continua sendo "rodar o projeto". As caixas de teste não são salvas
-> (persistência de objetos é P2). Os arquivos ficam em `%APPDATA%\Godot\app_userdata\ELEMENTAL -- RUINS\`
+> (o slot persiste somente terreno). Os arquivos ficam em `%APPDATA%\Godot\app_userdata\ELEMENTAL -- RUINS\`
 > (`world/` = sessões temporárias, `saves/` = slots).
 
 O marcador esférico na mira fica **verde** quando a área é editável e **vermelho** quando não é. O overlay mostra
@@ -143,7 +147,95 @@ Parâmetros em `data/abilities/earth_tuning.tres` (abra no inspetor da Godot; ve
 6. Mire o céu, o chão a 1 m ou a 10 m e clique: X vermelho na retícula, nada acontece.
 7. Mude `anticipation_s`, `rise_s` ou `throw_speed` no `.tres`, rode de novo e compare a sensação.
 
+### Roteiro manual do P4A — controle livre de Terra
+
+1. **1**, mire o chão a 2,5–7 m e segure **LMB** até a rocha ficar pronta. Gire a câmera: ela acompanha com inércia.
+2. Use **Q/E** para baixar/subir e a **roda** para aproximar/afastar. O HUD mostra altura, distância e limites; parâmetros em `EarthTuning`, editáveis por `data/abilities/earth_tuning.tres`.
+3. Empurre o alvo contra terreno ou parede: a rocha continua física, sem teleporte. Solte **LMB** para lançar; toque curto mantém o lançamento automático.
+4. Troque elemento, salve, resete ou carregue durante o controle: os comandos cessam. Salvar solta a rocha com gravidade e preserva os corpos vivos; reset/carregar recriam a sessão.
+5. Fora do hold, confira a roda regulando o pincel; **[ ]** continuam regulando-o durante hold. Playtest dos controles em 27/10/2026: feedback positivo do usuário ("acho que ficou bom"), sem avaliação detalhada por cenário.
+
+Os limites restringem o alvo da mola: a posição real pode atrasar ou apresentar sobressinal físico. Contra um obstáculo, a rocha permanece bloqueada pelas colisões/CCD e recebe força limitada; não há teleporte nem desvio automático. O lançamento mantém a trajetória existente, calculada do centro atual com impulso que considera a velocidade corrente.
+
+### Roteiro manual do P3.6 — Água, Fogo e Ar (≈ 6 min)
+Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tuning.tres` (inspetor da Godot); detalhes em
+`docs/p36_elemental_polish.md`. Use **B** para criar caixas de teste e **H** para levantar um morro de terreno.
+1. **2** (Água), segure LMB numa caixa a ~6 m: o jato avança (não nasce inteiro) e a pressão sobe em ~0,1 s. Gire 90° segurando:
+   a água já lançada segue a direção antiga e a nova chega depois. Solte: para na hora.
+2. Com uma caixa atrás de um morro ou de outra caixa, molhe a da frente: a de trás não molha através do obstáculo.
+3. **3** (Fogo), clique numa caixa e gire a câmera logo em seguida: a bola se forma na mão (~0,08 s) e segue a mira do clique.
+   Clique várias vezes: no máximo 8 bolas e uma nova a cada ~0,14 s. Troque de elemento logo após clicar: a bola não sai.
+4. Mire o céu: a bola some numa baforada de fumaça no fim dos 30 m, sem aquecer nada.
+5. Acenda uma caixa encostada em outra e uma terceira separada por um morro: a encostada pega fogo, a de trás do morro não.
+   Atire numa caixa molhada: sai vapor, ela seca e só a 2ª bola acende.
+6. **4** (Ar), toque perto de um grupo de caixas: o anel avança e as caixas reagem na ordem da distância; uma caixa escondida
+   atrás de outra ou de um morro fica (total ou parcialmente) protegida; a rocha extraída (**R**) mal se mexe.
+7. Ar em fogo fraco apaga; em fogo forte aviva e a caixa voa queimando. A água apaga com vapor.
+8. Com bolas de fogo ou frentes de ar em andamento, aperte **Z**, **F5** ou **F9**: os poderes são cancelados. **F5** preserva a física dos corpos já existentes; **Z/F9** recriam a sessão.
+9. Avalie (como jogador e como observador de outro ângulo, pensando em PvP): legibilidade das antecipações e frentes, peso,
+   clareza de limites e recuperação. **NÃO TESTADO** por pessoas até aqui.
+
 ## Testes automatizados
+
+### P4A — validação direcionada e checkpoint de integração
+
+Executado com `Invoke-SelftestStep` de `tools/lib_godot_process.ps1`, sem runner novo: valida exit code, relatório novo/run_id, IDs explícitos e zero erros/avisos. Evidências em [`docs/evidence/p4a/`](docs/evidence/p4a/); históricos anteriores preservados.
+
+| Verificação | Risco coberto | Resultado |
+|---|---|---|
+| T59/T60 | altura/distância, forças sem teleporte, limites, parede, cancelamento e input contextual | PASS headless e janela |
+| T28/T29/T30/T39/T40/T42/T43/T44 | regressão da Terra: ciclo, lançamento, impacto, mola e Resource | PASS headless |
+| T37 em janela, base e versão final | custo no caminho físico, mesmo ambiente e cenário | PASS nas duas versões |
+
+Checkpoint final: [11/11 headless](docs/evidence/p4a/editor_headless.json) e [4/4 em janela](docs/evidence/p4a/editor_window.json), incluindo T1 obrigatório; zero erros e zero avisos. Import da base, parse/inicialização de produção, parse do selftest e `git diff --check` também passaram.
+
+| Cenário em janela | p95 | p99 | Máximo |
+|---|---:|---:|---:|
+| T37, base `180ec59` | 18,63 ms | 20,33 ms | 34,86 ms |
+| T37, P4A | 18,47 ms | 20,95 ms | 37,01 ms |
+| T59, manipulação ativa P4A | 17,93 ms | 18,79 ms | 19,32 ms |
+
+Godot 4.7.2 custom + Voxel Tools 1.7, Jolt, Forward+, 1600×900; i5-1135G7 e Iris Xe (driver 32.0.101.7085). [Ambiente](docs/evidence/p4a/environment.json) e [baseline](docs/evidence/p4a/baseline_window_T37.json). As duas versões atendem aos gates; esta amostra não demonstra ganho ou regressão causal.
+
+Para repetir somente esta cobertura, usar `--p36-selftest --only=T28,T29,T30,T39,T40,T42,T43,T44,T59,T60` em headless; em janela, `--only=T37,T59,T60`. Passar `--report=<novo_caminho.json>` e validar pelo helper existente; não sobrescrever as evidências históricas do runner P3.6.
+
+Limites preservados: p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms. O checkpoint direcionado acima foi seguido pelo gate completo abaixo. Playtest humano dos controles P4A: feedback positivo do usuário em 27/10/2026; as avaliações humanas dos outros elementos permanecem pendentes.
+
+**Gate de integração — 27/10/2026:** uma execução completa por modo, sem falhas ou repetição da bateria. Mesma máquina/configuração descrita acima; [ambiente e hashes dos scripts executados](docs/evidence/p4a/integration/environment.json).
+
+| Modo | Resultado |
+|---|---|
+| [Editor headless](docs/evidence/p4a/integration/editor_headless.json) | 66/66 PASS |
+| [Editor em janela](docs/evidence/p4a/integration/editor_window.json) | 66/66 PASS |
+| [Export headless](docs/evidence/p4a/integration/export_headless.json) | 66/66 PASS |
+| [Export em janela](docs/evidence/p4a/integration/export_window.json) | 66/66 PASS |
+
+264 testes aprovados, zero erros/avisos. Export Windows e persistência write/read em processos separados no editor e export também passaram (2/2 IDs em cada uma das quatro etapas); [passos do runner](docs/evidence/p4a/integration/steps.json). Logs de import/export conferidos sem erros/avisos. Fixtures históricas e preset de export restaurados; hashes dos scripts conferidos após o gate. Não foram geradas novas capturas.
+
+| Cenário | Editor: p95 / p99 / máximo | Export: p95 / p99 / máximo |
+|---|---|---|
+| T27 — colapso | 17,58 / 18,27 / 18,80 ms | 17,38 / 18,14 / 21,94 ms |
+| T37 — quatro poderes | 18,28 / 19,93 / 32,60 ms | 18,80 / 21,07 / 28,49 ms |
+| T59 — manipulação ativa | 17,66 / 18,22 / 18,73 ms | 17,85 / 18,61 / 31,07 ms |
+
+Comando usado neste checkpoint; ao repetir, escolher outra pasta para preservar este histórico:
+
+```powershell
+./tools/run_p361_tests.ps1 -Template 'C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\godot.windows.template_release.x86_64.exe' -EvidenceDirectory 'docs/evidence/p4a/integration'
+```
+
+O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Próximo passo: revisar e integrar a PR P4A antes da próxima fatia de gameplay.
+
+### P3.6 — Água, Fogo e Ar polidos (inclui as regressões do P0 ao P3.5)
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools/run_p36_tests.ps1 -Stage final -Window -Export
+```
+
+Grava em `docs/evidence/p36/final/`: import, selftest P3.6 (P0–P3.5 + T46–T58) no editor e no export, headless e em janela,
+com contrato explícito de IDs, zero erros/avisos e capturas em janela. `-Stage m1|m2|m3` grava as evidências de cada marco;
+`-TestIds T49,T50` limita a IDs do contrato (T1 sempre incluso). Direto: `... -- --p36-selftest --evidence-stage=final`
+(opções `--only=`, `--p36-screenshots`).
 
 ### P3.5 — Terra polida (inclui as regressões do P0 ao P3)
 
@@ -286,3 +378,12 @@ P3: `AbilityController.select(i)/use_pressed()/use_released()`, sinais `element_
 P3.5: `Ability.fx_event(kind, data)` (ganchos de FX/áudio); `EarthLiftThrow.phase`, `is_ready()`, `ready_progress()`,
 `validate_target()`; `TerrainService.can_extract_rock(p, normal, raio)`, `cavity_confirmed(p)` e
 `extract_rock(..., hold_kinematic)`; `ThirdPersonCamera.add_trauma(x)`.
+
+## P3.6 — polimento incremental
+M0–M4 concluídos (relatório final em docs/p36_elemental_polish.md); baseline corrigido em docs/p36_baseline_corrected.md, arquitetura em docs/p36_m0.md, Água em docs/p36_water_polish.md, Fogo em docs/p36_fire_polish.md e Ar em docs/p36_air_polish.md (parâmetros em data/abilities/*_tuning.tres; testes por marco: `tools/run_p36_tests.ps1 -Stage m2|m3 -Window`). Capturas e automação não são playtest humano.
+
+P3.6.1: save preserva o mundo físico e o T26 confirma repouso natural antes da medição.
+30/30 repetições prospectivas (pico 0 m), bateria 64/64 nos quatro modos, zero erros/avisos
+e limites de desempenho preservados. Diagnóstico, falhas exploratórias mantidas e comandos
+em [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md).
+

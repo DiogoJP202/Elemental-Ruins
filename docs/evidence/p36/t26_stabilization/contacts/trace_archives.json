@@ -1,0 +1,20 @@
+[
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\contacts\\headless_tower_B_001_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\contacts\\headless_tower_B_001_trace.zip",
+    "original_bytes": 37436981,
+    "archive_bytes": 3458337,
+    "original_sha256": "1850575C447759D8E398BDE21029B27308CB1ED20BC05F84BEB6F3D37411EE65",
+    "verified": true,
+    "raw_retained": false
+  },
+  {
+    "original_trace_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\contacts\\headless_tower_B_002_trace.json",
+    "archive_path": "C:\\Users\\diogo\\.codex\\worktrees\\p36-t26-stabilization\\Elemental-Ruins\\docs\\evidence\\p36\\t26_stabilization\\contacts\\headless_tower_B_002_trace.zip",
+    "original_bytes": 36568599,
+    "archive_bytes": 3286772,
+    "original_sha256": "668C0F959276498999A507A94EDD14A2818F1900B7EC24CD021ED9CAFFA0B8BA",
+    "verified": true,
+    "raw_retained": false
+  }
+]
