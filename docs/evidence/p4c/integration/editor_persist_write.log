@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 1109 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":1109.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[TerrainService] dig_sphere OK c=(14.0, 0.0, 22.0) r=3.00 rev=1 0.959ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=2 0.911ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=3 1.594ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=4 0.070ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=5 0.430ms
+[TerrainService] dig_path OK pontos=4 comp=10.4m rev=6 0.497ms
+[TerrainService] dig_path OK pontos=3 comp=5.2m rev=7 0.064ms
+[TerrainService] add_sphere OK c=(-14.0, 0.5, 22.0) r=2.00 mat=sand rev=8 0.202ms
+[TerrainService] add_sphere OK c=(-14.0, 2.5, 22.0) r=2.00 mat=sand rev=9 0.087ms
+[TerrainService] add_sphere OK c=(-14.0, 4.5, 22.0) r=2.00 mat=sand rev=10 0.055ms
+[TerrainService] add_path OK pontos=9 comp=8.5m mat=stone rev=11 0.682ms
+[TerrainService] save selftest_xproc: ok=true { "slot": "selftest_xproc", "ok": true, "ms": 98.0, "flush_ms": 46.0, "blocks_tasks": 1, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 147456, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_xproc.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 41.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[P36TEST] T14x-write PASS — Fase 1: editar, salvar o slot e gravar o estado esperado | {"diferencas_apos_salvar":[],"edicoes":["OK dig_sphere OK rev=1 0.96ms soil ~169646 kg","OK dig_path OK rev=2 0.91ms soil ~195432 kg","OK dig_path OK rev=3 1.59ms soil ~195432 kg","OK dig_path OK rev=4 0.07ms stone ~201132 kg","OK dig_path OK rev=5 0.43ms stone ~338749 kg","OK dig_path OK rev=6 0.50ms stone ~338749 kg","OK dig_path OK rev=7 0.06ms soil ~116038 kg","OK add_sphere OK rev=8 0.20ms sand ~53617 kg","OK add_sphere OK rev=9 0.09ms sand ~53617 kg","OK add_sphere OK rev=10 0.06ms sand ~53617 kg","OK add_path OK rev=11 0.68ms stone ~366281 kg"],"esperado_json":"C:/Users/dsoares/Documents/Projetos/game/docs/evidence/p36/final/p1_persist_expected.json","probes_alteradas":5,"salvar":{"blocks_tasks":1,"bytes":147456,"copy":"OK","flush_ms":46.0,"io_drain":{"idle":true,"ms":41.0,"tasks":{"generation":0,"gpu":0,"main_thread":0,"meshing":0,"streaming":0}},"ms":98.0,"ok":true,"path":"C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_xproc.sqlite","publication":{"error":0,"recovery_file":"","rollback":0},"reason":"","save_anterior_em_voo":"nenhum","slot":"selftest_xproc","terrain_recreated":false}}
+[P36TEST] relatório: C:\Users\dsoares\Documents\Projetos\game\docs\evidence\p4c\integration\editor_persist_write.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (2/2) em 5.3 s

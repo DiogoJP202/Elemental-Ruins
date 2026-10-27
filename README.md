@@ -10,7 +10,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
 **P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
 **P4B — checkpoint fechado e integrado à main (`266627d`) em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando").
-**P4C — fase atual:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. Playtest com feedback positivo do usuário em 27/10/2026 ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário. Checkpoint de integração pendente.
+**P4C — checkpoint fechado em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário. Pronto para publicar a branch e revisar a PR.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -201,7 +201,7 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
-### P4C — validação direcionada
+### P4C — validação direcionada e checkpoint de integração
 
 - [T1/T63/T64 headless: 3/3 PASS](docs/evidence/p4c/pillar_radius2_headless.json): RMB real, um único PATH aditivo, apoio físico de caixa/jogador, save/reset/load, recusas e cancelamentos de prévia/fila. Um corpo que entra no volume depois da confirmação cancela somente esse pedido, antes da fila processá-lo.
 - [Regressão relacionada: 17/17 PASS](docs/evidence/p4c/related_headless.json): T1, T4, T11, T13, T14, T28–T30, T39, T40, T42–T44 e T59–T62. Cobre os consumidores reais da validação PATH e o ciclo da rocha.
@@ -217,7 +217,28 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 As [duas primeiras](docs/evidence/p4c/pillar_headless.json) [execuções headless](docs/evidence/p4c/pillar_recheck_headless.json) ficaram em 2/3 por a caixa escorregar do topo com raio 1,1 m, inclusive com 3 s de assentamento. Raio padrão ajustado para 2 m; mesmos critérios de apoio e sem mudança nos limites de desempenho.
 
-Não executados nesta fatia: bateria integral de 70 IDs nos quatro modos e persistência entre processos. O playtest recebeu feedback positivo do usuário depois dessa validação; o próximo passo é o checkpoint de integração. O campo de playtest no ambiente de teste preserva o estado histórico da execução automatizada. Para repetir os testes novos, usar `--p36-selftest --only=T63,T64`; T1 é obrigatório e incluído automaticamente. Reutilizar `Invoke-SelftestStep` com pasta/relatório novos para preservar evidências.
+Na fatia direcionada acima não foram executados bateria integral e persistência entre processos; esses passos foram executados no checkpoint abaixo, após o feedback humano positivo. O campo de playtest no ambiente direcionado preserva o estado histórico daquela execução. Para repetir somente os testes novos, usar `--p36-selftest --only=T63,T64`; T1 é obrigatório e incluído automaticamente. Reutilizar `Invoke-SelftestStep` com pasta/relatório novos para preservar evidências.
+
+**Checkpoint de integração — 27/10/2026:** [resumo validado](docs/evidence/p4c/integration/final_result.json), [passos do runner](docs/evidence/p4c/integration/steps.json).
+
+| Modo | Resultado integral |
+|---|---|
+| [Editor headless](docs/evidence/p4c/integration/editor_headless.json) | 70/70 PASS |
+| [Editor em janela](docs/evidence/p4c/integration/editor_window.json) | 70/70 PASS |
+| [Export headless](docs/evidence/p4c/integration/export_headless.json) | 70/70 PASS |
+| [Export em janela](docs/evidence/p4c/integration/export_window.json) | 70/70 PASS |
+
+280 execuções de teste aprovadas, zero erros/avisos. Cada modo integral foi executado uma única vez, sem rechecagens. Export Windows e persistência write/read em processos separados passaram no editor e no export (2/2 em cada uma das quatro etapas). Import/export sem erros/avisos; 52 scripts conferem com os hashes do [ambiente](docs/evidence/p4c/integration/environment.json). Preset e fixtures anteriores restaurados exatamente; nenhuma captura nova.
+
+| Cenário | Editor: p95 / p99 / máximo | Export: p95 / p99 / máximo |
+|---|---|---|
+| T27 — colapso | 17,73 / 18,20 / 18,44 ms | 17,98 / 18,43 / 18,86 ms |
+| T37 — quatro poderes | 18,50 / 20,30 / 32,18 ms | 18,98 / 20,08 / 32,23 ms |
+| T59 — controle livre | 17,90 / 18,46 / 19,09 ms | 17,86 / 18,20 / 19,17 ms |
+| T61 — recaptura da rocha | 17,67 / 18,57 / 24,67 ms | 17,76 / 19,02 / 23,52 ms |
+| T63 — pilar | 17,82 / 18,33 / 19,54 ms | 17,73 / 18,15 / 21,50 ms |
+
+Todos atendem a 20/33/50 ms, em i5-1135G7/Iris Xe, Forward+, 1600×900 e Jolt, com execuções sequenciais e sem outra Godot aberta no início. Acompanhamento por leitura de log sem abrir processos shell/CIM durante as janelas de medição. Sem inferência de ganho causal entre amostras. Para um próximo checkpoint, reutilizar `tools/run_p361_tests.ps1` com `-Template <template-custom>` e `-EvidenceDirectory <pasta-nova>`. Próximo passo: publicar a branch P4C e abrir a PR para revisão.
 
 ### P4B — validação direcionada e checkpoint de integração
 

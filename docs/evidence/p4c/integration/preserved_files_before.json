@@ -1,0 +1,17 @@
+[
+  {
+    "path": "export_presets.cfg",
+    "exists": true,
+    "sha256": "D24A0F349C8EC943D17535F7ED74E33D3AF548EB4F92BC2BDFE556FB7B70EDA4"
+  },
+  {
+    "path": "docs/evidence/p36/final/p1_persist_expected.json",
+    "exists": false,
+    "sha256": null
+  },
+  {
+    "path": "C:\\Users\\dsoares\\AppData\\Roaming\\Godot\\app_userdata\\ELEMENTAL -- RUINS\\p1_persist_expected.json",
+    "exists": true,
+    "sha256": "08E1C2C4FFB3A12620696B70B8F7E18633D23D01FE3F7A723126270231F299A6"
+  }
+]

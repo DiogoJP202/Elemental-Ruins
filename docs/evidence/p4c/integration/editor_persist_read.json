@@ -1,0 +1,63 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T18:29:58",
+  "duracao_s": 4.42,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 949.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 949.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "amostras_sdf_material": 108,
+        "carregar": {
+          "bytes": 147456,
+          "copy": "OK",
+          "ms": 217.0,
+          "ok": true,
+          "slot": "selftest_xproc"
+        },
+        "diferencas": [],
+        "esperado_de": "2026-10-27T18:29:53",
+        "mundo_novo_difere_do_salvo_em_probes": 5,
+        "nos": {
+          "esperado": 230,
+          "obtido": 230
+        },
+        "slot": "selftest_xproc"
+      },
+      "id": "T14x-read",
+      "status": "PASS",
+      "titulo": "Fase 2: processo novo carrega o slot e reproduz o estado salvo"
+    }
+  ],
+  "run_id": "d56d6df7bb66",
+  "testes_ids": [
+    "T1",
+    "T14x-read"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": ""
+}
