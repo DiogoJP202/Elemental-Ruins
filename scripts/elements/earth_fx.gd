@@ -49,6 +49,7 @@ var _invalid: MeshInstance3D
 var _invalid_mat: StandardMaterial3D
 var _invalid_t := -1.0
 var _preview: MeshInstance3D
+var _pillar_preview: MeshInstance3D
 var _preview_mat: StandardMaterial3D
 var _dust: Array[GPUParticles3D] = []
 var _pebbles: Array[GPUParticles3D] = []
@@ -96,6 +97,18 @@ func _ready() -> void:
 	_invalid = _torus("Invalid", 0.45, 0.6, _invalid_mat)
 	_preview_mat = _unshaded(PREVIEW_OK)
 	_preview = _torus("Preview", 1.7, 1.8, _preview_mat)
+	_pillar_preview = MeshInstance3D.new()
+	_pillar_preview.name = "PillarPreview"
+	var cylinder := CylinderMesh.new()
+	cylinder.top_radius = 1.0
+	cylinder.bottom_radius = 1.0
+	cylinder.height = 1.0
+	cylinder.radial_segments = 16
+	_pillar_preview.mesh = cylinder
+	_pillar_preview.material_override = _preview_mat
+	_pillar_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_pillar_preview.visible = false
+	add_child(_pillar_preview)
 	for i in BURST_POOL:
 		_dust.append(_make_dust("Dust%d" % i))
 		_pebbles.append(_make_pebbles("Pebbles%d" % i, true))
@@ -275,14 +288,20 @@ func _update_attached(delta: float) -> void:
 ## Anel no ponto de arranque com a Terra escolhida e parada: verde se o clique vai funcionar.
 func _update_preview() -> void:
 	var show := false
+	var pillar := false
 	if earth != null and abilities.current_ability() == earth and earth.phase == "" \
-			and abilities.player != null and abilities.player.input_enabled:
-		var check := earth.validate_target()
+			and abilities.player != null and abilities.player.input_enabled \
+			and (not abilities.require_captured_mouse or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
+		pillar = earth.pillar_aiming
+		var check := earth.validate_pillar_target() if pillar else earth.validate_target()
 		if check.has("point"):
 			show = true
 			_preview.global_position = (check.point as Vector3) + Vector3.UP * 0.03
+			_pillar_preview.global_position = (check.point as Vector3) + Vector3.UP * earth.tuning.pillar_height * 0.5
+			_pillar_preview.scale = Vector3(earth.tuning.pillar_radius, earth.tuning.pillar_height, earth.tuning.pillar_radius)
 			_preview_mat.albedo_color = PREVIEW_OK if check.ok else PREVIEW_BAD
-	_preview.visible = show
+	_preview.visible = show and not pillar
+	_pillar_preview.visible = show and pillar
 
 
 # --- Peças ----------------------------------------------------------------------------------

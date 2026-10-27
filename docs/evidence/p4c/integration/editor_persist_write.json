@@ -1,0 +1,92 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T18:29:53",
+  "duracao_s": 5.283,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 1109.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1109.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "diferencas_apos_salvar": [],
+        "edicoes": [
+          "OK dig_sphere OK rev=1 0.96ms soil ~169646 kg",
+          "OK dig_path OK rev=2 0.91ms soil ~195432 kg",
+          "OK dig_path OK rev=3 1.59ms soil ~195432 kg",
+          "OK dig_path OK rev=4 0.07ms stone ~201132 kg",
+          "OK dig_path OK rev=5 0.43ms stone ~338749 kg",
+          "OK dig_path OK rev=6 0.50ms stone ~338749 kg",
+          "OK dig_path OK rev=7 0.06ms soil ~116038 kg",
+          "OK add_sphere OK rev=8 0.20ms sand ~53617 kg",
+          "OK add_sphere OK rev=9 0.09ms sand ~53617 kg",
+          "OK add_sphere OK rev=10 0.06ms sand ~53617 kg",
+          "OK add_path OK rev=11 0.68ms stone ~366281 kg"
+        ],
+        "esperado_json": "C:/Users/dsoares/Documents/Projetos/game/docs/evidence/p36/final/p1_persist_expected.json",
+        "probes_alteradas": 5,
+        "salvar": {
+          "blocks_tasks": 1,
+          "bytes": 147456,
+          "copy": "OK",
+          "flush_ms": 46.0,
+          "io_drain": {
+            "idle": true,
+            "ms": 41.0,
+            "tasks": {
+              "generation": 0,
+              "gpu": 0,
+              "main_thread": 0,
+              "meshing": 0,
+              "streaming": 0
+            }
+          },
+          "ms": 98.0,
+          "ok": true,
+          "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_xproc.sqlite",
+          "publication": {
+            "error": 0,
+            "recovery_file": "",
+            "rollback": 0
+          },
+          "reason": "",
+          "save_anterior_em_voo": "nenhum",
+          "slot": "selftest_xproc",
+          "terrain_recreated": false
+        }
+      },
+      "id": "T14x-write",
+      "status": "PASS",
+      "titulo": "Fase 1: editar, salvar o slot e gravar o estado esperado"
+    }
+  ],
+  "run_id": "8331ccfddef4",
+  "testes_ids": [
+    "T1",
+    "T14x-write"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": ""
+}

@@ -1,7 +1,7 @@
 class_name AbilityController
 extends Node
 ## Poderes elementais (P3): 1–4 escolhem Terra / Água / Fogo / Ar e o LMB usa o poder do
-## elemento (segurar ou tocar, conforme o poder). Um poder por elemento (roadmap: no máximo 4).
+## elemento (segurar ou tocar, conforme o poder). Terra também usa RMB para um pilar.
 ## Modo Criativo: recurso infinito e sem recarga. Reset/salvar/carregar cancelam poderes;
 ## salvar preserva a física viva. Não aceita comandos com o input do jogador desligado.
 
@@ -75,6 +75,8 @@ func use_pressed() -> bool:
 	if not _can_act():
 		return false
 	var a := current_ability()
+	if a is EarthLiftThrow and (a.pillar_aiming or a.phase == "pillar_pending"):
+		return false
 	holding = a.input_mode == "hold"
 	a.on_press()
 	ability_used.emit(a.id, "press")
@@ -137,6 +139,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.is_action_pressed(ElementalKeys.ACTIONS[i]):
 			select(i)
 			return
+	if event.is_action_pressed(&"earth_pillar") or event.is_action_released(&"earth_pillar"):
+		var earth := current_ability() as EarthLiftThrow
+		if earth == null or holding:
+			return
+		if not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
+			earth.cancel()
+			return
+		if event.is_action_pressed(&"earth_pillar"):
+			earth.begin_pillar()
+		else:
+			earth.finish_pillar()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed(&"ability_use"):
 		if require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			return
@@ -148,6 +163,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if abilities.is_empty():
 		return
+	var earth := current_ability() as EarthLiftThrow
+	if earth != null and (earth.pillar_aiming or earth.phase == "pillar_pending") \
+			and (not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
+		earth.cancel()
 	if holding and (not _can_act() or not player.input_enabled):
 		cancel_all()
 	elif holding:

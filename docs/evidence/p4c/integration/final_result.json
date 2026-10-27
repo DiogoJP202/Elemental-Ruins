@@ -1,0 +1,51 @@
+{
+  "result": "PASS",
+  "tested_commit": "1f151f33da813d0849fbb5df6912db2442c3cf87",
+  "validated_reports": {
+    "editor_headless": {
+      "count": 70,
+      "result": "PASS",
+      "run_id": "c5ed80eba72c"
+    },
+    "editor_window": {
+      "count": 70,
+      "result": "PASS",
+      "run_id": "f5304d3fcc55"
+    },
+    "export_headless": {
+      "count": 70,
+      "result": "PASS",
+      "run_id": "eecdc3996751"
+    },
+    "export_window": {
+      "count": 70,
+      "result": "PASS",
+      "run_id": "485d7188ff47"
+    },
+    "editor_persist_write": {
+      "count": 2,
+      "result": "PASS",
+      "run_id": "8331ccfddef4"
+    },
+    "editor_persist_read": {
+      "count": 2,
+      "result": "PASS",
+      "run_id": "d56d6df7bb66"
+    },
+    "export_persist_write": {
+      "count": 2,
+      "result": "PASS",
+      "run_id": "b24009272534"
+    },
+    "export_persist_read": {
+      "count": 2,
+      "result": "PASS",
+      "run_id": "f3e7ad555a76"
+    }
+  },
+  "source_hashes_unchanged": true,
+  "source_files": 52,
+  "preset_and_prior_fixtures_restored": true,
+  "all_logs_zero_errors_warnings": true,
+  "full_runs_per_mode": 1
+}

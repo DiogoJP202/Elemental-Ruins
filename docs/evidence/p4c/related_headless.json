@@ -1,0 +1,729 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T17:38:51",
+  "duracao_s": 93.921,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "column_collider_latency_ms": 13.861,
+    "initial_terrain_ready_ms": 1076.0,
+    "p4a_hold_frame_ms": {
+      "max": 14.05,
+      "media": 6.9,
+      "min": 0.28,
+      "n": 1139,
+      "p95": 7.95,
+      "p99": 8.17
+    },
+    "p4b_reuse_frame_ms": {
+      "max": 13.13,
+      "media": 6.9,
+      "min": 0.65,
+      "n": 379,
+      "p95": 7.97,
+      "p99": 8.28
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1076.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "caixa_vel": 0.0,
+        "caixa_y_apos_3s": 7.0,
+        "edicoes": [
+          "add_sphere OK rev=1 1.19ms soil ~50265 kg",
+          "add_sphere OK rev=2 0.17ms soil ~50265 kg",
+          "add_sphere OK rev=3 0.11ms soil ~50265 kg"
+        ],
+        "jogador_y_no_topo": 6.22515630722046,
+        "latencia_collider_ms": 13.861,
+        "on_floor": true,
+        "topo_coluna_y": 6.49999809265137
+      },
+      "id": "T4",
+      "status": "PASS",
+      "titulo": "Adicionar matéria forma coluna sólida (caixa e jogador apoiados)"
+    },
+    {
+      "detalhes": {
+        "add_areia": {
+          "dentro": "sand(dureza 0.5, 1600 kg/m³)",
+          "fora_3m": "soil(dureza 1.0, 1500 kg/m³)",
+          "massa_esperada_kg": 22619.4671058465,
+          "massa_kg": 22619.4671058465,
+          "ok": true,
+          "resultado": "add_sphere OK rev=4 0.83ms sand ~22619 kg"
+        },
+        "dureza_ok": true,
+        "dureza_tracos": {
+          "areia": {
+            "carimbos": 19,
+            "material": "sand(dureza 0.5, 1600 kg/m³)"
+          },
+          "pedra": {
+            "carimbos": 5,
+            "material": "stone(dureza 3.0, 2600 kg/m³)"
+          },
+          "solo": {
+            "carimbos": 11,
+            "material": "soil(dureza 1.0, 1500 kg/m³)"
+          }
+        },
+        "layout_gerador": [
+          {
+            "esperado": "soil",
+            "lido": "soil(dureza 1.0, 1500 kg/m³)",
+            "ok": true,
+            "p": "(0.0, -1.0, 28.0)"
+          },
+          {
+            "esperado": "sand",
+            "lido": "sand(dureza 0.5, 1600 kg/m³)",
+            "ok": true,
+            "p": "(30.0, -1.0, 28.0)"
+          },
+          {
+            "esperado": "stone",
+            "lido": "stone(dureza 3.0, 2600 kg/m³)",
+            "ok": true,
+            "p": "(0.0, -8.0, 28.0)"
+          },
+          {
+            "esperado": "stone",
+            "lido": "stone(dureza 3.0, 2600 kg/m³)",
+            "ok": true,
+            "p": "(0.0, 4.0, -10.0)"
+          },
+          {
+            "esperado": "soil",
+            "lido": "soil(dureza 1.0, 1500 kg/m³)",
+            "ok": true,
+            "p": "(0.0, 10.5, -10.0)"
+          },
+          {
+            "esperado": "soil",
+            "lido": "soil(dureza 1.0, 1500 kg/m³)",
+            "ok": true,
+            "p": "(5.0, -3.0, 40.0)"
+          },
+          {
+            "esperado": "stone",
+            "lido": "stone(dureza 3.0, 2600 kg/m³)",
+            "ok": true,
+            "p": "(5.0, -7.0, 40.0)"
+          }
+        ],
+        "politica_bendable": {
+          "nao_dobravel": "material_not_bendable",
+          "ok": true,
+          "solo": ""
+        }
+      },
+      "id": "T11",
+      "status": "PASS",
+      "titulo": "Materiais: layout do gerador, ADD de areia lido nos dados, dureza no ritmo, massa por densidade"
+    },
+    {
+      "detalhes": {
+        "edicao": "add_path OK rev=40 0.62ms sand ~225404 kg",
+        "jogador_x_final": -21.0135231018066,
+        "jogador_y_final": 2.88012409210205,
+        "jogador_y_max": 2.88012409210205,
+        "material_no_meio": "sand(dureza 0.5, 1600 kg/m³)",
+        "on_floor": true,
+        "topo_esperado_y": 3.1,
+        "topo_no_fim_y": 2.91332626342773
+      },
+      "id": "T13",
+      "status": "PASS",
+      "titulo": "Rampa (PATH aditivo de areia): jogador sobe a pé até o topo"
+    },
+    {
+      "detalhes": {
+        "amostras_sdf_material": 108,
+        "arquivos_de_sessao": 1,
+        "carregar_1": {
+          "bytes": 147456,
+          "copy": "OK",
+          "ms": 321.0,
+          "ok": true,
+          "slot": "selftest"
+        },
+        "diferencas_apos_salvar": [],
+        "diferencas_carga_1": [],
+        "diferencas_carga_2": [],
+        "diferencas_reset": [],
+        "edicoes": [
+          "OK dig_sphere OK rev=41 0.86ms soil ~169646 kg",
+          "OK dig_path OK rev=42 1.79ms soil ~195432 kg",
+          "OK dig_path OK rev=43 3.49ms soil ~195432 kg",
+          "OK dig_path OK rev=44 0.07ms stone ~201132 kg",
+          "OK dig_path OK rev=45 0.71ms stone ~338749 kg",
+          "OK dig_path OK rev=46 0.69ms stone ~338749 kg",
+          "OK dig_path OK rev=47 0.10ms soil ~116038 kg",
+          "OK add_sphere OK rev=48 0.30ms sand ~53617 kg",
+          "OK add_sphere OK rev=49 0.12ms sand ~53617 kg",
+          "OK add_sphere OK rev=50 0.07ms sand ~53617 kg",
+          "OK add_path OK rev=51 1.18ms stone ~366281 kg"
+        ],
+        "nos": {
+          "apos_salvar": 230,
+          "carga_1": 230,
+          "carga_2": 230,
+          "editado": 230
+        },
+        "probes_alteradas_pelas_edicoes": 5,
+        "reset_volta_ao_baseline": true,
+        "salvar": {
+          "blocks_tasks": 0,
+          "bytes": 147456,
+          "copy": "OK",
+          "flush_ms": 9.0,
+          "io_drain": {
+            "idle": true,
+            "ms": 34.0,
+            "tasks": {
+              "generation": 0,
+              "gpu": 0,
+              "main_thread": 0,
+              "meshing": 0,
+              "streaming": 0
+            }
+          },
+          "ms": 49.0,
+          "ok": true,
+          "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite",
+          "publication": {
+            "error": 0,
+            "recovery_file": "",
+            "rollback": 0
+          },
+          "reason": "",
+          "save_anterior_em_voo": "esperado",
+          "slot": "selftest",
+          "terrain_recreated": false
+        },
+        "save_abortado": {
+          "exercitado": true,
+          "resultado": {
+            "blocks_tasks": 58,
+            "bytes": -1,
+            "copy": "Busy",
+            "flush_ms": 1.0,
+            "io_drain": {
+              "idle": false,
+              "ms": 0.0,
+              "tasks": {}
+            },
+            "ms": 1.0,
+            "ok": false,
+            "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest_abort.sqlite",
+            "publication": {
+              "error": 44,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "flush_incomplete",
+            "save_anterior_em_voo": "nenhum",
+            "slot": "selftest_abort",
+            "terrain_recreated": false
+          },
+          "save_seguinte_imediato": {
+            "blocks_tasks": 0,
+            "bytes": 147456,
+            "copy": "OK",
+            "flush_ms": 9.0,
+            "io_drain": {
+              "idle": true,
+              "ms": 34.0,
+              "tasks": {
+                "generation": 0,
+                "gpu": 0,
+                "main_thread": 0,
+                "meshing": 0,
+                "streaming": 0
+              }
+            },
+            "ms": 49.0,
+            "ok": true,
+            "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/selftest.sqlite",
+            "publication": {
+              "error": 0,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "",
+            "save_anterior_em_voo": "esperado",
+            "slot": "selftest",
+            "terrain_recreated": false
+          },
+          "terreno_pronto_sem_slot": true
+        },
+        "topo_coluna_carga_2_y": 6.5,
+        "topo_coluna_salvo_y": 6.5
+      },
+      "id": "T14",
+      "status": "PASS",
+      "titulo": "Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar"
+    },
+    {
+      "detalhes": {
+        "agiu_durante_reset": false,
+        "clique_sem_mouse_capturado_ignorado": true,
+        "lmb_roteado": [
+          "earth_lift_throw:press",
+          "earth_lift_throw:release"
+        ],
+        "mouse_estava_preso": false,
+        "poderes": [
+          "earth/earth_lift_throw/hold",
+          "water/water_jet/hold",
+          "fire/fire_burst/tap",
+          "air/air_gust/tap"
+        ],
+        "selecionados_por_1_4": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "id": "T28",
+      "status": "PASS",
+      "titulo": "1–4 escolhem o elemento; LMB chega ao poder; clique de recaptura não age; nada age no reset"
+    },
+    {
+      "detalhes": {
+        "caixa_deslocada_m": 45.9334869384766,
+        "caixa_pos": "(-34.0, 0.519997, 53.99997)",
+        "contatos": 1,
+        "erro_suspensao_m": 0.0142947314307094,
+        "maior_desvio_de_teleporte_m": 0.00337795028463006,
+        "maior_impulso_Ns": 1263.4377748496,
+        "maior_passo_por_quadro_m": 0.575381100177765,
+        "mira_acertou": "TestCrate:<RigidBody3D#282712870048>",
+        "mira_ponto": "(-34.0, 0.555709, 54.49997)",
+        "ms_ate_suspensa_a_1m": 390,
+        "pronta_ms": 377,
+        "rocha_t": 6.97317041015625,
+        "trajetoria": [
+          "(-34.0, 1.6, 57.0) v=23.6",
+          "(-33.9, 2.1, 52.1) v=15.9",
+          "(-33.8, 3.5, 47.8) v=14.6",
+          "(-33.7, 3.6, 44.3) v=13.8",
+          "(-33.5, 4.0, 40.9) v=13.5",
+          "(-33.3, 3.1, 36.9) v=13.7"
+        ],
+        "vel_no_lancamento": 23.9618358612061
+      },
+      "id": "T29",
+      "status": "PASS",
+      "titulo": "Terra: rocha real extraída, suspensa só por forças e arremessada; acerta a caixa e a desloca"
+    },
+    {
+      "detalhes": {
+        "alvo_pos": "(16.5, 0.8, 16.5)",
+        "bloco_de_cima": "P08_pilar0",
+        "bloco_de_cima_solto": true,
+        "maior_impulso_Ns": 149146.468123547,
+        "mira_acertou": "P06_pilar0:<RigidBody3D#291890005705>",
+        "pe_mirado": "P06_pilar0",
+        "pe_solto": false,
+        "quebras_por_impacto": 1,
+        "soltas_no_total": 2,
+        "soltas_por_impacto": 1,
+        "soltas_total": 2,
+        "suspensa": true,
+        "trajetoria": [
+          "(18.4, 2.0, 23.3) v=23.9",
+          "(17.3, 1.6, 19.6) v=23.6",
+          "(17.0, 1.1, 18.3) v=1.4",
+          "(17.0, 1.1, 18.3) v=0.0",
+          "(17.0, 1.1, 18.3) v=0.0",
+          "(17.0, 1.1, 18.3) v=0.0"
+        ],
+        "ultima_quebra": "P07_pilar0 (impacto)"
+      },
+      "id": "T30",
+      "status": "PASS",
+      "titulo": "Terra × torre: rocha arremessada solta bloco(s) de pilar por impacto e o grafo derruba o bloco de cima"
+    },
+    {
+      "detalhes": {
+        "alvo": {
+          "dist": 4.50288820266724,
+          "jogador": "(-34.0, 0.020201, 68.0)",
+          "motivo": "",
+          "ok": true,
+          "ponto": "(-33.83014, 0.02, 63.50032)",
+          "ultimo": "arremessada a 24 m/s"
+        },
+        "cavidade_aberta_no_desprendimento": true,
+        "chao_intacto_na_antecipacao": true,
+        "congelada_no_desprendimento": true,
+        "dinamica_no_levantamento": true,
+        "espera_extra_pela_cavidade_quadros": 0,
+        "esperado": {
+          "anticipation": 6,
+          "detach": 7,
+          "rise": 10
+        },
+        "fx_eventos": [
+          "anticipation",
+          "detach",
+          "rise",
+          "hold",
+          "windup",
+          "launch",
+          "recovery",
+          "impact_ground"
+        ],
+        "fx_na_fase": {
+          "cracks": "anticipation",
+          "impacts": "recovery",
+          "mesh_shakes": "detach",
+          "rock_pebbles": "rise",
+          "telegraphs": "anticipation",
+          "trails": "recovery"
+        },
+        "pronta_ms": 366,
+        "pronta_ms_relogio_teste": 379,
+        "quadros_observados": {
+          "anticipation": 5,
+          "detach": 7,
+          "rise": 10
+        },
+        "quadros_por_fase": {
+          "anticipation": 5,
+          "detach": 7,
+          "rise": 10
+        },
+        "rocha_antes_do_desprendimento": false,
+        "sequencia": [
+          "anticipation",
+          "detach",
+          "rise",
+          "hold"
+        ]
+      },
+      "id": "T39",
+      "status": "PASS",
+      "titulo": "Terra em fases: antecipação (chão intacto) → desprendimento (rocha congelada, cavidade aberta) → levantamento → pronta em ≤ 400 ms"
+    },
+    {
+      "detalhes": {
+        "angulo_com_a_mira_graus": -1.48821529738039,
+        "clique_na_recuperacao_ignorado": true,
+        "fase_apos_lancar": "recovery",
+        "lancamento_ms": 428,
+        "limite_ms": 510,
+        "livre_apos_recuperacao": true,
+        "soltou_na_fase": "anticipation"
+      },
+      "id": "T40",
+      "status": "PASS",
+      "titulo": "Toque curto: soltar na antecipação guarda o arremesso, que sai ao ficar pronta na direção da mira do instante; recuperação bloqueia novo clique"
+    },
+    {
+      "detalhes": {
+        "atraso_100ms_m": 6.25449275970459,
+        "balanco_amplitude_m": 0.0432744026184082,
+        "ms_ate_0_3m": 1220,
+        "sobressinal_m": 0.0,
+        "velocidade_depois": 1.0,
+        "velocidade_jogador_no_hold": 0.8
+      },
+      "id": "T42",
+      "status": "PASS",
+      "titulo": "Peso no hold: giro de 90° faz a rocha atrasar e assentar sem oscilar; balanço vertical; jogador mais lento só enquanto carrega"
+    },
+    {
+      "detalhes": {
+        "A_crateras": 1,
+        "A_ponto": "(-31.98711, 0.02, 54.99867)",
+        "A_sdf_no_ponto": 0.717184901237488,
+        "A_velocidade_no_chao": 23.5228652954102,
+        "B_arremessos": 1,
+        "B_crateras": 0,
+        "B_impactos_no_chao": [
+          "8.6 m/s"
+        ],
+        "B_pronta": true
+      },
+      "id": "T43",
+      "status": "PASS",
+      "titulo": "Impacto no chão a ≥ 12 m/s abre cratera real pela fila (uma por arremesso); arremesso lento não abre"
+    },
+    {
+      "detalhes": {
+        "clique_aceito": true,
+        "esperado": 9,
+        "fase_apos_clique": "anticipation",
+        "livre_antes": true,
+        "quadros_de_antecipacao": 8,
+        "resultado": "erguendo rocha",
+        "velocidade_jogador_no_hold": 0.5
+      },
+      "id": "T44",
+      "status": "PASS",
+      "titulo": "Tuning em uso: antecipação de 140 ms e velocidade 0,5 no hold mudam o que é medido"
+    },
+    {
+      "detalhes": {
+        "brush_unchanged": true,
+        "distance_min_max_m": [
+          3.0,
+          6.5
+        ],
+        "farthest_rock_m": 3.64456939697266,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 14.05,
+          "media": 6.9,
+          "min": 0.28,
+          "n": 1139,
+          "p95": 7.95,
+          "p99": 8.17
+        },
+        "height_min_max_m": [
+          1.8,
+          3.8
+        ],
+        "horizontal_m": 6.99599885940552,
+        "launches": [
+          {
+            "origin_error_m": 0.0,
+            "speed": 23.3986492156982
+          }
+        ],
+        "lowered_m": 1.92228245735168,
+        "opposite_keys_neutral": true,
+        "raised_m": 1.72534775733948,
+        "release_without_teleport": true,
+        "teleport_error_m": 0.000255169288720936,
+        "wall_blocked": true,
+        "wall_distance_m": 5.0,
+        "wheel_step_m": 0.75
+      },
+      "id": "T59",
+      "status": "PASS",
+      "titulo": "Q/E e roda reposicionam uma rocha por física, respeitam Resource e obstáculo e mantêm o arremesso"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01263570785522,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01263570785522,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99408, 0.02, 63.50566)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01259517669678,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01259517669678,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99406, 0.02, 63.50569)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01430797576904,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01430797576904,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99519, 0.02, 63.50441)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.0142674446106,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.0142674446106,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99517, 0.02, 63.50444)",
+              "reason": ""
+            },
+            "ok": true
+          }
+        },
+        "slot": "p4a_lifecycle",
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T60",
+      "status": "PASS",
+      "titulo": "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais"
+    },
+    {
+      "detalhes": {
+        "callbacks_clean": true,
+        "capture_without_position_velocity_reset": true,
+        "controls": true,
+        "flight_speed_m_s": 23.9872150421143,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 13.13,
+          "media": 6.9,
+          "min": 0.65,
+          "n": 379,
+          "p95": 7.97,
+          "p99": 8.28
+        },
+        "mass_kg": 6973.17041015625,
+        "moved_m": 0.68927389383316,
+        "no_terrain_edit_or_new_body": true,
+        "one_new_impact": true,
+        "previous_flight_disconnected": true,
+        "recaptured_in_flight": true,
+        "reused_twice": true,
+        "same_body": true,
+        "teleport_error_m": 0.000612816889770329
+      },
+      "id": "T61",
+      "status": "PASS",
+      "titulo": "Mesma rocha e massa: captura por LMB, controles físicos, recaptura em voo e novo impacto sem callbacks duplicados"
+    },
+    {
+      "detalhes": {
+        "crate_not_earth": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        },
+        "distance_3d": {
+          "ok": true,
+          "reason": "rocha longe demais (máx. 7.0 m)"
+        },
+        "load": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "near_parked_rock": {
+          "awakened": true,
+          "budget_protected": true,
+          "minimum_distance": true,
+          "ok": true
+        },
+        "reset": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "save": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "select": {
+          "ok": true,
+          "owned_before": true,
+          "released_after": true
+        },
+        "tower_not_earth": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "reason": "mire no chão ou em uma rocha extraída"
+        }
+      },
+      "id": "T62",
+      "status": "PASS",
+      "titulo": "Reutilização respeita oclusão/tipo/alcance; acorda rocha estacionada e limpa propriedade em seleção/reset/save/load"
+    }
+  ],
+  "run_id": "10cc287a0547",
+  "testes_ids": [
+    "T1",
+    "T4",
+    "T11",
+    "T13",
+    "T14",
+    "T28",
+    "T29",
+    "T30",
+    "T39",
+    "T40",
+    "T42",
+    "T43",
+    "T44",
+    "T59",
+    "T60",
+    "T61",
+    "T62"
+  ],
+  "testes_pass": 17,
+  "testes_total": 17,
+  "video_adapter": ""
+}

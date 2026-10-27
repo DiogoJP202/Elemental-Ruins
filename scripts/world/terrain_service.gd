@@ -721,37 +721,12 @@ func _sphere_op(op: String, mode: int, world_point: Vector3, radius: float,
 func _path_op(op: String, mode: int, world_points: PackedVector3Array, radii: PackedFloat32Array,
 		material_id: StringName = &"") -> TerrainEditResult:
 	var t0 := Time.get_ticks_usec()
+	var check := _check_path(mode, world_points, radii, material_id)
+	if check.reason != "":
+		return _reject(op, check.reason, check.get("aabb", AABB()))
 	var n := world_points.size()
-	if n < 2 or n != radii.size() or n > max_path_points:
-		return _reject(op, "invalid_path_points")
-	var paint: TerrainMaterial = null
-	if material_id != &"":
-		paint = TerrainMaterialLibrary.get_by_id(material_id)
-		if paint == null:
-			return _reject(op, "unknown_material")
-	var pad := remove_radius_padding if mode == VoxelTool.MODE_REMOVE else 0.0
-	var margin := pad + (material_paint_margin if paint != null else 0.0)
-	var length := 0.0
-	var aabb := AABB()
-	for i in n:
-		var p := world_points[i]
-		var r := radii[i]
-		if not _is_finite_vec(p) or not is_finite(r):
-			return _reject(op, "invalid_input")
-		if r < min_radius or r > max_radius:
-			return _reject(op, "radius_out_of_range")
-		var e := r + margin
-		var sphere_box := AABB(p - Vector3.ONE * e, Vector3.ONE * e * 2.0)
-		aabb = sphere_box if i == 0 else aabb.merge(sphere_box)
-		if i > 0:
-			length += p.distance_to(world_points[i - 1])
-	if length > max_path_length:
-		return _reject(op, "path_too_long", aabb)
-	var reason := _validate_area(aabb)
-	if reason != "":
-		return _reject(op, reason, aabb)
-	if mode == VoxelTool.MODE_ADD and _path_overlaps_protected_body(world_points, radii):
-		return _reject(op, "overlaps_player", aabb)
+	var paint: TerrainMaterial = check.paint
+	var aabb: AABB = check.aabb
 	if not _consume_budget():
 		return _reject(op, "frame_budget_exceeded", aabb)
 
@@ -759,6 +734,7 @@ func _path_op(op: String, mode: int, world_points: PackedVector3Array, radii: Pa
 	local_points.resize(n)
 	var padded_radii := PackedFloat32Array()
 	padded_radii.resize(n)
+	var pad := remove_radius_padding if mode == VoxelTool.MODE_REMOVE else 0.0
 	for i in n:
 		local_points[i] = _terrain.to_local(world_points[i])
 		padded_radii[i] = radii[i] + pad
@@ -770,16 +746,55 @@ func _path_op(op: String, mode: int, world_points: PackedVector3Array, radii: Pa
 		paint_radii.resize(n)
 		for i in n:
 			paint_radii[i] = padded_radii[i] + material_paint_margin
-		# Mesmo princípio do _paint_sphere; do_path em MODE_SET conferido no spike (S4b).
 		_tool.channel = VoxelBuffer.CHANNEL_INDICES
 		_tool.mode = VoxelTool.MODE_SET
 		_tool.value = paint.index
 		_tool.do_path(local_points, paint_radii)
 		_tool.channel = VoxelBuffer.CHANNEL_SDF
-	var result := _commit(op, aabb, t0, "pontos=%d comp=%.1fm%s" % [n, length,
+	var result := _commit(op, aabb, t0, "pontos=%d comp=%.1fm%s" % [n, check.length,
 		(" mat=%s" % paint.id) if paint != null else ""])
 	_set_estimate(result, mat, _path_volume(world_points, radii))
 	return result
+
+
+## Mesma validação da aplicação, sem editar nem gastar orçamento (prévia do pilar).
+func can_add_path(world_points: PackedVector3Array, radii: PackedFloat32Array,
+		material_id: StringName = &"") -> String:
+	return _check_path(VoxelTool.MODE_ADD, world_points, radii, material_id).reason
+
+
+func _check_path(mode: int, world_points: PackedVector3Array, radii: PackedFloat32Array,
+		material_id: StringName) -> Dictionary:
+	var n := world_points.size()
+	if n < 2 or n != radii.size() or n > max_path_points:
+		return {"reason": "invalid_path_points"}
+	var paint: TerrainMaterial = null
+	if material_id != &"":
+		paint = TerrainMaterialLibrary.get_by_id(material_id)
+		if paint == null:
+			return {"reason": "unknown_material"}
+	var pad := remove_radius_padding if mode == VoxelTool.MODE_REMOVE else 0.0
+	var margin := pad + (material_paint_margin if paint != null else 0.0)
+	var length := 0.0
+	var aabb := AABB()
+	for i in n:
+		var p := world_points[i]
+		var r := radii[i]
+		if not _is_finite_vec(p) or not is_finite(r):
+			return {"reason": "invalid_input"}
+		if r < min_radius or r > max_radius:
+			return {"reason": "radius_out_of_range"}
+		var e := r + margin
+		var sphere_box := AABB(p - Vector3.ONE * e, Vector3.ONE * e * 2.0)
+		aabb = sphere_box if i == 0 else aabb.merge(sphere_box)
+		if i > 0:
+			length += p.distance_to(world_points[i - 1])
+	if length > max_path_length:
+		return {"reason": "path_too_long", "aabb": aabb}
+	var reason := _validate_area(aabb)
+	if reason == "" and mode == VoxelTool.MODE_ADD and _path_overlaps_protected_body(world_points, radii):
+		reason = "overlaps_player"
+	return {"reason": reason, "aabb": aabb, "paint": paint, "length": length}
 
 
 func _validate_area(world_aabb: AABB) -> String:

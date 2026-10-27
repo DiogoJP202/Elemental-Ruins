@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4A + P4B)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4C)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -9,7 +9,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P3.5 (Terra polida: fases, peso, telegraph):** resultado e parâmetros em [`docs/p35_earth_polish.md`](docs/p35_earth_polish.md).
 **P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
 **P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
-**P4B — checkpoint fechado em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando"). Pronto para revisão da PR.
+**P4B — checkpoint fechado e integrado à main (`266627d`) em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando").
+**P4C — checkpoint fechado em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário. Pronto para publicar a branch e revisar a PR.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -74,6 +75,7 @@ de fluidos.
 | Mouse | orbitar a câmera; em hold da Terra, desloca a rocha horizontalmente com massa e atraso (Esc solta/prende o mouse; clique recaptura) |
 | **Q / E**, durante hold da Terra | abaixar / elevar o alvo da rocha a 2 m/s; altura inicial 2 m, limites 1–6 m sobre os pés do jogador |
 | **LMB mirando uma rocha solta** (Terra; P4B) | capturar o mesmo corpo físico, preservando massa e velocidade, até 7 m do jogador ao centro da rocha; Q/E, roda e lançamento iguais ao P4A |
+| **RMB** (Terra parada; P4C) | segurar mostra a prévia; soltar cria um pilar permanente. Altura 4,5 m, raio 2 m; chão entre 2,5 m horizontais e 18 m em 3D. Trocar elemento ou Esc cancela |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -167,6 +169,18 @@ Os limites restringem o alvo da mola: a posição real pode atrasar ou apresenta
 4. A captura entra direto no hold, sem antecipação/desprendimento de terreno; a mola faz a transição desde a posição atual e preserva a inércia. O controle impede estacionamento automático pelo orçamento de destroços até lançar/cancelar.
 5. Trocar elemento, salvar, resetar e carregar encerram o controle. Capturar/expirar/limpar encerra o monitoramento do voo anterior para não acumular contatos. Playtest P4B em 27/10/2026: feedback positivo do usuário ("está funcionando"), sem avaliação detalhada por cenário.
 
+### Roteiro manual do P4C — Pilar de Terra
+
+1. Selecione **1**, mire chão livre e segure **RMB**: a prévia indica o volume aproximado (verde válido, vermelho recusado). Solte para criar; não há criação enquanto só segura.
+2. O topo fica 4,5 m acima do chão mirado, com extremidade arredondada pelo PATH. O pilar é terreno SDF real e pode apoiar jogador/caixas; colisão e malha atualizam de forma assíncrona depois da edição. A prévia cilíndrica mostra altura/raio, sem reproduzir o arredondamento voxel.
+3. Parede/objeto sob a mira bloqueia a seleção. O espaço futuro precisa estar livre de corpos; sobreposição com o jogador também é recusada na aplicação. Não ergue o jogador sob os próprios pés. Limites em `EarthTuning`: `pillar_range`, `pillar_radius`, `pillar_height`; reutiliza `min_range` e `min_floor_normal_y`.
+4. Durante prévia do pilar, LMB não inicia extração. Durante o ciclo da rocha, RMB não cria pilar. Troca de elemento, perda de captura do mouse, input desabilitado, reset/save/load cancelam a prévia e o pedido ainda pendente, sem apagar edições já aplicadas.
+5. **F5/Z/F9** salva/remove/restaura o pilar pelo sistema existente. Ele permanece até escavar ou resetar; não há temporizador de desaparecimento. O material vem do chão mirado, independentemente do material do pincel **M**.
+
+Playtest humano do P4C em 27/10/2026: feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário.
+
+O raio padrão de 2 m usa a mesma escala já validada pela coluna do laboratório. Com 1,1 m, a caixa escorregou do topo arredondado nos testes; os critérios de apoio foram mantidos.
+
 ### Roteiro manual do P3.6 — Água, Fogo e Ar (≈ 6 min)
 Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tuning.tres` (inspetor da Godot); detalhes em
 `docs/p36_elemental_polish.md`. Use **B** para criar caixas de teste e **H** para levantar um morro de terreno.
@@ -186,6 +200,45 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
    clareza de limites e recuperação. **NÃO TESTADO** por pessoas até aqui.
 
 ## Testes automatizados
+
+### P4C — validação direcionada e checkpoint de integração
+
+- [T1/T63/T64 headless: 3/3 PASS](docs/evidence/p4c/pillar_radius2_headless.json): RMB real, um único PATH aditivo, apoio físico de caixa/jogador, save/reset/load, recusas e cancelamentos de prévia/fila. Um corpo que entra no volume depois da confirmação cancela somente esse pedido, antes da fila processá-lo.
+- [Regressão relacionada: 17/17 PASS](docs/evidence/p4c/related_headless.json): T1, T4, T11, T13, T14, T28–T30, T39, T40, T42–T44 e T59–T62. Cobre os consumidores reais da validação PATH e o ciclo da rocha.
+- [Export em janela: 4/4 PASS](docs/evidence/p4c/candidate_window.json): T1, T37, T63, T64; zero erros/avisos em todos os resultados finais. Import, export Windows, inspeção e `git diff --check` aprovados; preset preservado.
+
+| Cenário em janela | p95 | p99 | Máximo |
+|---|---:|---:|---:|
+| T37, base P4B `266627d` | 18,92 ms | 20,26 ms | 25,27 ms |
+| T37, P4C | 18,47 ms | 20,76 ms | 30,68 ms |
+| T63, prévia/criação/apoio do pilar | 17,97 ms | 19,87 ms | 22,67 ms |
+
+[Ambiente e fontes](docs/evidence/p4c/environment.json), [baseline](docs/evidence/p4c/baseline_p4b_window.json): mesma máquina i5-1135G7/Iris Xe, Godot custom 4.7.2 + Voxel Tools 1.7, Forward+, viewport configurada 1600×900 e Jolt. Execuções sequenciais de export, sem outra Godot ativa. Gates 20/33/50 ms intactos; a variação do T37 não demonstra ganho ou regressão causal. T63 coleta intervalo real entre quadros, incluindo prévia, edição e confirmação do collider; save/load ficam fora dessa janela de desempenho.
+
+As [duas primeiras](docs/evidence/p4c/pillar_headless.json) [execuções headless](docs/evidence/p4c/pillar_recheck_headless.json) ficaram em 2/3 por a caixa escorregar do topo com raio 1,1 m, inclusive com 3 s de assentamento. Raio padrão ajustado para 2 m; mesmos critérios de apoio e sem mudança nos limites de desempenho.
+
+Na fatia direcionada acima não foram executados bateria integral e persistência entre processos; esses passos foram executados no checkpoint abaixo, após o feedback humano positivo. O campo de playtest no ambiente direcionado preserva o estado histórico daquela execução. Para repetir somente os testes novos, usar `--p36-selftest --only=T63,T64`; T1 é obrigatório e incluído automaticamente. Reutilizar `Invoke-SelftestStep` com pasta/relatório novos para preservar evidências.
+
+**Checkpoint de integração — 27/10/2026:** [resumo validado](docs/evidence/p4c/integration/final_result.json), [passos do runner](docs/evidence/p4c/integration/steps.json).
+
+| Modo | Resultado integral |
+|---|---|
+| [Editor headless](docs/evidence/p4c/integration/editor_headless.json) | 70/70 PASS |
+| [Editor em janela](docs/evidence/p4c/integration/editor_window.json) | 70/70 PASS |
+| [Export headless](docs/evidence/p4c/integration/export_headless.json) | 70/70 PASS |
+| [Export em janela](docs/evidence/p4c/integration/export_window.json) | 70/70 PASS |
+
+280 execuções de teste aprovadas, zero erros/avisos. Cada modo integral foi executado uma única vez, sem rechecagens. Export Windows e persistência write/read em processos separados passaram no editor e no export (2/2 em cada uma das quatro etapas). Import/export sem erros/avisos; 52 scripts conferem com os hashes do [ambiente](docs/evidence/p4c/integration/environment.json). Preset e fixtures anteriores restaurados exatamente; nenhuma captura nova.
+
+| Cenário | Editor: p95 / p99 / máximo | Export: p95 / p99 / máximo |
+|---|---|---|
+| T27 — colapso | 17,73 / 18,20 / 18,44 ms | 17,98 / 18,43 / 18,86 ms |
+| T37 — quatro poderes | 18,50 / 20,30 / 32,18 ms | 18,98 / 20,08 / 32,23 ms |
+| T59 — controle livre | 17,90 / 18,46 / 19,09 ms | 17,86 / 18,20 / 19,17 ms |
+| T61 — recaptura da rocha | 17,67 / 18,57 / 24,67 ms | 17,76 / 19,02 / 23,52 ms |
+| T63 — pilar | 17,82 / 18,33 / 19,54 ms | 17,73 / 18,15 / 21,50 ms |
+
+Todos atendem a 20/33/50 ms, em i5-1135G7/Iris Xe, Forward+, 1600×900 e Jolt, com execuções sequenciais e sem outra Godot aberta no início. Acompanhamento por leitura de log sem abrir processos shell/CIM durante as janelas de medição. Sem inferência de ganho causal entre amostras. Para um próximo checkpoint, reutilizar `tools/run_p361_tests.ps1` com `-Template <template-custom>` e `-EvidenceDirectory <pasta-nova>`. Próximo passo: publicar a branch P4C e abrir a PR para revisão.
 
 ### P4B — validação direcionada e checkpoint de integração
 
@@ -228,7 +281,7 @@ Zero erros/avisos nos resultados finais. Export Windows e persistência write/re
 | T37 — quatro poderes | 18,86 / 23,48 / 38,99 ms | 19,12 / 21,42 / 32,47 ms |
 | T61 — reutilização | 17,98 / 23,50 / 23,93 ms | 18,72 / 20,17 / 22,77 ms |
 
-Todos os resultados finais atendem a 20/33/50 ms, em i5-1135G7/Iris Xe, Forward+, 1600×900 e Jolt. Para outro checkpoint, reutilizar `tools/run_p361_tests.ps1` com `-Template <template-custom>` e `-EvidenceDirectory <pasta-nova>`. Próximo passo: revisar a PR P4B antes de ampliar o escopo.
+Todos os resultados finais atendem a 20/33/50 ms, em i5-1135G7/Iris Xe, Forward+, 1600×900 e Jolt. Para outro checkpoint, reutilizar `tools/run_p361_tests.ps1` com `-Template <template-custom>` e `-EvidenceDirectory <pasta-nova>`. P4B integrado à main em `266627d`; histórico preservado.
 
 ### P4A — validação direcionada e checkpoint de integração
 
@@ -277,7 +330,7 @@ Comando usado neste checkpoint; ao repetir, escolher outra pasta para preservar 
 ./tools/run_p361_tests.ps1 -Template 'C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\godot.windows.template_release.x86_64.exe' -EvidenceDirectory 'docs/evidence/p4a/integration'
 ```
 
-O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Este checkpoint P4A já foi integrado à main em `9103bee`; a fase atual é P4B.
+O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Este checkpoint P4A já foi integrado à main em `9103bee`; a fase atual é P4C.
 
 ### P3.6 — Água, Fogo e Ar polidos (inclui as regressões do P0 ao P3.5)
 
@@ -376,8 +429,17 @@ Ferramentas avulsas (mesmo executável, `--headless --path . --script ...`):
 
 ## Export Windows
 
-```bash
-"C:/Users/dsoares/Tools/Godot/4.7.2-voxel1.7/godot.windows.editor.x86_64.exe" --headless --path . --export-release "Windows Desktop" build/elemental_ruins.exe
+PowerShell, na raiz do projeto (o helper aguarda o processo GUI e grava o log):
+
+```powershell
+. .\tools\lib_godot_process.ps1
+$root = (Get-Location).Path
+$godot = Resolve-Godot $env:GODOT
+New-Item -ItemType Directory -Force build | Out-Null
+$log = Join-Path $root 'build/export.log'
+$code = Invoke-Native $godot @('--headless', '--path', '.', '--export-release',
+    'Windows Desktop', 'build/elemental_ruins.exe') $log $root 180
+if ($code -ne 0 -or (Test-GodotLog $log)) { throw 'Export falhou; confira build/export.log' }
 ```
 
 Gera `build/elemental_ruins.exe` (template custom, 88,5 MB, com o Voxel Tools embutido) e `build/elemental_ruins.pck`.

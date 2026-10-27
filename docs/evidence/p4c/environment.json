@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-27T17:41:26.4457128-03:00",
+  "base_commit": "266627dbc87f963b4f1ddf4c66dd71d2eba4dbde",
+  "branch": "codex/p4c-earth-pillar",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "gpu": "Intel Iris Xe Graphics (Vulkan 1.4.323 per both window logs)",
+  "renderer": "forward_plus",
+  "viewport_configured": "1600x900",
+  "physics": "Jolt Physics",
+  "method": "Sequential Windows x64 exports on the same machine; no other Godot process at start, no shell/CIM monitoring during measured windows. T37 same workload; T63 active preview, edit/collider and physical support, excludes persistence.",
+  "frame_gates_ms": {
+    "p95": 20,
+    "p99": 33,
+    "max": 50
+  },
+  "source_sha256": {
+    "scripts/abilities/ability_controller.gd": "34C35FFCF2213B5459171B1FF8155407BA54D862293DAC6AB3DDD52931AAD29A",
+    "scripts/abilities/earth_lift_throw.gd": "E1FAD3FFDF112BCD3749D995045BD9C7B7DDBD8DE9AC3DF188CD756828FB2C89",
+    "scripts/abilities/earth_tuning.gd": "9F79EA6EFB5D1C3BE15E042B1863580507B9C50DB32A6EA2CF84CC0380483EBA",
+    "scripts/core/input_actions.gd": "49E465E6005BCF762A6691E35A2FEF9BEC6BD990A051F9BCFC869E86EA641FDC",
+    "scripts/dev/p36_selftest.gd": "F63EFDE5E3F0F5E470B5308F4E8FADA6D2C9B9DC7296D753001D87BA3A63B4A0",
+    "scripts/elements/earth_fx.gd": "016FEEF5ED3348E1C1EA3822E3C1532BD8BF72F742F5B170E118E17ABF72D2FC",
+    "scripts/ui/debug_hud.gd": "CE771C219B24D85F5713AEF9EF8B8DC2ECE2582B27504EC720F2AA680D2F16C5",
+    "scripts/world/terrain_brush_queue.gd": "92196836646AD3C056EEC6A49B68FE38D32F4A43BC10840FB266C842F6ACF2FE",
+    "scripts/world/terrain_service.gd": "EE51D6ED3F9591649C14193FABB4F8BFE3C6A618BEC55E51AC6F29A445ACBD82",
+    "tools/lib_selftest_contract.ps1": "4320D3C44A0198CB72CF25E5124A8F0F73A55E628981A3ED3BDFA70C460F1ABC"
+  },
+  "baseline_pck_sha256": "25EFF223BF7609F8864AAE45B58DFB37AD430800D9B60987825C0B896F739E3E",
+  "candidate_pck_sha256": "667B4A77B2A46A6C13E237A97931EC1110E63ED64830708CAD6678AAA2652EA4",
+  "shared_p4b_zip_sha256": "42AF1AA6E6ECB9C6CA519EF48BCFD82C1927865ACA7C4CCB5BA3ABFAE06B3868",
+  "human_playtest": "P4C NÃO TESTADO",
+  "not_run": [
+    "full 70 IDs in four modes",
+    "cross-process persistence"
+  ]
+}
