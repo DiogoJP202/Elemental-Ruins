@@ -4,7 +4,7 @@
 
 ## Estado vigente: P4A — manipulação livre de Terra (27/10/2026)
 - P0–P3.6.1 implementados. Base `codex/p36-t26-stabilization`, referência `180ec59`: salvar preserva terreno, colisores e física viva. Não reiniciar fases anteriores.
-- P4A implementado: 11/11 headless e 4/4 em janela, zero erros/avisos; resultados no README e evidências em `docs/evidence/p4a/`. Próximo passo é playtest humano (NÃO TESTADO), sem ampliar o escopo automaticamente.
+- P4A com checkpoint fechado em 27/10/2026: 66/66 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos; resultados no README e evidências em `docs/evidence/p4a/integration/`. Playtest dos controles recebeu feedback positivo do usuário na mesma data. Próximo passo: revisar a PR, sem ampliar o escopo automaticamente.
 - Trabalho autorizado: uma rocha suspensa com câmera horizontal, Q/E para altura e roda contextual para distância; preservar mola, arremesso e cancelamentos. Sem novas habilidades, múltiplas rochas, multiplayer ou arquitetura genérica.
 - Branch de trabalho: `feat/p4a-earth-free-control`. Conferir repositório, worktree e Git antes de editar; preservar alterações locais. Não modificar a main, fazer reset destrutivo, merge ou push sem autorização.
 - Stack vigente: Godot 4.7.2 custom + Voxel Tools 1.7 como módulo (D13). Editor e template release compatíveis. Não reintroduzir a GDExtension.
@@ -13,7 +13,7 @@
 - Em janela: intervalo entre quadros p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms nos cenários T27/T37. Registrar hardware, resolução, renderer, cenário e metodologia. Headless não comprova renderização.
 - Água, Fogo e Ar: Resources independentes editáveis pelo inspetor, seguindo EarthTuning. Separar comandos, simulação, materiais e VFX. Não criar habilidades novas.
 - PvP nesta fase: timings configuráveis, eventos identificáveis, cancelamentos e telegraphs. Sem rede, rollback, servidores ou dano em jogadores; sem pausa/tempo global para impacto.
-- Capturas e automação não são playtest humano. Controles, legibilidade e game feel: NÃO TESTADO até avaliação humana real.
+- Capturas e automação não são playtest humano. P4A: feedback humano positivo dos controles em 27/10/2026; legibilidade PvP e avaliações dos demais elementos continuam NÃO TESTADO.
 - Raycasts: registrar tentativas, acertos e falhas por cenário, superfícies finas e corpos adjacentes. Amostra sem falhas não prova correção universal.
 - Testes proporcionais ao risco: `git diff --check` e parse/import quando necessário; IDs direcionados para o comportamento alterado e consumidores reais; benchmark em janela ao alterar o caminho físico. Bateria integral nos quatro modos somente no checkpoint de integração, alteração sistêmica de alto risco ou candidata a merge.
 

@@ -8,7 +8,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P3 (quatro elementos iniciais):** resultado e gate em [`docs/p3_results.md`](docs/p3_results.md).
 **P3.5 (Terra polida: fases, peso, telegraph):** resultado e parâmetros em [`docs/p35_earth_polish.md`](docs/p35_earth_polish.md).
 **P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
-**P4A implementado:** controle livre de uma rocha suspensa; testes direcionados e desempenho em janela PASSARAM em 27/10/2026. Próximo passo: avaliação humana dos controles (**NÃO TESTADO**). Sem novas habilidades ou multiplayer.
+**P4A — checkpoint fechado em 27/10/2026:** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom"). Pronto para revisão da PR. Sem novas habilidades ou multiplayer.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -153,7 +153,7 @@ Parâmetros em `data/abilities/earth_tuning.tres` (abra no inspetor da Godot; ve
 2. Use **Q/E** para baixar/subir e a **roda** para aproximar/afastar. O HUD mostra altura, distância e limites; parâmetros em `EarthTuning`, editáveis por `data/abilities/earth_tuning.tres`.
 3. Empurre o alvo contra terreno ou parede: a rocha continua física, sem teleporte. Solte **LMB** para lançar; toque curto mantém o lançamento automático.
 4. Troque elemento, salve, resete ou carregue durante o controle: os comandos cessam. Salvar solta a rocha com gravidade e preserva os corpos vivos; reset/carregar recriam a sessão.
-5. Fora do hold, confira a roda regulando o pincel; **[ ]** continuam regulando-o durante hold. Controles e sensação de jogo por pessoas: **NÃO TESTADO**.
+5. Fora do hold, confira a roda regulando o pincel; **[ ]** continuam regulando-o durante hold. Playtest dos controles em 27/10/2026: feedback positivo do usuário ("acho que ficou bom"), sem avaliação detalhada por cenário.
 
 Os limites restringem o alvo da mola: a posição real pode atrasar ou apresentar sobressinal físico. Contra um obstáculo, a rocha permanece bloqueada pelas colisões/CCD e recebe força limitada; não há teleporte nem desvio automático. O lançamento mantém a trajetória existente, calculada do centro atual com impulso que considera a velocidade corrente.
 
@@ -177,7 +177,7 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
-### P4A — validação direcionada
+### P4A — validação direcionada e checkpoint de integração
 
 Executado com `Invoke-SelftestStep` de `tools/lib_godot_process.ps1`, sem runner novo: valida exit code, relatório novo/run_id, IDs explícitos e zero erros/avisos. Evidências em [`docs/evidence/p4a/`](docs/evidence/p4a/); históricos anteriores preservados.
 
@@ -199,7 +199,32 @@ Godot 4.7.2 custom + Voxel Tools 1.7, Jolt, Forward+, 1600×900; i5-1135G7 e Iri
 
 Para repetir somente esta cobertura, usar `--p36-selftest --only=T28,T29,T30,T39,T40,T42,T43,T44,T59,T60` em headless; em janela, `--only=T37,T59,T60`. Passar `--report=<novo_caminho.json>` e validar pelo helper existente; não sobrescrever as evidências históricas do runner P3.6.
 
-Limites preservados: p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms. Não executados nesta entrega: bateria completa nos quatro modos, export e persistência entre processos (fluxo de produção do save inalterado). Reservados ao checkpoint de integração. Playtest humano: **NÃO TESTADO**.
+Limites preservados: p95 ≤ 20 ms, p99 ≤ 33 ms, máximo ≤ 50 ms. O checkpoint direcionado acima foi seguido pelo gate completo abaixo. Playtest humano dos controles P4A: feedback positivo do usuário em 27/10/2026; as avaliações humanas dos outros elementos permanecem pendentes.
+
+**Gate de integração — 27/10/2026:** uma execução completa por modo, sem falhas ou repetição da bateria. Mesma máquina/configuração descrita acima; [ambiente e hashes dos scripts executados](docs/evidence/p4a/integration/environment.json).
+
+| Modo | Resultado |
+|---|---|
+| [Editor headless](docs/evidence/p4a/integration/editor_headless.json) | 66/66 PASS |
+| [Editor em janela](docs/evidence/p4a/integration/editor_window.json) | 66/66 PASS |
+| [Export headless](docs/evidence/p4a/integration/export_headless.json) | 66/66 PASS |
+| [Export em janela](docs/evidence/p4a/integration/export_window.json) | 66/66 PASS |
+
+264 testes aprovados, zero erros/avisos. Export Windows e persistência write/read em processos separados no editor e export também passaram (2/2 IDs em cada uma das quatro etapas); [passos do runner](docs/evidence/p4a/integration/steps.json). Logs de import/export conferidos sem erros/avisos. Fixtures históricas e preset de export restaurados; hashes dos scripts conferidos após o gate. Não foram geradas novas capturas.
+
+| Cenário | Editor: p95 / p99 / máximo | Export: p95 / p99 / máximo |
+|---|---|---|
+| T27 — colapso | 17,58 / 18,27 / 18,80 ms | 17,38 / 18,14 / 21,94 ms |
+| T37 — quatro poderes | 18,28 / 19,93 / 32,60 ms | 18,80 / 21,07 / 28,49 ms |
+| T59 — manipulação ativa | 17,66 / 18,22 / 18,73 ms | 17,85 / 18,61 / 31,07 ms |
+
+Comando usado neste checkpoint; ao repetir, escolher outra pasta para preservar este histórico:
+
+```powershell
+./tools/run_p361_tests.ps1 -Template 'C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\godot.windows.template_release.x86_64.exe' -EvidenceDirectory 'docs/evidence/p4a/integration'
+```
+
+O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Próximo passo: revisar e integrar a PR P4A antes da próxima fatia de gameplay.
 
 ### P3.6 — Água, Fogo e Ar polidos (inclui as regressões do P0 ao P3.5)
 

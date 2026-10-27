@@ -1,8 +1,9 @@
-param([string]$Godot=$env:GODOT, [Parameter(Mandatory=$true)][string]$Template)
+param([string]$Godot=$env:GODOT, [Parameter(Mandatory=$true)][string]$Template,
+    [string]$EvidenceDirectory='docs/evidence/p36/t26_stabilization/full')
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'lib_godot_process.ps1')
 $root=Split-Path $PSScriptRoot
-$evidence=Join-Path $root 'docs/evidence/p36/t26_stabilization/full'
+$evidence=if([System.IO.Path]::IsPathRooted($EvidenceDirectory)){$EvidenceDirectory}else{Join-Path $root $EvidenceDirectory}
 $StepTimeoutSec=1200
 $results=[ordered]@{}
 $Godot=Resolve-Godot $Godot
