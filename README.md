@@ -9,7 +9,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P3.5 (Terra polida: fases, peso, telegraph):** resultado e parâmetros em [`docs/p35_earth_polish.md`](docs/p35_earth_polish.md).
 **P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
 **P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
-**P4B implementado:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Validação direcionada: 18/18 headless e 5/5 em janela, zero erros/avisos. Próximo passo: playtest específico do P4B (**NÃO TESTADO**).
+**P4B implementado:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Validação direcionada: 18/18 headless e 5/5 em janela, zero erros/avisos. Playtest com feedback positivo do usuário em 27/10/2026 ("está funcionando"). Próximo passo: checkpoint de integração P4B.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -165,7 +165,7 @@ Os limites restringem o alvo da mola: a posição real pode atrasar ou apresenta
 2. Use câmera, Q/E e roda; solte LMB para lançar. Após a recuperação, mire a mesma rocha para capturá-la novamente, inclusive em voo se ainda estiver no alcance.
 3. O primeiro obstáculo visível bloqueia a seleção. Caixas e peças da torre não são rochas capturáveis. O alcance de captura usa a distância 3D ao centro, limitado por `EarthTuning.max_range`; o alvo do hold continua limitado por `min_range/max_range` horizontalmente.
 4. A captura entra direto no hold, sem antecipação/desprendimento de terreno; a mola faz a transição desde a posição atual e preserva a inércia. O controle impede estacionamento automático pelo orçamento de destroços até lançar/cancelar.
-5. Trocar elemento, salvar, resetar e carregar encerram o controle. Capturar/expirar/limpar encerra o monitoramento do voo anterior para não acumular contatos. Playtest humano P4B: **NÃO TESTADO**.
+5. Trocar elemento, salvar, resetar e carregar encerram o controle. Capturar/expirar/limpar encerra o monitoramento do voo anterior para não acumular contatos. Playtest P4B em 27/10/2026: feedback positivo do usuário ("está funcionando"), sem avaliação detalhada por cenário.
 
 ### Roteiro manual do P3.6 — Água, Fogo e Ar (≈ 6 min)
 Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tuning.tres` (inspetor da Godot); detalhes em
@@ -207,7 +207,7 @@ Na preparação, T22 isolado foi executado sem sua torre previamente derrubada; 
 
 Para repetir: `--p36-selftest --only=T19,T20,T21,T22,T28,T29,T30,T39,T40,T41,T42,T43,T44,T59,T60,T61,T62` em headless; em janela `--only=T27,T37,T61,T62`, usando o helper de validação existente e `--report=<novo_caminho.json>`.
 
-Não executados nesta fatia: bateria completa nos quatro modos, export e persistência entre processos (fluxo de produção de salvar/carregar inalterado). Reservados ao checkpoint de integração. Playtest humano P4B: **NÃO TESTADO**.
+Não executados nesta fatia: bateria completa nos quatro modos, export e persistência entre processos (fluxo de produção de salvar/carregar inalterado). Reservados ao checkpoint de integração. Playtest humano P4B: feedback positivo do usuário em 27/10/2026; avaliações detalhadas por cenário não registradas.
 
 ### P4A — validação direcionada e checkpoint de integração
 
@@ -256,7 +256,7 @@ Comando usado neste checkpoint; ao repetir, escolher outra pasta para preservar 
 ./tools/run_p361_tests.ps1 -Template 'C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\godot.windows.template_release.x86_64.exe' -EvidenceDirectory 'docs/evidence/p4a/integration'
 ```
 
-O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Próximo passo: revisar e integrar a PR P4A antes da próxima fatia de gameplay.
+O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Este checkpoint P4A já foi integrado à main em `9103bee`; a fase atual é P4B.
 
 ### P3.6 — Água, Fogo e Ar polidos (inclui as regressões do P0 ao P3.5)
 
