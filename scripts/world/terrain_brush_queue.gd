@@ -105,6 +105,11 @@ func enqueue(request: TerrainBrushRequest) -> bool:
 	return true
 
 
+## Cancela um pedido avulso ainda pendente, sem descartar edições de outras ferramentas.
+func cancel_request(request: TerrainBrushRequest) -> void:
+	_pending.erase(request)
+
+
 ## Esvazia a fila e encerra os traços (reset, salvar, carregar). Retorna quantos pedidos caíram.
 func clear(reason := "") -> int:
 	_world_epoch += 1

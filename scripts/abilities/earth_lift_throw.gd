@@ -24,11 +24,15 @@ const OMEGA := 6.0
 const MAX_ACCEL := 40.0
 const PHASE_LOG_MAX := 32
 const PHASE_NAMES := {"anticipation": "antecipação", "detach": "desprendendo", "rise": "erguendo",
-	"hold": "pronta: solte para arremessar", "windup": "lançando", "recovery": "recuperando"}
+	"hold": "pronta: solte para arremessar", "windup": "lançando", "recovery": "recuperando",
+	"pillar_pending": "pilar na fila de terreno"}
 
 var tuning: EarthTuning
 var rock: RigidBody3D
 var phase := ""
+var pillar_aiming := false
+var _pillar_request: TerrainBrushRequest
+var _pillar_shape := CapsuleShape3D.new()
 ## Fases percorridas: [{phase, ms, frame}] (testes e diagnóstico).
 var phase_log: Array[Dictionary] = []
 var _phase_t := 0.0
@@ -48,7 +52,7 @@ var _rng := RandomNumberGenerator.new()
 var _thrown := []
 var _stats := {"extracted": 0, "thrown": 0, "hits": 0, "max_impulse": 0.0, "invalid": 0, "failed": 0,
 	"ground_impacts": 0, "craters": 0, "craters_rejected": 0, "buffered_throws": 0, "cancelled": 0,
-	"last_ready_ms": -1, "last_cavity_wait_frames": -1, "reused": 0}
+	"last_ready_ms": -1, "last_cavity_wait_frames": -1, "reused": 0, "pillars": 0, "pillars_rejected": 0}
 
 
 func _init() -> void:
@@ -60,6 +64,12 @@ func _init() -> void:
 	if tuning == null:
 		tuning = EarthTuning.new()
 	_rng.seed = 7
+
+
+func setup(p_controller) -> void:
+	super.setup(p_controller)
+	if controller.brush_queue != null:
+		controller.brush_queue.brush_applied.connect(_on_pillar_applied)
 
 
 func get_stats() -> Dictionary:
@@ -74,7 +84,7 @@ func is_ready() -> bool:
 
 ## Em ação (fases ou rocha em voo): o HUD/FX esconde o marcador do pincel para não cobrir o poder.
 func is_busy() -> bool:
-	return phase != "" or not _thrown.is_empty()
+	return pillar_aiming or phase != "" or not _thrown.is_empty()
 
 
 ## 0 → 1 do clique até a rocha pronta (anel do HUD).
@@ -100,6 +110,10 @@ func move_speed_scale() -> float:
 
 
 func status() -> String:
+	if pillar_aiming:
+		var check := validate_pillar_target()
+		return "RMB: solte para criar pilar %.1f m × Ø %.1f m · %s" % [tuning.pillar_height,
+			tuning.pillar_radius * 2.0, "alvo válido" if check.ok else check.reason]
 	if PHASE_NAMES.has(phase):
 		var mass := rock.mass / 1000.0 if rock != null and is_instance_valid(rock) else 0.0
 		var text := "%s%s" % [PHASE_NAMES[phase], (" (%.1f t)" % mass) if mass > 0.0 else ""]
@@ -112,6 +126,95 @@ func status() -> String:
 
 
 # --- Entrada ----------------------------------------------------------------------------------
+
+func begin_pillar() -> bool:
+	if phase != "" or _button or controller.brush_queue == null:
+		return false
+	pillar_aiming = true
+	return true
+
+
+func finish_pillar() -> bool:
+	if not pillar_aiming:
+		return false
+	pillar_aiming = false
+	var check := validate_pillar_target()
+	if not check.ok:
+		_stats.invalid += 1
+		last_result = "pilar recusado: %s" % check.reason
+		emit_fx(&"invalid", {"point": check.get("point", Vector3.ZERO), "reason": check.reason})
+		return false
+	_pillar_request = check.request
+	if not controller.brush_queue.enqueue(_pillar_request):
+		_pillar_request = null
+		last_result = "pilar recusado: fila indisponível"
+		return false
+	_set_phase("pillar_pending", {})
+	return true
+
+
+func make_pillar_request(point: Vector3, material_id: StringName) -> TerrainBrushRequest:
+	var r := tuning.pillar_radius
+	var req := TerrainBrushRequest.path(PackedVector3Array([point - Vector3.UP * r,
+		point + Vector3.UP * (tuning.pillar_height - r)]), PackedFloat32Array([r, r]), true, material_id)
+	req.source = "ability:earth_pillar"
+	return req
+
+
+## O primeiro obstáculo bloqueia a mira; o volume novo também precisa estar livre de corpos.
+func validate_pillar_target() -> Dictionary:
+	var ray: Array = controller.aim_ray()
+	var hit: Dictionary = controller.cast_segment(ray[0], ray[0] + ray[1] * (tuning.pillar_range + 15.0), true)
+	if hit.is_empty():
+		return {"ok": false, "reason": "sem chão na mira"}
+	var p: Vector3 = hit.position
+	var out := {"ok": false, "reason": "", "point": p}
+	var relative: Vector3 = p - controller.player.global_position
+	if not hit.collider is VoxelLodTerrain or hit.normal.y < tuning.min_floor_normal_y:
+		out.reason = "mire em chão livre"
+	elif relative.length() > tuning.pillar_range:
+		out.reason = "fora do alcance (máx. %.1f m)" % tuning.pillar_range
+	elif Vector2(relative.x, relative.z).length() < tuning.min_range:
+		out.reason = "perto demais (mín. %.1f m)" % tuning.min_range
+	if out.reason != "":
+		return out
+	var mat: TerrainMaterial = controller.terrain_service.get_material_at(p - hit.normal * 0.5)
+	var req := make_pillar_request(p, mat.id if mat != null else &"")
+	out.request = req
+	out.reason = TerrainBrushQueue.material_policy(req.op, mat)
+	if out.reason == "":
+		out.reason = controller.terrain_service.can_add_path(req.points, req.radii, req.material_id)
+	# Um pilar é um pedido atômico; nunca entra no fracionamento de PATHs grandes da fila.
+	var size := req.world_aabb().size
+	if out.reason == "" and size[size.max_axis_index()] > controller.brush_queue.max_aabb_extent:
+		out.reason = "dimensões excedem o limite da fila"
+	if out.reason == "" and _pillar_space_blocked(req):
+		out.reason = "há um corpo no espaço do pilar"
+	out.ok = out.reason == ""
+	return out
+
+
+func _pillar_space_blocked(req: TerrainBrushRequest) -> bool:
+	_pillar_shape.radius = req.radii[0]
+	_pillar_shape.height = req.length() + 2.0 * req.radii[0]
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = _pillar_shape
+	query.transform.origin = (req.points[0] + req.points[1]) * 0.5
+	query.collision_mask = Layers.PROPS
+	return not controller.player.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty()
+
+
+func _on_pillar_applied(request: TerrainBrushRequest, result: TerrainEditResult) -> void:
+	if request != _pillar_request:
+		return
+	_pillar_request = null
+	if result.ok:
+		_stats.pillars += 1
+		last_result = "pilar criado · colisão atualiza em seguida"
+	else:
+		_stats.pillars_rejected += 1
+		last_result = "pilar recusado: %s" % result.reason
+	_set_phase("recovery", {})
 
 func on_press() -> void:
 	_button = true
@@ -234,6 +337,11 @@ func validate_target() -> Dictionary:
 
 
 func cancel() -> void:
+	pillar_aiming = false
+	if _pillar_request != null:
+		controller.brush_queue.cancel_request(_pillar_request)
+		_pillar_request = null
+		_end_quietly()
 	_button = false
 	if phase in ["anticipation", "detach", "rise", "hold", "windup"]:
 		_abort("cancelado")
@@ -256,6 +364,12 @@ func clear() -> void:
 
 func physics_tick(delta: float) -> void:
 	_tick_thrown()
+	# Controladores rodam antes da fila (priority 100): revalidar o volume fixo enquanto
+	# espera, inclusive se um corpo entrou depois de soltar RMB. Nunca seguir a mira nova.
+	if _pillar_request != null and _pillar_space_blocked(_pillar_request):
+		var request := _pillar_request
+		controller.brush_queue.cancel_request(request)
+		_on_pillar_applied(request, TerrainEditResult.failure("add_path", "corpo no espaço do pilar"))
 	if phase in ["detach", "rise", "hold", "windup"] and (rock == null or not is_instance_valid(rock)):
 		rock = null
 		_end_quietly()

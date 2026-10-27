@@ -4,6 +4,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## elementos e limites de VFX; T57 é o ciclo de vida (reset/save/load) de Fogo e Ar.
 ## P4A: T59 cobre manipulação de uma rocha e T60 input/cancelamentos contextuais.
 ## P4B: T61 reutiliza a mesma rocha e T62 cobre seleção, orçamento e cancelamentos.
+## P4C: T63 cria/persiste um pilar real e T64 cobre recusas e cancelamentos do RMB.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -72,6 +73,9 @@ func _run_tests() -> bool:
 	_log("--- testes P4B (reutilizar rocha existente) ---")
 	if _should_run("T61"): await _t61_earth_reuse()
 	if _should_run("T62"): await _t62_earth_reuse_limits()
+	_log("--- testes P4C (pilar de Terra) ---")
+	if _should_run("T63"): await _t63_earth_pillar()
+	if _should_run("T64"): await _t64_earth_pillar_guards()
 	return true
 
 
@@ -1958,5 +1962,274 @@ func _t62_earth_reuse_limits() -> void:
 		ab.cancel_all()
 	player.input_enabled = false
 	_record("T62", "Reutilização respeita oclusão/tipo/alcance; acorda rocha estacionada e limpa propriedade em seleção/reset/save/load",
+		slot_ready and cases.values().all(func(c): return c.ok), cases)
+	await main.request_world_reset()
+
+
+# --- P4C: PATH real pelo RMB, sem uma segunda implementação de terreno ---------------------
+
+func _p4c_rmb(pressed: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_RIGHT
+	event.pressed = pressed
+	Input.parse_input_event(event)
+	Input.flush_buffered_events()
+
+
+func _t63_earth_pillar() -> void:
+	const SLOT := "p4c_pillar"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var point := _ground_at(base + Vector3(0.17, 0, -5.0))
+	await _aim_settle(point)
+	var check := earth.validate_pillar_target()
+	if not check.ok:
+		player.input_enabled = false
+		_record("T63", "Pilar de Terra por RMB", false, {"reason": check.reason})
+		return
+	point = check.point
+	var edits: Array[Dictionary] = []
+	var cb := func(req: TerrainBrushRequest, result: TerrainEditResult):
+		if req.source == "ability:earth_pillar":
+			edits.append({"request": req, "ok": result.ok, "reason": result.reason})
+	queue.brush_applied.connect(cb)
+	var revision := svc.get_revision()
+	var extracted: int = earth.get_stats().extracted
+	var frame_ms := PackedFloat32Array()
+	var clock := {"last": Time.get_ticks_usec()}
+	var sample_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().process_frame.connect(sample_frame)
+	_p4c_rmb(true)
+	await _frames(12)
+	_p4b_lmb(true)
+	_p4b_lmb(false)
+	var preview: bool = earth.pillar_aiming and svc.get_revision() == revision and edits.is_empty() \
+		and queue.pending_count() == 0 and earth.get_stats().extracted == extracted and earth.rock == null
+	_p4c_rmb(false)
+	var confirmed: bool = await _wait_until(func(): return edits.size() == 1, 5.0)
+	var req: TerrainBrushRequest = edits[0].request if confirmed else null
+	var radius := earth.tuning.pillar_radius
+	var height := earth.tuning.pillar_height
+	var geometry: bool = req != null and req.op == TerrainBrushRequest.Op.PATH and req.additive \
+		and req.points.size() == 2 and req.radii.size() == 2 \
+		and req.points[0].distance_to(point - Vector3.UP * radius) < 0.01 \
+		and req.points[1].distance_to(point + Vector3.UP * (height - radius)) < 0.01 \
+		and is_equal_approx(req.radii[0], radius) and is_equal_approx(req.radii[1], radius)
+	var top := await _wait_ray(point + Vector3.UP * (height + 5.0), point + Vector3.DOWN * 3.0,
+		func(h): return not h.is_empty() and absf(h.position.y - point.y - height) < 0.5, 5.0)
+	if not confirmed or not geometry or not top.ok:
+		queue.brush_applied.disconnect(cb)
+		get_tree().process_frame.disconnect(sample_frame)
+		player.input_enabled = false
+		_record("T63", "Pilar de Terra por RMB", false,
+			{"confirmed": confirmed, "geometry": geometry, "collider": top.ok, "preview": preview})
+		await main.request_world_reset()
+		return
+	var top_y := _hit_y(top.hit)
+	var crate := DebugProps.spawn_crate(props, Vector3(point.x, top_y + 3.0, point.z))
+	# Mesmo assentamento do T4; a caixa de 1 m tem forma/origem centradas no corpo.
+	await _seconds(3.0)
+	var crate_y := crate.global_position.y
+	var crate_speed := crate.linear_velocity.length()
+	var crate_offset := Vector2(crate.global_position.x - point.x, crate.global_position.z - point.z).length()
+	var crate_support: bool = crate_y > top_y and crate_speed < 0.3
+	crate.queue_free()
+	await _frames(2)
+	player.teleport_to(Vector3(point.x, top_y + 2.0, point.z))
+	await _seconds(1.5)
+	var player_support: bool = player.is_on_floor() and player.global_position.y > top_y - 0.5
+	_p4c_rmb(false)
+	await _frames(2)
+	var once: bool = edits.size() == 1 and svc.get_revision() == revision + 1
+	queue.brush_applied.disconnect(cb)
+	get_tree().process_frame.disconnect(sample_frame)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p4c_pillar_frame_ms"] = timings
+	var perf_ok: bool = _mode.begins_with("headless") or (timings.get("p95", 999.0) <= 20.0 \
+		and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	var samples := PackedVector3Array([point + Vector3.UP, point + Vector3.UP * (height * 0.5),
+		point + Vector3.UP * (height - 0.7)])
+	var snapshot := func():
+		var sdf := []
+		var material := []
+		for p: Vector3 in samples:
+			sdf.append(svc.sample_sdf(p))
+			material.append(svc.sample_material_index(p))
+		return {"sdf": sdf, "material": material}
+	var saved: Dictionary = snapshot.call()
+	var save_ok: bool = await main.request_world_save(SLOT)
+	var after_save: Dictionary = snapshot.call()
+	var reset_ok: bool = await main.request_world_reset()
+	await _prepare_area(base, AABB(point - Vector3(3, 4, 3), Vector3(6, height + 8, 6)))
+	var reset_top := await _wait_ray(point + Vector3.UP * (height + 5.0), point + Vector3.DOWN * 3.0,
+		func(h): return not h.is_empty() and h.position.y < point.y + 0.5, 5.0)
+	var load_ok: bool = await main.request_world_load(SLOT)
+	await _prepare_area(base, AABB(point - Vector3(3, 4, 3), Vector3(6, height + 8, 6)))
+	var loaded_top := await _wait_ray(point + Vector3.UP * (height + 5.0), point + Vector3.DOWN * 3.0,
+		func(h): return not h.is_empty() and absf(h.position.y - top_y) < PROBE_TOLERANCE, 5.0)
+	var loaded: Dictionary = snapshot.call()
+	var persistence: bool = save_ok and reset_ok and reset_top.ok and load_ok and loaded_top.ok \
+		and saved == after_save and saved.material == loaded.material
+	for i in samples.size():
+		persistence = persistence and float(saved.sdf[i]) < 0.0 \
+			and absf(float(saved.sdf[i]) - float(loaded.sdf[i])) < SDF_TOLERANCE
+	player.input_enabled = false
+	_record("T63", "RMB confirma um PATH+ vertical sólido; caixa/jogador apoiam e save/reset/load preservam o pilar",
+		preview and edits[0].ok and once and crate_support and player_support and persistence and perf_ok,
+		{"preview_without_edit": preview, "single_path": once, "geometry": geometry, "collider_ms": top.ms,
+		"top_y": top_y, "crate_supported": crate_support, "player_supported": player_support,
+		"crate_y_after_3s": crate_y, "crate_speed_m_s": crate_speed, "crate_horizontal_offset_m": crate_offset,
+		"saved": saved, "loaded": loaded, "persistence": persistence, "frame_ms": timings})
+	await main.request_world_reset()
+
+
+func _t64_earth_pillar_guards() -> void:
+	const SLOT := "p4c_cancel"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var original := earth.tuning
+	var point := _ground_at(base + Vector3(0.17, 0, -5.0))
+	var cases := {}
+	var reject := func(name: String):
+		var check := earth.validate_pillar_target()
+		var rev := svc.get_revision()
+		var n := _brush_log.size()
+		_p4c_rmb(true)
+		await _frames(2)
+		_p4c_rmb(false)
+		await _frames(3)
+		cases[name] = {"reason": check.reason, "ok": not check.ok and svc.get_revision() == rev \
+			and _brush_log.size() == n and queue.pending_count() == 0 and not earth.pillar_aiming and earth.rock == null}
+	player.camera_rig.set_view(0.0, deg_to_rad(45.0))
+	await _frames(2)
+	await reject.call("no_ground")
+	await _aim_settle(_ground_at(base + Vector3(0, 0, -earth.tuning.pillar_range - 3.0)))
+	await reject.call("out_of_range")
+	await _aim_settle(_ground_at(base + Vector3(0, 0, -1.0)))
+	await reject.call("minimum_range")
+	var wall := _p36_thin_wall(base + Vector3(0, 2, -2), Vector3(6, 5, 0.2))
+	await _frames(2)
+	await _aim_settle(point)
+	await reject.call("wall_occlusion")
+	wall.queue_free()
+	await _frames(2)
+	var crate := DebugProps.spawn_crate(props, point + Vector3.UP * 0.6)
+	crate.freeze = true
+	await _frames(2)
+	await _aim_settle(MaterialResponseSystem.body_center(crate))
+	await reject.call("prop_not_ground")
+	crate.queue_free()
+	await _frames(2)
+	var roof := _p36_thin_wall(point + Vector3.UP * 3.0, Vector3(3, 0.3, 3))
+	await _frames(2)
+	await _aim_settle(point)
+	await reject.call("future_volume_blocked")
+	roof.queue_free()
+	await _frames(2)
+	# O espaço pode ficar ocupado depois da confirmação, antes de a fila aplicar o PATH.
+	await _aim_settle(point)
+	queue.set_physics_process(false)
+	var revision := svc.get_revision()
+	var log0 := _brush_log.size()
+	var rejected0: int = earth.get_stats().pillars_rejected
+	_p4c_rmb(true)
+	_p4c_rmb(false)
+	var queued: bool = earth.phase == "pillar_pending" and queue.pending_count() == 1
+	crate = DebugProps.spawn_crate(props, point + Vector3.UP * 2.0)
+	crate.freeze = true
+	await _frames(2)
+	queue.set_physics_process(true)
+	var discarded: bool = await _wait_until(func(): return queue.pending_count() == 0, 2.0)
+	cases["body_entered_pending_volume"] = {"queued": queued, "result": earth.get_stats().get("last_result", ""),
+		"ok": queued and discarded and _brush_log.size() == log0 \
+		and svc.get_revision() == revision and earth.get_stats().pillars_rejected == rejected0 + 1}
+	crate.queue_free()
+	ab.cancel_all()
+	await _frames(2)
+	earth.tuning = original.duplicate()
+	earth.tuning.pillar_radius = 3.0
+	await _aim_settle(_ground_at(base + Vector3(0, 0, -3.0)))
+	await reject.call("protected_player")
+	earth.tuning = original
+	# RMB deixa os outros elementos e o LMB atuais funcionarem pelo mesmo dispatcher.
+	for index in [1, 2, 3]:
+		ab.select(index)
+		var rev := svc.get_revision()
+		_p4c_rmb(true)
+		_p4c_rmb(false)
+		await _frames(2)
+		cases["other_element_%d" % index] = {"ok": svc.get_revision() == rev and not earth.pillar_aiming \
+			and not ab.holding and queue.pending_count() == 0}
+	ab.select(0)
+	await _aim_settle(point)
+	_p4b_lmb(true)
+	var rock_ready: bool = await _wait_until(func(): return earth.phase == "hold", 2.0)
+	var rock: RigidBody3D = earth.rock
+	_p4c_rmb(true)
+	_p4c_rmb(false)
+	var exclusive: bool = rock_ready and earth.rock == rock and earth.phase == "hold" and not earth.pillar_aiming
+	var throws: int = earth.get_stats().thrown
+	_p4b_lmb(false)
+	var launched: bool = await _wait_until(func(): return earth.get_stats().thrown == throws + 1, 1.0)
+	cases["lmb_still_throws"] = {"ok": exclusive and launched}
+	ab.cancel_all()
+	base = await _p3_lab(0)
+	var slot_ready: bool = await main.request_world_save(SLOT)
+	var old_capture := ab.require_captured_mouse
+	var old_mouse := Input.mouse_mode
+	for pending: bool in [false, true]:
+		for kind: String in ["select", "input_disabled", "mouse_lost", "reset", "save", "load"]:
+			base = await _p3_lab(0)
+			point = _ground_at(base + Vector3(0.17, 0, -5.0))
+			await _aim_settle(point)
+			queue.set_physics_process(false)
+			var rev := svc.get_revision()
+			var n := _brush_log.size()
+			_p4c_rmb(true)
+			var started: bool = earth.pillar_aiming
+			if pending:
+				_p4c_rmb(false)
+				started = started and earth.phase == "pillar_pending" and queue.pending_count() == 1
+			var unrelated: TerrainBrushRequest
+			if pending and kind == "select":
+				unrelated = TerrainBrushRequest.sphere(TerrainBrushRequest.Op.ADD, point + Vector3.RIGHT * 5.0, 0.5)
+				unrelated.source = "selftest:P4C-unrelated"
+				queue.enqueue(unrelated)
+			var command_ok := true
+			if kind == "select": ab.select(1)
+			elif kind == "input_disabled": player.input_enabled = false
+			elif kind == "mouse_lost":
+				ab.require_captured_mouse = true
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			elif kind == "reset": command_ok = await main.request_world_reset()
+			elif kind == "save": command_ok = await main.request_world_save(SLOT)
+			else: command_ok = await main.request_world_load(SLOT)
+			await _frames(2)
+			var only_own: bool = queue.pending_count() == (1 if unrelated != null else 0)
+			if unrelated != null: queue.cancel_request(unrelated)
+			_p4c_rmb(false)
+			queue.set_physics_process(true)
+			await _frames(4)
+			cases["%s_%s" % ["pending" if pending else "preview", kind]] = {"started": started,
+				"only_own_request_cancelled": only_own,
+				"ok": started and command_ok and only_own and not earth.pillar_aiming and earth.phase == "" \
+				and not ab.holding and queue.pending_count() == 0 and _brush_log.size() == n \
+				and (kind in ["reset", "load"] or svc.get_revision() == rev)}
+			ab.require_captured_mouse = old_capture
+			Input.mouse_mode = old_mouse
+			player.input_enabled = true
+			ab.cancel_all()
+	earth.tuning = original
+	ab.require_captured_mouse = old_capture
+	Input.mouse_mode = old_mouse
+	player.input_enabled = false
+	_record("T64", "Pilar recusa alvos inseguros, mantém LMB/outros elementos e cancela preview/fila sem edição residual",
 		slot_ready and cases.values().all(func(c): return c.ok), cases)
 	await main.request_world_reset()

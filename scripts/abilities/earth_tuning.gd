@@ -15,6 +15,13 @@ extends Resource
 ## Componente vertical mínima da normal: só arranca de chão (não de parede ou teto).
 @export var min_floor_normal_y := 0.6
 
+@export_group("Pilar")
+@export_range(3.0, 30.0, 0.5) var pillar_range := 18.0
+## 2 m dá apoio estável para a caixa de 1 m sobre o topo arredondado na resolução atual.
+@export_range(0.5, 2.0, 0.1) var pillar_radius := 2.0
+## Altura do topo acima do chão mirado; o pilar fica no terreno até escavar/resetar.
+@export_range(2.5, 6.0, 0.5) var pillar_height := 4.5
+
 @export_group("Antecipação")
 @export var anticipation_s := 0.10
 
