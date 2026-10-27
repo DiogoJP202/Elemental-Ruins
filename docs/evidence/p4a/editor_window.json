@@ -1,0 +1,325 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T11:42:33",
+  "duracao_s": 35.974,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 60.0,
+      "media": 57.58,
+      "min": 1.0,
+      "n": 69,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 1341.0,
+    "p36_custos_cpu_us": {
+      "fogo_avanco_us_max_acumulado": 381,
+      "fogo_avanco_us_medio": 45.248,
+      "fogo_consultas": 105,
+      "fogo_testemunhas_1mm": 0,
+      "fogo_ticks_ativos": 125,
+      "propagacao_bloqueadas": 172,
+      "propagacao_consultas": 2047,
+      "propagacao_us_medio": 1877.6,
+      "termico_ticks": 35,
+      "termico_us_max_acumulado": 3024,
+      "termico_us_medio": 1965.62857142857,
+      "vfx_fogo_ar_us_max_acumulado": 8426,
+      "vfx_fogo_ar_us_medio_quadro": 56.8315098468271
+    },
+    "p3_poderes_fisica_ms": {
+      "max": 22.46,
+      "media": 8.43,
+      "min": 2.65,
+      "n": 457,
+      "p95": 22.46,
+      "p99": 22.46
+    },
+    "p3_poderes_quadro_ms": {
+      "max": 37.01,
+      "media": 16.63,
+      "min": 2.55,
+      "n": 456,
+      "p50": 16.7,
+      "p95": 18.47,
+      "p99": 20.95
+    },
+    "p4a_hold_frame_ms": {
+      "max": 19.32,
+      "media": 16.67,
+      "min": 13.59,
+      "n": 471,
+      "p95": 17.93,
+      "p99": 18.79
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1341.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
+        "criterio_fps_aplicado": true,
+        "custos_cpu_us": {
+          "fogo_avanco_us_max_acumulado": 381,
+          "fogo_avanco_us_medio": 45.248,
+          "fogo_consultas": 105,
+          "fogo_testemunhas_1mm": 0,
+          "fogo_ticks_ativos": 125,
+          "propagacao_bloqueadas": 172,
+          "propagacao_consultas": 2047,
+          "propagacao_us_medio": 1877.6,
+          "termico_ticks": 35,
+          "termico_us_max_acumulado": 3024,
+          "termico_us_medio": 1965.62857142857,
+          "vfx_fogo_ar_us_max_acumulado": 8426,
+          "vfx_fogo_ar_us_medio_quadro": 56.8315098468271
+        },
+        "duracao_s": 7.601,
+        "fx": {
+          "air_dust_contacts": 23,
+          "air_dust_front": 16,
+          "air_rings_live": 0,
+          "air_rings_missing": 0,
+          "blasts": 4,
+          "charred": 12,
+          "fire_anticipations": 5,
+          "fire_balls_visible": 0,
+          "fire_dissipations": 1,
+          "fire_launches": 5,
+          "fire_slots_live": 0,
+          "fire_slots_missing": 0,
+          "fire_steam": 0,
+          "fire_trail_pool": 8,
+          "fire_vfx_frames": 802,
+          "fire_vfx_usec": 31917,
+          "fire_vfx_usec_max": 8426,
+          "flames_active": 12,
+          "flames_created": 12,
+          "flames_skipped": 0,
+          "gusts": 4,
+          "steam": 0,
+          "water_instances": 0,
+          "water_spray": false
+        },
+        "intervalo_entre_quadros_ms": {
+          "max": 37.01,
+          "media": 16.63,
+          "min": 2.55,
+          "n": 456,
+          "p50": 16.7,
+          "p95": 18.47,
+          "p99": 20.95
+        },
+        "materiais": {
+          "burned_out": 0,
+          "burning": 12,
+          "events": 94,
+          "events_rejected_busy": 0,
+          "extinguished": 0,
+          "ignitions": 12,
+          "ignitions_skipped": 0,
+          "kinetic_breaks": 0,
+          "spread_blocked": 172,
+          "spread_queries": 2047,
+          "spread_usec": 65757,
+          "thermal_ticks": 57,
+          "thermal_usec": 69051,
+          "thermal_usec_max": 3024,
+          "tracked": 29
+        },
+        "modo": "window",
+        "pico_em_chamas": 12,
+        "pico_pecas_dinamicas": 36,
+        "poderes_usados": {
+          "agua_quadros_em_corpo": 54,
+          "ar_rajadas": 4,
+          "fogo_concluidos": 5,
+          "fogo_disparos_aceitos": 5,
+          "fogo_dissipacoes": 1,
+          "fogo_impactos": 4,
+          "fogo_lancamentos": 5,
+          "terra_arremessos": 1
+        },
+        "soltas": 36,
+        "time_physics_process_ms": {
+          "max": 22.46,
+          "media": 8.43,
+          "min": 2.65,
+          "n": 457,
+          "p95": 22.46,
+          "p99": 22.46
+        }
+      },
+      "id": "T37",
+      "status": "PASS",
+      "titulo": "Benchmark: colapso total + 12 caixas em chamas + os 4 poderes; critério de FPS em janela"
+    },
+    {
+      "detalhes": {
+        "brush_unchanged": true,
+        "distance_min_max_m": [
+          3.0,
+          6.5
+        ],
+        "farthest_rock_m": 3.66806030273438,
+        "frame_gate_applied": true,
+        "frame_ms": {
+          "max": 19.32,
+          "media": 16.67,
+          "min": 13.59,
+          "n": 471,
+          "p95": 17.93,
+          "p99": 18.79
+        },
+        "height_min_max_m": [
+          1.8,
+          3.8
+        ],
+        "horizontal_m": 6.99407958984375,
+        "launches": [
+          {
+            "origin_error_m": 0.0,
+            "speed": 23.3384666442871
+          }
+        ],
+        "lowered_m": 1.92246961593628,
+        "opposite_keys_neutral": true,
+        "raised_m": 1.72349452972412,
+        "release_without_teleport": true,
+        "teleport_error_m": 0.000222551432671025,
+        "wall_blocked": true,
+        "wall_distance_m": 5.0,
+        "wheel_step_m": 0.75
+      },
+      "id": "T59",
+      "status": "PASS",
+      "titulo": "Q/E e roda reposicionam uma rocha por física, respeitam Resource e obstáculo e mantêm o arremesso"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01263570785522,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01263570785522,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99408, 0.02, 63.50566)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01259517669678,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01259517669678,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99406, 0.02, 63.50569)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01430797576904,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01430797576904,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99519, 0.02, 63.50441)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01425409317017,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01425409317017,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99516, 0.02, 63.50445)",
+              "reason": ""
+            },
+            "ok": true
+          }
+        },
+        "slot": "p4a_lifecycle",
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T60",
+      "status": "PASS",
+      "titulo": "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais"
+    }
+  ],
+  "run_id": "ce166183157c",
+  "testes_ids": [
+    "T1",
+    "T37",
+    "T59",
+    "T60"
+  ],
+  "testes_pass": 4,
+  "testes_total": 4,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

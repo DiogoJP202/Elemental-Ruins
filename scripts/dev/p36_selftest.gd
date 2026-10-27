@@ -2,6 +2,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P3.6: regressões P0–P3.5 e cenários novos. --only=T46,T47,T48 limita a Água;
 ## --only=T49,T50,T51 limita o Fogo; --only=T52,T53,T54,T56 limita o Ar; T55/T58 integram os
 ## elementos e limites de VFX; T57 é o ciclo de vida (reset/save/load) de Fogo e Ar.
+## P4A: T59 cobre manipulação de uma rocha e T60 input/cancelamentos contextuais.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -64,6 +65,9 @@ func _run_tests() -> bool:
 	if _should_run("T58"): await _t58_vfx_limits()
 	_log("--- testes P3.6 ciclo de vida ---")
 	if _should_run("T57"): await _t57_lifecycle_invalidation()
+	_log("--- testes P4A (controle livre de Terra) ---")
+	if _should_run("T59"): await _t59_earth_manipulation()
+	if _should_run("T60"): await _t60_earth_input_lifecycle()
 	return true
 
 
@@ -576,6 +580,237 @@ func _t49_fire_anticipation_and_tuning() -> void:
 	for ch in props.get_children():
 		ch.queue_free()
 	materials.clear()
+
+
+# --- P4A: uma rocha, pelos mesmos inputs e pela mesma mola -------------------------------------
+
+func _p4a_key(key: Key, pressed: bool) -> void:
+	var event := InputEventKey.new()
+	event.keycode = key
+	event.physical_keycode = key
+	event.pressed = pressed
+	Input.parse_input_event(event)
+
+
+func _p4a_wheel(up: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_WHEEL_UP if up else MOUSE_BUTTON_WHEEL_DOWN
+	event.pressed = true
+	Input.parse_input_event(event)
+	event = event.duplicate() as InputEventMouseButton
+	event.pressed = false
+	Input.parse_input_event(event)
+
+
+func _t59_earth_manipulation() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var original: EarthTuning = earth.tuning
+	var variant: EarthTuning = original.duplicate(true)
+	variant.hold_min_height = 1.8
+	variant.hold_max_height = 3.8
+	variant.hold_height_speed = 3.0
+	variant.min_range = 3.0
+	variant.max_range = 6.5
+	variant.hold_distance_step = 0.75
+	earth.tuning = variant
+	await _aim_settle(_ground_at(base + Vector3(0.17, 0, -4.5)))
+	ab.use_pressed()
+	var ready := await _wait_until(func(): return earth.phase == "hold", 2.0)
+	if not ready:
+		earth.tuning = original
+		ab.cancel_all()
+		player.input_enabled = false
+		_record("T59", "Controle livre de Terra", false, {"reason": "hold_not_reached"})
+		return
+	var rock := earth.rock
+	await _seconds(0.8)
+	var start := EarthLiftThrow.center_of(rock)
+	var radius0 := controller.radius
+	var probe := {"previous": start, "teleport_m": 0.0, "measure": true}
+	var dt := 1.0 / Engine.physics_ticks_per_second
+	var sample_motion := func():
+		var at := EarthLiftThrow.center_of(rock)
+		if probe.measure:
+			probe.teleport_m = maxf(probe.teleport_m, (at - (probe.previous as Vector3)).distance_to(rock.linear_velocity * dt))
+		probe.previous = at
+	var frame_ms := PackedFloat32Array()
+	var clock := {"last": Time.get_ticks_usec()}
+	var sample_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().physics_frame.connect(sample_motion)
+	get_tree().process_frame.connect(sample_frame)
+	_p4a_key(KEY_E, true)
+	await _frames(60)
+	_p4a_key(KEY_E, false)
+	var high := earth._hold_height
+	var raised_m := EarthLiftThrow.center_of(rock).y - start.y
+	# A comparação de integração mede o trecho livre; correção de contato com chão/parede é física legítima.
+	probe.measure = false
+	_p4a_key(KEY_Q, true)
+	await _frames(60)
+	_p4a_key(KEY_Q, false)
+	var low := earth._hold_height
+	var lowered_m := start.y + raised_m - EarthLiftThrow.center_of(rock).y
+	_p4a_key(KEY_Q, true)
+	_p4a_key(KEY_E, true)
+	await _frames(12)
+	var opposite_keys_neutral := is_equal_approx(earth._hold_height, low)
+	_p4a_key(KEY_Q, false)
+	await _frames(36)
+	_p4a_key(KEY_E, false)
+	await _frames(30)
+	probe.measure = true
+	var distance0 := earth._hold_dist
+	_p4a_wheel(true)
+	await _frames(2)
+	var distance_step := distance0 - earth._hold_dist
+	for i in 20: _p4a_wheel(true)
+	await _frames(30)
+	var near := earth._hold_dist
+	for i in 20: _p4a_wheel(false)
+	await _frames(45)
+	var far := earth._hold_dist
+	player.camera_rig.set_view(PI * 0.5, deg_to_rad(-20.0))
+	await _frames(60)
+	var horizontal_m := Vector2(EarthLiftThrow.center_of(rock).x - start.x, EarthLiftThrow.center_of(rock).z - start.z).length()
+	player.camera_rig.set_view(0.0, deg_to_rad(-20.0))
+	for i in 20: _p4a_wheel(true)
+	await _frames(60)
+	probe.measure = false
+	var wall_distance := 5.0
+	var wall := _p36_thin_wall(player.global_position + Vector3(0, 3, -wall_distance), Vector3(10, 10, 0.5))
+	await _frames(2)
+	for i in 20: _p4a_wheel(false)
+	var farthest := 0.0
+	for i in 75:
+		await get_tree().physics_frame
+		farthest = maxf(farthest, player.global_position.z - EarthLiftThrow.center_of(rock).z)
+	var blocked := farthest < wall_distance and is_equal_approx(earth._hold_dist, variant.max_range)
+	wall.queue_free()
+	get_tree().physics_frame.disconnect(sample_motion)
+	get_tree().process_frame.disconnect(sample_frame)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p4a_hold_frame_ms"] = timings
+	var windowed := not _mode.begins_with("headless")
+	var performance_ok: bool = not windowed or (timings.get("p95", 999.0) <= 20.0 and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	await _frames(2)
+	var launches := []
+	var watch_launch := func(kind, data):
+		if kind == &"launch":
+			launches.append({"speed": (data.velocity as Vector3).length(), "origin_error_m": (data.point as Vector3).distance_to(EarthLiftThrow.center_of(rock))})
+	earth.fx_event.connect(watch_launch)
+	var before_release := EarthLiftThrow.center_of(rock)
+	ab.use_released()
+	var no_release_teleport := before_release.distance_to(EarthLiftThrow.center_of(rock)) < 0.0001
+	await _wait_until(func(): return not launches.is_empty(), 1.0)
+	earth.fx_event.disconnect(watch_launch)
+	var launched: bool = launches.size() == 1 and launches[0].speed >= 18.0 and launches[0].origin_error_m < 0.001
+	var ok: bool = is_equal_approx(high, variant.hold_max_height) and is_equal_approx(low, variant.hold_min_height) \
+		and raised_m > 0.7 and lowered_m > 0.7 and opposite_keys_neutral and horizontal_m > 2.0 \
+		and is_equal_approx(distance_step, variant.hold_distance_step) and is_equal_approx(near, variant.min_range) \
+		and is_equal_approx(far, variant.max_range) and is_equal_approx(controller.radius, radius0) \
+		and float(probe.teleport_m) < 0.05 and blocked and launched and no_release_teleport and performance_ok
+	earth.tuning = original
+	ab.cancel_all()
+	player.input_enabled = false
+	_record("T59", "Q/E e roda reposicionam uma rocha por física, respeitam Resource e obstáculo e mantêm o arremesso", ok,
+		{"height_min_max_m": [low, high], "raised_m": raised_m, "lowered_m": lowered_m,
+		"opposite_keys_neutral": opposite_keys_neutral, "distance_min_max_m": [near, far], "wheel_step_m": distance_step,
+		"horizontal_m": horizontal_m, "teleport_error_m": probe.teleport_m, "wall_distance_m": wall_distance,
+		"farthest_rock_m": farthest, "wall_blocked": blocked, "brush_unchanged": is_equal_approx(controller.radius, radius0),
+		"launches": launches, "release_without_teleport": no_release_teleport, "frame_ms": timings, "frame_gate_applied": windowed})
+	await main.request_world_reset()
+
+
+func _t60_earth_input_lifecycle() -> void:
+	const SLOT := "p4a_lifecycle"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var radius0 := controller.radius
+	var outside := []
+	# A roda continua no pincel em Terra ociosa e nos outros três elementos.
+	for index in 4:
+		_send_key(index)
+		await _frames(1)
+		var before := controller.radius
+		_p4a_wheel(true)
+		await _frames(1)
+		outside.append(is_equal_approx(controller.radius, before + controller.radius_step))
+		_p4a_wheel(false)
+		await _frames(1)
+	var slot_ready: bool = await main.request_world_save(SLOT)
+	var cases := {}
+	for kind: String in ["select", "reset", "save", "load"]:
+		base = await _p3_lab(0)
+		await _aim_settle(_ground_at(base + Vector3(0.17, 0, -4.5)))
+		ab.use_pressed()
+		var ready := await _wait_until(func(): return earth.phase == "hold", 2.0)
+		if not ready:
+			cases[kind] = {"ok": false, "reason": "hold_not_reached"}
+			continue
+		var old_ref: WeakRef = weakref(earth.rock)
+		_p4a_key(KEY_E, true)
+		_p4a_wheel(true)
+		await _frames(8)
+		var modified := earth._hold_height > earth.tuning.hold_height
+		var at_signal := {}
+		var probe := func(_slot := ""):
+			at_signal["clean"] = earth.rock == null and earth.phase == "" and not ab.holding
+		var sig: Signal = svc.world_reset_started
+		if kind == "save": sig = svc.world_save_started
+		elif kind == "load": sig = svc.world_load_started
+		if kind != "select": sig.connect(probe)
+		var thrown0: int = earth.get_stats().thrown
+		var command_ok := true
+		if kind == "select":
+			_send_key(1)
+			await _frames(1)
+		elif kind == "reset": command_ok = await main.request_world_reset()
+		elif kind == "save": command_ok = await main.request_world_save(SLOT)
+		else: command_ok = await main.request_world_load(SLOT)
+		if sig.is_connected(probe): sig.disconnect(probe)
+		var height_after := earth._hold_height
+		var distance_after := earth._hold_dist
+		await _frames(12)
+		var old_rock: RigidBody3D = old_ref.get_ref()
+		var clean: bool = earth.rock == null and earth.phase == "" and not ab.holding \
+			and earth.get_stats().thrown == thrown0 and is_equal_approx(earth._hold_height, height_after) \
+			and is_equal_approx(earth._hold_dist, distance_after) \
+			and (old_rock == null or (not old_rock.freeze and is_equal_approx(old_rock.gravity_scale, 1.0)))
+		_p4a_key(KEY_E, false)
+		# Um ciclo novo, com teclas liberadas, volta aos padrões em vez de herdar os offsets.
+		await _prepare_area(base, AABB(LAB_P3 - Vector3(8, 4, 16), Vector3(16, 10, 30)))
+		# Outra origem, fora da cavidade do ciclo anterior (salvar/selecionar a preservam).
+		await _wait_until(func(): return not svc.raycast_terrain(base + Vector3(-4, 5, -4.5), base + Vector3(-4, -10, -4.5)).is_empty(), 5.0)
+		ab.select(0)
+		player.input_enabled = true
+		await _aim_settle(_ground_at(base + Vector3(-4, 0, -4.5)))
+		var expected := earth.validate_target()
+		ab.use_pressed()
+		var new_hold := await _wait_until(func(): return earth.phase == "hold", 2.0)
+		var defaults: bool = new_hold and is_equal_approx(earth._hold_height, earth.tuning.hold_height) \
+			and absf(earth._hold_dist - float(expected.get("dist", -1.0))) < 0.001
+		cases[kind] = {"command_ok": command_ok, "modified_before": modified, "clean_after": clean,
+			"clean_at_signal": at_signal.get("clean", kind == "select"), "new_hold_defaults": defaults,
+			"new_target": expected, "new_phase": earth.phase, "new_result": earth.last_result,
+			"new_height_m": earth._hold_height, "new_distance_m": earth._hold_dist,
+			"ok": command_ok and modified and clean and defaults and bool(at_signal.get("clean", kind == "select"))}
+		ab.cancel_all()
+	_p4a_key(KEY_Q, false)
+	_p4a_key(KEY_E, false)
+	controller.radius = radius0
+	player.input_enabled = false
+	_record("T60", "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais",
+		slot_ready and outside.all(func(passed): return passed) and cases.values().all(func(c): return c.ok),
+		{"wheel_outside_hold_by_element": outside, "cases": cases, "slot": SLOT})
+	await main.request_world_reset()
 
 
 func _t50_fire_sweep_and_dissipation() -> void:
