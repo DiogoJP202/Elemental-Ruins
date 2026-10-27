@@ -1,0 +1,52 @@
+{
+  "result": "PASS",
+  "date": "2026-10-27T17:17:45.7595345-03:00",
+  "source_commit": "ca3aff194968ad4bab01c1cbe9dc47905dcb4c22",
+  "source_hashes": "environment.json",
+  "expected_tests_per_mode": 68,
+  "validated_reports": {
+    "editor_headless": {
+      "result": "PASS",
+      "report": "editor_headless.json",
+      "run_id": "fa8b57abcf2e"
+    },
+    "editor_window": {
+      "result": "PASS",
+      "report": "recheck/editor_window_quiet.json",
+      "run_id": "dee7cb3cda28"
+    },
+    "export_headless": {
+      "result": "PASS",
+      "report": "export_headless.json",
+      "run_id": "ba2a7863c5f6"
+    },
+    "export_window": {
+      "result": "PASS",
+      "report": "export_window.json",
+      "run_id": "44a6320edfcc"
+    },
+    "editor_persist_write": {
+      "result": "PASS",
+      "report": "editor_persist_write.json",
+      "run_id": "83bd2cf33c19"
+    },
+    "editor_persist_read": {
+      "result": "PASS",
+      "report": "editor_persist_read.json",
+      "run_id": "3bae3fe52df6"
+    },
+    "export_persist_write": {
+      "result": "PASS",
+      "report": "export_persist_write.json",
+      "run_id": "96dbf5b10c9c"
+    },
+    "export_persist_read": {
+      "result": "PASS",
+      "report": "export_persist_read.json",
+      "run_id": "d1bc92bab9ac"
+    }
+  },
+  "original_attempt": "steps.json",
+  "rechecks": "recheck/steps.json",
+  "performance_note": "Primeiro editor em janela: T61 máximo 114,13 ms; primeira repetição: T27 p95 20,51 ms. Rechecagens focadas e última integral aprovadas, fontes e limites intactos. Causa exata dos picos não confirmada."
+}

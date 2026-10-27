@@ -1,0 +1,110 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-27T17:07:22",
+  "duracao_s": 12.213,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 60.0,
+      "media": 56.33,
+      "min": 16.0,
+      "n": 24,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 944.0,
+    "p2_colapso_fisica_ms": {
+      "max": 9.22,
+      "media": 3.16,
+      "min": 1.1,
+      "n": 361,
+      "p95": 9.22,
+      "p99": 9.22
+    },
+    "p2_colapso_quadro_ms": {
+      "max": 24.8,
+      "media": 16.67,
+      "min": 10.66,
+      "n": 360,
+      "p50": 16.67,
+      "p95": 17.76,
+      "p99": 18.39
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 944.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "abaixo_do_chao": [],
+        "criterio": "p95 ≤ 20 ms, p99 ≤ 33 ms, máx ≤ 50 ms",
+        "criterio_fps_aplicado": true,
+        "intervalo_entre_quadros_ms": {
+          "max": 24.8,
+          "media": 16.67,
+          "min": 10.66,
+          "n": 360,
+          "p50": 16.67,
+          "p95": 17.76,
+          "p99": 18.39
+        },
+        "modo": "window",
+        "orcamento": {
+          "active": 36,
+          "checks": 43,
+          "max_active_seen": 36,
+          "max_park_speed": 0.0,
+          "over_budget_moving": 0,
+          "parked": 0,
+          "parked_budget": 0,
+          "parked_distance": 0,
+          "tracked": 36,
+          "unparked_distance": 0
+        },
+        "pico_pecas_dinamicas": 36,
+        "poeira": {
+          "bursts": 12,
+          "skipped": 24
+        },
+        "soltas": 36,
+        "time_physics_process_ms": {
+          "max": 9.22,
+          "media": 3.16,
+          "min": 1.1,
+          "n": 361,
+          "p95": 9.22,
+          "p99": 9.22
+        }
+      },
+      "id": "T27",
+      "status": "PASS",
+      "titulo": "Benchmark do colapso total (4 pés no mesmo quadro): quadro e física por 6 s; critério de FPS em janela"
+    }
+  ],
+  "run_id": "38aeb81f6c39",
+  "testes_ids": [
+    "T1",
+    "T27"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

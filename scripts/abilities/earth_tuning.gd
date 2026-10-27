@@ -8,6 +8,7 @@ extends Resource
 @export_group("Alvo")
 ## Distância horizontal do jogador ao arranque e ao alvo do hold.
 @export var min_range := 2.5
+## Também limita a captura P4B pela distância 3D do jogador ao centro da rocha.
 @export var max_range := 7.0
 ## Raio do núcleo extraído (o TerrainService aceita 1–2 m; 1,2 m de solo ≈ 4–5 t).
 @export var rock_radius := 1.2

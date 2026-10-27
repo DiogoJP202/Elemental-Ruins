@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P3.6.1 + P4A)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4A + P4B)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -8,7 +8,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P3 (quatro elementos iniciais):** resultado e gate em [`docs/p3_results.md`](docs/p3_results.md).
 **P3.5 (Terra polida: fases, peso, telegraph):** resultado e parâmetros em [`docs/p35_earth_polish.md`](docs/p35_earth_polish.md).
 **P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
-**P4A — checkpoint fechado em 27/10/2026:** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom"). Pronto para revisão da PR. Sem novas habilidades ou multiplayer.
+**P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
+**P4B — checkpoint fechado em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando"). Pronto para revisão da PR.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -72,6 +73,7 @@ de fluidos.
 | Espaço | pular |
 | Mouse | orbitar a câmera; em hold da Terra, desloca a rocha horizontalmente com massa e atraso (Esc solta/prende o mouse; clique recaptura) |
 | **Q / E**, durante hold da Terra | abaixar / elevar o alvo da rocha a 2 m/s; altura inicial 2 m, limites 1–6 m sobre os pés do jogador |
+| **LMB mirando uma rocha solta** (Terra; P4B) | capturar o mesmo corpo físico, preservando massa e velocidade, até 7 m do jogador ao centro da rocha; Q/E, roda e lançamento iguais ao P4A |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -157,6 +159,14 @@ Parâmetros em `data/abilities/earth_tuning.tres` (abra no inspetor da Godot; ve
 
 Os limites restringem o alvo da mola: a posição real pode atrasar ou apresentar sobressinal físico. Contra um obstáculo, a rocha permanece bloqueada pelas colisões/CCD e recebe força limitada; não há teleporte nem desvio automático. O lançamento mantém a trajetória existente, calculada do centro atual com impulso que considera a velocidade corrente.
 
+### Roteiro manual do P4B — reutilizar uma rocha
+
+1. Extraia uma rocha com Terra ou com **R**. Com Terra selecionada, mire a rocha solta e segure **LMB**: a mesma rocha entra no hold, sem editar o terreno ou criar outra.
+2. Use câmera, Q/E e roda; solte LMB para lançar. Após a recuperação, mire a mesma rocha para capturá-la novamente, inclusive em voo se ainda estiver no alcance.
+3. O primeiro obstáculo visível bloqueia a seleção. Caixas e peças da torre não são rochas capturáveis. O alcance de captura usa a distância 3D ao centro, limitado por `EarthTuning.max_range`; o alvo do hold continua limitado por `min_range/max_range` horizontalmente.
+4. A captura entra direto no hold, sem antecipação/desprendimento de terreno; a mola faz a transição desde a posição atual e preserva a inércia. O controle impede estacionamento automático pelo orçamento de destroços até lançar/cancelar.
+5. Trocar elemento, salvar, resetar e carregar encerram o controle. Capturar/expirar/limpar encerra o monitoramento do voo anterior para não acumular contatos. Playtest P4B em 27/10/2026: feedback positivo do usuário ("está funcionando"), sem avaliação detalhada por cenário.
+
 ### Roteiro manual do P3.6 — Água, Fogo e Ar (≈ 6 min)
 Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tuning.tres` (inspetor da Godot); detalhes em
 `docs/p36_elemental_polish.md`. Use **B** para criar caixas de teste e **H** para levantar um morro de terreno.
@@ -176,6 +186,49 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
    clareza de limites e recuperação. **NÃO TESTADO** por pessoas até aqui.
 
 ## Testes automatizados
+
+### P4B — validação direcionada e checkpoint de integração
+
+Reutiliza o selftest existente: T61 cobre captura/relançamento da mesma instância; T62 cobre seleção, alcance, orçamento e cancelamentos. Sem runner ou controlador físico novo.
+
+- [18/18 headless](docs/evidence/p4b/editor_headless.json): T1, T19–T22 (preparação e orçamento), T28–T30, T39–T44 e T59–T62 (Terra/P4A/P4B).
+- [5/5 em janela](docs/evidence/p4b/editor_window.json): T1, T27, T37, T61 e T62. Zero erros/avisos nos dois modos; parse/inicialização, parse do selftest e `git diff --check` passaram.
+
+| Cenário em janela | p95 | p99 | Máximo |
+|---|---:|---:|---:|
+| T37, base main `9103bee` | 18,53 ms | 20,84 ms | 34,49 ms |
+| T27, P4B — colapso | 18,48 ms | 19,77 ms | 24,79 ms |
+| T37, P4B — quatro poderes | 18,68 ms | 20,81 ms | 33,62 ms |
+| T61, P4B — capturar/relançar | 18,55 ms | 21,02 ms | 25,18 ms |
+
+[Ambiente e hashes](docs/evidence/p4b/environment.json), [baseline](docs/evidence/p4b/baseline_window_T37.json): i5-1135G7/Iris Xe, Forward+, 1600×900, Godot custom 4.7.2 + Voxel Tools 1.7, Jolt. Gates 20/33/50 ms preservados; esta amostra não demonstra ganho causal.
+
+Na preparação, T22 isolado foi executado sem sua torre previamente derrubada; a seleção final inclui T19–T21. Os eventos brutos de mouse do novo selftest são despachados antes das comparações imediatas, sem avançar a física.
+
+Para repetir: `--p36-selftest --only=T19,T20,T21,T22,T28,T29,T30,T39,T40,T41,T42,T43,T44,T59,T60,T61,T62` em headless; em janela `--only=T27,T37,T61,T62`, usando o helper de validação existente e `--report=<novo_caminho.json>`.
+
+Na fatia inicial acima não foram executados bateria completa, export ou persistência entre processos; esses passos foram executados no checkpoint posterior abaixo. Playtest humano P4B: feedback positivo do usuário em 27/10/2026; avaliações detalhadas por cenário não registradas.
+
+**Gate de integração — resultado final:** [resumo validado por contratos e run_ids reais](docs/evidence/p4b/integration/final_result.json), com fontes idênticas aos hashes do [ambiente original](docs/evidence/p4b/integration/environment.json).
+
+| Modo | Resultado integral final |
+|---|---|
+| [Editor headless](docs/evidence/p4b/integration/editor_headless.json) | 68/68 PASS |
+| [Editor em janela — última verificação](docs/evidence/p4b/integration/recheck/editor_window_quiet.json) | 68/68 PASS |
+| [Export headless](docs/evidence/p4b/integration/export_headless.json) | 68/68 PASS |
+| [Export em janela](docs/evidence/p4b/integration/export_window.json) | 68/68 PASS |
+
+Zero erros/avisos nos resultados finais. Export Windows e persistência write/read em processos separados no editor e export passaram (2/2 IDs em cada uma das quatro etapas). Logs de import/export conferidos; preset e fixtures anteriores restaurados. Nenhuma captura nova.
+
+**Histórico de desempenho preservado:** a [primeira execução do editor em janela](docs/evidence/p4b/integration/editor_window.json) ficou em 67/68 por T61 (p95 33,49 ms, p99 45,17 ms, máximo 114,13 ms). A [primeira repetição integral](docs/evidence/p4b/integration/recheck/editor_window_full.json) ficou em 67/68 por T27 (p95 20,51 ms), com T61 aprovado. A [rechecagem contextual](docs/evidence/p4b/integration/recheck/editor_window_context.json) passou 7/7; T27 curto passou na base e no P4B com p95 de 17,76 ms. A última integral passou 68/68, acompanhada por leitura do log sem abrir processos shell/CIM durante a medição. Fontes e limites permaneceram iguais; a causa exata dos picos não foi confirmada. [Passos originais](docs/evidence/p4b/integration/steps.json), [rechecagens](docs/evidence/p4b/integration/recheck/steps.json) e [condições da comparação](docs/evidence/p4b/integration/recheck/comparison_environment.json) mantêm os resultados anteriores.
+
+| Cenário | Editor final: p95 / p99 / máximo | Export: p95 / p99 / máximo |
+|---|---|---|
+| T27 — colapso | 17,81 / 18,56 / 19,79 ms | 18,80 / 20,48 / 21,15 ms |
+| T37 — quatro poderes | 18,86 / 23,48 / 38,99 ms | 19,12 / 21,42 / 32,47 ms |
+| T61 — reutilização | 17,98 / 23,50 / 23,93 ms | 18,72 / 20,17 / 22,77 ms |
+
+Todos os resultados finais atendem a 20/33/50 ms, em i5-1135G7/Iris Xe, Forward+, 1600×900 e Jolt. Para outro checkpoint, reutilizar `tools/run_p361_tests.ps1` com `-Template <template-custom>` e `-EvidenceDirectory <pasta-nova>`. Próximo passo: revisar a PR P4B antes de ampliar o escopo.
 
 ### P4A — validação direcionada e checkpoint de integração
 
@@ -224,7 +277,7 @@ Comando usado neste checkpoint; ao repetir, escolher outra pasta para preservar 
 ./tools/run_p361_tests.ps1 -Template 'C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\godot.windows.template_release.x86_64.exe' -EvidenceDirectory 'docs/evidence/p4a/integration'
 ```
 
-O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Próximo passo: revisar e integrar a PR P4A antes da próxima fatia de gameplay.
+O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Este checkpoint P4A já foi integrado à main em `9103bee`; a fase atual é P4B.
 
 ### P3.6 — Água, Fogo e Ar polidos (inclui as regressões do P0 ao P3.5)
 

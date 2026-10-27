@@ -3,6 +3,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## --only=T49,T50,T51 limita o Fogo; --only=T52,T53,T54,T56 limita o Ar; T55/T58 integram os
 ## elementos e limites de VFX; T57 é o ciclo de vida (reset/save/load) de Fogo e Ar.
 ## P4A: T59 cobre manipulação de uma rocha e T60 input/cancelamentos contextuais.
+## P4B: T61 reutiliza a mesma rocha e T62 cobre seleção, orçamento e cancelamentos.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -68,6 +69,9 @@ func _run_tests() -> bool:
 	_log("--- testes P4A (controle livre de Terra) ---")
 	if _should_run("T59"): await _t59_earth_manipulation()
 	if _should_run("T60"): await _t60_earth_input_lifecycle()
+	_log("--- testes P4B (reutilizar rocha existente) ---")
+	if _should_run("T61"): await _t61_earth_reuse()
+	if _should_run("T62"): await _t62_earth_reuse_limits()
 	return true
 
 
@@ -1733,3 +1737,226 @@ func _t57_lifecycle_invalidation() -> void:
 	for ch in props.get_children():
 		ch.queue_free()
 	materials.clear()
+
+
+# --- P4B: capturar o mesmo corpo, inclusive durante seu voo ------------------------------------
+
+func _p4b_lmb(pressed: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = pressed
+	Input.parse_input_event(event)
+	# Despachar o mouse antes das amostras imediatas, sem avançar um tick de física.
+	Input.flush_buffered_events()
+
+
+## Fixture real: o TerrainService extrai a rocha pelo fluxo já testado; cancelar a deixa solta.
+func _p4b_free_rock(base: Vector3) -> RigidBody3D:
+	var ab: AbilityController = main.abilities
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	await _aim_settle(_ground_at(base + Vector3(0.17, 0, -4.5)))
+	ab.use_pressed()
+	if not await _wait_until(func(): return earth.phase == "hold", 2.0):
+		ab.cancel_all()
+		return null
+	await _frames(30)
+	var body := earth.rock
+	ab.cancel_all()
+	return body
+
+
+func _t61_earth_reuse() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var original: EarthTuning = earth.tuning
+	var variant: EarthTuning = original.duplicate(true)
+	# Uma janela de recaptura reproduzível, sem mudar velocidade de arremesso ou mover a rocha.
+	variant.recovery_s = 0.0
+	earth.tuning = variant
+	var body: RigidBody3D = await _p4b_free_rock(base)
+	if body == null:
+		earth.tuning = original
+		player.input_enabled = false
+		_record("T61", "Reutilização de rocha", false, {"reason": "fixture_not_extracted"})
+		return
+	await _aim_settle(EarthLiftThrow.center_of(body))
+	var revision := svc.get_revision()
+	var bodies := props.get_child_count()
+	var mass := body.mass
+	var instance := body.get_instance_id()
+	var reused0: int = earth.get_stats().reused
+	var extracted0: int = earth.get_stats().extracted
+	var before := EarthLiftThrow.center_of(body)
+	var velocity := body.linear_velocity
+	_p4b_lmb(true)
+	var captured: bool = earth.rock == body and earth.phase == "hold" and body.get_instance_id() == instance
+	var untouched: bool = before.distance_to(EarthLiftThrow.center_of(body)) < 0.0001 \
+		and velocity.distance_to(body.linear_velocity) < 0.0001 and is_equal_approx(body.mass, mass)
+	var probe := {"previous": EarthLiftThrow.center_of(body), "teleport_m": 0.0}
+	var dt := 1.0 / Engine.physics_ticks_per_second
+	var motion := func():
+		var at := EarthLiftThrow.center_of(body)
+		probe.teleport_m = maxf(probe.teleport_m, (at - (probe.previous as Vector3)).distance_to(body.linear_velocity * dt))
+		probe.previous = at
+	var frame_ms := PackedFloat32Array()
+	var clock := {"last": Time.get_ticks_usec()}
+	var sample_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().physics_frame.connect(motion)
+	get_tree().process_frame.connect(sample_frame)
+	var h0 := earth._hold_height
+	var d0 := earth._hold_dist
+	_p4a_key(KEY_E, true)
+	_p4a_wheel(true)
+	await _frames(18)
+	_p4a_key(KEY_E, false)
+	var controls: bool = earth._hold_height > h0 + 0.3 and is_equal_approx(d0 - earth._hold_dist, variant.hold_distance_step)
+	await _frames(45)
+	var physical_move := EarthLiftThrow.center_of(body).distance_to(before)
+	get_tree().physics_frame.disconnect(motion)
+	var no_edit: bool = svc.get_revision() == revision and props.get_child_count() == bodies and earth.get_stats().extracted == extracted0
+	player.camera_rig.set_view(0.0, deg_to_rad(10.0))
+	_p4b_lmb(false)
+	var thrown := await _wait_until(func(): return earth.phase == "", 1.0)
+	var flight_speed := body.linear_velocity.length()
+	var first_connections := body.get_signal_connection_list(&"body_entered").size()
+	# Resolver a mira no mesmo tick permite pegar a rocha a 24 m/s antes de ela sair do alcance.
+	for i in 8: _aim_at(EarthLiftThrow.center_of(body))
+	var flight_point := EarthLiftThrow.center_of(body)
+	var flight_velocity := body.linear_velocity
+	_p4b_lmb(true)
+	var recaptured: bool = thrown and flight_speed > 18.0 and earth.rock == body and earth.phase == "hold" \
+		and flight_point.distance_to(EarthLiftThrow.center_of(body)) < 0.0001 \
+		and flight_velocity.distance_to(body.linear_velocity) < 0.0001
+	var stale_removed: bool = first_connections == 1 and body.get_signal_connection_list(&"body_entered").is_empty() and not body.contact_monitor
+	var crate := DebugProps.spawn_crate(props, base + Vector3(0, 0, -14))
+	await _frames(30)
+	var c0 := crate.global_position
+	await _aim_settle(MaterialResponseSystem.body_center(crate))
+	var hits0: int = earth.get_stats().hits
+	_p4b_lmb(false)
+	await _wait_until(func(): return earth.get_stats().hits > hits0, 2.0)
+	await _frames(45)
+	var hit_once: bool = earth.get_stats().hits - hits0 == 1 and crate.global_position.distance_to(c0) > 0.5
+	get_tree().process_frame.disconnect(sample_frame)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p4b_reuse_frame_ms"] = timings
+	var windowed := not _mode.begins_with("headless")
+	var perf_ok: bool = not windowed or (timings.get("p95", 999.0) <= 20.0 and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	var reused_twice: bool = earth.get_stats().reused - reused0 == 2 and is_equal_approx(body.mass, mass)
+	ab.cancel_all()
+	var clean_callbacks := body.get_signal_connection_list(&"body_entered").is_empty()
+	earth.tuning = original
+	player.input_enabled = false
+	_record("T61", "Mesma rocha e massa: captura por LMB, controles físicos, recaptura em voo e novo impacto sem callbacks duplicados",
+		captured and untouched and controls and physical_move > 0.1 and float(probe.teleport_m) < 0.05 \
+		and no_edit and recaptured and stale_removed and hit_once and reused_twice and clean_callbacks and perf_ok,
+		{"same_body": captured, "capture_without_position_velocity_reset": untouched, "mass_kg": mass,
+		"controls": controls, "moved_m": physical_move, "teleport_error_m": probe.teleport_m, "no_terrain_edit_or_new_body": no_edit,
+		"flight_speed_m_s": flight_speed, "recaptured_in_flight": recaptured, "previous_flight_disconnected": stale_removed,
+		"one_new_impact": hit_once, "reused_twice": reused_twice, "callbacks_clean": clean_callbacks,
+		"frame_ms": timings, "frame_gate_applied": windowed})
+	await main.request_world_reset()
+
+
+func _t62_earth_reuse_limits() -> void:
+	const SLOT := "p4b_lifecycle"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var body: RigidBody3D = await _p4b_free_rock(base)
+	if body == null:
+		player.input_enabled = false
+		_record("T62", "Limites e ciclo da reutilização", false, {"reason": "fixture_not_extracted"})
+		return
+	# Uma rocha estacionada pelo orçamento continua capturável, mas não deve ser reestacionada no hold.
+	body.freeze = true
+	body.set_meta(DebrisBudget.PARKED_META, "budget")
+	var cases := {}
+	var reject := func(name: String):
+		var rev := svc.get_revision()
+		var reused: int = earth.get_stats().reused
+		var check := earth.validate_target()
+		_p4b_lmb(true)
+		await _frames(2)
+		_p4b_lmb(false)
+		cases[name] = {"reason": check.reason, "ok": not check.ok and earth.rock == null and earth.phase == "" \
+			and svc.get_revision() == rev and earth.get_stats().reused == reused}
+	var wall := _p36_thin_wall(base + Vector3(0, 2, -2), Vector3(6, 5, 0.2))
+	await _frames(2)
+	await _aim_settle(EarthLiftThrow.center_of(body))
+	await reject.call("wall_occlusion")
+	wall.queue_free()
+	await _frames(2)
+	var crate := DebugProps.spawn_crate(props, base + Vector3(0, 1.5, -2))
+	crate.freeze = true
+	await _aim_settle(MaterialResponseSystem.body_center(crate))
+	await reject.call("crate_not_earth")
+	crate.queue_free()
+	await _frames(2)
+	player.teleport_to(base + Vector3(0, 9, 0))
+	await _aim_settle(EarthLiftThrow.center_of(body))
+	var out_of_range: bool = EarthLiftThrow.center_of(body).distance_to(player.global_position) > earth.tuning.max_range
+	await reject.call("distance_3d")
+	cases.distance_3d.ok = cases.distance_3d.ok and out_of_range
+	player.teleport_to(base + Vector3(0, 0.5, -2.8))
+	await _aim_settle(EarthLiftThrow.center_of(body))
+	var budget: DebrisBudget = main.debris
+	var active0 := budget.max_active
+	budget.max_active = 0
+	_p4b_lmb(true)
+	var awakened: bool = earth.rock == body and not body.freeze and not body.has_meta(DebrisBudget.PARKED_META)
+	var minimum: bool = is_equal_approx(earth._hold_dist, earth.tuning.min_range)
+	await _frames(120)
+	var protected: bool = not body.freeze and body.has_meta(DebrisBudget.EARTH_HELD_META)
+	budget.max_active = active0
+	ab.cancel_all()
+	cases["near_parked_rock"] = {"awakened": awakened, "minimum_distance": minimum, "budget_protected": protected,
+		"ok": awakened and minimum and protected and not body.has_meta(DebrisBudget.EARTH_HELD_META) and is_equal_approx(body.gravity_scale, 1.0)}
+	await _go_to_tower()
+	var foot: StructurePiece = _foot_at(Vector2(-1, 1))
+	player.teleport_to(foot.global_position + Vector3(0, 0.5, 5))
+	await _aim_settle(MaterialResponseSystem.body_center(foot))
+	await reject.call("tower_not_earth")
+	base = await _p3_lab(0)
+	var slot_ready: bool = await main.request_world_save(SLOT)
+	for kind: String in ["select", "reset", "save", "load"]:
+		base = await _p3_lab(0)
+		body = await _p4b_free_rock(base)
+		if body == null:
+			cases[kind] = {"ok": false, "reason": "fixture_not_extracted"}
+			continue
+		await _aim_settle(EarthLiftThrow.center_of(body))
+		_p4b_lmb(true)
+		var owned: bool = earth.rock == body and body.has_meta(DebrisBudget.EARTH_HELD_META)
+		var old_ref: WeakRef = weakref(body)
+		_p4a_key(KEY_E, true)
+		_p4a_wheel(true)
+		await _frames(6)
+		var thrown0: int = earth.get_stats().thrown
+		var command_ok := true
+		if kind == "select": _send_key(1)
+		elif kind == "reset": command_ok = await main.request_world_reset()
+		elif kind == "save": command_ok = await main.request_world_save(SLOT)
+		else: command_ok = await main.request_world_load(SLOT)
+		_p4b_lmb(false)
+		var h := earth._hold_height
+		var d := earth._hold_dist
+		await _frames(12)
+		var old: RigidBody3D = old_ref.get_ref()
+		var released: bool = old == null or (not old.has_meta(DebrisBudget.EARTH_HELD_META) \
+			and not old.freeze and is_equal_approx(old.gravity_scale, 1.0) and old.get_signal_connection_list(&"body_entered").is_empty())
+		cases[kind] = {"owned_before": owned, "released_after": released,
+			"ok": owned and command_ok and released and earth.rock == null and earth.phase == "" and not ab.holding \
+			and earth.get_stats().thrown == thrown0 and is_equal_approx(h, earth._hold_height) and is_equal_approx(d, earth._hold_dist)}
+		_p4a_key(KEY_E, false)
+		ab.cancel_all()
+	player.input_enabled = false
+	_record("T62", "Reutilização respeita oclusão/tipo/alcance; acorda rocha estacionada e limpa propriedade em seleção/reset/save/load",
+		slot_ready and cases.values().all(func(c): return c.ok), cases)
+	await main.request_world_reset()

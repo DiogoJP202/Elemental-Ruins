@@ -15,6 +15,8 @@ extends Node
 const GROUP := "debris"
 const PARKED_META := "debris_parked"
 const SEEN_META := "debris_seen_ms"
+## Controlada pela Terra: conta no orçamento, mas só volta a estacionar ao ser solta.
+const EARTH_HELD_META := "earth_held"
 
 @export var terrain_service_path: NodePath = ^"../TerrainService"
 @export var player_path: NodePath = ^"../../Player"
@@ -77,13 +79,13 @@ func _physics_process(delta: float) -> void:
 			_stats.unparked_distance += 1
 		if body.freeze:
 			continue
-		if dist > freeze_distance:
+		if dist > freeze_distance and not body.has_meta(EARTH_HELD_META):
 			_park(body, "distance")
 			_stats.parked_distance += 1
 			continue
 		active.append(body)
 	if active.size() > max_active:
-		var settled := active.filter(func(b: RigidBody3D): return b.linear_velocity.length() < settle_speed)
+		var settled := active.filter(func(b: RigidBody3D): return b.linear_velocity.length() < settle_speed and not b.has_meta(EARTH_HELD_META))
 		settled.sort_custom(func(a: RigidBody3D, b: RigidBody3D): return a.get_meta(SEEN_META) < b.get_meta(SEEN_META))
 		var excess := active.size() - max_active
 		for b: RigidBody3D in settled.slice(0, excess):

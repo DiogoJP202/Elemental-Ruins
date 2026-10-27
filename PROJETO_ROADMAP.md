@@ -1,6 +1,6 @@
 # ELEMENTAL // RUINS — Roadmap técnico
 
-**Estado atual:** P0–P4A implementados. **Checkpoint P4A fechado em 27/10/2026:** 66/66 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos e feedback humano positivo dos controles. Próximo passo: **revisar a PR P4A**, antes de ampliar o escopo. Os gates e resultados históricos continuam preservados.
+**Estado atual:** P0–P4A integrados à main (`9103bee`). **Checkpoint P4B fechado em branch:** resultado integral final 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos e feedback humano positivo em 27/10/2026 ("está funcionando"). Histórico das rechecagens de desempenho preservado no README. Próximo passo: **revisar a PR P4B**.
 
 ## P0 — prova de terreno volumétrico (concluído)
 Terreno SDF + colisão, personagem 3D, câmera, escavação/adição, túnel sob teto, reset e relatório de compatibilidade/execução. Não fazer poderes completos.
@@ -31,12 +31,21 @@ Simulação, Resources e VFX progressivos, com histórico em `docs/p36_progress.
 ## P3.6.1 — salvamento com física viva (implementado)
 Salvar conserva o terreno e seus colisores, sem congelar ou recriar os corpos vivos. Cancelamentos dos poderes continuam ativos. Base `180ec59`; evidências históricas em `docs/p36_t26_stabilization.md`.
 
-## P4A — manipulação livre de Terra (checkpoint fechado; revisão da PR pendente)
+## P4A — manipulação livre de Terra (checkpoint fechado e integrado)
 Uma única rocha: câmera orienta o movimento horizontal; Q/E ajustam altura, roda ajusta distância somente no hold, e soltar LMB continua lançando. Reutilizar `EarthLiftThrow`, sua mola, `EarthTuning`, input, HUD e contratos de cancelamento existentes.
 
 **Aceite:** movimento por forças, limites configuráveis, colisão preservada, toque curto e impactos mantidos, comandos limpos ao cancelar e roda do pincel preservada fora do hold. Testes direcionados e T37 em janela; resultados no README. Playtest dos controles: feedback positivo do usuário em 27/10/2026, sem avaliação detalhada por cenário. Sem múltiplas rochas, novas habilidades, rede ou arquitetura genérica.
 
 **Validação automatizada:** direcionados 11/11 headless e 4/4 em janela; integração 66/66 em cada um dos quatro modos, export e persistência write/read no editor e export aprovados. Zero erros/avisos; T27/T37/T59 em janela dentro de 20/33/50 ms. Resultados no README e em `docs/evidence/p4a/integration/`. Gate completo executado uma vez por modo, sem repetição.
+
+## P4B — reutilizar rochas existentes (checkpoint fechado; revisão da PR pendente)
+Capturar uma rocha extraída já existente, preservando instância, massa e velocidade. Reutilizar hold, câmera, Q/E, roda e lançamento do P4A; primeiro obstáculo bloqueia seleção. Sem novas classes de física ou alteração de terreno ao capturar.
+
+**Aceite:** captura/relançamento sem duplicação, sem teleporte, sem callbacks de impacto antigos; rocha controlada não é estacionada pelo orçamento e volta ao ciclo normal ao soltar/cancelar. Testes direcionados e benchmark em janela; playtest com feedback positivo do usuário em 27/10/2026, sem avaliação detalhada por cenário.
+
+**Validação direcionada inicial:** 18/18 headless e 5/5 em janela, zero erros/avisos; T27/T37/T61 dentro de 20/33/50 ms. Evidências em `docs/evidence/p4b/` e resultados no README.
+
+**Integração:** resultado integral final 68/68 em cada um dos quatro modos; export e persistência write/read no editor e export aprovados. O editor em janela teve duas falhas de desempenho em tentativas anteriores e passou na última integral, com fontes e limites intactos; causa exata dos picos não confirmada. Relatórios completos e rechecagens em `docs/evidence/p4b/integration/`.
 
 ## P4 posterior — 16 habilidades, combinações e visual (futuro)
 Expandir `elemental_abilities_mvp.json`; estados de materiais, gelo, lava, eletricidade, vórtices, shaders Ilustrado/Retro, áudio/animações e modos de jogo.
