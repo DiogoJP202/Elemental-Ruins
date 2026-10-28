@@ -43,6 +43,7 @@ const MOUSE_BUTTON_ACTIONS := {
 	&"brush_radius_down": [MOUSE_BUTTON_WHEEL_DOWN],
 	&"ability_use": [MOUSE_BUTTON_LEFT],
 	&"earth_pillar": [MOUSE_BUTTON_RIGHT],
+	&"water_orb": [MOUSE_BUTTON_RIGHT],
 }
 
 

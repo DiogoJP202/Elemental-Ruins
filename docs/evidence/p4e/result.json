@@ -1,0 +1,197 @@
+{
+  "implementation": "READY_FOR_PLAYTEST",
+  "base_commit": "b1efae92ec23bf1c4ccc07986caedc7a89e8f439",
+  "branch": "codex/p4e-water-orb",
+  "date": "2026-10-28",
+  "p4d_checkpoint": "FAIL (preserved; T26 not run or investigated)",
+  "p4e_integration_checkpoint": "NOT_RUN",
+  "current_full_contract_count": 75,
+  "reports": {
+    "orb_headless_initial": {
+      "report": "orb_headless_initial.json",
+      "run_id": "27aaf2037947",
+      "result": "PASS",
+      "complete": true,
+      "passed": 4,
+      "total": 4,
+      "expected_ids": [
+        "T1",
+        "T67",
+        "T68",
+        "T69"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "related_headless": {
+      "report": "related_headless.json",
+      "run_id": "bfc457a27b4b",
+      "result": "PASS",
+      "complete": true,
+      "passed": 7,
+      "total": 7,
+      "expected_ids": [
+        "T1",
+        "T46",
+        "T47",
+        "T48",
+        "T60",
+        "T64",
+        "T66"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "orb_window": {
+      "report": "orb_window.json",
+      "run_id": "722f07d29980",
+      "result": "PASS",
+      "complete": true,
+      "passed": 4,
+      "total": 4,
+      "expected_ids": [
+        "T1",
+        "T67",
+        "T68",
+        "T69"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "orb_headless_final": {
+      "report": "orb_headless_final.json",
+      "run_id": "a16522c9bdfd",
+      "result": "PASS",
+      "complete": true,
+      "passed": 4,
+      "total": 4,
+      "expected_ids": [
+        "T1",
+        "T67",
+        "T68",
+        "T69"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "contact_headless_final": {
+      "report": "contact_headless_final.json",
+      "run_id": "404c2695d26f",
+      "result": "PASS",
+      "complete": true,
+      "passed": 2,
+      "total": 2,
+      "expected_ids": [
+        "T1",
+        "T68"
+      ],
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "validation": "Existing Invoke-SelftestStep verified fresh externally supplied run_id, completion, exact IDs, counters, all results and zero engine log diagnostics.",
+  "logs_checked": 7,
+  "logs_zero_errors_warnings": false,
+  "benchmark": {
+    "id": "T67",
+    "mode": "editor window",
+    "p95_ms": 18.05,
+    "p99_ms": 18.76,
+    "max_ms": 21.65,
+    "samples": 376,
+    "limits_ms": {
+      "p95": 20,
+      "p99": 33,
+      "max": 50
+    },
+    "pass": true
+  },
+  "environment": {
+    "godot": "4.7.2-stable (custom_build)",
+    "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "gpu": "Intel(R) Iris(R) Xe Graphics",
+    "renderer": "forward_plus",
+    "physics": "Jolt Physics",
+    "resolution": "1600x900 configured",
+    "vulkan": "1.4.323",
+    "methodology": "Sequential existing selftests; process_frame intervals during hold, movement, wall and throw. Screenshot after frame sampling disconnected; prior baseline screenshot restored. No concurrent Godot, no shell/CIM spawned during benchmark.",
+    "gpu_driver": "32.0.101.7085",
+    "ram_gb": 16
+  },
+  "coverage_notes": [
+    "Initial headless precedes Esc/60m/s additions; window and final headless cover both.",
+    "Final contact run covers real voxel collider and 10 L formation blocked by thin wall between player and hand.",
+    "Five completed directed processes; one extra startup attempt timed out on a test parse error, preserved separately. No full integration suite."
+  ],
+  "human_playtest": "NOT_TESTED",
+  "not_run": [
+    "export",
+    "full integration suite",
+    "T26",
+    "human playtest"
+  ],
+  "capture": "screens/orb_hold.png",
+  "capture_is_human_playtest": false,
+  "path_normalization": "Local checkout prefixes and log whitespace normalized; test values and run IDs preserved.",
+  "final_source_hashes": [
+    {
+      "path": "scripts/abilities/ability_controller.gd",
+      "sha256": "6ffb8f7379afab23c59baae4d30890ed2333216a29c1bf2b5413b363f767ec6c"
+    },
+    {
+      "path": "scripts/abilities/water_jet.gd",
+      "sha256": "197dac1f8c9e034d76e4896ef4bb56199552677ecf9dcdaa85b8e08f1425f413"
+    },
+    {
+      "path": "scripts/abilities/water_orb.gd",
+      "sha256": "c8d3bd9c2278240a6566ce64f132848f11399c73fd96020a1252fd19dbb121e8"
+    },
+    {
+      "path": "scripts/abilities/water_orb.gd.uid",
+      "sha256": "4b2fd64ca922a254793cf7ab46c2c07a77cbaaecf4100706a1b8938d2ed43cc1"
+    },
+    {
+      "path": "scripts/abilities/water_orb_tuning.gd",
+      "sha256": "844176372fafb1dc091358eb47fdaffcecaedb6dc5052678d05ecd314ff07a5a"
+    },
+    {
+      "path": "scripts/abilities/water_orb_tuning.gd.uid",
+      "sha256": "e0abb5885f355042b60e65f23596bdf641b16aa0e9c07b1ce1df87b027bab353"
+    },
+    {
+      "path": "data/abilities/water_orb_tuning.tres",
+      "sha256": "2180f56b9353d89e4b6bf8e93f1feba73f785275194d4b165b92254d933e7320"
+    },
+    {
+      "path": "scripts/core/input_actions.gd",
+      "sha256": "c6e1d817276fb4b1ffba64262a79a1fbea973aed5d129ba1cac943926f9b6c7b"
+    },
+    {
+      "path": "scripts/elements/elemental_fx.gd",
+      "sha256": "b3654e8bc55aeee736d18403ea64cfab2d537420e8f8cbf0534dd73aa0a569e5"
+    },
+    {
+      "path": "scripts/ui/debug_hud.gd",
+      "sha256": "fbccc386da2cc28cceb4000dda34e6ce85ddcdc26be4d7f216fd273681bc1a45"
+    },
+    {
+      "path": "scripts/dev/p36_selftest.gd",
+      "sha256": "d92db7f7b22687b561c42d7e00f88b0fd83d3f3670d5d2db915950936bcd0113"
+    },
+    {
+      "path": "tools/lib_selftest_contract.ps1",
+      "sha256": "e373af7c6f4c16b312e5e297f12efbc8aabc147fc8c2a29d5401376267cc949f"
+    }
+  ],
+  "approved_run_logs_zero_errors_warnings": true,
+  "historical_attempts": [
+    {
+      "step": "contact_headless",
+      "exit": 124,
+      "report_present": false,
+      "log": "contact_headless.log",
+      "reason": "Selftest did not parse: blocked_formation required explicit bool annotation. Corrected; final contact run passed 2/2. This attempt is not PASS."
+    }
+  ]
+}

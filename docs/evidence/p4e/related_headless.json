@@ -1,0 +1,568 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T11:09:19",
+  "duracao_s": 55.469,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 1252
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1252,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "forward": {
+          "arrived_on_time": true,
+          "deadline_s": 0.246693928703125,
+          "distance_m": 4.90081787109375,
+          "earliest_s": 0.130027262369792,
+          "first_contact_s": 0.166666666666667,
+          "max_packets": 32,
+          "no_early_contact": true,
+          "peak_packets": 5,
+          "pressure_on_time": true,
+          "pressure_ready_s": 0.133333333333333
+        },
+        "method": "physics ticks; distances to actual collider contact",
+        "pressed": true,
+        "turn_90_deg": {
+          "arrived_on_time": true,
+          "deadline_s": 0.246694151227132,
+          "distance_m": 4.90082454681396,
+          "earliest_s": 0.130027484893799,
+          "first_contact_s": 0.183333333333333,
+          "max_packets": 32,
+          "no_early_contact": true,
+          "peak_packets": 5,
+          "pressure_on_time": true,
+          "pressure_ready_s": 0
+        }
+      },
+      "id": "T46",
+      "status": "PASS",
+      "titulo": "Água transporta pacotes e pressão; virar 90° não acerta alvo distante instantaneamente"
+    },
+    {
+      "detalhes": {
+        "arrival": {
+          "arrived_on_time": true,
+          "deadline_s": 0.475068155924479,
+          "distance_m": 4.90081787109375,
+          "earliest_s": 0.375068155924479,
+          "first_contact_s": 0.416666666666667,
+          "max_packets": 2,
+          "no_early_contact": true,
+          "peak_packets": 2,
+          "pressure_on_time": true,
+          "pressure_ready_s": 0.25
+        },
+        "pressure_at_7_ticks": 0.479172025034294,
+        "stops": [
+          {
+            "clean_in_command": true,
+            "contacts_after_2_ticks": 9,
+            "contacts_before": 9,
+            "kind": "release",
+            "live_before": 2,
+            "ok": true
+          },
+          {
+            "clean_in_command": true,
+            "contacts_after_2_ticks": 9,
+            "contacts_before": 9,
+            "kind": "cancel",
+            "live_before": 2,
+            "ok": true
+          },
+          {
+            "clean_in_command": true,
+            "contacts_after_2_ticks": 9,
+            "contacts_before": 9,
+            "kind": "clear",
+            "live_before": 2,
+            "ok": true
+          }
+        ],
+        "variant": {
+          "force_N": 0,
+          "max_packets": 2,
+          "rise_s": 0.24,
+          "speed_mps": 12
+        },
+        "zero_force_observed": true
+      },
+      "id": "T47",
+      "status": "PASS",
+      "titulo": "Água usa Resource variante, limita pacotes e descarta simulação ao soltar/cancelar/limpar"
+    },
+    {
+      "detalhes": {
+        "heavy": {
+          "expected_delta_v": 0.0869004224836826,
+          "impulse_Ns": 173.800844967365,
+          "mass_kg": 2000,
+          "ok": true,
+          "relative_tolerance": 0.12,
+          "speed_mps": 0.086900420486927
+        },
+        "legacy_extinction": "T33 conserva o limite de 3 s",
+        "light": {
+          "expected_delta_v": 7.69330452978611,
+          "impulse_Ns": 153.866090595722,
+          "mass_kg": 20,
+          "ok": true,
+          "relative_tolerance": 0.12,
+          "speed_mps": 7.69330501556396
+        },
+        "origin_inside_prop": {
+          "blocked_wetness": 0,
+          "body_contacts": 0,
+          "camera_sees_target_behind": true,
+          "contact_normal": "(0.0, -0.032016, 0.999487)",
+          "contact_point": "(-34.0, 1.320201, 67.4)",
+          "hand": "(-34.0, 1.320201, 67.4)",
+          "ok": true,
+          "origin_inside_convex_prop": true,
+          "wall_contacts": 16
+        },
+        "splash": {
+          "blocked_temperature": 80.5,
+          "blocked_wetness": 0,
+          "exposed_temperature": 58.7267183004675,
+          "exposed_wetness": 0.0648435884261737,
+          "impact_normal": "(0.0, 0.0, 1.0)",
+          "impact_origin": "(-34.0, 1.39781, 64.0205)",
+          "los_blocked": false,
+          "los_exposed": true,
+          "physical_wall_contacts": 40,
+          "pressed": true,
+          "wall_thickness_m": 0.001
+        }
+      },
+      "id": "T48",
+      "status": "PASS",
+      "titulo": "Água respeita parede fina e origem dentro de prop; respingo resfria e impulso depende da massa"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01265478134155,
+            "new_height_m": 2,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01265478134155,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99409, 0.02, 63.50564)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01261711120605,
+            "new_height_m": 2,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01261711120605,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99406, 0.02, 63.50567)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01432752609253,
+            "new_height_m": 2,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01432752609253,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.9952, 0.02, 63.50439)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01429510116577,
+            "new_height_m": 2,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01429510116577,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99518, 0.02, 63.50441)",
+              "reason": ""
+            },
+            "ok": true
+          }
+        },
+        "slot": "p4a_lifecycle",
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T60",
+      "status": "PASS",
+      "titulo": "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais"
+    },
+    {
+      "detalhes": {
+        "body_entered_pending_volume": {
+          "ok": true,
+          "queued": true,
+          "result": ""
+        },
+        "future_volume_blocked": {
+          "ok": true,
+          "reason": "há um corpo no espaço do pilar"
+        },
+        "lmb_still_throws": {
+          "ok": true
+        },
+        "minimum_range": {
+          "ok": true,
+          "reason": "perto demais (mín. 2.5 m)"
+        },
+        "no_ground": {
+          "ok": true,
+          "reason": "sem chão na mira"
+        },
+        "other_element_1": {
+          "ok": true
+        },
+        "other_element_2": {
+          "ok": true
+        },
+        "other_element_3": {
+          "ok": true
+        },
+        "out_of_range": {
+          "ok": true,
+          "reason": "fora do alcance (máx. 18.0 m)"
+        },
+        "pending_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "prop_not_ground": {
+          "ok": true,
+          "reason": "mire em chão livre"
+        },
+        "protected_player": {
+          "ok": true,
+          "reason": "overlaps_player"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "reason": "mire em chão livre"
+        }
+      },
+      "id": "T64",
+      "status": "PASS",
+      "titulo": "Pilar recusa alvos inseguros, mantém LMB/outros elementos e cancela preview/fila sem edição residual"
+    },
+    {
+      "detalhes": {
+        "discontinuous_floor": {
+          "fixture_hole_confirmed": true,
+          "ok": true,
+          "raycasts": {
+            "attempts": 5,
+            "hits": 5,
+            "misses": 0
+          },
+          "reason": "desnível no caminho"
+        },
+        "invalid_radius": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 0,
+            "hits": 0,
+            "misses": 0
+          },
+          "reason": "parâmetros fora dos limites"
+        },
+        "lmb_still_throws": {
+          "ok": true
+        },
+        "minimum_range": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho perto demais do jogador"
+        },
+        "no_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 0,
+            "misses": 1
+          },
+          "reason": "sem chão na mira"
+        },
+        "non_bendable_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "material_not_bendable"
+        },
+        "other_element_1": {
+          "ok": true
+        },
+        "other_element_2": {
+          "ok": true
+        },
+        "other_element_3": {
+          "ok": true
+        },
+        "out_of_range": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho fora do alcance"
+        },
+        "oversized_path": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 0,
+            "hits": 0,
+            "misses": 0
+          },
+          "reason": "parâmetros fora dos limites"
+        },
+        "path_would_split": {
+          "aabb_extent_m": 6.24338912963867,
+          "ok": true,
+          "path_length_m": 5.99999839067459,
+          "queue_extent_m": 7.5,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho excede o limite de operação única"
+        },
+        "pending_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pillar_exclusive": {
+          "ok": true
+        },
+        "player_entered_pending_path": {
+          "ok": true,
+          "queued": true,
+          "reason": "fissura recusada: caminho perto demais do jogador"
+        },
+        "preview_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "prop_not_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 1,
+            "misses": 0
+          },
+          "reason": "mire em chão livre"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 1,
+            "misses": 0
+          },
+          "reason": "mire em chão livre"
+        }
+      },
+      "id": "T66",
+      "status": "PASS",
+      "titulo": "Fissura respeita chão/alcance/material, mantém LMB/RMB e cancela prévia/pedido sem edição residual"
+    }
+  ],
+  "run_id": "bfc457a27b4b",
+  "testes_ids": [
+    "T1",
+    "T46",
+    "T47",
+    "T48",
+    "T60",
+    "T64",
+    "T66"
+  ],
+  "testes_pass": 7,
+  "testes_total": 7,
+  "video_adapter": ""
+}

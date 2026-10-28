@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[TerrainService] terreno inicial pronto=true em 833 ms
+
+----- stderr -----
+SCRIPT ERROR: Parse Error: Cannot infer the type of "blocked_formation" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://scripts/dev/p36_selftest.gd:2851)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://scripts/main.gd:85)
+ERROR: Failed to load script "res://scripts/dev/p36_selftest.gd" with error "Parse error".
+   at: ResourceFormatLoaderGDScript::load (modules\gdscript\gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://scripts/main.gd:85)
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: _ready (res://scripts/main.gd:85)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://scripts/main.gd:85)
+
+----- TIMEOUT: processo encerrado após 90 s (taskkill /T /F); exit=124 -----
+
+----- RELATÓRIO INVÁLIDO (run_id 184d20107892): relatório não foi gravado (docs\evidence\p4e\contact_headless.json); exit do processo=124 -----

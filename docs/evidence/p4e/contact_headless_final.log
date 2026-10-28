@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 900 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":900.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[P36TEST] --- testes P3 ---
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] --- testes P4A (controle livre de Terra) ---
+[P36TEST] --- testes P4B (reutilizar rocha existente) ---
+[P36TEST] --- testes P4C (pilar de Terra) ---
+[P36TEST] --- testes P4D (fissura de Terra) ---
+[P36TEST] --- testes P4E (orbe de Água) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 264 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 0)
+[TerrainService] reset: geração 3 pronta=true em 261 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 0)
+[TerrainService] reset: geração 4 pronta=true em 302 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 0)
+[TerrainService] reset: geração 5 pronta=true em 287 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 0)
+[TerrainService] reset: geração 6 pronta=true em 260 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 0)
+[TerrainService] reset: geração 7 pronta=true em 371 ms
+[P36TEST] T68 PASS — Orbe varre contato único, transfere impulso/WET antes do FX, apaga chama e respeita parede e alcance | {"formation_blocked_by_thin_wall":true,"heavy_body":{"burning_before":false,"expected_delta_v":0.9,"finished":true,"formed":true,"fx":{"burning_at_fx":false,"contacts":1,"event_id":12,"temperature_at_fx":20.0,"wet_at_fx":0.9},"impacts":1,"impulse_ns":1800.0,"mass_kg":2000.0,"moved_m":0.195009261369705,"ok":true,"speed_m_s":0.900000035762787,"temperature_before":20.0,"visual_disabled":true,"wetness":0.891333333333333},"light_burning_body":{"burning_before":true,"expected_delta_v":8.0,"finished":true,"formed":true,"fx":{"burning_at_fx":false,"contacts":1,"event_id":5,"temperature_at_fx":150.0,"wet_at_fx":0.9},"impacts":1,"impulse_ns":160.0,"mass_kg":20.0,"moved_m":1.733353972435,"ok":true,"speed_m_s":8.0,"temperature_before":470.0,"visual_disabled":true,"wetness":0.891333333333333},"range_without_remote_contact":{"finished":true,"formed":true,"ok":true,"range_m":3.0,"remote_speed_m_s":0.0,"remote_wetness":0.0},"thin_wall_occlusion":{"behind_temperature":93.5,"behind_wetness":0.0,"exposed_temperature":30.4993758201599,"exposed_wetness":0.3150031208992,"finished":true,"formed":true,"impacts":1,"launch_speed_m_s":60.0,"ok":true,"orb_diameter_m":0.65922075510025,"step_m":1.0,"terrain_contacts":1,"wall_thickness_m":0.001},"voxel_ground":{"center_y":0.351864606142044,"finished":true,"ground_y":0.0199999809265137,"ok":true}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 0)
+[TerrainService] reset: geração 8 pronta=true em 449 ms
+[P36TEST] relatório: docs\evidence\p4e\contact_headless_final.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (2/2) em 11.9 s

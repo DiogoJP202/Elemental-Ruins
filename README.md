@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4D)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4E)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -12,7 +12,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P4B — checkpoint fechado e integrado à main (`266627d`) em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando").
 **P4C — checkpoint fechado e integrado à main (`b84b4c6`, PR #4) em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário.
 **P4D — Fissura de Terra implementada e integrada à main (`80f2a08`, PR #5), com feedback humano positivo:** vala permanente por F (segurar prévia/soltar aplicar), reutilizando PATH subtrativo e os sistemas existentes. O checkpoint de integração é registrado abaixo, separadamente da implementação já integrada. Feedback humano positivo em 28/10/2026 sobre posição e controle, sem avaliação detalhada por cenário.
-**Checkpoint P4D na retomada de 28/10/2026: FALHOU** no preparo do T26 em dois modos; os demais testes, persistência entre processos e benchmarks passaram. P4E — Manipulação Livre de Água ainda sem autorização de implementação.
+**Checkpoint P4D na retomada de 28/10/2026: FALHOU** no preparo do T26 em dois modos; os demais testes, persistência entre processos e benchmarks passaram. Esse FAIL está preservado; o usuário autorizou avançar para P4E sem investigar T26 nesta tarefa.
+**P4E — Orbe de Água implementado e pronto para playtest:** segurar RMB forma uma massa da reserva abstrata do Criativo; câmera, Q/E e roda controlam sua posição com atraso; soltar lança. Validação direcionada abaixo; playtest humano e checkpoint integral P4E ainda não executados.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -79,6 +80,7 @@ de fluidos.
 | **LMB mirando uma rocha solta** (Terra; P4B) | capturar o mesmo corpo físico, preservando massa e velocidade, até 7 m do jogador ao centro da rocha; Q/E, roda e lançamento iguais ao P4A |
 | **RMB** (Terra parada; P4C) | segurar mostra a prévia; soltar cria um pilar permanente. Altura 4,5 m, raio 2 m; chão entre 2,5 m horizontais e 18 m em 3D. Trocar elemento ou Esc cancela |
 | **F** (Terra parada; P4D) | segurar mostra a prévia; soltar abre uma fissura permanente de 6 m, raio 1 m e centro 0,35 m abaixo do piso, para longe na direção horizontal da câmera; todo o caminho deve estar a até 18 m |
+| **RMB** (Água; P4E) | segurar forma/sustenta um orbe; mouse orienta o alvo horizontal, Q/E regulam altura, roda aproxima/afasta; soltar lança. O primeiro botão mantido vence o conflito com o jato LMB; não há comando enfileirado |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -88,7 +90,7 @@ de fluidos.
 | **F5** | salvar as edições do terreno no slot `slot1`, mantendo terreno, colisores e física viva; cancela o poder e solta a rocha suspensa com gravidade (P3.6.1) |
 | **F9** | carregar o slot `slot1` (jogador volta ao spawn; caixas somem) |
 | **Z** | **reset do mundo**: recria o terreno do gerador, apaga todas as edições, devolve o jogador ao spawn e remove as caixas (o slot salvo fica intacto) |
-| Roda do mouse | durante hold da Terra: subir aproxima / descer afasta o alvo 0,5 m, dentro de 2,5–7 m; fora do hold: raio do pincel (0,5–6 m; padrão 2 m) |
+| Roda do mouse | durante hold da Terra ou orbe de Água: subir aproxima / descer afasta o alvo 0,5 m (Terra 2,5–7 m; Água 2–7 m); fora desses contextos: raio do pincel (0,5–6 m; padrão 2 m) |
 | `[` `]` | raio do pincel, inclusive durante hold |
 | **R** | extrair uma rocha logo abaixo da mira (raio do pincel limitado a 1–2 m): o núcleo vira um corpo físico real, com a massa do material, e pousa ao lado do buraco |
 | **T** | impulso de teste (lançamento a 45°) no corpo físico mirado: rocha, caixa ou peça já caída da torre |
@@ -214,6 +216,20 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
+### P4E — Orbe de Água: pronto para playtest
+
+Selecione **2** e segure **RMB**: o orbe se forma junto à mão e acompanha o alvo com atraso. Gire a câmera, ande, use **Q/E** para baixar/subir e a **roda** para aproximar/afastar. Solte RMB mirando caixa, rocha, terreno ou corpo em chamas. Trocar elemento, Esc, perder captura/input e reset/save/load dissipam controle e voo. LMB mantém o jato existente; enquanto um modo está ativo, o outro é recusado, inclusive durante o voo do orbe. Solte e pressione de novo para iniciar o outro modo.
+
+Parâmetros próprios em [`data/abilities/water_orb_tuning.tres`](data/abilities/water_orb_tuning.tres), separados do jato: volume nominal **150 L** (raio ~0,33 m), distância do alvo **2–7 m**, altura do alvo **0,6–4 m**, controle limitado a **8 m/s** e **55 m/s²**, lançamento **22 m/s** mais até **5 m/s** da velocidade acumulada, alcance de percurso **24 m**. O raio/volume são capturados por formação; a edição do volume vale para a próxima massa. Intensidade: até **1800 N·s**, limitada a massa do alvo × **8 m/s**; WET **0,9**, respingo **1,8 m**, com a oclusão existente. Peças presas recebem KINETIC pelo sistema de materiais; corpos livres recebem impulso, sem teleporte nem impacto duplicado. WET atualiza umidade, temperatura e combustão antes do respingo visual.
+
+`WaterOrb` tem posição/velocidade próprias e usa esfera varrida tanto no controle quanto no voo, com teste explícito de sobreposição inicial; não usa o corpo rígido nem a mola da Terra. Forma somente com espaço livre e trajeto desobstruído do peito à mão. Os limites regulam o alvo; a massa real pode atrasar ou ficar bloqueada sem teleporte. Parede bloqueia/desliza o controle; se geometria móvel invadir a massa, ela é cancelada em vez de teleportada para fora. Colisão sem testemunho de contato é dissipada de forma conservadora. O lançamento é retilíneo, sem gravidade nesta fatia; o primeiro contato válido encerra a massa. Nenhuma escavação, poça, reservatório captável ou simulação conservativa de líquido. Os litros são um recurso nominal da reserva Criativo, não água extraída do cenário.
+
+`WaterJet`, controller/mira/input, `Ability`/identidade de eventos, `MaterialResponseSystem` e `ElementalFx` foram reutilizados. O núcleo translúcido, brilho interno e oscilação são malhas nativas; trilha até 12 partículas e pool de dois respingos. `trail_amount=0` preserva o núcleo sem partículas; `visual_enabled=false` desliga apresentação sem alterar o estado/colisão do gameplay. [Captura do núcleo suspenso](docs/evidence/p4e/screens/orb_hold.png), inspecionada visualmente; não equivale a playtest humano.
+
+**Validação direcionada em 28/10/2026:** import/parse custom sem erros/avisos; [T1/T67–T69 inicial headless, 4/4](docs/evidence/p4e/orb_headless_initial.json); [regressão headless, 7/7](docs/evidence/p4e/related_headless.json): T1, T46/T47/T48 (jato), T60/T64/T66 (controles/cancelamentos de Terra); [T1/T67–T69 em janela, 4/4](docs/evidence/p4e/orb_window.json); [T1/T67–T69 final headless, 4/4](docs/evidence/p4e/orb_headless_final.json); [contato final T1/T68, 2/2](docs/evidence/p4e/contact_headless_final.json). T67 cobre controle, parede, ausência de teleporte e benchmark. T68 verifica impacto único, impulso em 20/2000 kg, WET/extinção antes do FX com visual desativado, oclusão por parede de 1 mm a **60 m/s** (1 m/tick, maior que o diâmetro) e alcance sem contato remoto. A conferência final inclui contato com o collider voxel real, sem editar o terreno, e formação de 10 L bloqueada por parede fina entre o personagem e a mão. T69 cobre exclusão, pincel fora do contexto, reinício e cancelamento em hold/voo por seleção, input, captura, Esc real e reset/save/load. Esc/60 m/s estão na janela e em `orb_headless_final`. [Ambiente/resultados](docs/evidence/p4e/result.json).
+
+Benchmark T67 em janela: **p95 18,05 ms / p99 18,76 ms / máximo 21,65 ms** (limites 20/33/50). i5-1135G7, Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; intervalos de `process_frame` durante controle/lançamento, sem captura de imagem na amostragem e sem outra Godot concorrente. Captura histórica restaurada; evidências anteriores intactas. Cinco execuções direcionadas concluídas, sem repetir integrais. Uma tentativa adicional não iniciou por inferência de tipo no teste; anotação booleana corrigida e contato reexecutado 2/2, sem erros/avisos. O [log da tentativa interrompida](docs/evidence/p4e/contact_headless.log) foi preservado e não conta como PASS. O contrato completo agora tem **75 IDs**, mas **não foram executados export, bateria integral, T26 ou playtest humano nesta tarefa**. P4D permanece FAIL; P4E está implementado para experimentar, sem aprovação de integração.
+
 ### P4D — validação direcionada e feedback humano
 
 - [Import](docs/evidence/p4d/01_import.log): saída 0 em uma tentativa.
@@ -264,7 +280,7 @@ Reutilizado `tools/run_p361_tests.ps1`, com editor/template custom e `-EvidenceD
 
 As duas integrais em janela atendem a 20/33/50 ms em todos esses cenários. Máquina: i5-1135G7, 16 GB RAM, Iris Xe (driver 32.0.101.7085), Vulkan 1.4.323/Forward+, Jolt; janela configurada 1600×900, display 1920×1200, plano Equilibrado. Execuções sequenciais, sem outra Godot aberta; acompanhamento por leitura do log sem criar processos shell/CIM durante medições. Intervalos reais de `process_frame` nos runners existentes. A validação direcionada anterior usou outro hardware AMD; nenhuma diferença é atribuída causalmente ao código. Caminhos locais nas novas evidências foram normalizados para publicação; medições e IDs preservados.
 
-**Único próximo passo:** isolar o timeout de preparação do T26 no contexto integral, preservando 15 s/60 ticks, antes de revalidar os modos que falharam. Não iniciar P4E. Os checkpoints abaixo são históricos.
+**Pendência daquele checkpoint:** isolar o timeout de preparação do T26 no contexto integral, preservando 15 s/60 ticks, antes de revalidar os modos que falharam. P4E foi autorizado posteriormente, mantendo essa dívida fora da fatia de gameplay. Os checkpoints abaixo são históricos.
 
 ### P4C — validação direcionada e checkpoint de integração
 

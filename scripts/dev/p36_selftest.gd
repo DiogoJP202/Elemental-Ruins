@@ -6,6 +6,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4B: T61 reutiliza a mesma rocha e T62 cobre seleção, orçamento e cancelamentos.
 ## P4C: T63 cria/persiste um pilar real e T64 cobre recusas e cancelamentos do RMB.
 ## P4D: T65 escava uma fissura física/persistente e T66 cobre input, limites e cancelamentos.
+## P4E: T67 manipula/lança o orbe; T68 verifica contato/material/oclusão; T69 seu ciclo de vida.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -80,6 +81,10 @@ func _run_tests() -> bool:
 	_log("--- testes P4D (fissura de Terra) ---")
 	if _should_run("T65"): await _t65_earth_fissure()
 	if _should_run("T66"): await _t66_earth_fissure_guards()
+	_log("--- testes P4E (orbe de Água) ---")
+	if _should_run("T67"): await _t67_water_orb_control()
+	if _should_run("T68"): await _t68_water_orb_contact()
+	if _should_run("T69"): await _t69_water_orb_lifecycle()
 	return true
 
 
@@ -2587,4 +2592,372 @@ func _t66_earth_fissure_guards() -> void:
 	player.input_enabled = false
 	_record("T66", "Fissura respeita chão/alcance/material, mantém LMB/RMB e cancela prévia/pedido sem edição residual",
 		slot_ready and cases.values().all(func(c): return c.ok), cases)
+	await main.request_world_reset()
+
+
+# --- P4E: estado contínuo da água, consultas físicas e reações materiais existentes -----------
+
+func _t67_water_orb_control() -> void:
+	var ab: AbilityController = main.abilities
+	await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var revision := svc.get_revision()
+	var bodies := props.get_child_count()
+	var radius0 := controller.radius
+	_p4c_rmb(true)
+	var formed := orb.phase == "hold" and ab.can_manipulate_water()
+	if not formed:
+		_p4c_rmb(false)
+		ab.cancel_all()
+		player.input_enabled = false
+		_record("T67", "Controle contínuo do orbe de Água", false, {"reason": "orb_not_formed", "status": orb.status()})
+		return
+	var start := orb.position
+	var probe := {"previous": start, "max_step_m": 0.0}
+	var sample_motion := func():
+		probe.max_step_m = maxf(probe.max_step_m, orb.position.distance_to(probe.previous))
+		probe.previous = orb.position
+	var frame_ms := PackedFloat32Array()
+	var clock := {"last": Time.get_ticks_usec()}
+	var sample_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().physics_frame.connect(sample_motion)
+	get_tree().process_frame.connect(sample_frame)
+	var height0 := orb.hold_height
+	_p4a_key(KEY_E, true)
+	await _frames(36)
+	_p4a_key(KEY_E, false)
+	var high := orb.hold_height
+	var raised_m := orb.position.y - start.y
+	_p4a_key(KEY_Q, true)
+	await _frames(90)
+	_p4a_key(KEY_Q, false)
+	var low := orb.hold_height
+	_p4a_key(KEY_Q, true)
+	_p4a_key(KEY_E, true)
+	await _frames(4)
+	var opposite_neutral := is_equal_approx(orb.hold_height, low)
+	_p4a_key(KEY_Q, false)
+	await _frames(45)
+	_p4a_key(KEY_E, false)
+	var distance0 := orb.hold_distance
+	_p4a_wheel(true)
+	await _frames(2)
+	var wheel_step := distance0 - orb.hold_distance
+	for i in 20: _p4a_wheel(true)
+	await _frames(4)
+	var near := orb.hold_distance
+	for i in 20: _p4a_wheel(false)
+	await _frames(4)
+	var far := orb.hold_distance
+	player.camera_rig.set_view(PI * 0.5, deg_to_rad(-20.0))
+	await _frames(45)
+	var horizontal_m := Vector2(orb.position.x - start.x, orb.position.z - start.z).length()
+	var player_start := player.global_position
+	player.set_scripted_move(Vector3.RIGHT)
+	await _frames(12)
+	player.clear_scripted_move()
+	var player_moved := player.global_position.distance_to(player_start)
+	# A parede entra depois de aproximar: o teste mede um deslocamento comum até ela.
+	player.camera_rig.set_view(0.0, deg_to_rad(-20.0))
+	for i in 20: _p4a_wheel(true)
+	await _frames(60)
+	var wall_distance := 4.5
+	var wall := _p36_thin_wall(player.global_position + Vector3(0, 2.0, -wall_distance), Vector3(16, 8, 0.04))
+	await _frames(2)
+	var blocked0: int = orb.get_stats().blocked_motion
+	for i in 20: _p4a_wheel(false)
+	var farthest := 0.0
+	for i in 60:
+		await get_tree().physics_frame
+		farthest = maxf(farthest, player.global_position.z - orb.position.z)
+	var wall_blocked: bool = farthest + orb.radius() <= wall_distance + 0.01 and orb.get_stats().blocked_motion > blocked0
+	get_tree().physics_frame.disconnect(sample_motion)
+	await _aim_settle(wall.global_position)
+	var before_release := orb.position
+	var launched0: int = orb.get_stats().launched
+	_p4c_rmb(false)
+	var launch_speed := orb.velocity.length()
+	var launched: bool = orb.phase == "flight" and orb.get_stats().launched == launched0 + 1 \
+		and before_release.distance_to(orb.position) < 0.0001 and launch_speed > orb.tuning.launch_speed * 0.5 \
+		and launch_speed <= orb.tuning.launch_speed + orb.tuning.inherited_speed_limit + 0.001
+	var finished := await _wait_until(func(): return orb.phase == "", 2.0)
+	await _frames(8)
+	get_tree().process_frame.disconnect(sample_frame)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p4e_orb_frame_ms"] = timings
+	var windowed := not _mode.begins_with("headless")
+	var perf_ok: bool = not windowed or (timings.get("p95", 999.0) <= 20.0 and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	var continuous: bool = float(probe.max_step_m) <= orb.tuning.max_control_speed / float(Engine.physics_ticks_per_second) + 0.01
+	var ok: bool = formed and high > height0 + 0.7 and raised_m > 0.4 and is_equal_approx(low, orb.tuning.min_height) \
+		and opposite_neutral and is_equal_approx(wheel_step, orb.tuning.distance_step) \
+		and is_equal_approx(near, orb.tuning.min_distance) and is_equal_approx(far, orb.tuning.max_distance) \
+		and horizontal_m > 2.0 and player_moved > 0.2 and continuous and wall_blocked and launched and finished \
+		and svc.get_revision() == revision and props.get_child_count() == bodies + 1 and is_equal_approx(controller.radius, radius0) and perf_ok
+	ab.cancel_all()
+	player.input_enabled = false
+	_record("T67", "Orbe: RMB, Q/E, roda, câmera e movimento contínuo; parede bloqueia e soltar lança, com benchmark curto", ok,
+		{"formed": formed, "nominal_liters": orb.tuning.nominal_liters, "height_min_max_m": [low, high], "raised_m": raised_m,
+		"opposite_keys_neutral": opposite_neutral, "distance_min_max_m": [near, far], "wheel_step_m": wheel_step,
+		"horizontal_m": horizontal_m, "player_moved_m": player_moved, "max_control_step_m": probe.max_step_m, "continuous": continuous,
+		"wall_blocked": wall_blocked, "farthest_m": farthest, "wall_distance_m": wall_distance, "radius_m": orb.radius(),
+		"launched_without_teleport": launched, "launch_speed_m_s": launch_speed, "finished": finished,
+		"no_terrain_edit": svc.get_revision() == revision, "brush_unchanged": is_equal_approx(controller.radius, radius0),
+		"frame_ms": timings, "frame_gate_applied": windowed})
+	# Captura opcional depois de fechar a amostragem: readback não entra no benchmark.
+	if _screens:
+		player.input_enabled = true
+		player.camera_rig.set_view(0.0, deg_to_rad(-12.0))
+		if ab.begin_water_orb():
+			await _frames(60)
+			await _snap("p4e_water_orb_hold")
+		ab.cancel_all()
+		player.input_enabled = false
+	await main.request_world_reset()
+
+
+func _p4e_orb_body_case(mass: float, ignite: bool) -> Dictionary:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var original := orb.tuning
+	orb.tuning = original.duplicate(true)
+	orb.tuning.visual_enabled = false
+	var body := _air_crate(base + Vector3(0, 1.6, -8), mass)
+	var state := materials.state_of(body)
+	if ignite: _apply_direct(ElementalEvent.Kind.HEAT, body, 450.0)
+	var burning_before := state.burning
+	var temp_before := state.temperature
+	var watch := {"contacts": 0, "wet_at_fx": 0.0, "temperature_at_fx": temp_before, "burning_at_fx": burning_before, "event_id": 0}
+	var on_contact := func(kind: StringName, data: Dictionary):
+		if kind == &"water_orb_impact":
+			watch.contacts += 1
+			watch.wet_at_fx = state.wetness
+			watch.temperature_at_fx = state.temperature
+			watch.burning_at_fx = state.burning
+			watch.event_id = data.get("event_id", 0)
+	orb.fx_event.connect(on_contact)
+	var formed := ab.begin_water_orb()
+	await _frames(20)
+	await _aim_settle(MaterialResponseSystem.body_center(body))
+	var start := body.global_position
+	var impacts0: int = orb.get_stats().impacts
+	var impulse0: float = orb.get_stats().impulse_ns
+	ab.release_water_orb()
+	var finished := await _wait_until(func(): return orb.phase == "", 2.0)
+	await _frames(12)
+	var impulse: float = orb.get_stats().impulse_ns - impulse0
+	var speed := body.linear_velocity.length()
+	var expected := impulse / mass
+	var result := {"formed": formed, "finished": finished, "mass_kg": mass, "impulse_ns": impulse, "speed_m_s": speed,
+		"expected_delta_v": expected, "moved_m": body.global_position.distance_to(start), "burning_before": burning_before,
+		"temperature_before": temp_before, "wetness": state.wetness, "visual_disabled": not orb.tuning.visual_enabled,
+		"impacts": orb.get_stats().impacts - impacts0, "fx": watch.duplicate(),
+		"ok": formed and finished and orb.get_stats().impacts - impacts0 == 1 and watch.contacts == 1 and watch.event_id > 0 \
+			and impulse > 0.0 and expected > 0.0 and absf(speed - expected) <= expected * 0.05 \
+			and state.wetness > 0.5 and watch.wet_at_fx > 0.5 and (not ignite or (burning_before and not watch.burning_at_fx \
+			and watch.temperature_at_fx < temp_before - 20.0))}
+	orb.fx_event.disconnect(on_contact)
+	orb.tuning = original
+	ab.cancel_all()
+	return result
+
+
+func _t68_water_orb_contact() -> void:
+	var light := await _p4e_orb_body_case(20.0, true)
+	var heavy := await _p4e_orb_body_case(2000.0, false)
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var wall_original := orb.tuning
+	orb.tuning = wall_original.duplicate(true)
+	orb.tuning.launch_speed = 60.0
+	var wall := _p36_thin_wall(base + Vector3(0, 1.6, -6), Vector3(4, 4, 0.001))
+	var exposed := _air_crate(base + Vector3(0.95, 1.6, -5.3))
+	var behind := _air_crate(base + Vector3(0, 1.6, -6.7))
+	exposed.freeze = true
+	behind.freeze = true
+	var exposed_state := materials.state_of(exposed)
+	var behind_state := materials.state_of(behind)
+	_apply_direct(ElementalEvent.Kind.HEAT, exposed, 80.0)
+	_apply_direct(ElementalEvent.Kind.HEAT, behind, 80.0)
+	await _aim_settle(wall.global_position)
+	var revision := svc.get_revision()
+	var hits0: int = orb.get_stats().impacts
+	var terrain0: int = orb.get_stats().terrain_impacts
+	var formed := ab.begin_water_orb()
+	await _frames(20)
+	await _aim_settle(wall.global_position)
+	ab.release_water_orb()
+	var finished := await _wait_until(func(): return orb.phase == "", 2.0)
+	await _frames(4)
+	var occlusion := {"formed": formed, "finished": finished, "wall_thickness_m": 0.001,
+		"launch_speed_m_s": orb.tuning.launch_speed, "step_m": orb.tuning.launch_speed / float(Engine.physics_ticks_per_second),
+		"orb_diameter_m": orb.radius() * 2.0,
+		"impacts": orb.get_stats().impacts - hits0, "terrain_contacts": orb.get_stats().terrain_impacts - terrain0,
+		"exposed_wetness": exposed_state.wetness, "behind_wetness": behind_state.wetness,
+		"exposed_temperature": exposed_state.temperature, "behind_temperature": behind_state.temperature,
+		"ok": formed and finished and orb.get_stats().impacts - hits0 == 1 and orb.get_stats().terrain_impacts - terrain0 == 1 \
+			and orb.tuning.launch_speed / float(Engine.physics_ticks_per_second) > orb.radius() * 2.0 \
+			and exposed_state.wetness > 0.01 and behind_state.wetness < 0.001 \
+			and exposed_state.temperature < behind_state.temperature - 1.0 and svc.get_revision() == revision}
+	orb.tuning = wall_original
+	base = await _p3_lab(1)
+	var original := orb.tuning
+	orb.tuning = original.duplicate(true)
+	orb.tuning.max_range = 3.0
+	var remote := _air_crate(base + Vector3(0, 1.6, -10))
+	var remote_state := materials.state_of(remote)
+	await _aim_settle(MaterialResponseSystem.body_center(remote))
+	var dissipated0: int = orb.get_stats().dissipated
+	hits0 = orb.get_stats().impacts
+	formed = ab.begin_water_orb()
+	await _frames(12)
+	ab.release_water_orb()
+	finished = await _wait_until(func(): return orb.phase == "", 2.0)
+	var range_case := {"range_m": orb.tuning.max_range, "formed": formed, "finished": finished,
+		"remote_wetness": remote_state.wetness, "remote_speed_m_s": remote.linear_velocity.length(),
+		"ok": formed and finished and orb.get_stats().dissipated == dissipated0 + 1 and orb.get_stats().impacts == hits0 \
+			and remote_state.wetness < 0.001 and remote.linear_velocity.length() < 0.001}
+	orb.tuning = original
+	base = await _p3_lab(1)
+	var ground := _ground_at(base + Vector3(0, 0, -8))
+	await _aim_settle(ground)
+	formed = ab.begin_water_orb()
+	await _frames(20)
+	await _aim_settle(ground)
+	hits0 = orb.get_stats().impacts
+	terrain0 = orb.get_stats().terrain_impacts
+	revision = svc.get_revision()
+	ab.release_water_orb()
+	finished = await _wait_until(func(): return orb.phase == "", 2.0)
+	var ground_case := {"finished": finished, "center_y": orb.position.y, "ground_y": ground.y,
+		"ok": formed and finished and orb.get_stats().impacts == hits0 + 1 \
+			and orb.get_stats().terrain_impacts == terrain0 + 1 and svc.get_revision() == revision \
+			and orb.position.y >= ground.y + orb.radius() - 0.05}
+	base = await _p3_lab(1)
+	orb.tuning = original.duplicate(true)
+	orb.tuning.nominal_liters = 10.0
+	_p36_thin_wall(player.global_position + Vector3(0, 1.6, -0.45), Vector3(4, 4, 0.001))
+	await _frames(2)
+	var formed0: int = orb.get_stats().formed
+	var blocked_formation: bool = not ab.begin_water_orb() and orb.phase == "" and orb.get_stats().formed == formed0
+	orb.tuning = original
+	ab.cancel_all()
+	player.input_enabled = false
+	_record("T68", "Orbe varre contato único, transfere impulso/WET antes do FX, apaga chama e respeita parede e alcance",
+		light.ok and heavy.ok and light.speed_m_s > heavy.speed_m_s * 4.0 and occlusion.ok and range_case.ok and ground_case.ok and blocked_formation,
+		{"light_burning_body": light, "heavy_body": heavy, "thin_wall_occlusion": occlusion,
+		"range_without_remote_contact": range_case, "voxel_ground": ground_case, "formation_blocked_by_thin_wall": blocked_formation})
+	await main.request_world_reset()
+
+
+func _t69_water_orb_lifecycle() -> void:
+	const SLOT := "p4e_orb_cancel"
+	var ab: AbilityController = main.abilities
+	await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var radius0 := controller.radius
+	var old_capture := ab.require_captured_mouse
+	var old_mouse := Input.mouse_mode
+	var cases := {}
+	_p4b_lmb(true)
+	var jet_first: bool = jet.active and ab.holding and not ab.begin_water_orb() and orb.phase == ""
+	_p4b_lmb(false)
+	_p4c_rmb(true)
+	var orb_first := orb.phase == "hold"
+	_p4b_lmb(true)
+	orb_first = orb_first and not jet.active and not ab.holding
+	_p4c_rmb(false)
+	_p4b_lmb(false)
+	orb_first = orb_first and orb.phase == "flight" and not jet.active
+	ab.cancel_all()
+	cases["first_button_wins"] = {"jet_first": jet_first, "orb_first": orb_first, "ok": jet_first and orb_first}
+	var outside := []
+	for index in 4:
+		ab.select(index)
+		var before := controller.radius
+		_p4a_wheel(true)
+		await _frames(1)
+		outside.append(is_equal_approx(controller.radius, before + controller.radius_step))
+		_p4a_wheel(false)
+		await _frames(1)
+	controller.radius = radius0
+	ab.select(1)
+	var slot_ready: bool = await main.request_world_save(SLOT)
+	for flight: bool in [false, true]:
+		for kind: String in ["select", "input_disabled", "mouse_lost", "escape", "reset", "save", "load"]:
+			await _p3_lab(1)
+			player.camera_rig.set_view(0.0, deg_to_rad(15.0))
+			_p4c_rmb(true)
+			var started := orb.phase == "hold"
+			if flight:
+				_p4c_rmb(false)
+				started = started and orb.phase == "flight"
+			_p4a_key(KEY_E, true)
+			var impacts0: int = orb.get_stats().impacts
+			var at_signal := {}
+			var probe := func(_slot := ""):
+				at_signal["clean"] = orb.phase == "" and orb.velocity.is_zero_approx() and not ab.holding
+			var sig: Signal = svc.world_reset_started
+			if kind == "save": sig = svc.world_save_started
+			elif kind == "load": sig = svc.world_load_started
+			if kind in ["reset", "save", "load"]: sig.connect(probe)
+			var command_ok := true
+			if kind == "select": ab.select(0)
+			elif kind == "input_disabled": player.input_enabled = false
+			elif kind == "mouse_lost":
+				ab.require_captured_mouse = true
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			elif kind == "escape":
+				ab.require_captured_mouse = false
+				_p4a_key(KEY_ESCAPE, true)
+				Input.flush_buffered_events()
+				_p4a_key(KEY_ESCAPE, false)
+				Input.flush_buffered_events()
+			elif kind == "reset": command_ok = await main.request_world_reset()
+			elif kind == "save": command_ok = await main.request_world_save(SLOT)
+			else: command_ok = await main.request_world_load(SLOT)
+			if sig.is_connected(probe): sig.disconnect(probe)
+			await _frames(2)
+			var height := orb.hold_height
+			var distance := orb.hold_distance
+			_p4c_rmb(false)
+			await _frames(4)
+			var fx_stats: Dictionary = main.fx.get_stats()
+			var clean: bool = orb.phase == "" and orb.velocity.is_zero_approx() and not ab.holding \
+				and orb.get_stats().impacts == impacts0 and is_equal_approx(height, orb.hold_height) \
+				and is_equal_approx(distance, orb.hold_distance) and not fx_stats.get("orb_visible", false) \
+				and not fx_stats.get("orb_trail_emitting", false)
+			cases["%s_%s" % ["flight" if flight else "hold", kind]] = {"started": started, "command_ok": command_ok,
+				"clean_at_signal": at_signal.get("clean", true), "clean_after": clean,
+				"ok": started and command_ok and clean and bool(at_signal.get("clean", true))}
+			_p4a_key(KEY_E, false)
+			ab.require_captured_mouse = old_capture
+			Input.mouse_mode = old_mouse
+			player.input_enabled = true
+			ab.cancel_all()
+	await _p3_lab(1)
+	var restarted := ab.begin_water_orb()
+	var defaults: bool = restarted and is_equal_approx(orb.hold_height, orb.tuning.initial_height) \
+		and is_equal_approx(orb.hold_distance, orb.tuning.initial_distance)
+	ab.cancel_all()
+	_p4a_key(KEY_Q, false)
+	_p4a_key(KEY_E, false)
+	_p4c_rmb(false)
+	ab.require_captured_mouse = old_capture
+	Input.mouse_mode = old_mouse
+	controller.radius = radius0
+	player.input_enabled = false
+	_record("T69", "Orbe mantém exclusão jato/RMB e pincel; seleção/input/mouse/Esc/reset/save/load cancelam hold e voo sem resíduos",
+		slot_ready and defaults and outside.all(func(passed): return passed) and cases.values().all(func(c): return c.ok),
+		{"slot_ready": slot_ready, "wheel_outside_hold_by_element": outside, "restart_defaults": defaults, "cases": cases})
 	await main.request_world_reset()

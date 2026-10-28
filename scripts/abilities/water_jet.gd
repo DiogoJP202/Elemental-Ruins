@@ -9,6 +9,7 @@ const SPLASH_RADIUS := 1.2
 const TUNING_PATH := "res://data/abilities/water_tuning.tres"
 
 var tuning: WaterTuning
+var orb := WaterOrb.new()
 var active := false
 var pressure := 0.0
 var packets: Array[Dictionary] = []
@@ -29,6 +30,10 @@ func _init() -> void:
 	display_name = "Jato d'água"
 	input_mode = "hold"
 	tuning = load(TUNING_PATH)
+
+func setup(p_controller) -> void:
+	super.setup(p_controller)
+	orb.setup(p_controller)
 
 func get_stats() -> Dictionary:
 	var data := _stats.duplicate()
@@ -75,6 +80,7 @@ func _emit_packet(duration: float) -> void:
 	_stats.max_live = maxi(_stats.max_live, packets.size())
 
 func physics_tick(delta: float) -> void:
+	orb.physics_tick(delta)
 	if not active:
 		return
 	contact_age += delta
@@ -129,6 +135,7 @@ func on_release() -> void:
 	cancel()
 
 func cancel() -> void:
+	orb.cancel()
 	active = false
 	pressure = 0.0
 	packets.clear()
@@ -139,4 +146,6 @@ func clear() -> void:
 	cancel()
 
 func status() -> String:
+	if orb.phase != "":
+		return orb.status()
 	return "pressão %d%% · %d pacotes" % [roundi(pressure * 100), packets.size()] if active else last_result

@@ -8,6 +8,7 @@ const LEGEND := "WASD mover · Shift correr · Space pular · Mouse câmera · E
 	+ "1 Terra · 2 Água · 3 Fogo · 4 Ar · LMB usar o poder (Terra e Água: segure)\n" \
 	+ "Terra: mire chão ou rocha solta · Q/E altura · roda distância · solte LMB para lançar\n" \
 	+ "RMB (Terra): segure para prévia do pilar · solte para criar · trocar elemento cancela\n" \
+	+ "Água: LMB jato · segure RMB orbe · Q/E altura · roda distância · solte RMB para lançar\n" \
 	+ "F (Terra): segure para prévia da fissura · solte para abrir o chão\n" \
 	+ "G escavar · H adicionar · N suavizar (segure) · J túnel · K rampa · M material do H · roda / [ ] raio\n" \
 	+ "R extrair rocha · T impulso de teste no corpo mirado · B caixa de teste\n" \

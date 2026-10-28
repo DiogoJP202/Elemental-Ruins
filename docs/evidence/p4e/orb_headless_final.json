@@ -1,0 +1,292 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T11:18:14",
+  "duracao_s": 31.57,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 969,
+    "p4e_orb_frame_ms": {
+      "max": 28.43,
+      "media": 6.95,
+      "min": 0.16,
+      "n": 902,
+      "p95": 8.2,
+      "p99": 9.9
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 969,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "brush_unchanged": true,
+        "continuous": true,
+        "distance_min_max_m": [
+          2,
+          7
+        ],
+        "farthest_m": 4.14398956298828,
+        "finished": true,
+        "formed": true,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 28.43,
+          "media": 6.95,
+          "min": 0.16,
+          "n": 902,
+          "p95": 8.2,
+          "p99": 9.9
+        },
+        "height_min_max_m": [
+          0.6,
+          2.76666666666667
+        ],
+        "horizontal_m": 5.07323551177979,
+        "launch_speed_m_s": 22.0001564025879,
+        "launched_without_teleport": true,
+        "max_control_step_m": 0.133337259292603,
+        "no_terrain_edit": true,
+        "nominal_liters": 150,
+        "opposite_keys_neutral": true,
+        "player_moved_m": 0.727771759033203,
+        "radius_m": 0.329610377550125,
+        "raised_m": 0.929862499237061,
+        "wall_blocked": true,
+        "wall_distance_m": 4.5,
+        "wheel_step_m": 0.5
+      },
+      "id": "T67",
+      "status": "PASS",
+      "titulo": "Orbe: RMB, Q/E, roda, câmera e movimento contínuo; parede bloqueia e soltar lança, com benchmark curto"
+    },
+    {
+      "detalhes": {
+        "heavy_body": {
+          "burning_before": false,
+          "expected_delta_v": 0.9,
+          "finished": true,
+          "formed": true,
+          "fx": {
+            "burning_at_fx": false,
+            "contacts": 1,
+            "event_id": 20,
+            "temperature_at_fx": 20,
+            "wet_at_fx": 0.9
+          },
+          "impacts": 1,
+          "impulse_ns": 1800,
+          "mass_kg": 2000,
+          "moved_m": 0.195009261369705,
+          "ok": true,
+          "speed_m_s": 0.900000035762787,
+          "temperature_before": 20,
+          "visual_disabled": true,
+          "wetness": 0.891333333333333
+        },
+        "light_burning_body": {
+          "burning_before": true,
+          "expected_delta_v": 8,
+          "finished": true,
+          "formed": true,
+          "fx": {
+            "burning_at_fx": false,
+            "contacts": 1,
+            "event_id": 13,
+            "temperature_at_fx": 150,
+            "wet_at_fx": 0.9
+          },
+          "impacts": 1,
+          "impulse_ns": 160,
+          "mass_kg": 20,
+          "moved_m": 1.733353972435,
+          "ok": true,
+          "speed_m_s": 8,
+          "temperature_before": 470,
+          "visual_disabled": true,
+          "wetness": 0.891333333333333
+        },
+        "range_without_remote_contact": {
+          "finished": true,
+          "formed": true,
+          "ok": true,
+          "range_m": 3,
+          "remote_speed_m_s": 0,
+          "remote_wetness": 0
+        },
+        "thin_wall_occlusion": {
+          "behind_temperature": 93.5,
+          "behind_wetness": 0,
+          "exposed_temperature": 30.4993758201599,
+          "exposed_wetness": 0.3150031208992,
+          "finished": true,
+          "formed": true,
+          "impacts": 1,
+          "launch_speed_m_s": 60,
+          "ok": true,
+          "orb_diameter_m": 0.65922075510025,
+          "step_m": 1,
+          "terrain_contacts": 1,
+          "wall_thickness_m": 0.001
+        },
+        "voxel_ground": {
+          "center_y": 0.351864606142044,
+          "finished": true,
+          "ground_y": 0.0199999809265137,
+          "ok": true
+        }
+      },
+      "id": "T68",
+      "status": "PASS",
+      "titulo": "Orbe varre contato único, transfere impulso/WET antes do FX, apaga chama e respeita parede e alcance"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "first_button_wins": {
+            "jet_first": true,
+            "ok": true,
+            "orb_first": true
+          },
+          "flight_escape": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_input_disabled": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_mouse_lost": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_escape": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_input_disabled": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_mouse_lost": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          }
+        },
+        "restart_defaults": true,
+        "slot_ready": true,
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T69",
+      "status": "PASS",
+      "titulo": "Orbe mantém exclusão jato/RMB e pincel; seleção/input/mouse/Esc/reset/save/load cancelam hold e voo sem resíduos"
+    }
+  ],
+  "run_id": "a16522c9bdfd",
+  "testes_ids": [
+    "T1",
+    "T67",
+    "T68",
+    "T69"
+  ],
+  "testes_pass": 4,
+  "testes_total": 4,
+  "video_adapter": ""
+}

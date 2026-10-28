@@ -7,6 +7,7 @@ extends Node3D
 ##   vapor     disparo único ao apagar com água
 ##   carvão    corpo carbonizado escurece (material_override), mesmo depois de apagado
 ##   jato      cilindro translúcido da mão ao ponto atingido + respingo
+##   orbe      núcleo legível sem partículas; deformação, trilha e respingo só leem o estado real
 ##   fogo      núcleo + chamas periféricas por projétil (slot estável por id), brasas na antecipação,
 ##             trilha térmica chama→brasa→fumaça em voo, clarão no impacto, vapor ao secar alvo molhado,
 ##             baforada de fumaça na dissipação por alcance
@@ -33,7 +34,7 @@ var _steam: Array[GPUParticles3D] = []
 var _blasts: Array[GPUParticles3D] = []
 var _gusts: Array[GPUParticles3D] = []
 var _fizzles: Array[GPUParticles3D] = []
-var _next := {"steam": 0, "blast": 0, "gust": 0, "fizzle": 0, "dust": 0}
+var _next := {"steam": 0, "blast": 0, "gust": 0, "fizzle": 0, "dust": 0, "water_orb": 0}
 var _dust: Array[GPUParticles3D] = []
 var _rings: Array[MeshInstance3D] = []
 var _ring_slots := {}  # wave id → índice do pool, estável durante a vida da onda
@@ -43,6 +44,11 @@ var _water_snapshot: Array = []
 var _water_tail := 0.0
 var _water_clock := 0.0
 var _spray: GPUParticles3D
+var _water_orb_mesh: MeshInstance3D
+var _water_orb_material: StandardMaterial3D
+var _water_orb_trail: GPUParticles3D
+var _water_orb_splashes: Array[GPUParticles3D] = []
+var _orb_was_flying := false
 var _balls: Array[MeshInstance3D] = []
 var _fire_trails: Array[GPUParticles3D] = []
 var _halos: Array[MeshInstance3D] = []
@@ -52,7 +58,7 @@ var _char_accum := 0.0
 var _stats := {"flames_created": 0, "flames_skipped": 0, "steam": 0, "blasts": 0, "gusts": 0, "charred": 0,
 	"fire_anticipations": 0, "fire_launches": 0, "fire_dissipations": 0, "fire_steam": 0, "fire_slots_missing": 0,
 	"fire_vfx_frames": 0, "fire_vfx_usec": 0, "fire_vfx_usec_max": 0, "air_dust_contacts": 0, "air_dust_front": 0,
-	"air_rings_missing": 0}
+	"air_rings_missing": 0, "water_orb_impacts": 0, "water_orb_dissipations": 0}
 
 
 func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) -> void:
@@ -67,6 +73,13 @@ func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) 
 	var air := abilities.get_ability(&"air_gust")
 	if air != null:
 		air.fx_event.connect(_on_air_event)
+	var water := abilities.get_ability(&"water_jet") as WaterJet
+	if water != null:
+		water.orb.fx_event.connect(_on_water_orb_event)
+	# Transições limpam também partículas de impactos anteriores, no próprio comando.
+	abilities.terrain_service.world_reset_started.connect(_clear_water_orb)
+	abilities.terrain_service.world_save_started.connect(func(_slot): _clear_water_orb())
+	abilities.terrain_service.world_load_started.connect(func(_slot): _clear_water_orb())
 
 
 func get_stats() -> Dictionary:
@@ -74,6 +87,9 @@ func get_stats() -> Dictionary:
 	d["flames_active"] = _flames.size()
 	d["water_instances"] = _beam.multimesh.visible_instance_count if _beam != null else 0
 	d["water_spray"] = _spray.emitting if _spray != null else false
+	d["orb_visible"] = _water_orb_mesh.visible if _water_orb_mesh != null else false
+	d["orb_trail_emitting"] = _water_orb_trail.emitting if _water_orb_trail != null else false
+	d["orb_splash_pool"] = _water_orb_splashes.size()
 	d["fire_trail_pool"] = _fire_trails.size()
 	d["fire_slots_live"] = _fire_slots.size()
 	d["air_rings_live"] = _ring_slots.size()
@@ -159,6 +175,7 @@ func _ready() -> void:
 	add_child(_beam)
 	_spray = _burst_emitter("Spray", _process_material(Vector3.UP, 60.0, 1.0, 3.0, Vector3(0, -6.0, 0), Color("#C7E9EE")), 0.3, 0.16)
 	_spray.one_shot = false
+	_create_water_orb_visuals()
 	for i in FireBurst.MAX_PROJECTILES:
 		var ball := MeshInstance3D.new()
 		ball.name = "FireBall%d" % i
@@ -202,6 +219,7 @@ func _process(delta: float) -> void:
 	if abilities == null or materials == null:
 		return
 	_update_jet(delta)
+	_update_water_orb()
 	var t0 := Time.get_ticks_usec()
 	_update_fireballs()
 	_update_air()
@@ -305,6 +323,112 @@ func _darken_if_charred(body: Node3D) -> void:
 
 
 # --- Poderes --------------------------------------------------------------------------------
+
+func _create_water_orb_visuals() -> void:
+	_water_orb_mesh = MeshInstance3D.new()
+	_water_orb_mesh.name = "WaterOrb"
+	var sphere := SphereMesh.new()
+	sphere.radius = 1.0
+	sphere.height = 2.0
+	sphere.radial_segments = 20
+	sphere.rings = 10
+	_water_orb_material = _unshaded(Color(0.34, 0.76, 0.92, 0.72))
+	sphere.material = _water_orb_material
+	_water_orb_mesh.mesh = sphere
+	_water_orb_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_water_orb_mesh.visible = false
+	add_child(_water_orb_mesh)
+	# Brilho interno original: mantém leitura de volume sem shader ou partículas.
+	var glint := MeshInstance3D.new()
+	glint.name = "Glint"
+	var inner := SphereMesh.new()
+	inner.radius = 0.6
+	inner.height = 1.2
+	inner.radial_segments = 12
+	inner.rings = 6
+	inner.material = _unshaded(Color(0.8, 0.96, 1.0, 0.32))
+	glint.mesh = inner
+	glint.position = Vector3(-0.16, 0.23, 0.08)
+	glint.scale = Vector3(0.7, 0.85, 0.6)
+	glint.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_water_orb_mesh.add_child(glint)
+	_water_orb_trail = _burst_emitter("WaterOrbTrail",
+		_process_material(Vector3.BACK, 30.0, 0.2, 0.8, Vector3(0, -1.5, 0), Color("#A5E5F2")), 0.2, 0.12)
+	_water_orb_trail.amount = 8
+	_water_orb_trail.one_shot = false
+	_water_orb_trail.visible = false
+	for i in 2:
+		_water_orb_splashes.append(_burst_emitter("WaterOrbSplash%d" % i,
+			_process_material(Vector3.UP, 75.0, 2.0, 4.0, Vector3(0, -4.0, 0), Color("#A5E5F2")), 0.45, 0.18))
+
+
+func _update_water_orb() -> void:
+	var jet := abilities.get_ability(&"water_jet") as WaterJet
+	if jet == null or jet.orb.phase == "":
+		_clear_water_orb(false)
+		return
+	var orb = jet.orb
+	var t = orb.tuning
+	if not t.visual_enabled:
+		_clear_water_orb()
+		return
+	_water_orb_mesh.visible = true
+	_water_orb_mesh.global_position = orb.position
+	_water_orb_material.albedo_color = t.color
+	var wobble := clampf(t.wobble, 0.0, 0.1)
+	var ripple := sin(orb.age * 5.7) * wobble
+	var formation: float = smoothstep(0.0, 0.16, orb.age) if orb.phase == "hold" else 1.0
+	# A silhueta permanece dentro do raio consultado pela física, inclusive na deformação.
+	_water_orb_mesh.scale = Vector3(1.0 + ripple, 1.0 - ripple * 0.55,
+		1.0 + sin(orb.age * 7.3) * wobble * 0.5) * orb.radius() * 0.9 * maxf(formation, 0.05)
+	var flying: bool = orb.phase == "flight" and t.trail_amount > 0
+	_water_orb_trail.visible = flying
+	_water_orb_trail.global_position = orb.position
+	_water_orb_trail.amount = clampi(t.trail_amount, 1, 12)
+	_water_orb_trail.lifetime = clampf(t.trail_lifetime_s, 0.05, 0.5)
+	if flying and not _orb_was_flying:
+		_water_orb_trail.restart()
+	_water_orb_trail.emitting = flying
+	if flying:
+		var direction: Vector3 = -orb.velocity.normalized()
+		(_water_orb_trail.process_material as ParticleProcessMaterial).direction = direction
+	_orb_was_flying = flying
+
+
+func _on_water_orb_event(kind: StringName, data: Dictionary) -> void:
+	match kind:
+		&"water_orb_impact":
+			_clear_water_orb(false)
+			var jet := abilities.get_ability(&"water_jet") as WaterJet
+			if jet == null or not jet.orb.tuning.visual_enabled:
+				return
+			var emitter := _water_orb_splashes[_next.water_orb]
+			emitter.visible = true
+			var splash := emitter.process_material as ParticleProcessMaterial
+			var spread_scale := clampf(float(data.get("radius", 0.33)) / 0.33, 0.5, 2.0)
+			splash.initial_velocity_min = 2.0 * spread_scale
+			splash.initial_velocity_max = 4.0 * spread_scale
+			_fire_burst(_water_orb_splashes, "water_orb", data.position, data.get("normal", Vector3.UP))
+			_stats.water_orb_impacts += 1
+		&"water_orb_cancel":
+			_clear_water_orb()
+		&"water_orb_dissipate":
+			_clear_water_orb()
+			_stats.water_orb_dissipations += 1
+
+
+func _clear_water_orb(clear_splashes := true) -> void:
+	_orb_was_flying = false
+	if _water_orb_mesh != null:
+		_water_orb_mesh.visible = false
+	if _water_orb_trail != null:
+		_water_orb_trail.emitting = false
+		_water_orb_trail.visible = false
+	if clear_splashes:
+		for emitter in _water_orb_splashes:
+			emitter.emitting = false
+			emitter.visible = false
+
 
 func _update_jet(delta := 0.0) -> void:
 	var jet := abilities.get_ability(&"water_jet") as WaterJet

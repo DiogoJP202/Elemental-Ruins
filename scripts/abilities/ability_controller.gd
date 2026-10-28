@@ -77,6 +77,8 @@ func use_pressed() -> bool:
 	var a := current_ability()
 	if a is EarthLiftThrow and (a.pillar_aiming or a.fissure_aiming or a.phase in ["pillar_pending", "fissure_pending"]):
 		return false
+	if a is WaterJet and a.orb.phase != "":
+		return false
 	holding = a.input_mode == "hold"
 	a.on_press()
 	ability_used.emit(a.id, "press")
@@ -111,7 +113,7 @@ func next_event_context() -> Dictionary:
 ## A roda é consumida antes de qualquer _unhandled_input do pincel, independentemente
 ## da ordem dos nós. Teclas [ ] continuam chegando ao TerrainEditController.
 func _input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton or not event.pressed or not can_manipulate_earth():
+	if not event is InputEventMouseButton or not event.pressed or not (can_manipulate_earth() or can_manipulate_water()):
 		return
 	var step := 0.0
 	if event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -120,8 +122,12 @@ func _input(event: InputEvent) -> void:
 		step = 1.0
 	else:
 		return
-	var earth := current_ability() as EarthLiftThrow
-	earth.adjust_hold_distance(step * event.factor * earth.tuning.hold_distance_step)
+	if can_manipulate_water():
+		var water := current_ability() as WaterJet
+		water.orb.adjust_hold_distance(step * event.factor * water.orb.tuning.distance_step)
+	else:
+		var earth := current_ability() as EarthLiftThrow
+		earth.adjust_hold_distance(step * event.factor * earth.tuning.hold_distance_step)
 	get_viewport().set_input_as_handled()
 
 
@@ -132,8 +138,45 @@ func can_manipulate_earth() -> bool:
 	return earth != null and earth.can_manipulate()
 
 
+func can_manipulate_water() -> bool:
+	var water := current_ability() as WaterJet
+	return water != null and water.orb.phase == "hold" and _can_act() \
+		and (not require_captured_mouse or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED)
+
+
+func begin_water_orb() -> bool:
+	var water := current_ability() as WaterJet
+	if water == null or holding or water.active or not _can_act() \
+			or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
+		return false
+	var formed := water.orb.begin()
+	if not formed:
+		water.last_result = water.orb.last_result
+	return formed
+
+
+func release_water_orb() -> void:
+	var water := current_ability() as WaterJet
+	if water == null:
+		return
+	if can_manipulate_water():
+		water.orb.release()
+	else:
+		water.orb.cancel()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if player == null or not player.input_enabled:
+		return
+	var water := current_ability() as WaterJet
+	if water != null and event.is_action_pressed(&"toggle_mouse_capture"):
+		water.orb.cancel()
+	if water != null and event.is_action(&"water_orb"):
+		if event.is_action_pressed(&"water_orb"):
+			begin_water_orb()
+		elif event.is_action_released(&"water_orb"):
+			release_water_orb()
+		get_viewport().set_input_as_handled()
 		return
 	for i in ElementalKeys.ACTIONS.size():
 		if event.is_action_pressed(ElementalKeys.ACTIONS[i]):
@@ -169,6 +212,10 @@ func _physics_process(delta: float) -> void:
 	if abilities.is_empty():
 		return
 	var earth := current_ability() as EarthLiftThrow
+	var water := current_ability() as WaterJet
+	if water != null and water.orb.phase != "" and (not _can_act() \
+			or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
+		water.orb.cancel()
 	if earth != null and (earth.pillar_aiming or earth.fissure_aiming or earth.phase in ["pillar_pending", "fissure_pending"]) \
 			and (not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
 		earth.cancel()

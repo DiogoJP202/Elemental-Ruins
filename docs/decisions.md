@@ -516,3 +516,13 @@ teleporte ou fragmentação artificial. Mesh/collider continuam assíncronos. A 
 mostra a largura nominal sobre o piso; não reproduz a superfície voxel final. VFX só são
 emitidos após a edição confirmada. Compressão permanece futura. Validação direcionada e
 limitações do P4D ficam no README; a bateria integral anterior é evidência do P4C.
+
+## D55. P4E: orbe como estado de gameplay composto na Água
+`WaterJet` mantém o jato LMB e possui um `WaterOrb` com ciclo próprio no RMB, preservando
+os quatro seletores do controller. O orbe reutiliza `Ability` para eventos e identidade,
+MaterialResponseSystem para KINETIC/WET/oclusão e ElementalFx para apresentação. O primeiro
+modo ativo bloqueia o outro; cancelamento descarta hold e voo. Posição/velocidade são
+contínuas com esfera varrida; não se usa um corpo rígido de água nem se generaliza a Terra.
+Os 150 L vêm de uma reserva abstrata explícita do Criativo; raio fixado por formação,
+intensidade configurável, sem conservação de fluido, captação fictícia ou poça persistente.
+P4E foi autorizado apesar do FAIL P4D/T26, que permanece histórico e fora desta tarefa.
