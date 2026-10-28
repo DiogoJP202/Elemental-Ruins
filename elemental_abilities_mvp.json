@@ -74,7 +74,7 @@
       "input_mode": "charge",
       "milestone": "M2",
       "implementation_status": "partial_implemented",
-      "implementation_note": "P4D implementou somente a fissura no terreno por F segurado/solto, com validação direcionada; playtest humano pendente e checkpoint de integração não fechado. Compressão de rochas e os parâmetros de carga abaixo continuam planejados.",
+      "implementation_note": "P4D implementou somente a fissura no terreno por F segurado/solto, com validação direcionada; feedback humano positivo sobre posição e controle em 28/10/2026, sem avaliação detalhada por cenário, e checkpoint de integração não fechado. Compressão de rochas e os parâmetros de carga abaixo continuam planejados.",
       "fissure_slice": {
         "input_mode": "hold_preview_release",
         "range_m": 18,

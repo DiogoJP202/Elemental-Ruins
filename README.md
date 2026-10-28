@@ -11,7 +11,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
 **P4B — checkpoint fechado e integrado à main (`266627d`) em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando").
 **P4C — checkpoint fechado e integrado à main (`b84b4c6`, PR #4) em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário.
-**P4D — Fissura de Terra implementada, pronta para playtest:** vala permanente por F (segurar prévia/soltar aplicar), reutilizando PATH subtrativo e os sistemas existentes. T65/T66 aprovados em headless e janela, com benchmark em janela dentro dos limites. As falhas e rechecagens direcionadas estão preservadas abaixo; checkpoint de integração P4D não fechado. Playtest humano NÃO TESTADO.
+**P4D — Fissura de Terra implementada, com feedback humano positivo:** vala permanente por F (segurar prévia/soltar aplicar), reutilizando PATH subtrativo e os sistemas existentes. T65/T66 aprovados em headless e janela, com benchmark em janela dentro dos limites. As falhas e rechecagens direcionadas estão preservadas abaixo; checkpoint de integração P4D não fechado. Feedback humano positivo em 28/10/2026 sobre posição e controle, sem avaliação detalhada por cenário.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -183,7 +183,9 @@ Playtest humano do P4C em 27/10/2026: feedback positivo do usuário ("Funcionou,
 
 O raio padrão de 2 m usa a mesma escala já validada pela coluna do laboratório. Com 1,1 m, a caixa escorregou do topo arredondado nos testes; os critérios de apoio foram mantidos.
 
-### Roteiro manual do P4D — Fissura de Terra (playtest humano NÃO TESTADO)
+### Roteiro manual do P4D — Fissura de Terra
+
+Feedback humano positivo em 28/10/2026 sobre posição e controle da fissura ("sim, pode subir"), sem avaliação detalhada por cenário.
 
 1. Selecione **1**, mire chão livre e segure **F**. Confira a prévia na direção horizontal da câmera; solte para abrir a vala. Apenas segurar não edita o terreno.
 2. O caminho nominal tem 6 m, raio 1 m e centro 0,35 m abaixo do piso amostrado. O alcance de 18 m vale para todo o trajeto; piso ausente, inclinação inválida ou salto de altura maior que 1 m recusam o pedido. Dimensões em `EarthTuning`.
@@ -211,7 +213,7 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
-### P4D — validação direcionada e playtest pendente
+### P4D — validação direcionada e feedback humano
 
 - [Import](docs/evidence/p4d/01_import.log): saída 0 em uma tentativa.
 - [Regressão relacionada headless](docs/evidence/p4d/related_headless.json): **18/20**, com T65/T66 aprovados e zero erros/avisos do motor. T21 falhou porque a seleção omitiu T20, seu pré-requisito; T61 falhou em `one_new_impact`, com as demais verificações verdadeiras.
@@ -229,7 +231,7 @@ Ambos atendem a 20/33/50 ms. [Ambiente registrado](docs/evidence/p4d/environment
 
 As capturas foram inspecionadas: a [prévia](docs/evidence/p4d/screens/03_p4d_fissure_preview.png) mostra a fita verde e a [fissura aplicada](docs/evidence/p4d/screens/04_p4d_fissure.png) mostra a vala. Os PNGs foram movidos do destino fixo do runner para `docs/evidence/p4d/screens/`; os relatórios brutos mantêm os caminhos originais. A captura histórica do P3.6 foi restaurada.
 
-Não foram executados export, persistência entre processos ou bateria completa nesta fatia. Save/reset/load de T65 ocorreram na mesma execução. **Checkpoint de integração P4D não fechado; próximo passo recomendado: playtest humano do F.** Compressão continua planejada; os resultados P4C abaixo são históricos.
+Não foram executados export, persistência entre processos ou bateria completa nesta fatia. Save/reset/load de T65 ocorreram na mesma execução. **Checkpoint de integração P4D não fechado; próximo passo recomendado: esclarecer a variação de T61 antes de fechar a integração.** O usuário confirmou feedback humano positivo em 28/10/2026 ("sim, pode subir"), sem avaliação detalhada por cenário. Os campos de playtest dos relatórios automatizados preservam o estado histórico da execução. Compressão continua planejada; os resultados P4C abaixo são históricos.
 
 ### P4C — validação direcionada e checkpoint de integração
 

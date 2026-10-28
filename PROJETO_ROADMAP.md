@@ -1,6 +1,6 @@
 # ELEMENTAL // RUINS — Roadmap técnico
 
-**Estado atual:** P0–P4C integrados à main (`b84b4c6`, PR #4). Checkpoint P4C: 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos e feedback humano positivo em 27/10/2026. **P4D implementado, pronto para playtest:** primeira fatia da Fissura de Terra, com validação direcionada e benchmark em janela. Checkpoint de integração P4D não fechado; bateria integral não repetida nesta fatia.
+**Estado atual:** P0–P4C integrados à main (`b84b4c6`, PR #4). Checkpoint P4C: 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos e feedback humano positivo em 27/10/2026. **P4D implementado, com feedback humano positivo em 28/10/2026:** primeira fatia da Fissura de Terra, com validação direcionada e benchmark em janela. Checkpoint de integração P4D não fechado; bateria integral não repetida nesta fatia.
 
 ## P0 — prova de terreno volumétrico (concluído)
 Terreno SDF + colisão, personagem 3D, câmera, escavação/adição, túnel sob teto, reset e relatório de compatibilidade/execução. Não fazer poderes completos.
@@ -56,12 +56,12 @@ RMB segurado mostra uma prévia de volume; soltar cria um único PATH aditivo ve
 
 **Integração:** 70/70 em cada um dos quatro modos, uma execução por modo; export e persistência write/read entre processos aprovados no editor e export. Zero erros/avisos, fontes e limites intactos, preset e fixtures preservados. T27/T37/T59/T61/T63 nas duas janelas dentro de 20/33/50 ms. Relatórios em `docs/evidence/p4c/integration/` e resultados no README.
 
-## P4D — Fissura de Terra (implementado; playtest pendente)
+## P4D — Fissura de Terra (implementado; feedback humano positivo)
 Terra selecionada: segurar F mostra a prévia; soltar solicita uma vala permanente de 6 m, raio 1 m e centro 0,35 m abaixo do piso. PATH subtrativo pela fila existente, na direção horizontal da câmera. Alcance de 18 m em todo o caminho, amostras de piso a cada 1 m e recusa de saltos de altura maiores que 1 m. Primeiro obstáculo bloqueia o alvo; remover o solo pode derrubar caixas e estruturas apoiadas ao longo do trajeto.
 
 **Aceite:** cavidade e colisão reais, limites/material/área carregada validados, operação única dentro do limite da fila, save/load/reset existentes e exclusão mútua com rocha/pilar. Troca de elemento, Esc, input desabilitado e reset/save/load cancelam prévia e pedido ainda pendente. Reutilizar EarthLiftThrow, EarthTuning, EarthFx, TerrainBrushQueue e TerrainService. Sem compressão ou ampliação dos outros elementos.
 
-**Validação direcionada:** T65/T66 aprovados em headless e janela; editor em janela 4/4 (T1/T37/T65/T66), zero erros/avisos, T37/T65 dentro de 20/33/50 ms. Regressão relacionada 18/20: T21 sem pré-requisito T20 e T61 na verificação one_new_impact; rechecagem contextual 5/5. A variação de T61 não foi isolada e o FAIL foi preservado. Tentativa inicial de T65 e correção da sonda SDF documentadas no README, sem relaxar tolerâncias. Evidências em `docs/evidence/p4d/`. Sem export, persistência entre processos ou bateria completa nesta fatia; checkpoint de integração P4D não fechado. **Próximo passo: playtest humano do F (NÃO TESTADO).** Compressão permanece futura; P4C continua como baseline integrado.
+**Validação direcionada:** T65/T66 aprovados em headless e janela; editor em janela 4/4 (T1/T37/T65/T66), zero erros/avisos, T37/T65 dentro de 20/33/50 ms. Regressão relacionada 18/20: T21 sem pré-requisito T20 e T61 na verificação one_new_impact; rechecagem contextual 5/5. A variação de T61 não foi isolada e o FAIL foi preservado. Tentativa inicial de T65 e correção da sonda SDF documentadas no README, sem relaxar tolerâncias. Evidências em `docs/evidence/p4d/`. Sem export, persistência entre processos ou bateria completa nesta fatia; checkpoint de integração P4D não fechado. Feedback humano positivo sobre posição e controle em 28/10/2026 ("sim, pode subir"), sem avaliação detalhada por cenário. **Próximo passo: esclarecer a variação de T61 antes de fechar a integração.** Compressão permanece futura; P4C continua como baseline integrado.
 
 ## P4 posterior — 16 habilidades, combinações e visual (futuro)
 Expandir `elemental_abilities_mvp.json`; estados de materiais, gelo, lava, eletricidade, vórtices, shaders Ilustrado/Retro, áudio/animações e modos de jogo.
