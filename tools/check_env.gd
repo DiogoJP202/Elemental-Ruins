@@ -7,7 +7,7 @@ extends SceneTree
 const VOXEL_CLASSES := [
 	"VoxelLodTerrain", "VoxelNode", "VoxelTool", "VoxelToolLodTerrain",
 	"VoxelViewer", "VoxelMesherTransvoxel", "VoxelGeneratorGraph",
-	"VoxelGraphFunction", "VoxelBuffer", "VoxelEngine", "VoxelStreamSQLite",
+	"VoxelGraphFunction", "VoxelBuffer", "VoxelEngine", "VoxelStreamSQLite", "VoxelSaveCompletionTracker",
 ]
 
 
@@ -31,7 +31,7 @@ func _initialize() -> void:
 	for cls: String in VOXEL_CLASSES:
 		var exists := ClassDB.class_exists(cls)
 		print("[check_env] class ", cls, ": ", "OK" if exists else "AUSENTE")
-		if not exists and cls != "VoxelStreamSQLite":
+		if not exists:
 			ok = false
 
 	if Engine.has_singleton("VoxelEngine"):

@@ -57,8 +57,8 @@ de fluidos.
 
 ## Abrir e rodar no editor
 
-1. Abra `godot.windows.editor.x86_64.exe` (o editor **custom**, não o `Godot_v4.7.2-stable_win64.exe` oficial).
-2. No Gerenciador de Projetos, clique em **Importar**, escolha `project.godot` desta pasta e depois **Importar e editar**.
+1. Execute **`open_editor.cmd` nesta pasta**. Ele valida as classes Voxel antes de abrir o projeto no editor custom. Usa `GODOT` se definido; o caminho padrão é `%USERPROFILE%\Tools\Godot\4.7.2-voxel1.7\godot.windows.editor.x86_64.exe`.
+2. Para abrir manualmente, execute `godot.windows.editor.x86_64.exe` (o editor **custom**), clique em **Importar**, escolha `project.godot` desta pasta e depois **Importar e editar**. Abrir `project.godot` por associação do Windows pode iniciar a Godot oficial, que não contém as classes Voxel e gera erros de tipo em cascata. O launcher não altera essa associação.
    O projeto já aparecia na lista do editor oficial; os dois editores compartilham essa lista, então confira
    qual executável está aberto.
 3. Pressione **F5** (cena principal `res://scenes/main.tscn`).
