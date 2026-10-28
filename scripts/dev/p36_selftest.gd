@@ -7,6 +7,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4C: T63 cria/persiste um pilar real e T64 cobre recusas e cancelamentos do RMB.
 ## P4D: T65 escava uma fissura física/persistente e T66 cobre input, limites e cancelamentos.
 ## P4E: T67 manipula/lança o orbe; T68 verifica contato/material/oclusão; T69 seu ciclo de vida.
+## P4F: T70 congela/controla/lança gelo; T71 verifica impacto e limpeza do estado congelado.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -85,6 +86,8 @@ func _run_tests() -> bool:
 	if _should_run("T67"): await _t67_water_orb_control()
 	if _should_run("T68"): await _t68_water_orb_contact()
 	if _should_run("T69"): await _t69_water_orb_lifecycle()
+	if _should_run("T70"): await _t70_ice_control()
+	if _should_run("T71"): await _t71_ice_contact_lifecycle()
 	return true
 
 
@@ -2960,4 +2963,266 @@ func _t69_water_orb_lifecycle() -> void:
 	_record("T69", "Orbe mantém exclusão jato/RMB e pincel; seleção/input/mouse/Esc/reset/save/load cancelam hold e voo sem resíduos",
 		slot_ready and defaults and outside.all(func(passed): return passed) and cases.values().all(func(c): return c.ok),
 		{"slot_ready": slot_ready, "wheel_outside_hold_by_element": outside, "restart_defaults": defaults, "cases": cases})
+	await main.request_world_reset()
+
+
+# --- P4F: o mesmo orbe em dois estados ------------------------------------------------------
+
+func _p4f_c() -> void:
+	_p4a_key(KEY_C, true)
+	Input.flush_buffered_events()
+	_p4a_key(KEY_C, false)
+	Input.flush_buffered_events()
+
+
+func _t70_ice_control() -> void:
+	var ab: AbilityController = main.abilities
+	await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var freezes0: int = orb.get_stats().freezes
+	var ignored := true
+	for index in 4:
+		ab.select(index)
+		_p4f_c()
+		ignored = ignored and orb.get_stats().freezes == freezes0 and not orb.is_frozen()
+	ab.select(1)
+	ab.use_pressed()
+	_p4f_c()
+	ignored = ignored and jet.active and not orb.is_frozen()
+	ab.use_released()
+	_p4c_rmb(true)
+	await _frames(20)
+	var formed: bool = orb.phase == "hold" and not orb.is_frozen()
+	var revision := svc.get_revision()
+	var brush := controller.radius
+	var clock := {"last": Time.get_ticks_usec()}
+	var frame_ms := PackedFloat32Array()
+	var sample := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().process_frame.connect(sample)
+	_p4a_key(KEY_E, true)
+	await _frames(8)
+	var at := orb.position
+	var velocity := orb.velocity
+	var target := orb.target_position
+	var radius := orb.radius()
+	_p4f_c()
+	var preserved: bool = orb.is_frozen() and orb.get_stats().freezes == freezes0 + 1 \
+		and at.distance_to(orb.position) < 0.00001 and velocity.distance_to(orb.velocity) < 0.00001 \
+		and target.distance_to(orb.target_position) < 0.00001 and is_equal_approx(radius, orb.radius())
+	_p4f_c()
+	var once: bool = orb.is_frozen() and orb.get_stats().freezes == freezes0 + 1
+	var height0 := orb.hold_height
+	await _frames(18)
+	_p4a_key(KEY_E, false)
+	var raised: bool = orb.hold_height > height0 + 0.4
+	var distance0 := orb.hold_distance
+	_p4a_wheel(true)
+	Input.flush_buffered_events()
+	var wheel: bool = is_equal_approx(orb.hold_distance, distance0 - orb.tuning.distance_step) and is_equal_approx(brush, controller.radius)
+	player.camera_rig.set_view(0.5, deg_to_rad(-12.0))
+	await _frames(20)
+	var moved: bool = orb.position.distance_to(at) > 0.3
+	player.camera_rig.set_view(0.0, deg_to_rad(-12.0))
+	await _frames(30)
+	var wall_distance := 4.8
+	var wall := _p36_thin_wall(player.global_position + Vector3(0, 2, -wall_distance), Vector3(12, 6, 0.02))
+	await _frames(2)
+	var blocked0: int = orb.get_stats().blocked_motion
+	for i in 20: _p4a_wheel(false)
+	await _frames(50)
+	var blocked: bool = orb.phase == "hold" and orb.is_frozen() and orb.get_stats().blocked_motion > blocked0 \
+		and player.global_position.z - orb.position.z + orb.radius() <= wall_distance + 0.01
+	wall.queue_free()
+	await _frames(2)
+	# Mira elevada: há espaço livre para observar a gravidade antes de qualquer contato.
+	player.camera_rig.set_view(0.0, deg_to_rad(20.0))
+	ab.release_water_orb()
+	var launched: bool = orb.phase == "flight" and orb.is_frozen()
+	var p0 := orb.position
+	var v0 := orb.velocity
+	_p4f_c()
+	var flight_ignored: bool = orb.get_stats().freezes == freezes0 + 1 and orb.is_frozen()
+	await _frames(6)
+	var dt := 1.0 / float(Engine.physics_ticks_per_second)
+	var dv := v0.y - orb.velocity.y
+	var gravity: bool = orb.phase == "flight" and dv >= orb.tuning.ice_gravity * dt * 4.0 \
+		and dv <= orb.tuning.ice_gravity * dt * 7.1 and orb.position.distance_to(p0) > 1.0
+	var finished := await _wait_until(func(): return orb.phase == "", 2.0)
+	get_tree().process_frame.disconnect(sample)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p4f_ice_frame_ms"] = timings
+	var windowed := not _mode.begins_with("headless")
+	var perf: bool = not windowed or (timings.get("p95", 999.0) <= 20.0 and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	_record("T70", "C contextual congela uma vez sem deslocar o orbe; controle e paredes mantidos, voo tem gravidade",
+		ignored and formed and preserved and once and raised and wheel and moved and blocked and launched and flight_ignored \
+		and gravity and finished and not orb.is_frozen() and svc.get_revision() == revision and perf,
+		{"ignored_outside_context": ignored, "formed_liquid": formed, "preserved_position_velocity_target_radius": preserved,
+		"one_freeze": once, "height_control": raised, "wheel_context": wheel, "camera_control": moved, "wall_blocked": blocked,
+		"ice_launched": launched, "freeze_ignored_in_flight": flight_ignored, "gravity": gravity, "vertical_dv_6_frames": dv,
+		"launch_speed": v0.length(), "finished_liquid": finished and not orb.is_frozen(), "frame_ms": timings, "frame_gate_applied": windowed})
+	if _screens:
+		ab.begin_water_orb()
+		await _frames(20)
+		_p4f_c()
+		player.camera_rig.set_view(0.0, deg_to_rad(-12.0))
+		await _frames(20)
+		await _snap("p4f_ice_orb_hold")
+	ab.cancel_all()
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+func _p4f_body_case(structural: bool) -> Dictionary:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var body: RigidBody3D
+	if structural:
+		# A peça isolada atravessa o consumidor KINETIC real; ele já aplica metade do impulso.
+		var piece := StructurePiece.new()
+		piece.material_id = BodyMaterialLibrary.WOOD
+		piece.mass = 20.0
+		piece.freeze = true
+		piece.gravity_scale = 0.0
+		piece.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE
+		piece.linear_damp = 0.0
+		piece.collision_layer = Layers.PROPS
+		piece.collision_mask = 0
+		var shape := CollisionShape3D.new()
+		shape.shape = BoxShape3D.new()
+		piece.add_child(shape)
+		props.add_child(piece)
+		piece.global_position = base + Vector3(0, 1.6, -8)
+		body = piece
+	else:
+		body = _air_crate(base + Vector3(0, 1.6, -8), 20.0)
+	var state := materials.state_of(body)
+	if not structural: _apply_direct(ElementalEvent.Kind.HEAT, body, 450.0)
+	var watch := {"count": 0, "frozen": false, "wet": -1.0, "burning": false, "velocity": Vector3.ZERO}
+	var cb := func(kind: StringName, data: Dictionary):
+		if kind == &"water_orb_impact":
+			watch.count += 1
+			watch.frozen = data.get("frozen", false)
+			watch.wet = state.wetness
+			watch.burning = state.burning
+			watch.velocity = body.linear_velocity
+	orb.fx_event.connect(cb)
+	var formed := ab.begin_water_orb()
+	await _frames(20)
+	var frozen := ab.freeze_water_orb()
+	await _aim_settle(MaterialResponseSystem.body_center(body))
+	var hits0: int = orb.get_stats().ice_impacts
+	var impulses0: float = orb.get_stats().impulse_ns
+	ab.release_water_orb()
+	var finished := await _wait_until(func(): return orb.phase == "", 2.0)
+	await _frames(4)
+	var impulse: float = orb.get_stats().impulse_ns - impulses0
+	var expected := minf(orb.tuning.ice_impulse_ns, body.mass * orb.tuning.ice_max_target_delta_v) * (0.5 if structural else 1.0)
+	var released: bool = not structural or (body as StructurePiece).released
+	var result := {"formed": formed, "frozen": frozen, "finished": finished, "impacts": orb.get_stats().ice_impacts - hits0,
+		"structural": structural, "released": released, "impulse_ns": impulse, "expected_impulse_ns": expected,
+		"speed": body.linear_velocity.length(), "expected_speed": expected / body.mass, "wetness": state.wetness,
+		"fx_frozen": watch.frozen, "fx_contacts": watch.count, "burning_at_impact": watch.burning,
+		"ok": formed and frozen and finished and released and orb.get_stats().ice_impacts - hits0 == 1 \
+			and watch.count == 1 and watch.frozen and watch.wet == 0.0 and state.wetness == 0.0 \
+			and absf(impulse - expected) < 0.001 and absf(body.linear_velocity.length() - expected / body.mass) < 0.02 \
+			and (structural or watch.burning) and not orb.is_frozen()}
+	orb.fx_event.disconnect(cb)
+	ab.cancel_all()
+	return result
+
+
+func _t71_ice_contact_lifecycle() -> void:
+	var body := await _p4f_body_case(false)
+	var structural := await _p4f_body_case(true)
+	var ab: AbilityController = main.abilities
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var original := orb.tuning
+	var contacts := {}
+	for kind: String in ["thin_wall", "voxel_ground", "range"]:
+		var base: Vector3 = await _p3_lab(1)
+		orb.tuning = original.duplicate(true)
+		var target := _ground_at(base + Vector3(0, 0, -8))
+		var behind: RigidBody3D
+		if kind == "thin_wall":
+			_p36_thin_wall(base + Vector3(0, 1.6, -6), Vector3(4, 4, 0.001))
+			behind = _air_crate(base + Vector3(0, 1.6, -7))
+			target = base + Vector3(0, 1.6, -6)
+			orb.tuning.ice_launch_speed = 60.0
+		elif kind == "range":
+			orb.tuning.max_range = 3.0
+			target = base + Vector3(0, 5, -20)
+		await _aim_settle(target)
+		var formed := ab.begin_water_orb()
+		await _frames(20)
+		var frozen := ab.freeze_water_orb()
+		await _aim_settle(target)
+		var hits0: int = orb.get_stats().impacts
+		var diss0: int = orb.get_stats().dissipated
+		var revision := svc.get_revision()
+		ab.release_water_orb()
+		var finished := await _wait_until(func(): return orb.phase == "", 2.0)
+		var expected_hits := 0 if kind == "range" else 1
+		contacts[kind] = {"ok": formed and frozen and finished and not orb.is_frozen() and svc.get_revision() == revision \
+			and orb.get_stats().impacts == hits0 + expected_hits \
+			and (kind != "range" or orb.get_stats().dissipated == diss0 + 1) \
+			and (behind == null or behind.linear_velocity.length() < 0.001), "impacts": orb.get_stats().impacts - hits0}
+	orb.tuning = original
+	const SLOT := "p4f_ice_cancel"
+	await _p3_lab(1)
+	var slot_ready: bool = await main.request_world_save(SLOT)
+	var old_capture := ab.require_captured_mouse
+	var old_mouse := Input.mouse_mode
+	var cases := {}
+	for flight: bool in [false, true]:
+		for kind: String in ["select", "input", "mouse", "escape", "reset", "save", "load"]:
+			await _p3_lab(1)
+			player.camera_rig.set_view(0.0, deg_to_rad(20.0))
+			var started: bool = ab.begin_water_orb() and ab.freeze_water_orb()
+			if flight: ab.release_water_orb()
+			var at_signal := {"clean": true}
+			var probe := func(_slot := ""):
+				at_signal.clean = orb.phase == "" and not orb.is_frozen() and orb.freeze_age == 0.0
+			var sig: Signal = svc.world_reset_started
+			if kind == "save": sig = svc.world_save_started
+			elif kind == "load": sig = svc.world_load_started
+			if kind in ["reset", "save", "load"]: sig.connect(probe)
+			var command_ok := true
+			if kind == "select": ab.select(0)
+			elif kind == "input": player.input_enabled = false
+			elif kind == "mouse":
+				ab.require_captured_mouse = true
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			elif kind == "escape":
+				_p4a_key(KEY_ESCAPE, true)
+				Input.flush_buffered_events()
+				_p4a_key(KEY_ESCAPE, false)
+				Input.flush_buffered_events()
+			elif kind == "reset": command_ok = await main.request_world_reset()
+			elif kind == "save": command_ok = await main.request_world_save(SLOT)
+			else: command_ok = await main.request_world_load(SLOT)
+			if sig.is_connected(probe): sig.disconnect(probe)
+			await _frames(2)
+			var fx: Dictionary = main.fx.get_stats()
+			var clean: bool = orb.phase == "" and not orb.is_frozen() and orb.velocity.is_zero_approx() \
+				and orb.freeze_age == 0.0 and not fx.ice_visible and not fx.ice_fragments_emitting and not fx.orb_trail_emitting
+			cases["%s_%s" % ["flight" if flight else "hold", kind]] = {"ok": started and command_ok and clean and at_signal.clean}
+			ab.require_captured_mouse = old_capture
+			Input.mouse_mode = old_mouse
+			player.input_enabled = true
+	await _p3_lab(1)
+	var restart: bool = ab.begin_water_orb() and not orb.is_frozen() and orb.freeze_age == 0.0
+	ab.cancel_all()
+	player.input_enabled = false
+	_record("T71", "Gelo aplica KINETIC único sem WET/impulso duplicado, respeita paredes/voxel/alcance e limpa estado ao cancelar",
+		body.ok and structural.ok and slot_ready and restart and contacts.values().all(func(c): return c.ok) and cases.values().all(func(c): return c.ok),
+		{"body": body, "structural_consumer": structural, "contacts": contacts, "cancellations": cases, "restart_liquid": restart})
 	await main.request_world_reset()

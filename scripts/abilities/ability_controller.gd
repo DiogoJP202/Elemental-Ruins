@@ -165,10 +165,19 @@ func release_water_orb() -> void:
 		water.orb.cancel()
 
 
+func freeze_water_orb() -> bool:
+	var water := current_ability() as WaterJet
+	return can_manipulate_water() and water.orb.freeze_orb()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if player == null or not player.input_enabled:
 		return
 	var water := current_ability() as WaterJet
+	if water != null and event.is_action_pressed(&"water_freeze"):
+		if freeze_water_orb():
+			get_viewport().set_input_as_handled()
+		return
 	if water != null and event.is_action_pressed(&"toggle_mouse_capture"):
 		water.orb.cancel()
 	if water != null and event.is_action(&"water_orb"):

@@ -46,6 +46,13 @@ var _water_clock := 0.0
 var _spray: GPUParticles3D
 var _water_orb_mesh: MeshInstance3D
 var _water_orb_material: StandardMaterial3D
+var _water_orb_liquid_mesh: Mesh
+var _water_orb_glint: MeshInstance3D
+var _water_orb_ice_mesh: ArrayMesh
+var _water_orb_ice_material: StandardMaterial3D
+var _water_orb_ice_fragments: GPUParticles3D
+var _water_orb_fragment_mesh: ArrayMesh
+var _water_orb_liquid_trail_mesh: Mesh
 var _water_orb_trail: GPUParticles3D
 var _water_orb_splashes: Array[GPUParticles3D] = []
 var _orb_was_flying := false
@@ -58,7 +65,8 @@ var _char_accum := 0.0
 var _stats := {"flames_created": 0, "flames_skipped": 0, "steam": 0, "blasts": 0, "gusts": 0, "charred": 0,
 	"fire_anticipations": 0, "fire_launches": 0, "fire_dissipations": 0, "fire_steam": 0, "fire_slots_missing": 0,
 	"fire_vfx_frames": 0, "fire_vfx_usec": 0, "fire_vfx_usec_max": 0, "air_dust_contacts": 0, "air_dust_front": 0,
-	"air_rings_missing": 0, "water_orb_impacts": 0, "water_orb_dissipations": 0}
+	"air_rings_missing": 0, "water_orb_impacts": 0, "water_orb_dissipations": 0,
+	"ice_crystallizations": 0, "ice_impacts": 0}
 
 
 func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) -> void:
@@ -90,6 +98,9 @@ func get_stats() -> Dictionary:
 	d["orb_visible"] = _water_orb_mesh.visible if _water_orb_mesh != null else false
 	d["orb_trail_emitting"] = _water_orb_trail.emitting if _water_orb_trail != null else false
 	d["orb_splash_pool"] = _water_orb_splashes.size()
+	d["ice_visible"] = _water_orb_mesh != null and _water_orb_mesh.visible and _water_orb_mesh.mesh == _water_orb_ice_mesh
+	d["ice_fragments_emitting"] = _water_orb_ice_fragments.emitting if _water_orb_ice_fragments != null else false
+	d["ice_fragment_cap"] = 12
 	d["fire_trail_pool"] = _fire_trails.size()
 	d["fire_slots_live"] = _fire_slots.size()
 	d["air_rings_live"] = _ring_slots.size()
@@ -334,6 +345,7 @@ func _create_water_orb_visuals() -> void:
 	sphere.rings = 10
 	_water_orb_material = _unshaded(Color(0.34, 0.76, 0.92, 0.72))
 	sphere.material = _water_orb_material
+	_water_orb_liquid_mesh = sphere
 	_water_orb_mesh.mesh = sphere
 	_water_orb_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_water_orb_mesh.visible = false
@@ -352,11 +364,32 @@ func _create_water_orb_visuals() -> void:
 	glint.scale = Vector3(0.7, 0.85, 0.6)
 	glint.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_water_orb_mesh.add_child(glint)
+	_water_orb_glint = glint
+	_water_orb_ice_material = StandardMaterial3D.new()
+	_water_orb_ice_material.albedo_color = Color("#C4E5F5")
+	_water_orb_ice_material.vertex_color_use_as_albedo = true
+	_water_orb_ice_material.roughness = 0.24
+	_water_orb_ice_material.metallic = 0.12
+	_water_orb_ice_material.emission_enabled = true
+	_water_orb_ice_material.emission = Color(0.06, 0.09, 0.12)
+	_water_orb_ice_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_water_orb_ice_mesh = _ice_crystal_mesh(1.0)
+	_water_orb_ice_mesh.surface_set_material(0, _water_orb_ice_material)
+	_water_orb_fragment_mesh = _ice_crystal_mesh(0.055)
+	_water_orb_fragment_mesh.surface_set_material(0, _water_orb_ice_material)
 	_water_orb_trail = _burst_emitter("WaterOrbTrail",
 		_process_material(Vector3.BACK, 30.0, 0.2, 0.8, Vector3(0, -1.5, 0), Color("#A5E5F2")), 0.2, 0.12)
 	_water_orb_trail.amount = 8
 	_water_orb_trail.one_shot = false
 	_water_orb_trail.visible = false
+	_water_orb_liquid_trail_mesh = _water_orb_trail.draw_pass_1
+	_water_orb_ice_fragments = _burst_emitter("IceOrbFragments",
+		_process_material(Vector3.UP, 80.0, 2.0, 5.0, Vector3(0, -6.0, 0), Color.WHITE), 0.45, 0.1)
+	_water_orb_ice_fragments.amount = 12
+	_water_orb_ice_fragments.draw_pass_1 = _water_orb_fragment_mesh
+	(_water_orb_ice_fragments.process_material as ParticleProcessMaterial).angular_velocity_min = -120.0
+	(_water_orb_ice_fragments.process_material as ParticleProcessMaterial).angular_velocity_max = 120.0
+	_water_orb_ice_fragments.visible = false
 	for i in 2:
 		_water_orb_splashes.append(_burst_emitter("WaterOrbSplash%d" % i,
 			_process_material(Vector3.UP, 75.0, 2.0, 4.0, Vector3(0, -4.0, 0), Color("#A5E5F2")), 0.45, 0.18))
@@ -374,14 +407,27 @@ func _update_water_orb() -> void:
 		return
 	_water_orb_mesh.visible = true
 	_water_orb_mesh.global_position = orb.position
-	_water_orb_material.albedo_color = t.color
-	var wobble := clampf(t.wobble, 0.0, 0.1)
-	var ripple := sin(orb.age * 5.7) * wobble
+	var frozen: bool = orb.is_frozen()
 	var formation: float = smoothstep(0.0, 0.16, orb.age) if orb.phase == "hold" else 1.0
-	# A silhueta permanece dentro do raio consultado pela física, inclusive na deformação.
-	_water_orb_mesh.scale = Vector3(1.0 + ripple, 1.0 - ripple * 0.55,
-		1.0 + sin(orb.age * 7.3) * wobble * 0.5) * orb.radius() * 0.9 * maxf(formation, 0.05)
+	_water_orb_glint.visible = not frozen
+	if frozen:
+		_water_orb_mesh.mesh = _water_orb_ice_mesh
+		var progress := clampf(float(orb.freeze_age) / maxf(float(t.freeze_transition_s), 0.001), 0.0, 1.0)
+		var ice_color: Color = t.ice_color
+		ice_color.a = 1.0
+		_water_orb_ice_material.albedo_color = Color.WHITE.lerp(ice_color, progress)
+		# A mesma posição e raio, mas silhueta facetada e escala rígida, sem oscilação líquida.
+		_water_orb_mesh.scale = Vector3.ONE * orb.radius() * 0.9 * maxf(formation, 0.05)
+	else:
+		_water_orb_mesh.mesh = _water_orb_liquid_mesh
+		_water_orb_material.albedo_color = t.color
+		var wobble := clampf(t.wobble, 0.0, 0.1)
+		var ripple := sin(orb.age * 5.7) * wobble
+		# A silhueta permanece dentro do raio consultado pela física, inclusive na deformação.
+		_water_orb_mesh.scale = Vector3(1.0 + ripple, 1.0 - ripple * 0.55,
+			1.0 + sin(orb.age * 7.3) * wobble * 0.5) * orb.radius() * 0.9 * maxf(formation, 0.05)
 	var flying: bool = orb.phase == "flight" and t.trail_amount > 0
+	_water_orb_trail.draw_pass_1 = _water_orb_fragment_mesh if frozen else _water_orb_liquid_trail_mesh
 	_water_orb_trail.visible = flying
 	_water_orb_trail.global_position = orb.position
 	_water_orb_trail.amount = clampi(t.trail_amount, 1, 12)
@@ -397,10 +443,19 @@ func _update_water_orb() -> void:
 
 func _on_water_orb_event(kind: StringName, data: Dictionary) -> void:
 	match kind:
+		&"water_orb_frozen":
+			var jet := abilities.get_ability(&"water_jet") as WaterJet
+			if jet != null and jet.orb.tuning.visual_enabled:
+				_ice_fragment_burst(data.position, Vector3.UP, true)
+				_stats.ice_crystallizations += 1
 		&"water_orb_impact":
 			_clear_water_orb(false)
 			var jet := abilities.get_ability(&"water_jet") as WaterJet
 			if jet == null or not jet.orb.tuning.visual_enabled:
+				return
+			if bool(data.get("frozen", false)):
+				_ice_fragment_burst(data.position, data.get("normal", Vector3.UP))
+				_stats.ice_impacts += 1
 				return
 			var emitter := _water_orb_splashes[_next.water_orb]
 			emitter.visible = true
@@ -417,6 +472,22 @@ func _on_water_orb_event(kind: StringName, data: Dictionary) -> void:
 			_stats.water_orb_dissipations += 1
 
 
+func _ice_fragment_burst(at: Vector3, normal: Vector3, crystallize := false) -> void:
+	# Um único emissor: um novo evento reinicia o efeito anterior, nunca acumula destroços.
+	var emitter := _water_orb_ice_fragments
+	emitter.visible = true
+	emitter.global_position = at
+	emitter.amount = 8 if crystallize else 12
+	emitter.lifetime = 0.22 if crystallize else 0.45
+	var process := emitter.process_material as ParticleProcessMaterial
+	process.direction = normal.normalized() if not normal.is_zero_approx() else Vector3.UP
+	process.initial_velocity_min = 0.2 if crystallize else 2.0
+	process.initial_velocity_max = 0.7 if crystallize else 5.0
+	process.gravity = Vector3.ZERO if crystallize else Vector3(0, -6.0, 0)
+	emitter.restart()
+	emitter.emitting = true
+
+
 func _clear_water_orb(clear_splashes := true) -> void:
 	_orb_was_flying = false
 	if _water_orb_mesh != null:
@@ -425,9 +496,44 @@ func _clear_water_orb(clear_splashes := true) -> void:
 		_water_orb_trail.emitting = false
 		_water_orb_trail.visible = false
 	if clear_splashes:
+		if _water_orb_ice_fragments != null:
+			_water_orb_ice_fragments.emitting = false
+			_water_orb_ice_fragments.visible = false
 		for emitter in _water_orb_splashes:
 			emitter.emitting = false
 			emitter.visible = false
+
+
+## Oito triângulos com normais por face: cristal original inscrito na esfera de colisão.
+static func _ice_crystal_mesh(size: float) -> ArrayMesh:
+	var points := PackedVector3Array([Vector3(0, 1, 0), Vector3(0, -1, 0),
+		Vector3(0.9, 0, 0), Vector3(0, 0, 0.9), Vector3(-0.9, 0, 0), Vector3(0, 0, -0.9)])
+	var faces: Array[Vector3i] = [Vector3i(0, 2, 3), Vector3i(0, 3, 4), Vector3i(0, 4, 5), Vector3i(0, 5, 2),
+		Vector3i(1, 3, 2), Vector3i(1, 4, 3), Vector3i(1, 5, 4), Vector3i(1, 2, 5)]
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var colors := PackedColorArray()
+	for i in faces.size():
+		var face: Vector3i = faces[i]
+		var a: Vector3 = points[face.x]
+		var b: Vector3 = points[face.y]
+		var c: Vector3 = points[face.z]
+		var normal := (b - a).cross(c - a).normalized()
+		if normal.dot(a + b + c) < 0.0:
+			normal = -normal
+		var shade := 1.0 - float(i % 3) * 0.09
+		for point: Vector3 in [a, b, c]:
+			vertices.append(point * size)
+			normals.append(normal)
+			colors.append(Color(shade, shade, 1.0))
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_COLOR] = colors
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
 
 
 func _update_jet(delta := 0.0) -> void:

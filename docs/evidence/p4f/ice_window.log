@@ -1,0 +1,86 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.323 - Forward+ - Using Device #0: Intel - Intel(R) Iris(R) Xe Graphics
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=window | screenshots=true | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 1261 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":1261.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] captura spawn_vista_colina -> OK
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[P36TEST] --- testes P3 ---
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] --- testes P4A (controle livre de Terra) ---
+[P36TEST] --- testes P4B (reutilizar rocha existente) ---
+[P36TEST] --- testes P4C (pilar de Terra) ---
+[P36TEST] --- testes P4D (fissura de Terra) ---
+[P36TEST] --- testes P4E (orbe de Água) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 387 ms
+[P36TEST] T70 PASS — C contextual congela uma vez sem deslocar o orbe; controle e paredes mantidos, voo tem gravidade | {"camera_control":true,"finished_liquid":true,"formed_liquid":true,"frame_gate_applied":true,"frame_ms":{"max":18.94,"media":16.67,"min":13.52,"n":185,"p95":18.13,"p99":18.86},"freeze_ignored_in_flight":true,"gravity":true,"height_control":true,"ice_launched":true,"ignored_outside_context":true,"launch_speed":26.8569202423096,"one_freeze":true,"preserved_position_velocity_target_radius":true,"vertical_dv_6_frames":0.979997634887695,"wall_blocked":true,"wheel_context":true}
+[P36TEST] captura p4f_ice_orb_hold -> OK
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 0)
+[TerrainService] reset: geração 3 pronta=true em 421 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 0)
+[TerrainService] reset: geração 4 pronta=true em 444 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 0)
+[TerrainService] reset: geração 5 pronta=true em 461 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 0)
+[TerrainService] reset: geração 6 pronta=true em 412 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 0)
+[TerrainService] reset: geração 7 pronta=true em 427 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 0)
+[TerrainService] reset: geração 8 pronta=true em 427 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 8, rev 0)
+[TerrainService] reset: geração 9 pronta=true em 411 ms
+[TerrainService] save p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 21.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p4f_ice_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 15.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 9, rev 0)
+[TerrainService] reset: geração 10 pronta=true em 455 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 10, rev 0)
+[TerrainService] reset: geração 11 pronta=true em 428 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 11, rev 0)
+[TerrainService] reset: geração 12 pronta=true em 446 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 12, rev 0)
+[TerrainService] reset: geração 13 pronta=true em 443 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 13, rev 0)
+[TerrainService] reset: geração 14 pronta=true em 411 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 14, rev 0)
+[TerrainService] reset: geração 15 pronta=true em 425 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 15, rev 0)
+[TerrainService] reset: geração 16 pronta=true em 411 ms
+[TerrainService] save p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 20.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p4f_ice_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 14.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 16, rev 0)
+[TerrainService] reset: geração 17 pronta=true em 430 ms
+[TerrainService] load p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 411.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 18, rev 0)
+[TerrainService] reset: geração 19 pronta=true em 427 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 19, rev 0)
+[TerrainService] reset: geração 20 pronta=true em 428 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 20, rev 0)
+[TerrainService] reset: geração 21 pronta=true em 429 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 21, rev 0)
+[TerrainService] reset: geração 22 pronta=true em 428 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 22, rev 0)
+[TerrainService] reset: geração 23 pronta=true em 443 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 23, rev 0)
+[TerrainService] reset: geração 24 pronta=true em 444 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 24, rev 0)
+[TerrainService] reset: geração 25 pronta=true em 462 ms
+[TerrainService] save p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 22.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "C:/Users/dsoares/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p4f_ice_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 16.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 25, rev 0)
+[TerrainService] reset: geração 26 pronta=true em 477 ms
+[TerrainService] load p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 445.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 27, rev 0)
+[TerrainService] reset: geração 28 pronta=true em 479 ms
+[P36TEST] T71 PASS — Gelo aplica KINETIC único sem WET/impulso duplicado, respeita paredes/voxel/alcance e limpa estado ao cancelar | {"body":{"burning_at_impact":true,"expected_impulse_ns":240.0,"expected_speed":12.0,"finished":true,"formed":true,"frozen":true,"fx_contacts":1,"fx_frozen":true,"impacts":1,"impulse_ns":240.0,"ok":true,"released":true,"speed":12.0000009536743,"structural":false,"wetness":0.0},"cancellations":{"flight_escape":{"ok":true},"flight_input":{"ok":true},"flight_load":{"ok":true},"flight_mouse":{"ok":true},"flight_reset":{"ok":true},"flight_save":{"ok":true},"flight_select":{"ok":true},"hold_escape":{"ok":true},"hold_input":{"ok":true},"hold_load":{"ok":true},"hold_mouse":{"ok":true},"hold_reset":{"ok":true},"hold_save":{"ok":true},"hold_select":{"ok":true}},"contacts":{"range":{"impacts":0,"ok":true},"thin_wall":{"impacts":1,"ok":true},"voxel_ground":{"impacts":1,"ok":true}},"restart_liquid":true,"structural_consumer":{"burning_at_impact":false,"expected_impulse_ns":120.0,"expected_speed":6.0,"finished":true,"formed":true,"frozen":true,"fx_contacts":1,"fx_frozen":true,"impacts":1,"impulse_ns":120.0,"ok":true,"released":true,"speed":6.00000047683716,"structural":true,"wetness":0.0}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 28, rev 0)
+[TerrainService] reset: geração 29 pronta=true em 478 ms
+[P36TEST] relatório: docs\evidence\p4f\ice_window.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (3/3) em 34.3 s

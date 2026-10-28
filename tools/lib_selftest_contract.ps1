@@ -11,7 +11,7 @@ function Get-SelftestIds([string]$Suite) {
         'p2' { return $p2 }
         'p3' { return $p3 }
         'p35' { return $p35 }
-        'p36' { return ($p35 + @('T46','T47','T48','T49','T50','T51','T52','T53','T54','T56','T55','T58','T57','T59','T60','T61','T62','T63','T64','T65','T66','T67','T68','T69')) }
+        'p36' { return ($p35 + @('T46','T47','T48','T49','T50','T51','T52','T53','T54','T56','T55','T58','T57','T59','T60','T61','T62','T63','T64','T65','T66','T67','T68','T69','T70','T71')) }
         'persist_write' { return @('T1','T14x-write') }
         'persist_read' { return @('T1','T14x-read') }
         default { throw "Bateria sem contrato: $Suite" }

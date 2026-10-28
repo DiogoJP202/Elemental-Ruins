@@ -1,0 +1,186 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T15:10:37",
+  "duracao_s": 34.327,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 60,
+      "media": 58.06,
+      "min": 15,
+      "n": 66,
+      "p95": 60
+    },
+    "initial_terrain_ready_ms": 1261,
+    "p4f_ice_frame_ms": {
+      "max": 18.94,
+      "media": 16.67,
+      "min": 13.52,
+      "n": 185,
+      "p95": 18.13,
+      "p99": 18.86
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1261,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "camera_control": true,
+        "finished_liquid": true,
+        "formed_liquid": true,
+        "frame_gate_applied": true,
+        "frame_ms": {
+          "max": 18.94,
+          "media": 16.67,
+          "min": 13.52,
+          "n": 185,
+          "p95": 18.13,
+          "p99": 18.86
+        },
+        "freeze_ignored_in_flight": true,
+        "gravity": true,
+        "height_control": true,
+        "ice_launched": true,
+        "ignored_outside_context": true,
+        "launch_speed": 26.8569202423096,
+        "one_freeze": true,
+        "preserved_position_velocity_target_radius": true,
+        "vertical_dv_6_frames": 0.979997634887695,
+        "wall_blocked": true,
+        "wheel_context": true
+      },
+      "id": "T70",
+      "status": "PASS",
+      "titulo": "C contextual congela uma vez sem deslocar o orbe; controle e paredes mantidos, voo tem gravidade"
+    },
+    {
+      "detalhes": {
+        "body": {
+          "burning_at_impact": true,
+          "expected_impulse_ns": 240,
+          "expected_speed": 12,
+          "finished": true,
+          "formed": true,
+          "frozen": true,
+          "fx_contacts": 1,
+          "fx_frozen": true,
+          "impacts": 1,
+          "impulse_ns": 240,
+          "ok": true,
+          "released": true,
+          "speed": 12.0000009536743,
+          "structural": false,
+          "wetness": 0
+        },
+        "cancellations": {
+          "flight_escape": {
+            "ok": true
+          },
+          "flight_input": {
+            "ok": true
+          },
+          "flight_load": {
+            "ok": true
+          },
+          "flight_mouse": {
+            "ok": true
+          },
+          "flight_reset": {
+            "ok": true
+          },
+          "flight_save": {
+            "ok": true
+          },
+          "flight_select": {
+            "ok": true
+          },
+          "hold_escape": {
+            "ok": true
+          },
+          "hold_input": {
+            "ok": true
+          },
+          "hold_load": {
+            "ok": true
+          },
+          "hold_mouse": {
+            "ok": true
+          },
+          "hold_reset": {
+            "ok": true
+          },
+          "hold_save": {
+            "ok": true
+          },
+          "hold_select": {
+            "ok": true
+          }
+        },
+        "contacts": {
+          "range": {
+            "impacts": 0,
+            "ok": true
+          },
+          "thin_wall": {
+            "impacts": 1,
+            "ok": true
+          },
+          "voxel_ground": {
+            "impacts": 1,
+            "ok": true
+          }
+        },
+        "restart_liquid": true,
+        "structural_consumer": {
+          "burning_at_impact": false,
+          "expected_impulse_ns": 120,
+          "expected_speed": 6,
+          "finished": true,
+          "formed": true,
+          "frozen": true,
+          "fx_contacts": 1,
+          "fx_frozen": true,
+          "impacts": 1,
+          "impulse_ns": 120,
+          "ok": true,
+          "released": true,
+          "speed": 6.00000047683716,
+          "structural": true,
+          "wetness": 0
+        }
+      },
+      "id": "T71",
+      "status": "PASS",
+      "titulo": "Gelo aplica KINETIC único sem WET/impulso duplicado, respeita paredes/voxel/alcance e limpa estado ao cancelar"
+    }
+  ],
+  "run_id": "3e9427c98bef",
+  "testes_ids": [
+    "T1",
+    "T70",
+    "T71"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

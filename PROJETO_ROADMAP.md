@@ -1,6 +1,6 @@
 # ELEMENTAL // RUINS — Roadmap técnico
 
-**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E — Orbe de Água implementado na branch `codex/p4e-water-orb`, base `codex/p4d-integration` em `b1efae9`, pronto para playtest humano. Validação dirigida aprovada; gate integral P4E não executado.
+**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E recebeu feedback humano positivo. P4F — Congelamento e Lançamento de Gelo implementado em `codex/p4f-ice-orb`, base P4E `7678c12`, pronto para playtest; gate integral não executado.
 
 **Checkpoint P4D em 28/10/2026: FALHOU.** Editor headless e export janela: 71/72 por timeout de preparação do T26 antes do save. Editor janela e export headless: 72/72. Persistência entre processos e benchmarks aprovados, zero erros/avisos; detalhamento abaixo. O usuário autorizou P4E apesar desse FAIL, que permanece preservado. T26 não foi investigado nesta fatia.
 
@@ -67,12 +67,17 @@ Terra selecionada: segurar F mostra a prévia; soltar solicita uma vala permanen
 
 **Integração da retomada: FALHOU.** Uma integral por modo, contrato de 72 IDs: 71/72 editor headless, 72/72 editor janela, 72/72 export headless e 71/72 export janela. T26 falhou antes do save por não confirmar 60 ticks consecutivos de repouso natural em 15 s; três rechecagens T14/T26 passaram 3/3 cada, sem causa comprovada. T61 físico passou dez repetições, checagem contextual e quatro integrais; uma repetição direcionada falhou somente por p95=20,14 ms. Diagnóstico separado adicionado ao T61, sem alterar critérios. Persistência entre processos 2/2 nas quatro etapas, zero erros/avisos e seis benchmarks em cada janela dentro de 20/33/50 ms. Relatórios completos e FAILs preservados em `docs/evidence/p4d/integration/`. A preparação do T26 continua como dívida registrada, fora do escopo da fatia P4E. Compressão permanece futura.
 
-## P4E — Orbe de Água (implementado; pronto para playtest)
+## P4E — Orbe de Água (implementado; feedback humano positivo)
 Com Água selecionada, LMB mantém o jato existente. Segurar RMB forma um único orbe; câmera orienta o alvo horizontal, Q/E ajustam altura e roda aproxima/afasta somente durante o controle. Soltar RMB lança com direção da mira e herança limitada da velocidade. O primeiro modo de Água aceito bloqueia o outro; troca de elemento, Esc, input desabilitado e reset/save/load limpam hold e voo.
 
 `WaterOrb` compõe `WaterJet`, reutilizando Ability/controller, eventos de materiais e ElementalFx. Posição e velocidade contínuas, controle suavizado e colisão esférica varrida; contato único aplica impulso e WET/resfriamento/extinção antes do respingo. Parâmetros próprios em `data/abilities/water_orb_tuning.tres`. Reserva abstrata do Criativo: 150 L nominais por formação, sem simulação conservativa, corpo rígido de água, captação de reservatórios, poças ou edição do terreno.
 
-**Validação dirigida:** T1/T67/T68/T69, 4/4 headless e 4/4 em janela; regressão T1/T46/T47/T48/T60/T64/T66, 7/7 headless. Execuções aprovadas sem erros/avisos. Benchmark curto de controle/lançamento em janela: p95 18,05 ms, p99 18,76 ms, máximo 21,65 ms, dentro de 20/33/50 ms. Evidências em `docs/evidence/p4e/`. Contrato `p36`: 75 IDs, **integral não executada**; checkpoint P4D permanece FAIL. **Próximo passo: playtest humano do orbe (NÃO TESTADO)**, sem iniciar outra habilidade automaticamente.
+**Validação dirigida:** T1/T67/T68/T69, 4/4 headless e 4/4 em janela; regressão T1/T46/T47/T48/T60/T64/T66, 7/7 headless. Execuções aprovadas sem erros/avisos. Benchmark curto de controle/lançamento em janela: p95 18,05 ms, p99 18,76 ms, máximo 21,65 ms, dentro de 20/33/50 ms. Evidências em `docs/evidence/p4e/`. Contrato P4E: 75 IDs, **integral não executada**; checkpoint P4D permanece FAIL. Feedback humano positivo informado pelo usuário em 28/10/2026, sem avaliação detalhada por cenário; os relatórios mantêm o estado histórico anterior.
+
+## P4F — Congelamento e Lançamento de Gelo (implementado; pronto para playtest)
+Água selecionada: C durante RMB congela uma vez o mesmo orbe, com posição/velocidade preservadas. Controle suspenso P4E mantido; soltar RMB lança gelo balístico a 26 m/s, gravidade 9,8 m/s², KINETIC mais intenso (até 3000 N·s e massa × 12 m/s), sem WET. Mesma esfera varrida, contato único e consumidor estrutural sem duplicação de impulso. Cristal facetado opaco, transição de 0,18 s e fragmentos visuais limitados a 12. Cancelar/finalizar restaura LIQUID; C fora do hold é ignorado. Resource existente, sem gelo persistente, derretimento ou estruturas de gelo.
+
+**Validação dirigida:** T1/T70/T71 3/3 headless e 3/3 janela; regressão 9/9 headless (jato, líquido, Terra/Fogo/Ar e controles). Zero erros/avisos. Benchmark: p95 18,13 / p99 18,86 / máximo 18,94 ms, dentro de 20/33/50. Evidências em `docs/evidence/p4f/`. Contrato completo 77 IDs não executado; P4D continua FAIL e T26 não foi investigado. **Próximo passo: playtest humano P4F (NÃO TESTADO)**, sem outra habilidade automática.
 
 ## P4 posterior — 16 habilidades, combinações e visual (futuro)
 Expandir `elemental_abilities_mvp.json`; estados de materiais, gelo, lava, eletricidade, vórtices, shaders Ilustrado/Retro, áudio/animações e modos de jogo.

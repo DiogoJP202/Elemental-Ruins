@@ -1,0 +1,149 @@
+{
+  "implementation": "READY_FOR_PLAYTEST",
+  "branch": "codex/p4f-ice-orb",
+  "base_branch": "codex/p4e-water-orb",
+  "base_commit": "7678c12d3f576cf772233e053407e09d9ef99826",
+  "p4e_human_feedback": "Positive feedback reported by user on 2026-10-28; no detailed per-scenario evaluation or integration approval inferred.",
+  "p4d_checkpoint": "FAIL preserved; T26 neither modified nor investigated",
+  "p4f_integration": "NOT_RUN",
+  "full_contract_count": 77,
+  "reports": {
+    "ice_headless": {
+      "report": "ice_headless.json",
+      "run_id": "64577a7f65e2",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T70",
+        "T71"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "related_headless": {
+      "report": "related_headless.json",
+      "run_id": "f673e4edf2fc",
+      "result": "PASS",
+      "complete": true,
+      "passed": 9,
+      "total": 9,
+      "expected_ids": [
+        "T1",
+        "T46",
+        "T48",
+        "T49",
+        "T52",
+        "T60",
+        "T67",
+        "T68",
+        "T69"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "ice_window": {
+      "report": "ice_window.json",
+      "run_id": "3e9427c98bef",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T70",
+        "T71"
+      ],
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "formal_validation": "Existing Invoke-SelftestStep: externally supplied run_id, fresh complete reports, exact IDs, typed counters, individual PASS results, zero engine diagnostics.",
+  "logs_checked": 5,
+  "all_logs_zero_errors_warnings": true,
+  "benchmark": {
+    "id": "T70",
+    "phase": "freeze, hold, wall and ballistic flight",
+    "mode": "editor window",
+    "p95_ms": 18.13,
+    "p99_ms": 18.86,
+    "max_ms": 18.94,
+    "samples": 185,
+    "limits_ms": {
+      "p95": 20,
+      "p99": 33,
+      "max": 50
+    },
+    "pass": true
+  },
+  "environment": {
+    "godot": "4.7.2-stable (custom_build)",
+    "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "gpu": "Intel(R) Iris(R) Xe Graphics",
+    "renderer": "forward_plus",
+    "physics": "Jolt Physics",
+    "resolution": "1600x900 (capture and project)",
+    "vulkan": "1.4.323",
+    "methodology": "Sequential existing selftests, no concurrent Godot; process_frame intervals including transformation and ice motion. Screenshot readback after benchmark disconnected; historical spawn capture restored."
+  },
+  "mechanical_difference": {
+    "liquid": "Existing 22 m/s straight flight; 1800 N.s capped at mass * 8 m/s, WET unchanged",
+    "frozen": "26 m/s ballistic flight, gravity 9.8 m/s2; 3000 N.s capped at mass * 12 m/s; no WET",
+    "free_body_20kg": {
+      "impulse_ns": 240,
+      "speed_m_s": 12,
+      "wetness": 0
+    },
+    "structural_20kg": {
+      "impulse_ns": 120,
+      "speed_m_s": 6,
+      "consumer_applied_impulse_once": true
+    }
+  },
+  "not_run": [
+    "export",
+    "full integration suite (77 IDs)",
+    "T26",
+    "human playtest P4F"
+  ],
+  "capture": "screens/ice_hold.png",
+  "capture_is_human_playtest": false,
+  "source_hashes": [
+    {
+      "path": "scripts/abilities/water_orb.gd",
+      "sha256": "aae1ffc9ca1ab215518b12ea0a7fd69bc3c631d9ab8620c57e95c157d43e8d8a"
+    },
+    {
+      "path": "scripts/abilities/water_orb_tuning.gd",
+      "sha256": "1d875250b4184db2c9fdf6ec869a73522c90d3b9c89ff38353a71b546e7709c7"
+    },
+    {
+      "path": "scripts/abilities/ability_controller.gd",
+      "sha256": "d92f29ccbdc62bd6ee38b8a9e6b1ea3de820299633ca01d6e11302b72432e888"
+    },
+    {
+      "path": "scripts/core/input_actions.gd",
+      "sha256": "b57d474e1e9fda1a99c5eaebd49faa9b328d4431c7d2158f39e06d980b13579a"
+    },
+    {
+      "path": "scripts/elements/elemental_fx.gd",
+      "sha256": "96b8904ef6c85d329aa1ed717288487159c6c72e9a55c718ac622deeafa3ccfd"
+    },
+    {
+      "path": "scripts/ui/debug_hud.gd",
+      "sha256": "b36bb361427f06ea142fce93de17e58abf1ad99abc1d4d1e7645c78b5788f27c"
+    },
+    {
+      "path": "scripts/dev/p36_selftest.gd",
+      "sha256": "6bcb191ce8b5597fdbe1d7fc133100b3d2255fb9b5ed4ba9c10fb31480ce76cc"
+    },
+    {
+      "path": "tools/lib_selftest_contract.ps1",
+      "sha256": "35040c44957475c231e6fef85f71a193f6adfd4a4bf1fdf03cb317e35940da0c"
+    }
+  ],
+  "path_normalization": "Local checkout prefixes and log whitespace normalized; measurements, event IDs and run IDs preserved."
+}

@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4E)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4F)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -13,7 +13,9 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P4C — checkpoint fechado e integrado à main (`b84b4c6`, PR #4) em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário.
 **P4D — Fissura de Terra implementada e integrada à main (`80f2a08`, PR #5), com feedback humano positivo:** vala permanente por F (segurar prévia/soltar aplicar), reutilizando PATH subtrativo e os sistemas existentes. O checkpoint de integração é registrado abaixo, separadamente da implementação já integrada. Feedback humano positivo em 28/10/2026 sobre posição e controle, sem avaliação detalhada por cenário.
 **Checkpoint P4D na retomada de 28/10/2026: FALHOU** no preparo do T26 em dois modos; os demais testes, persistência entre processos e benchmarks passaram. Esse FAIL está preservado; o usuário autorizou avançar para P4E sem investigar T26 nesta tarefa.
-**P4E — Orbe de Água implementado e pronto para playtest:** segurar RMB forma uma massa da reserva abstrata do Criativo; câmera, Q/E e roda controlam sua posição com atraso; soltar lança. Validação direcionada abaixo; playtest humano e checkpoint integral P4E ainda não executados.
+**P4E — Orbe de Água implementado e pronto para playtest:** segurar RMB forma uma massa da reserva abstrata do Criativo; câmera, Q/E e roda controlam sua posição com atraso; soltar lança. Feedback humano positivo informado pelo usuário em 28/10/2026, sem avaliação detalhada por cenário; checkpoint integral P4E não executado.
+
+**P4F — Congelamento e Lançamento de Gelo implementado e pronto para playtest:** C durante RMB transforma o mesmo orbe; voo balístico, impacto cinético próprio e cristal facetado. Validação dirigida aprovada; playtest humano P4F e gate integral ainda não executados.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -81,6 +83,7 @@ de fluidos.
 | **RMB** (Terra parada; P4C) | segurar mostra a prévia; soltar cria um pilar permanente. Altura 4,5 m, raio 2 m; chão entre 2,5 m horizontais e 18 m em 3D. Trocar elemento ou Esc cancela |
 | **F** (Terra parada; P4D) | segurar mostra a prévia; soltar abre uma fissura permanente de 6 m, raio 1 m e centro 0,35 m abaixo do piso, para longe na direção horizontal da câmera; todo o caminho deve estar a até 18 m |
 | **RMB** (Água; P4E) | segurar forma/sustenta um orbe; mouse orienta o alvo horizontal, Q/E regulam altura, roda aproxima/afasta; soltar lança. O primeiro botão mantido vence o conflito com o jato LMB; não há comando enfileirado |
+| **C** (Água; P4F) | congela uma vez o orbe suspenso durante RMB; preserva posição e controle. Ignorado fora do hold ou após congelar; soltar RMB lança gelo balístico |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -216,7 +219,17 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
-### P4E — Orbe de Água: pronto para playtest
+### P4F — Congelar e lançar gelo: pronto para playtest
+
+Selecione **2**, segure **RMB** e pressione **C**: o mesmo orbe cristaliza sem mudar de posição ou velocidade. Câmera, Q/E e roda continuam controlando-o. Solte RMB para lançar e mire um pouco acima de alvos distantes para compensar a gravidade. Compare com uma nova formação sem C: água voa reta, molha/resfria/apaga; gelo tem queda balística e golpe maior, sem WET automático. C só age uma vez no hold válido; durante voo, jato ou outro elemento é ignorado. Cancelar ou concluir volta ao estado inicial líquido.
+
+Foram estendidos `WaterOrb` e seu Resource existente, sem outra Ability/controlador ou cálculo duplicado de movimento/colisão. Parâmetros novos em `water_orb_tuning.tres`: `freeze_transition_s=0.18` (visual), `ice_launch_speed=26` m/s, `ice_gravity=9.8` m/s², `ice_impulse_ns=3000`, `ice_max_target_delta_v=12` m/s e `ice_color`. O controle suspenso usa os valores P4E; alcance de percurso 24 m e herança limitada da velocidade são compartilhados. Esfera varrida por tick para água/gelo; KINETIC respeita o impulso já aplicado pelo consumidor estrutural. Gelo usa um octaedro opaco com normais por face, sem oscilação líquida; cristalização e fragmentos cosméticos reutilizam ElementalFx (um emissor, até 12 lascas). [Captura inspecionada](docs/evidence/p4f/screens/ice_hold.png). Sem gelo persistente, derretimento sob Fogo, estruturas de gelo ou física dos fragmentos.
+
+**Testes dirigidos (28/10/2026):** import/parse custom aprovados; [T1/T70/T71 headless 3/3](docs/evidence/p4f/ice_headless.json), [regressão headless 9/9](docs/evidence/p4f/related_headless.json) (T1/T46/T48/T49/T52/T60/T67/T68/T69) e [T1/T70/T71 janela 3/3](docs/evidence/p4f/ice_window.json). Zero erros/avisos. T70 cobre C contextual/uma vez, posição/velocidade preservadas, controle, parede e gravidade; T71 cobre contato único sem WET, peça estrutural sem impulso duplicado, parede de 1 mm a 60 m/s, terreno voxel, alcance e 14 cancelamentos em hold/voo (seleção/input/captura/Esc/reset/save/load), reiniciando líquido. Caixa de 20 kg recebeu 240 N·s e 12 m/s; a peça estrutural de 20 kg recebeu os 120 N·s/6 m/s aplicados pelo consumidor existente. A regressão líquida manteve 160 N·s/8 m/s, WET e extinção.
+
+Benchmark T70 com congelamento/controle/lançamento em janela: **p95 18,13 / p99 18,86 / máximo 18,94 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; intervalos de process_frame, execuções sequenciais sem outra Godot, captura depois de encerrar amostragem. [Consolidação e ambiente](docs/evidence/p4f/result.json). Três execuções dirigidas; **export, contrato integral de 77 IDs e playtest humano P4F não executados**. P4D permanece FAIL; T26 não foi investigado. Próximo passo: experimentar gelo/água no editor custom (F5), sem iniciar outra habilidade.
+
+### P4E — Orbe de Água: feedback humano positivo
 
 Selecione **2** e segure **RMB**: o orbe se forma junto à mão e acompanha o alvo com atraso. Gire a câmera, ande, use **Q/E** para baixar/subir e a **roda** para aproximar/afastar. Solte RMB mirando caixa, rocha, terreno ou corpo em chamas. Trocar elemento, Esc, perder captura/input e reset/save/load dissipam controle e voo. LMB mantém o jato existente; enquanto um modo está ativo, o outro é recusado, inclusive durante o voo do orbe. Solte e pressione de novo para iniciar o outro modo.
 
@@ -228,7 +241,7 @@ Parâmetros próprios em [`data/abilities/water_orb_tuning.tres`](data/abilities
 
 **Validação direcionada em 28/10/2026:** import/parse custom sem erros/avisos; [T1/T67–T69 inicial headless, 4/4](docs/evidence/p4e/orb_headless_initial.json); [regressão headless, 7/7](docs/evidence/p4e/related_headless.json): T1, T46/T47/T48 (jato), T60/T64/T66 (controles/cancelamentos de Terra); [T1/T67–T69 em janela, 4/4](docs/evidence/p4e/orb_window.json); [T1/T67–T69 final headless, 4/4](docs/evidence/p4e/orb_headless_final.json); [contato final T1/T68, 2/2](docs/evidence/p4e/contact_headless_final.json). T67 cobre controle, parede, ausência de teleporte e benchmark. T68 verifica impacto único, impulso em 20/2000 kg, WET/extinção antes do FX com visual desativado, oclusão por parede de 1 mm a **60 m/s** (1 m/tick, maior que o diâmetro) e alcance sem contato remoto. A conferência final inclui contato com o collider voxel real, sem editar o terreno, e formação de 10 L bloqueada por parede fina entre o personagem e a mão. T69 cobre exclusão, pincel fora do contexto, reinício e cancelamento em hold/voo por seleção, input, captura, Esc real e reset/save/load. Esc/60 m/s estão na janela e em `orb_headless_final`. [Ambiente/resultados](docs/evidence/p4e/result.json).
 
-Benchmark T67 em janela: **p95 18,05 ms / p99 18,76 ms / máximo 21,65 ms** (limites 20/33/50). i5-1135G7, Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; intervalos de `process_frame` durante controle/lançamento, sem captura de imagem na amostragem e sem outra Godot concorrente. Captura histórica restaurada; evidências anteriores intactas. Cinco execuções direcionadas concluídas, sem repetir integrais. Uma tentativa adicional não iniciou por inferência de tipo no teste; anotação booleana corrigida e contato reexecutado 2/2, sem erros/avisos. O [log da tentativa interrompida](docs/evidence/p4e/contact_headless.log) foi preservado e não conta como PASS. O contrato completo agora tem **75 IDs**, mas **não foram executados export, bateria integral, T26 ou playtest humano nesta tarefa**. P4D permanece FAIL; P4E está implementado para experimentar, sem aprovação de integração.
+Benchmark T67 em janela: **p95 18,05 ms / p99 18,76 ms / máximo 21,65 ms** (limites 20/33/50). i5-1135G7, Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; intervalos de `process_frame` durante controle/lançamento, sem captura de imagem na amostragem e sem outra Godot concorrente. Captura histórica restaurada; evidências anteriores intactas. Cinco execuções direcionadas concluídas, sem repetir integrais. Uma tentativa adicional não iniciou por inferência de tipo no teste; anotação booleana corrigida e contato reexecutado 2/2, sem erros/avisos. O [log da tentativa interrompida](docs/evidence/p4e/contact_headless.log) foi preservado e não conta como PASS. Na entrega P4E, o contrato tinha **75 IDs**; **export, bateria integral, T26 e playtest humano não foram executados naquela sessão**. Depois, o usuário informou feedback humano positivo, sem avaliação detalhada por cenário. P4D permanece FAIL; P4E está implementado para experimentar, sem aprovação de integração.
 
 ### P4D — validação direcionada e feedback humano
 

@@ -22,6 +22,13 @@ extends Resource
 @export_range(0.0, 20.0, 0.1) var max_target_delta_v := 8.0
 @export_range(0.0, 2.0, 0.05) var wetness := 0.9
 @export_range(0.0, 4.0, 0.1) var splash_radius := 1.8
+@export_group("Gelo")
+@export_range(0.0, 0.5, 0.01) var freeze_transition_s := 0.18
+@export_range(5.0, 60.0, 0.5) var ice_launch_speed := 26.0
+@export_range(0.0, 40.0, 0.1) var ice_gravity := 9.8
+@export_range(0.0, 6000.0, 10.0) var ice_impulse_ns := 3000.0
+@export_range(0.0, 20.0, 0.1) var ice_max_target_delta_v := 12.0
+@export var ice_color := Color("#C4E5F5")
 @export_group("Apresentação (sem física)")
 @export var color := Color("#80DDEDCC")
 @export_range(0.0, 0.1, 0.005) var wobble := 0.045

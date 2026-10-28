@@ -3,8 +3,11 @@ extends Ability
 ## Uma massa abstrata com estado contínuo; não é RigidBody3D nem altera o terreno.
 ## Esfera varrida antes de cada deslocamento. Contato decide eventos antes dos VFX.
 const SKIN := 0.005
+enum MatterState { LIQUID, FROZEN }
 var tuning: WaterOrbTuning = preload("res://data/abilities/water_orb_tuning.tres")
 var phase := ""
+var matter_state: MatterState = MatterState.LIQUID
+var freeze_age := 0.0
 var position := Vector3.ZERO
 var velocity := Vector3.ZERO
 var target_position := Vector3.ZERO
@@ -18,7 +21,8 @@ var _traveled := 0.0
 var _shape := SphereShape3D.new()
 var _query := PhysicsShapeQueryParameters3D.new()
 var _stats := {"formed": 0, "launched": 0, "impacts": 0, "body_impacts": 0,
-	"terrain_impacts": 0, "cancelled": 0, "dissipated": 0, "blocked_motion": 0, "impulse_ns": 0.0}
+	"terrain_impacts": 0, "cancelled": 0, "dissipated": 0, "blocked_motion": 0, "impulse_ns": 0.0,
+	"freezes": 0, "ice_impacts": 0}
 
 
 func _init() -> void:
@@ -45,7 +49,28 @@ func get_stats() -> Dictionary:
 	var data := _stats.duplicate()
 	data["phase"] = phase
 	data["traveled_m"] = _traveled
+	data["matter_state"] = "FROZEN" if is_frozen() else "LIQUID"
 	return data
+
+
+func is_frozen() -> bool:
+	return matter_state == MatterState.FROZEN
+
+
+func _reset_matter() -> void:
+	matter_state = MatterState.LIQUID
+	freeze_age = 0.0
+
+
+func freeze_orb() -> bool:
+	if phase != "hold" or is_frozen() or controller == null or not controller.can_manipulate_water():
+		return false
+	matter_state = MatterState.FROZEN
+	freeze_age = 0.0
+	_stats.freezes += 1
+	last_result = "orbe congelado"
+	emit_fx(&"water_orb_frozen", {"position": position, "radius": radius()})
+	return true
 
 
 func begin() -> bool:
@@ -60,6 +85,7 @@ func begin() -> bool:
 		return false
 	position = start
 	velocity = Vector3.ZERO
+	_reset_matter()
 	hold_distance = clampf(tuning.initial_distance, tuning.min_distance, tuning.max_distance)
 	hold_height = clampf(tuning.initial_height, tuning.min_height, tuning.max_height)
 	target_position = _control_target()
@@ -90,7 +116,8 @@ func release() -> void:
 	var direction := (toward - position).normalized()
 	if direction.is_zero_approx():
 		direction = controller.aim_direction()
-	velocity = direction * maxf(tuning.launch_speed, 0.1) + velocity.limit_length(maxf(tuning.inherited_speed_limit, 0.0))
+	var speed := tuning.ice_launch_speed if is_frozen() else tuning.launch_speed
+	velocity = direction * maxf(speed, 0.1) + velocity.limit_length(maxf(tuning.inherited_speed_limit, 0.0))
 	launch_position = position
 	launch_velocity = velocity
 	_traveled = 0.0
@@ -107,6 +134,8 @@ func physics_tick(delta: float) -> void:
 		cancel()
 		return
 	age += delta
+	if is_frozen():
+		freeze_age += delta
 	if phase == "hold":
 		_hold_tick(delta)
 	else:
@@ -139,10 +168,18 @@ func _hold_tick(delta: float) -> void:
 
 func _flight_tick(delta: float) -> void:
 	var remaining := maxf(tuning.max_range - _traveled, 0.0)
-	var motion := (velocity * delta).limit_length(remaining)
+	var motion := velocity * delta
+	var gravity_step := Vector3.ZERO
+	if is_frozen():
+		gravity_step = Vector3.DOWN * maxf(tuning.ice_gravity, 0.0) * delta
+		motion += gravity_step * delta * 0.5
+	var time_fraction := minf(1.0, remaining / maxf(motion.length(), 0.000001))
+	motion = motion.limit_length(remaining)
 	var result := _sweep(position, motion)
 	position += motion * float(result.fraction)
 	_traveled += motion.length() * float(result.fraction)
+	if is_frozen():
+		velocity += gravity_step * time_fraction * float(result.fraction)
 	if result.blocked:
 		if not result.hit.is_empty():
 			_impact(result.hit)
@@ -193,8 +230,12 @@ func _contact_info(rest: Dictionary) -> Dictionary:
 
 func _impact(hit: Dictionary) -> void:
 	# Encerrar antes de callbacks de materiais: contato e efeitos só podem ocorrer uma vez.
+	var frozen := is_frozen()
 	phase = ""
+	_reset_matter()
 	_stats.impacts += 1
+	if frozen:
+		_stats.ice_impacts += 1
 	var session: int = controller.session_id
 	var direction := velocity.normalized()
 	var body := hit.collider as RigidBody3D
@@ -202,7 +243,9 @@ func _impact(hit: Dictionary) -> void:
 	if body != null:
 		_stats.body_impacts += 1
 		var was_frozen := body.freeze
-		impulse = minf(maxf(tuning.impulse_ns, 0.0), body.mass * maxf(tuning.max_target_delta_v, 0.0))
+		var strength := tuning.ice_impulse_ns if frozen else tuning.impulse_ns
+		var max_delta_v := tuning.ice_max_target_delta_v if frozen else tuning.max_target_delta_v
+		impulse = minf(maxf(strength, 0.0), body.mass * maxf(max_delta_v, 0.0))
 		var kinetic := ElementalEvent.make(ElementalEvent.Kind.KINETIC, hit.position, impulse, 0.0, id, direction)
 		kinetic.target = body
 		emit_event(kinetic)
@@ -219,19 +262,21 @@ func _impact(hit: Dictionary) -> void:
 		_stats.terrain_impacts += 1
 	if controller.session_id != session:
 		return
-	var wet := ElementalEvent.make(ElementalEvent.Kind.WET, hit.position + hit.normal * 0.02,
-		maxf(tuning.wetness, 0.0), maxf(tuning.splash_radius, 0.0), id, direction)
-	if is_instance_valid(body):
-		wet.target = body
-	emit_event(wet)
-	last_result = "água em contato"
+	if not frozen:
+		var wet := ElementalEvent.make(ElementalEvent.Kind.WET, hit.position + hit.normal * 0.02,
+			maxf(tuning.wetness, 0.0), maxf(tuning.splash_radius, 0.0), id, direction)
+		if is_instance_valid(body):
+			wet.target = body
+		emit_event(wet)
+	last_result = "gelo em contato" if frozen else "água em contato"
 	if controller.session_id == session:
-		emit_fx(&"water_orb_impact", {"position": hit.position, "normal": hit.normal, "radius": radius()})
+		emit_fx(&"water_orb_impact", {"position": hit.position, "normal": hit.normal, "radius": radius(), "frozen": frozen})
 	velocity = Vector3.ZERO
 
 
 func _dissipate(reason: String) -> void:
 	phase = ""
+	_reset_matter()
 	velocity = Vector3.ZERO
 	_stats.dissipated += 1
 	last_result = reason
@@ -242,6 +287,7 @@ func cancel() -> void:
 	if phase != "":
 		_stats.cancelled += 1
 	phase = ""
+	_reset_matter()
 	velocity = Vector3.ZERO
 	hold_distance = clampf(tuning.initial_distance, tuning.min_distance, tuning.max_distance)
 	hold_height = clampf(tuning.initial_height, tuning.min_height, tuning.max_height)
@@ -253,5 +299,6 @@ func clear() -> void:
 
 
 func status() -> String:
-	return "%.0f L Criativo · RMB solta · Q/E altura %.1f · roda distância %.1f" % [volume_liters, hold_height, hold_distance] \
-		if phase == "hold" else ("orbe em voo" if phase == "flight" else last_result)
+	var label := "GELO" if is_frozen() else "ÁGUA · C congela"
+	return "%s · %.0f L Criativo · RMB solta · Q/E altura %.1f · roda distância %.1f" % [label, volume_liters, hold_height, hold_distance] \
+		if phase == "hold" else (("gelo em voo" if is_frozen() else "água em voo") if phase == "flight" else last_result)
