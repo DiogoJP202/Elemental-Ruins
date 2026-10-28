@@ -763,6 +763,10 @@ func can_add_path(world_points: PackedVector3Array, radii: PackedFloat32Array,
 	return _check_path(VoxelTool.MODE_ADD, world_points, radii, material_id).reason
 
 
+func can_dig_path(world_points: PackedVector3Array, radii: PackedFloat32Array) -> String:
+	return _check_path(VoxelTool.MODE_REMOVE, world_points, radii, &"").reason
+
+
 func _check_path(mode: int, world_points: PackedVector3Array, radii: PackedFloat32Array,
 		material_id: StringName) -> Dictionary:
 	var n := world_points.size()

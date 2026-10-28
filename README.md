@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4C)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4D)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -10,7 +10,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P3.6.1:** base `180ec59`; salvar preserva terreno, colisores e física viva (ver [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md)).
 **P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
 **P4B — checkpoint fechado e integrado à main (`266627d`) em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando").
-**P4C — checkpoint fechado em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário. Pronto para publicar a branch e revisar a PR.
+**P4C — checkpoint fechado e integrado à main (`b84b4c6`, PR #4) em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário.
+**P4D — Fissura de Terra implementada, com feedback humano positivo:** vala permanente por F (segurar prévia/soltar aplicar), reutilizando PATH subtrativo e os sistemas existentes. T65/T66 aprovados em headless e janela, com benchmark em janela dentro dos limites. As falhas e rechecagens direcionadas estão preservadas abaixo; checkpoint de integração P4D não fechado. Feedback humano positivo em 28/10/2026 sobre posição e controle, sem avaliação detalhada por cenário.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -56,8 +57,8 @@ de fluidos.
 
 ## Abrir e rodar no editor
 
-1. Abra `godot.windows.editor.x86_64.exe` (o editor **custom**, não o `Godot_v4.7.2-stable_win64.exe` oficial).
-2. No Gerenciador de Projetos, clique em **Importar**, escolha `project.godot` desta pasta e depois **Importar e editar**.
+1. Execute **`open_editor.cmd` nesta pasta**. Ele valida as classes Voxel antes de abrir o projeto no editor custom. Usa `GODOT` se definido; o caminho padrão é `%USERPROFILE%\Tools\Godot\4.7.2-voxel1.7\godot.windows.editor.x86_64.exe`.
+2. Para abrir manualmente, execute `godot.windows.editor.x86_64.exe` (o editor **custom**), clique em **Importar**, escolha `project.godot` desta pasta e depois **Importar e editar**. Abrir `project.godot` por associação do Windows pode iniciar a Godot oficial, que não contém as classes Voxel e gera erros de tipo em cascata. O launcher não altera essa associação.
    O projeto já aparecia na lista do editor oficial; os dois editores compartilham essa lista, então confira
    qual executável está aberto.
 3. Pressione **F5** (cena principal `res://scenes/main.tscn`).
@@ -76,6 +77,7 @@ de fluidos.
 | **Q / E**, durante hold da Terra | abaixar / elevar o alvo da rocha a 2 m/s; altura inicial 2 m, limites 1–6 m sobre os pés do jogador |
 | **LMB mirando uma rocha solta** (Terra; P4B) | capturar o mesmo corpo físico, preservando massa e velocidade, até 7 m do jogador ao centro da rocha; Q/E, roda e lançamento iguais ao P4A |
 | **RMB** (Terra parada; P4C) | segurar mostra a prévia; soltar cria um pilar permanente. Altura 4,5 m, raio 2 m; chão entre 2,5 m horizontais e 18 m em 3D. Trocar elemento ou Esc cancela |
+| **F** (Terra parada; P4D) | segurar mostra a prévia; soltar abre uma fissura permanente de 6 m, raio 1 m e centro 0,35 m abaixo do piso, para longe na direção horizontal da câmera; todo o caminho deve estar a até 18 m |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -181,6 +183,16 @@ Playtest humano do P4C em 27/10/2026: feedback positivo do usuário ("Funcionou,
 
 O raio padrão de 2 m usa a mesma escala já validada pela coluna do laboratório. Com 1,1 m, a caixa escorregou do topo arredondado nos testes; os critérios de apoio foram mantidos.
 
+### Roteiro manual do P4D — Fissura de Terra
+
+Feedback humano positivo em 28/10/2026 sobre posição e controle da fissura ("sim, pode subir"), sem avaliação detalhada por cenário.
+
+1. Selecione **1**, mire chão livre e segure **F**. Confira a prévia na direção horizontal da câmera; solte para abrir a vala. Apenas segurar não edita o terreno.
+2. O caminho nominal tem 6 m, raio 1 m e centro 0,35 m abaixo do piso amostrado. O alcance de 18 m vale para todo o trajeto; piso ausente, inclinação inválida ou salto de altura maior que 1 m recusam o pedido. Dimensões em `EarthTuning`.
+3. Objetos e paredes sob a mira bloqueiam o alvo. Uma fissura válida pode remover o apoio de caixas/estruturas adiante; a queda deve vir da sustentação e da física existentes. Malha e colisão atualizam de forma assíncrona.
+4. Rocha, pilar e fissura não iniciam simultaneamente. Trocar elemento, Esc, input desabilitado e reset/save/load cancelam a prévia e o pedido pendente. Cancelar não desfaz edições já aplicadas.
+5. Use **F5/Z/F9** para salvar/remover/restaurar a fissura. Esta fatia não implementa compressão de rochas.
+
 ### Roteiro manual do P3.6 — Água, Fogo e Ar (≈ 6 min)
 Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tuning.tres` (inspetor da Godot); detalhes em
 `docs/p36_elemental_polish.md`. Use **B** para criar caixas de teste e **H** para levantar um morro de terreno.
@@ -200,6 +212,26 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
    clareza de limites e recuperação. **NÃO TESTADO** por pessoas até aqui.
 
 ## Testes automatizados
+
+### P4D — validação direcionada e feedback humano
+
+- [Import](docs/evidence/p4d/01_import.log): saída 0 em uma tentativa.
+- [Regressão relacionada headless](docs/evidence/p4d/related_headless.json): **18/20**, com T65/T66 aprovados e zero erros/avisos do motor. T21 falhou porque a seleção omitiu T20, seu pré-requisito; T61 falhou em `one_new_impact`, com as demais verificações verdadeiras.
+- [Rechecagem contextual headless](docs/evidence/p4d/context_headless.json): **5/5** para T1/T19/T20/T21/T61, zero erros/avisos. A causa da variação de T61 não foi isolada; não se atribui a resultado preexistente ou regressão, nem se reclassifica o FAIL anterior.
+- [Editor em janela](docs/evidence/p4d/fissure_window.json): **4/4** para T1/T37/T65/T66, zero erros/avisos. T65 confirmou um PATH subtrativo, queda da caixa de **1,16044 m**, três fundos de colisão em **−1,2954/−1,2542/−1,2383 m** (antes: +0,02 m), seis verificações de save/reset/load verdadeiras e SDF restaurado idêntico.
+
+| Cenário em janela | p95 | p99 | Máximo |
+|---|---:|---:|---:|
+| T37, quatro poderes | 18,96 ms | 21,36 ms | 44,18 ms |
+| T65, prévia/criação/apoio da fissura (128 quadros) | 17,90 ms | 19,48 ms | 19,52 ms |
+
+Ambos atendem a 20/33/50 ms. [Ambiente registrado](docs/evidence/p4d/environment.json): Ryzen 7 5825U, AMD Radeon Graphics (driver 31.0.21925.1001), 1600×900, Vulkan 1.3.260, Forward+ e Jolt. Os hashes das 52 fontes permaneceram iguais desde esse registro. Não se infere ganho causal em relação ao hardware dos checkpoints anteriores.
+
+**Tentativa inicial preservada:** [2/3 headless](docs/evidence/p4d/fissure_headless_initial.json), com FAIL em T65. O testemunho SDF usava o centro a aproximadamente −0,33 m, arredondado para o voxel Y=0 (SDF=0) após reset. A sonda foi deslocada 0,5 m para dentro do solo e todas as verificações passaram a ser registradas, sem alterar tolerâncias. Os resultados acima incluem essa correção do testemunho.
+
+As capturas foram inspecionadas: a [prévia](docs/evidence/p4d/screens/03_p4d_fissure_preview.png) mostra a fita verde e a [fissura aplicada](docs/evidence/p4d/screens/04_p4d_fissure.png) mostra a vala. Os PNGs foram movidos do destino fixo do runner para `docs/evidence/p4d/screens/`; os relatórios brutos mantêm os caminhos originais. A captura histórica do P3.6 foi restaurada.
+
+Não foram executados export, persistência entre processos ou bateria completa nesta fatia. Save/reset/load de T65 ocorreram na mesma execução. **Checkpoint de integração P4D não fechado; próximo passo recomendado: esclarecer a variação de T61 antes de fechar a integração.** O usuário confirmou feedback humano positivo em 28/10/2026 ("sim, pode subir"), sem avaliação detalhada por cenário. Os campos de playtest dos relatórios automatizados preservam o estado histórico da execução. Compressão continua planejada; os resultados P4C abaixo são históricos.
 
 ### P4C — validação direcionada e checkpoint de integração
 
@@ -238,7 +270,7 @@ Na fatia direcionada acima não foram executados bateria integral e persistênci
 | T61 — recaptura da rocha | 17,67 / 18,57 / 24,67 ms | 17,76 / 19,02 / 23,52 ms |
 | T63 — pilar | 17,82 / 18,33 / 19,54 ms | 17,73 / 18,15 / 21,50 ms |
 
-Todos atendem a 20/33/50 ms, em i5-1135G7/Iris Xe, Forward+, 1600×900 e Jolt, com execuções sequenciais e sem outra Godot aberta no início. Acompanhamento por leitura de log sem abrir processos shell/CIM durante as janelas de medição. Sem inferência de ganho causal entre amostras. Para um próximo checkpoint, reutilizar `tools/run_p361_tests.ps1` com `-Template <template-custom>` e `-EvidenceDirectory <pasta-nova>`. Próximo passo: publicar a branch P4C e abrir a PR para revisão.
+Todos atendem a 20/33/50 ms, em i5-1135G7/Iris Xe, Forward+, 1600×900 e Jolt, com execuções sequenciais e sem outra Godot aberta no início. Acompanhamento por leitura de log sem abrir processos shell/CIM durante as janelas de medição. Sem inferência de ganho causal entre amostras. Para um próximo checkpoint, reutilizar `tools/run_p361_tests.ps1` com `-Template <template-custom>` e `-EvidenceDirectory <pasta-nova>`. P4C integrado à main pela PR #4 em `b84b4c6`; histórico preservado.
 
 ### P4B — validação direcionada e checkpoint de integração
 
@@ -330,7 +362,7 @@ Comando usado neste checkpoint; ao repetir, escolher outra pasta para preservar 
 ./tools/run_p361_tests.ps1 -Template 'C:\Users\dsoares\Tools\Godot\4.7.2-voxel1.7\godot.windows.template_release.x86_64.exe' -EvidenceDirectory 'docs/evidence/p4a/integration'
 ```
 
-O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Este checkpoint P4A já foi integrado à main em `9103bee`; a fase atual é P4C.
+O parâmetro `EvidenceDirectory` só altera a saída das evidências; o destino padrão e todos os contratos do runner anterior foram preservados. Este checkpoint P4A já foi integrado à main em `9103bee`; a fase atual é P4D.
 
 ### P3.6 — Água, Fogo e Ar polidos (inclui as regressões do P0 ao P3.5)
 

@@ -23,6 +23,7 @@ const KEY_ACTIONS := {
 	&"debug_push": [KEY_T],
 	&"earth_lower": [KEY_Q],
 	&"earth_raise": [KEY_E],
+	&"earth_fissure": [KEY_F],
 	# P3: elementos (GDD §4: 1 2 3 4 = Terra / Água / Fogo / Ar).
 	&"element_earth": [KEY_1],
 	&"element_water": [KEY_2],

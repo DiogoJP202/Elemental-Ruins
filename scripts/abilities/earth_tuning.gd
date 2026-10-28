@@ -22,6 +22,15 @@ extends Resource
 ## Altura do topo acima do chão mirado; o pilar fica no terreno até escavar/resetar.
 @export_range(2.5, 6.0, 0.5) var pillar_height := 4.5
 
+@export_group("Fissura")
+## Todo o caminho precisa estar neste alcance 3D, sobre chão contínuo.
+@export_range(3.0, 30.0, 0.5) var fissure_range := 18.0
+@export_range(1.0, 10.0, 0.5) var fissure_length := 6.0
+@export_range(0.5, 2.0, 0.1) var fissure_radius := 1.0
+## Profundidade do centro do tubo; a remoção alcança mais um raio abaixo dele.
+@export_range(0.0, 0.75, 0.05) var fissure_depth := 0.35
+@export_range(0.1, 1.0, 0.1) var fissure_max_step_height := 1.0
+
 @export_group("Antecipação")
 @export var anticipation_s := 0.10
 

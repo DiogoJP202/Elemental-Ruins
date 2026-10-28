@@ -25,13 +25,15 @@ const MAX_ACCEL := 40.0
 const PHASE_LOG_MAX := 32
 const PHASE_NAMES := {"anticipation": "antecipação", "detach": "desprendendo", "rise": "erguendo",
 	"hold": "pronta: solte para arremessar", "windup": "lançando", "recovery": "recuperando",
-	"pillar_pending": "pilar na fila de terreno"}
+	"pillar_pending": "pilar na fila de terreno", "fissure_pending": "fissura na fila de terreno"}
 
 var tuning: EarthTuning
 var rock: RigidBody3D
 var phase := ""
 var pillar_aiming := false
+var fissure_aiming := false
 var _pillar_request: TerrainBrushRequest
+var _fissure_request: TerrainBrushRequest
 var _pillar_shape := CapsuleShape3D.new()
 ## Fases percorridas: [{phase, ms, frame}] (testes e diagnóstico).
 var phase_log: Array[Dictionary] = []
@@ -52,7 +54,8 @@ var _rng := RandomNumberGenerator.new()
 var _thrown := []
 var _stats := {"extracted": 0, "thrown": 0, "hits": 0, "max_impulse": 0.0, "invalid": 0, "failed": 0,
 	"ground_impacts": 0, "craters": 0, "craters_rejected": 0, "buffered_throws": 0, "cancelled": 0,
-	"last_ready_ms": -1, "last_cavity_wait_frames": -1, "reused": 0, "pillars": 0, "pillars_rejected": 0}
+	"last_ready_ms": -1, "last_cavity_wait_frames": -1, "reused": 0, "pillars": 0, "pillars_rejected": 0,
+	"fissures": 0, "fissures_rejected": 0}
 
 
 func _init() -> void:
@@ -70,6 +73,7 @@ func setup(p_controller) -> void:
 	super.setup(p_controller)
 	if controller.brush_queue != null:
 		controller.brush_queue.brush_applied.connect(_on_pillar_applied)
+		controller.brush_queue.brush_applied.connect(_on_fissure_applied)
 
 
 func get_stats() -> Dictionary:
@@ -84,7 +88,7 @@ func is_ready() -> bool:
 
 ## Em ação (fases ou rocha em voo): o HUD/FX esconde o marcador do pincel para não cobrir o poder.
 func is_busy() -> bool:
-	return pillar_aiming or phase != "" or not _thrown.is_empty()
+	return pillar_aiming or fissure_aiming or phase != "" or not _thrown.is_empty()
 
 
 ## 0 → 1 do clique até a rocha pronta (anel do HUD).
@@ -110,6 +114,10 @@ func move_speed_scale() -> float:
 
 
 func status() -> String:
+	if fissure_aiming:
+		var check := validate_fissure_target()
+		return "F: solte para abrir fissura %.1f m × Ø %.1f m · %s" % [tuning.fissure_length,
+			tuning.fissure_radius * 2.0, "alvo válido" if check.ok else check.reason]
 	if pillar_aiming:
 		var check := validate_pillar_target()
 		return "RMB: solte para criar pilar %.1f m × Ø %.1f m · %s" % [tuning.pillar_height,
@@ -128,7 +136,7 @@ func status() -> String:
 # --- Entrada ----------------------------------------------------------------------------------
 
 func begin_pillar() -> bool:
-	if phase != "" or _button or controller.brush_queue == null:
+	if phase != "" or _button or fissure_aiming or controller.brush_queue == null:
 		return false
 	pillar_aiming = true
 	return true
@@ -215,6 +223,146 @@ func _on_pillar_applied(request: TerrainBrushRequest, result: TerrainEditResult)
 		_stats.pillars_rejected += 1
 		last_result = "pilar recusado: %s" % result.reason
 	_set_phase("recovery", {})
+
+
+func begin_fissure() -> bool:
+	if phase != "" or _button or pillar_aiming or controller.brush_queue == null:
+		return false
+	fissure_aiming = true
+	return true
+
+
+func finish_fissure() -> bool:
+	if not fissure_aiming:
+		return false
+	fissure_aiming = false
+	var check := validate_fissure_target()
+	if not check.ok:
+		_stats.fissures_rejected += 1
+		last_result = "fissura recusada: %s" % check.reason
+		emit_fx(&"invalid", {"point": check.get("point", Vector3.ZERO), "reason": check.reason})
+		return false
+	_fissure_request = check.request
+	if not controller.brush_queue.enqueue(_fissure_request):
+		_fissure_request = null
+		_stats.fissures_rejected += 1
+		last_result = "fissura recusada: fila indisponível"
+		return false
+	_set_phase("fissure_pending", {})
+	return true
+
+
+## Amostras limitadas de piso: a vala acompanha o chão, sem unir superfícies separadas
+## por um buraco ou salto. A remoção é um PATH nativo único; não cria corpos nem impulsos.
+func validate_fissure_target() -> Dictionary:
+	var out := {"ok": false, "reason": "", "ray_attempts": 0, "ray_hits": 0}
+	for v in [tuning.fissure_range, tuning.fissure_length, tuning.fissure_radius,
+			tuning.fissure_depth, tuning.fissure_max_step_height]:
+		if not is_finite(v):
+			out.reason = "parâmetros inválidos"
+			return out
+	if tuning.fissure_length < 1.0 or tuning.fissure_length > 10.0 \
+			or tuning.fissure_radius < 0.5 or tuning.fissure_radius > 2.0 \
+			or tuning.fissure_depth < 0.0 or tuning.fissure_depth > 0.75 \
+			or tuning.fissure_max_step_height < 0.1 or tuning.fissure_max_step_height > 1.0 \
+			or tuning.fissure_range < 3.0 or tuning.fissure_range > 30.0:
+		out.reason = "parâmetros fora dos limites"
+		return out
+	var ray: Array = controller.aim_ray()
+	out.ray_attempts += 1
+	var hit: Dictionary = controller.cast_segment(ray[0], ray[0] + ray[1] * (tuning.fissure_range + 15.0), true)
+	if hit.is_empty():
+		out.reason = "sem chão na mira"
+		return out
+	out.ray_hits += 1
+	var start: Vector3 = hit.position
+	out.point = start
+	if not hit.collider is VoxelLodTerrain or hit.normal.y < tuning.min_floor_normal_y:
+		out.reason = "mire em chão livre"
+		return out
+	var direction: Vector3 = ray[1]
+	direction.y = 0.0
+	if direction.length() < 0.01:
+		out.reason = "mire adiante no chão"
+		return out
+	direction = direction.normalized()
+	var points := PackedVector3Array()
+	var radii := PackedFloat32Array()
+	var steps := ceili(tuning.fissure_length)
+	var previous := start
+	for i in steps + 1:
+		var floor_point := start
+		if i > 0:
+			var next := start + direction * (tuning.fissure_length * i / steps)
+			next.y = previous.y
+			out.ray_attempts += 1
+			var floor_hit: Dictionary = controller.terrain_service.raycast_terrain(
+				next + Vector3.UP * 1.5, next + Vector3.DOWN * 2.5)
+			if floor_hit.is_empty():
+				out.reason = "caminho sem chão contínuo"
+				return out
+			out.ray_hits += 1
+			floor_point = floor_hit.position
+			if floor_hit.normal.y < tuning.min_floor_normal_y \
+					or absf(floor_point.y - previous.y) > tuning.fissure_max_step_height:
+				out.reason = "desnível no caminho"
+				return out
+		points.append(floor_point - Vector3.UP * tuning.fissure_depth)
+		radii.append(tuning.fissure_radius)
+		previous = floor_point
+	var req := TerrainBrushRequest.path(points, radii, false)
+	req.source = "ability:earth_fissure"
+	out.request = req
+	out.reason = _fissure_path_reason(req)
+	out.ok = out.reason == ""
+	return out
+
+
+## Revalida também o caminho fixo enquanto espera na fila: nunca acompanha a nova mira.
+func _fissure_path_reason(req: TerrainBrushRequest) -> String:
+	var reason: String = controller.terrain_service.can_dig_path(req.points, req.radii)
+	if reason != "":
+		return reason
+	var size := req.world_aabb().size
+	if size[size.max_axis_index()] > controller.brush_queue.max_aabb_extent:
+		return "dimensões excedem o limite da fila"
+	if not controller.brush_queue.can_apply_unsplit(req):
+		return "caminho excede o limite de operação única"
+	var player_point: Vector3 = controller.player.global_position
+	for p in req.points:
+		if p.distance_to(player_point) > tuning.fissure_range:
+			return "caminho fora do alcance"
+		if Vector2(p.x - player_point.x, p.z - player_point.z).length() < tuning.min_range:
+			return "caminho perto demais do jogador"
+		var mat: TerrainMaterial = controller.terrain_service.get_material_at(p - Vector3.UP * 0.5)
+		if mat == null:
+			return "caminho sem matéria sólida"
+		reason = TerrainBrushQueue.material_policy(TerrainBrushRequest.Op.PATH, mat)
+		if reason != "":
+			return reason
+	# O jogador pode entrar entre duas amostras enquanto o pedido espera na fila.
+	var flat_player := Vector3(player_point.x, 0.0, player_point.z)
+	for i in range(1, req.points.size()):
+		var a := Vector3(req.points[i - 1].x, 0.0, req.points[i - 1].z)
+		var b := Vector3(req.points[i].x, 0.0, req.points[i].z)
+		if flat_player.distance_to(Geometry3D.get_closest_point_to_segment(flat_player, a, b)) < tuning.min_range:
+			return "caminho perto demais do jogador"
+	return ""
+
+
+func _on_fissure_applied(request: TerrainBrushRequest, result: TerrainEditResult) -> void:
+	if request != _fissure_request:
+		return
+	_fissure_request = null
+	if result.ok:
+		_stats.fissures += 1
+		last_result = "fissura aberta · colisão atualiza em seguida"
+		emit_fx(&"fissure_opened", {"points": request.points})
+	else:
+		_stats.fissures_rejected += 1
+		last_result = "fissura recusada: %s" % result.reason
+	_set_phase("recovery", {})
+
 
 func on_press() -> void:
 	_button = true
@@ -338,6 +486,11 @@ func validate_target() -> Dictionary:
 
 func cancel() -> void:
 	pillar_aiming = false
+	fissure_aiming = false
+	if _fissure_request != null:
+		controller.brush_queue.cancel_request(_fissure_request)
+		_fissure_request = null
+		_end_quietly()
 	if _pillar_request != null:
 		controller.brush_queue.cancel_request(_pillar_request)
 		_pillar_request = null
@@ -364,6 +517,12 @@ func clear() -> void:
 
 func physics_tick(delta: float) -> void:
 	_tick_thrown()
+	if _fissure_request != null:
+		var reason := _fissure_path_reason(_fissure_request)
+		if reason != "":
+			var request := _fissure_request
+			controller.brush_queue.cancel_request(request)
+			_on_fissure_applied(request, TerrainEditResult.failure("dig_path", reason))
 	# Controladores rodam antes da fila (priority 100): revalidar o volume fixo enquanto
 	# espera, inclusive se um corpo entrou depois de soltar RMB. Nunca seguir a mira nova.
 	if _pillar_request != null and _pillar_space_blocked(_pillar_request):

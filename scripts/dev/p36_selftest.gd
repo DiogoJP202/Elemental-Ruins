@@ -5,6 +5,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4A: T59 cobre manipulação de uma rocha e T60 input/cancelamentos contextuais.
 ## P4B: T61 reutiliza a mesma rocha e T62 cobre seleção, orçamento e cancelamentos.
 ## P4C: T63 cria/persiste um pilar real e T64 cobre recusas e cancelamentos do RMB.
+## P4D: T65 escava uma fissura física/persistente e T66 cobre input, limites e cancelamentos.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -76,6 +77,9 @@ func _run_tests() -> bool:
 	_log("--- testes P4C (pilar de Terra) ---")
 	if _should_run("T63"): await _t63_earth_pillar()
 	if _should_run("T64"): await _t64_earth_pillar_guards()
+	_log("--- testes P4D (fissura de Terra) ---")
+	if _should_run("T65"): await _t65_earth_fissure()
+	if _should_run("T66"): await _t66_earth_fissure_guards()
 	return true
 
 
@@ -2231,5 +2235,348 @@ func _t64_earth_pillar_guards() -> void:
 	Input.mouse_mode = old_mouse
 	player.input_enabled = false
 	_record("T64", "Pilar recusa alvos inseguros, mantém LMB/outros elementos e cancela preview/fila sem edição residual",
+		slot_ready and cases.values().all(func(c): return c.ok), cases)
+	await main.request_world_reset()
+
+
+# --- P4D: fissura altera matéria, collider, apoio e o slot existentes ---------------------------
+
+func _p4d_f(pressed: bool) -> void:
+	_p4a_key(KEY_F, pressed)
+	Input.flush_buffered_events()
+
+
+func _t65_earth_fissure() -> void:
+	const SLOT := "p4d_fissure"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var point := _ground_at(base + Vector3(0.17, 0, -5.0))
+	await _aim_settle(point)
+	var check := earth.validate_fissure_target()
+	if not check.ok:
+		player.input_enabled = false
+		_record("T65", "Fissura de Terra por F", false, {"reason": check.reason, "target": check})
+		return
+	var planned: TerrainBrushRequest = check.request
+	var centers := PackedVector3Array([planned.points[0], planned.points[planned.points.size() >> 1], planned.points[-1]])
+	# sample_sdf lê a célula voxel: o centro raso do PATH pode arredondar para SDF == 0.
+	# Estas testemunhas ficam no interior real antes da edição e dentro da vala depois.
+	var sdf_probes := PackedVector3Array()
+	var original_sdf := []
+	for p: Vector3 in centers:
+		sdf_probes.append(p - Vector3.UP * 0.5)
+		original_sdf.append(svc.sample_sdf(sdf_probes[-1]))
+	var before_y := []
+	for p: Vector3 in centers:
+		before_y.append(_hit_y(svc.raycast_terrain(p + Vector3.UP * 4.0, p + Vector3.DOWN * 5.0)))
+	# A caixa repousa de verdade no meio do futuro trecho; não é movida para simular queda.
+	var middle := centers[1]
+	var crate := DebugProps.spawn_crate(props, Vector3(middle.x, before_y[1] + 1.0, middle.z))
+	await _seconds(2.0)
+	var crate_before := crate.global_position
+	var supported: bool = crate.linear_velocity.length() < 0.3 and absf(crate_before.y - before_y[1] - 0.5) < 0.25
+	await _aim_settle(point)
+	var edits: Array[Dictionary] = []
+	var cb := func(req: TerrainBrushRequest, result: TerrainEditResult):
+		if req.source == "ability:earth_fissure":
+			edits.append({"request": req, "ok": result.ok, "reason": result.reason})
+	queue.brush_applied.connect(cb)
+	var revision := svc.get_revision()
+	var extracted: int = earth.get_stats().extracted
+	# Capturar a prévia fora da medição; a gravação PNG não pertence ao custo do poder.
+	_p4d_f(true)
+	await _frames(12)
+	await _snap("p4d_fissure_preview")
+	ab.cancel_all()
+	_p4d_f(false)
+	var frame_ms := PackedFloat32Array()
+	var clock := {"last": Time.get_ticks_usec()}
+	var sample_frame := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().process_frame.connect(sample_frame)
+	_p4d_f(true)
+	await _frames(12)
+	_p4b_lmb(true)
+	_p4b_lmb(false)
+	_p4c_rmb(true)
+	_p4c_rmb(false)
+	var preview: bool = earth.fissure_aiming and not earth.pillar_aiming and svc.get_revision() == revision \
+		and edits.is_empty() and queue.pending_count() == 0 and earth.get_stats().extracted == extracted
+	_p4d_f(false)
+	var applied: bool = await _wait_until(func(): return edits.size() == 1, 5.0)
+	var lower := []
+	var collider_ok := true
+	for i in centers.size():
+		var p := centers[i]
+		var ray := await _wait_ray(p + Vector3.UP * 4.0, p + Vector3.DOWN * 5.0,
+			func(h): return not h.is_empty() and h.position.y < float(before_y[i]) - 0.45, 5.0)
+		collider_ok = collider_ok and ray.ok
+		lower.append(_hit_y(ray.hit))
+	await _seconds(2.0)
+	var crate_drop := crate_before.y - crate.global_position.y
+	var fell: bool = supported and crate_drop > 0.45
+	_p4d_f(false)
+	await _frames(2)
+	var single_path: bool = applied and edits.size() == 1 and svc.get_revision() == revision + 1 \
+		and (edits[0].request as TerrainBrushRequest).is_path() and not edits[0].request.additive
+	queue.brush_applied.disconnect(cb)
+	get_tree().process_frame.disconnect(sample_frame)
+	await _snap("p4d_fissure")
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p4d_fissure_frame_ms"] = timings
+	var perf_ok: bool = _mode.begins_with("headless") or (timings.get("p95", 999.0) <= 20.0 \
+		and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	var sdf := []
+	for p: Vector3 in sdf_probes: sdf.append(svc.sample_sdf(p))
+	var save_ok: bool = await main.request_world_save(SLOT)
+	var save_unchanged := true
+	var after_save_sdf := []
+	for i in sdf_probes.size():
+		var value := svc.sample_sdf(sdf_probes[i])
+		after_save_sdf.append(value)
+		save_unchanged = save_unchanged and is_equal_approx(float(sdf[i]), value)
+	var reset_ok: bool = await main.request_world_reset()
+	await _prepare_area(base, AABB(base + Vector3(-5, -4, -15), Vector3(10, 10, 15)))
+	var reset_floor := true
+	var reset_sdf := []
+	var reset_rays := []
+	for i in centers.size():
+		var p := centers[i]
+		var ray := await _wait_ray(p + Vector3.UP * 4.0, p + Vector3.DOWN * 5.0,
+			func(h): return not h.is_empty() and absf(h.position.y - float(before_y[i])) < PROBE_TOLERANCE, 5.0)
+		var value := svc.sample_sdf(sdf_probes[i])
+		reset_sdf.append(value)
+		reset_rays.append({"ok": ray.ok, "y": _hit_y(ray.hit), "ms": ray.ms})
+		reset_floor = reset_floor and ray.ok and float(original_sdf[i]) < 0.0 and value < 0.0 \
+			and absf(value - float(original_sdf[i])) < SDF_TOLERANCE
+	var load_ok: bool = await main.request_world_load(SLOT)
+	await _prepare_area(base, AABB(base + Vector3(-5, -4, -15), Vector3(10, 10, 15)))
+	var loaded_floor := true
+	var loaded_sdf := []
+	var loaded_rays := []
+	for i in centers.size():
+		var p := centers[i]
+		var ray := await _wait_ray(p + Vector3.UP * 4.0, p + Vector3.DOWN * 5.0,
+			func(h): return not h.is_empty() and absf(h.position.y - float(lower[i])) < PROBE_TOLERANCE, 5.0)
+		var value := svc.sample_sdf(sdf_probes[i])
+		loaded_sdf.append(value)
+		loaded_rays.append({"ok": ray.ok, "y": _hit_y(ray.hit), "ms": ray.ms})
+		loaded_floor = loaded_floor and ray.ok and value > 0.0 and absf(value - float(sdf[i])) < SDF_TOLERANCE
+	var persistence: bool = save_ok and save_unchanged and reset_ok and reset_floor and load_ok and loaded_floor
+	player.input_enabled = false
+	_record("T65", "F confirma uma fissura física única; caixa perde apoio e save/reset/load conservam SDF/colisão",
+		preview and single_path and edits[0].ok and collider_ok and fell and persistence and perf_ok,
+		{"preview_without_edit": preview, "single_subtractive_path": single_path, "collider_lowered": collider_ok,
+		"floor_y_before": before_y, "floor_y_after": lower, "crate_supported_before": supported,
+		"crate_drop_m": crate_drop, "original_sdf": original_sdf, "saved_sdf": sdf, "after_save_sdf": after_save_sdf,
+		"reset_sdf": reset_sdf, "loaded_sdf": loaded_sdf, "reset_rays": reset_rays, "loaded_rays": loaded_rays,
+		"persistence": persistence, "persistence_checks": {"save": save_ok, "save_unchanged": save_unchanged,
+			"reset": reset_ok, "reset_floor_and_sdf": reset_floor, "load": load_ok, "loaded_floor_and_sdf": loaded_floor},
+		"frame_ms": timings, "raycasts": {"attempts": check.ray_attempts, "hits": check.ray_hits,
+			"misses": check.ray_attempts - check.ray_hits}})
+	await main.request_world_reset()
+
+
+func _t66_earth_fissure_guards() -> void:
+	const SLOT := "p4d_cancel"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var original := earth.tuning
+	var point := _ground_at(base + Vector3(0.17, 0, -5.0))
+	var cases := {}
+	var reject := func(name: String):
+		var check := earth.validate_fissure_target()
+		var rev := svc.get_revision()
+		var n := _brush_log.size()
+		_p4d_f(true)
+		await _frames(2)
+		_p4d_f(false)
+		await _frames(3)
+		cases[name] = {"reason": check.reason, "raycasts": {"attempts": check.ray_attempts, "hits": check.ray_hits,
+			"misses": check.ray_attempts - check.ray_hits},
+			"ok": not check.ok and svc.get_revision() == rev and _brush_log.size() == n \
+			and queue.pending_count() == 0 and not earth.fissure_aiming and earth.rock == null}
+	player.camera_rig.set_view(0.0, deg_to_rad(45.0))
+	await _frames(2)
+	await reject.call("no_ground")
+	await _aim_settle(_ground_at(base + Vector3(0, 0, -earth.tuning.fissure_range - 3.0)))
+	await reject.call("out_of_range")
+	await _aim_settle(_ground_at(base + Vector3(0, 0, -1.0)))
+	await reject.call("minimum_range")
+	var wall := _p36_thin_wall(base + Vector3(0, 2, -2), Vector3(6, 5, 0.2))
+	await _frames(2)
+	await _aim_settle(point)
+	await reject.call("wall_occlusion")
+	wall.queue_free()
+	await _frames(2)
+	var crate := DebugProps.spawn_crate(props, point + Vector3.UP * 0.6)
+	crate.freeze = true
+	await _frames(2)
+	await _aim_settle(MaterialResponseSystem.body_center(crate))
+	await reject.call("prop_not_ground")
+	crate.queue_free()
+	await _frames(2)
+	await _aim_settle(point)
+	var material: TerrainMaterial = svc.get_material_at(point - Vector3.UP * 0.5)
+	if material != null:
+		var was_bendable := material.bendable
+		material.bendable = false
+		await reject.call("non_bendable_ground")
+		material.bendable = was_bendable
+	else:
+		cases["non_bendable_ground"] = {"ok": false, "reason": "fixture_material_missing"}
+	earth.tuning = original.duplicate()
+	earth.tuning.fissure_length = 30.0
+	await reject.call("oversized_path")
+	earth.tuning.fissure_length = original.fissure_length
+	earth.tuning.fissure_radius = 0.0
+	await reject.call("invalid_radius")
+	earth.tuning = original
+	# Na diagonal a AABB cabe, mas o comprimento ainda exigiria dividir o pedido.
+	# A habilidade precisa recusar, pois cancelamento deve tratar um único PATH inteiro.
+	await _aim_settle(_ground_at(base + Vector3(4, 0, -4)))
+	var diagonal := earth.validate_fissure_target()
+	var queue_extent := queue.max_aabb_extent
+	queue.max_aabb_extent = 7.5
+	await reject.call("path_would_split")
+	var nominal_extent := 999.0
+	var nominal_length := 0.0
+	if diagonal.ok:
+		var diagonal_request: TerrainBrushRequest = diagonal.request
+		var size := diagonal_request.world_aabb().size
+		nominal_extent = size[size.max_axis_index()]
+		nominal_length = diagonal_request.length()
+	cases.path_would_split["aabb_extent_m"] = nominal_extent
+	cases.path_would_split["path_length_m"] = nominal_length
+	cases.path_would_split["queue_extent_m"] = queue.max_aabb_extent
+	cases.path_would_split.ok = cases.path_would_split.ok and diagonal.ok and nominal_extent <= queue.max_aabb_extent
+	queue.max_aabb_extent = queue_extent
+	await _aim_settle(point)
+	# Escavar de verdade no fim do trecho cria um degrau; a fissura não salta o vazio.
+	var continuous := earth.validate_fissure_target()
+	if continuous.ok:
+		var planned: TerrainBrushRequest = continuous.request
+		var tail := planned.points[-1] + Vector3.UP * earth.tuning.fissure_depth
+		var dug := svc.dig_sphere(tail - Vector3.UP * 0.5, 2.5)
+		var hole := await _wait_ray(tail + Vector3.UP * 3.0, tail + Vector3.DOWN * 6.0,
+			func(h): return not h.is_empty() and h.position.y < tail.y - 1.5, 5.0)
+		await _aim_settle(point)
+		await reject.call("discontinuous_floor")
+		cases.discontinuous_floor["fixture_hole_confirmed"] = dug.ok and hole.ok
+		cases.discontinuous_floor.ok = cases.discontinuous_floor.ok and dug.ok and hole.ok \
+			and cases.discontinuous_floor.reason in ["desnível no caminho", "caminho sem chão contínuo"]
+	else:
+		cases["discontinuous_floor"] = {"ok": false, "reason": "fixture_path_not_valid"}
+	base = await _p3_lab(0)
+	point = _ground_at(base + Vector3(0.17, 0, -5.0))
+	await _aim_settle(point)
+	# Os outros elementos ignoram F. O ciclo da rocha e a prévia do pilar continuam exclusivos.
+	for index in [1, 2, 3]:
+		ab.select(index)
+		var rev := svc.get_revision()
+		_p4d_f(true)
+		_p4d_f(false)
+		await _frames(2)
+		cases["other_element_%d" % index] = {"ok": svc.get_revision() == rev and not earth.fissure_aiming \
+			and not ab.holding and queue.pending_count() == 0}
+	ab.select(0)
+	await _aim_settle(point)
+	_p4c_rmb(true)
+	_p4d_f(true)
+	_p4d_f(false)
+	cases["pillar_exclusive"] = {"ok": earth.pillar_aiming and not earth.fissure_aiming and queue.pending_count() == 0}
+	ab.cancel_all()
+	_p4c_rmb(false)
+	_p4b_lmb(true)
+	var rock_ready: bool = await _wait_until(func(): return earth.phase == "hold", 2.0)
+	var rock: RigidBody3D = earth.rock
+	_p4d_f(true)
+	_p4d_f(false)
+	var exclusive: bool = rock_ready and earth.rock == rock and earth.phase == "hold" and not earth.fissure_aiming
+	var throws: int = earth.get_stats().thrown
+	_p4b_lmb(false)
+	var launched: bool = await _wait_until(func(): return earth.get_stats().thrown == throws + 1, 1.0)
+	cases["lmb_still_throws"] = {"ok": exclusive and launched}
+	ab.cancel_all()
+	base = await _p3_lab(0)
+	point = _ground_at(base + Vector3(0.17, 0, -5.0))
+	await _aim_settle(point)
+	var fixed := earth.validate_fissure_target()
+	if fixed.ok:
+		var fixed_request: TerrainBrushRequest = fixed.request
+		queue.set_physics_process(false)
+		var rev := svc.get_revision()
+		var n := _brush_log.size()
+		var rejected: int = earth.get_stats().fissures_rejected
+		_p4d_f(true)
+		_p4d_f(false)
+		var pending: bool = earth.phase == "fissure_pending" and queue.pending_count() == 1
+		player.teleport_to(fixed_request.points[fixed_request.points.size() >> 1] + Vector3.UP)
+		await _frames(3)
+		cases["player_entered_pending_path"] = {"queued": pending, "reason": earth.last_result,
+			"ok": pending and svc.get_revision() == rev and _brush_log.size() == n and queue.pending_count() == 0 \
+			and earth.get_stats().fissures_rejected == rejected + 1}
+		_p4d_f(false)
+		queue.set_physics_process(true)
+	else:
+		cases["player_entered_pending_path"] = {"ok": false, "reason": "fixture_path_not_valid"}
+	ab.cancel_all()
+	base = await _p3_lab(0)
+	var slot_ready: bool = await main.request_world_save(SLOT)
+	var old_capture := ab.require_captured_mouse
+	var old_mouse := Input.mouse_mode
+	for pending: bool in [false, true]:
+		for kind: String in ["select", "input_disabled", "mouse_lost", "reset", "save", "load"]:
+			base = await _p3_lab(0)
+			point = _ground_at(base + Vector3(0.17, 0, -5.0))
+			await _aim_settle(point)
+			queue.set_physics_process(false)
+			var rev := svc.get_revision()
+			var n := _brush_log.size()
+			_p4d_f(true)
+			var started: bool = earth.fissure_aiming
+			if pending:
+				_p4d_f(false)
+				started = started and earth.phase == "fissure_pending" and queue.pending_count() == 1
+			var unrelated: TerrainBrushRequest
+			if pending and kind == "select":
+				unrelated = TerrainBrushRequest.sphere(TerrainBrushRequest.Op.ADD, point + Vector3.RIGHT * 5.0, 0.5)
+				unrelated.source = "selftest:P4D-unrelated"
+				queue.enqueue(unrelated)
+			var command_ok := true
+			if kind == "select": ab.select(1)
+			elif kind == "input_disabled": player.input_enabled = false
+			elif kind == "mouse_lost":
+				ab.require_captured_mouse = true
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			elif kind == "reset": command_ok = await main.request_world_reset()
+			elif kind == "save": command_ok = await main.request_world_save(SLOT)
+			else: command_ok = await main.request_world_load(SLOT)
+			await _frames(2)
+			var only_own: bool = queue.pending_count() == (1 if unrelated != null else 0)
+			if unrelated != null: queue.cancel_request(unrelated)
+			_p4d_f(false)
+			queue.set_physics_process(true)
+			await _frames(4)
+			cases["%s_%s" % ["pending" if pending else "preview", kind]] = {"started": started,
+				"only_own_request_cancelled": only_own,
+				"ok": started and command_ok and only_own and not earth.fissure_aiming and earth.phase == "" \
+				and not ab.holding and queue.pending_count() == 0 and _brush_log.size() == n \
+				and (kind in ["reset", "load"] or svc.get_revision() == rev)}
+			ab.require_captured_mouse = old_capture
+			Input.mouse_mode = old_mouse
+			player.input_enabled = true
+			ab.cancel_all()
+	earth.tuning = original
+	ab.require_captured_mouse = old_capture
+	Input.mouse_mode = old_mouse
+	player.input_enabled = false
+	_record("T66", "Fissura respeita chão/alcance/material, mantém LMB/RMB e cancela prévia/pedido sem edição residual",
 		slot_ready and cases.values().all(func(c): return c.ok), cases)
 	await main.request_world_reset()

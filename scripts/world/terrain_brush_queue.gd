@@ -110,6 +110,12 @@ func cancel_request(request: TerrainBrushRequest) -> void:
 	_pending.erase(request)
 
 
+## Pedidos de habilidade que dependem da identidade/cancelamento precisam caber inteiros.
+func can_apply_unsplit(request: TerrainBrushRequest) -> bool:
+	return not request.is_path() or (request.length() <= _segment_limit(request.max_radius())
+		and request.points.size() <= _max_path_points())
+
+
 ## Esvazia a fila e encerra os traços (reset, salvar, carregar). Retorna quantos pedidos caíram.
 func clear(reason := "") -> int:
 	_world_epoch += 1
@@ -385,7 +391,7 @@ func _split_head(req: TerrainBrushRequest) -> Array:
 		return [req, null]
 	var limit := _segment_limit(req.max_radius())
 	var max_pts := _max_path_points()
-	if req.length() <= limit and req.points.size() <= max_pts:
+	if can_apply_unsplit(req):
 		return [req, null]
 	var head_pts := PackedVector3Array([req.points[0]])
 	var head_radii := PackedFloat32Array([req.radii[0]])
