@@ -1,0 +1,206 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T16:53:33",
+  "duracao_s": 36.695,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 61.0,
+      "media": 57.31,
+      "min": 1.0,
+      "n": 70,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 1675.0,
+    "p4h_ice_wall_frame_ms": {
+      "max": 19.54,
+      "media": 16.66,
+      "min": 13.67,
+      "n": 184,
+      "p95": 17.64,
+      "p99": 18.46,
+      "physics_ticks": 185
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1675.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "anchored_stable": true,
+        "contextual": true,
+        "freeze_wall_ignored_in_flight": true,
+        "mass_kg": 137.550003806502,
+        "mixed_budget": {
+          "eight_total_four_walls": true,
+          "factory_fixture": true,
+          "held_skipped": true
+        },
+        "object_blocked": true,
+        "one_release_one_wall_no_launch": true,
+        "physical_contract": true,
+        "player_blocked": true,
+        "preview_valid": true,
+        "preview_visual": true,
+        "refusals": {
+          "occluded": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "occupied": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "range": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "fora do alcance (máx. 10.0 m)",
+            "red_preview": true
+          },
+          "support": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "thin": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "volume insuficiente para espessura mínima",
+            "red_preview": true
+          }
+        },
+        "size_m": "(1.4, 1.5, 0.071429)",
+        "toggle_back": true,
+        "volume_m3": 0.150000004151038
+      },
+      "id": "T74",
+      "status": "PASS",
+      "titulo": "V alterna molde; release constrói um painel sólido com volume coerente e orçamento compartilhado"
+    },
+    {
+      "detalhes": {
+        "air_probes": {
+          "accessible_dynamic_panel": {
+            "blocked": 0,
+            "bodies_pushed": 2,
+            "body_id": 544269666791,
+            "contact": {
+              "ability": "air_gust",
+              "body_id": 544269666791,
+              "direction": "(0.000249, 0.132249, -0.991216)",
+              "distance": 2.48834562301636,
+              "event_id": 69,
+              "exposure": 1.0,
+              "impulse": 1407.12204090623,
+              "mass": 137.550003051758,
+              "position": "(-34.0, 0.663043, 65.0)",
+              "session_id": 13,
+              "strength": 0.938081360604153,
+              "tick": 1151,
+              "wave_id": 2,
+              "world_generation": 10
+            },
+            "dynamic": true,
+            "edit": true,
+            "line_of_sight": true,
+            "outside_cone": 0,
+            "position": "(-34.0, 0.744257, 65.0)",
+            "wave_id": 2
+          },
+          "fallen_in_crater": {
+            "blocked": 1,
+            "bodies_pushed": 0,
+            "line_of_sight": false,
+            "outside_cone": 0,
+            "position": "(-33.72062, -1.429677, 62.05958)",
+            "wave_id": 1
+          }
+        },
+        "benchmark_fire_shots": 2,
+        "excavated_support": {
+          "air": true,
+          "edit": true,
+          "fell": true,
+          "released": true
+        },
+        "fire_melts_real_material": true,
+        "frame_gate_applied": true,
+        "frame_ms": {
+          "max": 19.54,
+          "media": 16.66,
+          "min": 13.67,
+          "n": 184,
+          "p95": 17.64,
+          "p99": 18.46,
+          "physics_ticks": 185
+        },
+        "melt": {
+          "collider_disabled": true,
+          "consumed_before_fx": true,
+          "melted": 1
+        },
+        "mixed_bodies_fixture": true,
+        "preview_cancel_and_built_lifecycle": {
+          "escape": {
+            "ok": true
+          },
+          "input": {
+            "ok": true
+          },
+          "load": {
+            "ok": true
+          },
+          "mouse": {
+            "ok": true
+          },
+          "reset": {
+            "ok": true
+          },
+          "save": {
+            "ok": true
+          },
+          "select": {
+            "ok": true
+          }
+        },
+        "temperature_at_melt": 9.56666666666667
+      },
+      "id": "T75",
+      "status": "PASS",
+      "titulo": "Muralha funde por Fogo, perde apoio ao escavar e limpa prévia/corpos corretamente"
+    }
+  ],
+  "run_id": "72cc4b868af0",
+  "testes_ids": [
+    "T1",
+    "T74",
+    "T75"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

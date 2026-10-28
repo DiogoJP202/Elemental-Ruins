@@ -25,6 +25,7 @@ const KEY_ACTIONS := {
 	&"earth_raise": [KEY_E],
 	&"earth_fissure": [KEY_F],
 	&"water_freeze": [KEY_C],
+	&"water_wall": [KEY_V],
 	# P3: elementos (GDD §4: 1 2 3 4 = Terra / Água / Fogo / Ar).
 	&"element_earth": [KEY_1],
 	&"element_water": [KEY_2],

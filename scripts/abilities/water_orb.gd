@@ -8,6 +8,8 @@ var tuning: WaterOrbTuning = preload("res://data/abilities/water_orb_tuning.tres
 var phase := ""
 var matter_state: MatterState = MatterState.LIQUID
 var freeze_age := 0.0
+var wall_aiming := false
+var wall_preview: Dictionary = {}
 var position := Vector3.ZERO
 var velocity := Vector3.ZERO
 var target_position := Vector3.ZERO
@@ -22,7 +24,8 @@ var _shape := SphereShape3D.new()
 var _query := PhysicsShapeQueryParameters3D.new()
 var _stats := {"formed": 0, "launched": 0, "impacts": 0, "body_impacts": 0,
 	"terrain_impacts": 0, "cancelled": 0, "dissipated": 0, "blocked_motion": 0, "impulse_ns": 0.0,
-	"freezes": 0, "ice_impacts": 0, "ice_spawned": 0, "ice_spawn_rejected": 0, "ice_evicted": 0}
+	"freezes": 0, "ice_impacts": 0, "ice_spawned": 0, "ice_spawn_rejected": 0, "ice_evicted": 0,
+	"walls_created": 0, "walls_rejected": 0, "wall_toggles": 0}
 var _last_ice_spawn_reason := ""
 
 
@@ -51,6 +54,7 @@ func get_stats() -> Dictionary:
 	data["phase"] = phase
 	data["traveled_m"] = _traveled
 	data["matter_state"] = "FROZEN" if is_frozen() else "LIQUID"
+	data["wall_aiming"] = wall_aiming
 	data["persistent_ice"] = get_persistent_ice().size()
 	data["last_ice_spawn_reason"] = _last_ice_spawn_reason
 	return data
@@ -85,6 +89,11 @@ func _spawn_persistent_ice(hit: Dictionary) -> IceBody:
 			_last_ice_spawn_reason = "no_space"
 			return null
 		at = candidate
+	return _create_ice(Transform3D(Basis.IDENTITY, at))
+
+
+## Esferas e painéis usam o mesmo orçamento e ciclo de vida; a colocação é validada antes.
+func _create_ice(at: Transform3D, wall_size := Vector3.ZERO) -> IceBody:
 	var live := get_persistent_ice()
 	var limit := clampi(tuning.ice_max_bodies, 1, 16)
 	var required := maxi(0, live.size() - limit + 1)
@@ -100,13 +109,15 @@ func _spawn_persistent_ice(hit: Dictionary) -> IceBody:
 		removable[i].retire("limit")
 		_stats.ice_evicted += 1
 	var body := IceBody.new()
-	body.setup(tuning, radius(), volume_liters, controller.materials, _on_ice_body_removed)
+	body.setup(tuning, radius(), volume_liters, controller.materials, _on_ice_body_removed, wall_size)
 	controller.props_root.add_child(body)
-	body.global_position = at
+	body.global_transform = at
+	if wall_size != Vector3.ZERO:
+		body.anchor_wall(controller.terrain_service)
 	# Não carregar novamente a velocidade de impacto: o KINETIC já foi aplicado.
 	_stats.ice_spawned += 1
 	_last_ice_spawn_reason = ""
-	emit_fx(&"ice_body_spawned", {"body": body, "position": at, "radius": radius()})
+	emit_fx(&"ice_body_spawned", {"body": body, "position": at.origin, "radius": radius()})
 	return body
 
 
@@ -122,6 +133,90 @@ func is_frozen() -> bool:
 func _reset_matter() -> void:
 	matter_state = MatterState.LIQUID
 	freeze_age = 0.0
+	wall_aiming = false
+	wall_preview = {}
+
+
+func toggle_wall() -> bool:
+	if phase != "hold" or not is_frozen() or controller == null or not controller.can_manipulate_water():
+		return false
+	wall_aiming = not wall_aiming
+	_stats.wall_toggles += 1
+	wall_preview = validate_wall_target() if wall_aiming else {}
+	last_result = "molde de muralha" if wall_aiming else "projétil de gelo"
+	return true
+
+
+func wall_dimensions() -> Dictionary:
+	if tuning.wall_width <= 0.0 or tuning.wall_height <= 0.0:
+		return {"ok": false, "reason": "dimensões inválidas"}
+	var depth := volume_liters * 0.001 / (tuning.wall_width * tuning.wall_height)
+	var size := Vector3(tuning.wall_width, tuning.wall_height, depth)
+	return {"ok": depth >= tuning.wall_min_thickness, "size": size,
+		"reason": "" if depth >= tuning.wall_min_thickness else "volume insuficiente para espessura mínima"}
+
+
+## Mesmo primeiro obstáculo da mira usado pela Terra. A prévia nunca possui collider.
+func validate_wall_target() -> Dictionary:
+	var dimensions := wall_dimensions()
+	if not dimensions.has("size"):
+		return dimensions
+	var size: Vector3 = dimensions.size
+	var forward: Vector3 = controller.aim_direction()
+	forward.y = 0.0
+	forward = forward.normalized() if forward.length_squared() > 0.0001 else Vector3.FORWARD
+	var basis := Basis(forward.cross(Vector3.UP), Vector3.UP, -forward)
+	var ray: Array = controller.aim_ray()
+	var hit: Dictionary = controller.cast_segment(ray[0], ray[0] + ray[1] * (tuning.wall_range + 15.0), true)
+	var point: Vector3 = hit.position if not hit.is_empty() else controller.player.global_position + forward * tuning.wall_range
+	var at := Transform3D(basis, point + Vector3.UP * (size.y * 0.5 + 0.015))
+	var out := {"ok": false, "reason": dimensions.reason, "point": point, "transform": at, "size": size}
+	if not dimensions.ok:
+		return out
+	if not controller.terrain_service.is_ready():
+		out.reason = "terreno indisponível"
+	elif hit.is_empty():
+		out.reason = "sem chão na mira"
+	elif not hit.collider is VoxelLodTerrain or hit.normal.y < IceBody.WALL_FLOOR_NORMAL_Y:
+		out.reason = "mire em chão livre"
+	elif point.distance_to(controller.player.global_position) > tuning.wall_range:
+		out.reason = "fora do alcance (máx. %.1f m)" % tuning.wall_range
+	elif not controller.terrain_service.can_edit_area((at * AABB(-size * 0.5, size)).grow(0.6)):
+		out.reason = "área não carregada"
+	elif not IceBody.wall_supported(controller.terrain_service, at, size):
+		out.reason = "apoio insuficiente ou irregular"
+	else:
+		var box := BoxShape3D.new()
+		box.size = size
+		var query := PhysicsShapeQueryParameters3D.new()
+		query.shape = box
+		query.transform = at
+		query.collision_mask = Layers.TERRAIN | Layers.PLAYER | Layers.PROPS
+		query.margin = 0.002
+		if not _space().intersect_shape(query, 1).is_empty():
+			out.reason = "espaço ocupado"
+		elif not controller.cast_segment(controller.hand_position(), at.origin, true).is_empty():
+			out.reason = "caminho bloqueado"
+	out.ok = out.reason == ""
+	return out
+
+
+func _finish_wall() -> void:
+	# Revalidar no release; consumir o modo antes dos callbacks impede construção duplicada.
+	var check := validate_wall_target()
+	phase = ""
+	_reset_matter()
+	velocity = Vector3.ZERO
+	var body: IceBody
+	if check.ok:
+		body = _create_ice(check.transform, check.size)
+	if body != null:
+		_stats.walls_created += 1
+		last_result = "muralha de gelo construída"
+	else:
+		_stats.walls_rejected += 1
+		last_result = "muralha recusada: %s" % (check.reason if not check.ok else _last_ice_spawn_reason)
+	emit_fx(&"water_orb_cancel")
 
 
 func freeze_orb() -> bool:
@@ -174,6 +269,9 @@ func _control_target() -> Vector3:
 func release() -> void:
 	if phase != "hold":
 		return
+	if wall_aiming:
+		_finish_wall()
+		return
 	var toward: Vector3 = controller.aim_point(tuning.max_range + hold_distance + 10.0)
 	var direction := (toward - position).normalized()
 	if direction.is_zero_approx():
@@ -199,7 +297,10 @@ func physics_tick(delta: float) -> void:
 	if is_frozen():
 		freeze_age += delta
 	if phase == "hold":
-		_hold_tick(delta)
+		if wall_aiming:
+			wall_preview = validate_wall_target()
+		else:
+			_hold_tick(delta)
 	else:
 		_flight_tick(delta)
 
@@ -367,6 +468,8 @@ func clear() -> void:
 
 
 func status() -> String:
-	var label := "GELO" if is_frozen() else "ÁGUA · C congela"
+	if wall_aiming:
+		return "MURALHA · solte RMB confirma · V volta · %s" % ("alvo válido" if wall_preview.get("ok", false) else wall_preview.get("reason", "validando"))
+	var label := "GELO · V muralha" if is_frozen() else "ÁGUA · C congela"
 	return "%s · %.0f L Criativo · RMB solta · Q/E altura %.1f · roda distância %.1f" % [label, volume_liters, hold_height, hold_distance] \
 		if phase == "hold" else (("gelo em voo" if is_frozen() else "água em voo") if phase == "flight" else last_result)

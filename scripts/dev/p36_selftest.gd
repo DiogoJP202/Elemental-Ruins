@@ -9,6 +9,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4E: T67 manipula/lança o orbe; T68 verifica contato/material/oclusão; T69 seu ciclo de vida.
 ## P4F: T70 congela/controla/lança gelo; T71 verifica impacto e limpeza do estado congelado.
 ## P4G: T72 verifica gelo físico/orçamento; T73 cobre fusão por Fogo e limpeza da sessão.
+## P4H: T74 cobre molde/construção/recusas; T75 cobre apoio, fusão e ciclo de vida da muralha.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -91,6 +92,8 @@ func _run_tests() -> bool:
 	if _should_run("T71"): await _t71_ice_contact_lifecycle()
 	if _should_run("T72"): await _t72_persistent_ice_physics()
 	if _should_run("T73"): await _t73_persistent_ice_heat_lifecycle()
+	if _should_run("T74"): await _t74_ice_wall_build()
+	if _should_run("T75"): await _t75_ice_wall_world()
 	return true
 
 
@@ -3481,6 +3484,334 @@ func _t73_persistent_ice_heat_lifecycle() -> void:
 		"temperature_at_melt": state.temperature, "two_actual_fire_bolts": fusion, "melt": melt_watch,
 		"collision_removed": no_collision, "material_reference_removed": no_state, "signal_listener_removed": no_listener, "session": lifecycle,
 		"no_space_factory_fixture": no_space})
+	ab.cancel_all()
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+# --- P4H: construção usa o mesmo corpo de gelo e os consumidores do mundo ------------------
+
+func _p4h_v() -> void:
+	_p4a_key(KEY_V, true)
+	Input.flush_buffered_events()
+	_p4a_key(KEY_V, false)
+	Input.flush_buffered_events()
+
+
+## A primeira construção abaixo usa RMB/C/V reais. Esta helper não posiciona o corpo.
+func _p4h_preview(point: Vector3) -> Dictionary:
+	_p4c_rmb(true)
+	await _frames(14)
+	_p4f_c()
+	_p4h_v()
+	await _aim_settle(point)
+	await _frames(2)
+	var orb: WaterOrb = (main.abilities.get_ability(&"water_jet") as WaterJet).orb
+	var check := orb.validate_wall_target()
+	check["input_ready"] = orb.wall_aiming and orb.is_frozen() and orb.phase == "hold"
+	return check
+
+
+## Só preenche o teto/cenários de mundo; não substitui a prova de construção por input.
+func _p4h_wall_fixture(orb: WaterOrb, foot: Vector3) -> IceBody:
+	var dimensions := orb.wall_dimensions()
+	if not dimensions.ok:
+		return null
+	var size: Vector3 = dimensions.size
+	return orb._create_ice(Transform3D(Basis.IDENTITY, foot + Vector3.UP * (size.y * 0.5 + 0.015)), size)
+
+
+func _p4h_mixed_fixture(orb: WaterOrb, base: Vector3) -> bool:
+	var filled := true
+	var index := 0
+	for z: float in [-5.0, -9.0]:
+		for x: float in [-4.5, -1.5, 1.5, 4.5]:
+			var foot := _ground_at(base + Vector3(x, 0, z))
+			var body := _p4g_fixture(orb, foot + Vector3.UP * (orb.radius() + 0.06)) if index % 2 == 0 \
+				else _p4h_wall_fixture(orb, foot)
+			filled = body != null and filled
+			index += 1
+	return filled
+
+
+func _t74_ice_wall_build() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var orb: WaterOrb = (ab.get_ability(&"water_jet") as WaterJet).orb
+	var point := _ground_at(base + Vector3(0.17, 0, -6))
+	_p4h_v()
+	var contextual := not orb.wall_aiming
+	_p4c_rmb(true)
+	await _frames(14)
+	_p4h_v()
+	contextual = contextual and not orb.wall_aiming and not orb.is_frozen()
+	_p4f_c()
+	_p4h_v()
+	await _aim_settle(point)
+	await _frames(2)
+	var preview := orb.validate_wall_target()
+	var first_toggle: bool = orb.wall_aiming and preview.ok and not ab.use_pressed()
+	var held_position := orb.position
+	_p4h_v()
+	var back_to_projectile: bool = not orb.wall_aiming and orb.is_frozen() and orb.phase == "hold" \
+		and orb.position.is_equal_approx(held_position)
+	_p4h_v()
+	await _frames(2)
+	var fx_preview: bool = main.fx.get_stats().wall_preview_visible and main.fx.get_stats().wall_preview_valid
+	var before := orb.get_stats()
+	_p4c_rmb(false)
+	await _frames(2)
+	_p4c_rmb(false)
+	var bodies := orb.get_persistent_ice()
+	if bodies.size() != 1:
+		_record("T74", "V alterna molde; release constrói um painel sólido com volume coerente e orçamento compartilhado", false,
+			{"contextual": contextual, "first_toggle": first_toggle, "preview": str(preview), "bodies": bodies.size(), "stats": orb.get_stats()})
+		await main.request_world_reset()
+		return
+	var wall: IceBody = bodies[0]
+	var shape := wall.get_node("IceCollision") as CollisionShape3D
+	var size := wall.wall_size
+	var volume := size.x * size.y * size.z
+	var physical: bool = shape.shape is BoxShape3D and (shape.shape as BoxShape3D).size.is_equal_approx(size) \
+		and absf(volume - orb.volume_liters * 0.001) < 0.000001 \
+		and is_equal_approx(wall.mass, volume * orb.tuning.ice_density) and wall.wall_anchored and wall.freeze \
+		and wall.continuous_cd and not wall.has_meta("volume_m3") and wall.is_in_group(DebrisBudget.GROUP)
+	var single: bool = orb.get_stats().walls_created == before.walls_created + 1 and orb.get_stats().launched == before.launched \
+		and orb.phase == "" and not orb.wall_aiming and not orb.is_frozen() and orb.get_stats().persistent_ice == 1
+	var normal := wall.global_basis.z
+	var from := Transform3D(Basis.IDENTITY, wall.global_position - Vector3.UP * (size.y * 0.5 - 0.1) + normal * 2.0)
+	var player_blocked: bool = player.test_move(from, -normal * 3.0)
+	var query := PhysicsRayQueryParameters3D.create(wall.global_position + normal, wall.global_position - normal, Layers.PROPS)
+	var ray := player.get_world_3d().direct_space_state.intersect_ray(query)
+	var ray_blocked: bool = ray.get("collider") == wall
+	var pose := wall.global_transform
+	var crate := _air_crate(wall.global_position + normal * 2.0)
+	crate.collision_mask = Layers.PROPS
+	crate.linear_velocity = -normal * 4.0
+	await _frames(50)
+	var object_blocked: bool = (crate.global_position - wall.global_position).dot(normal) > 0.2
+	var stable: bool = wall.wall_anchored and wall.freeze and wall.global_transform.is_equal_approx(pose)
+	var refusals := {}
+	var original_liters := orb.tuning.nominal_liters
+	for kind: String in ["occupied", "occluded", "range", "thin", "support"]:
+		base = await _p3_lab(1)
+		point = _ground_at(base + Vector3(0.17, 0, -6))
+		var fixture_ok := true
+		if kind == "occupied":
+			DebugProps.spawn_crate(props, point + Vector3.UP * 0.5)
+		elif kind == "occluded":
+			_p36_thin_wall(base + Vector3(0, 1.5, -3), Vector3(5, 3, 0.02))
+		elif kind == "range":
+			point = _ground_at(base + Vector3(0.17, 0, -14))
+		elif kind == "thin":
+			orb.tuning.nominal_liters = 10.0
+		else:
+			var edge := point + Vector3(0.68, 0, 0)
+			var dug := svc.dig_sphere(point + Vector3(0.95, -0.25, 0), 0.75)
+			var hole := await _wait_ray(edge + Vector3.UP, edge + Vector3.DOWN * 3.0,
+				func(h): return not h.is_empty() and h.position.y < point.y - 0.25, 5.0)
+			fixture_ok = dug.ok and hole.ok
+		await _frames(2)
+		var rejected := await _p4h_preview(point)
+		var red_preview: bool = main.fx.get_stats().wall_preview_visible and not main.fx.get_stats().wall_preview_valid
+		var counters := orb.get_stats()
+		_p4c_rmb(false)
+		await _frames(2)
+		refusals[kind] = {"ok": fixture_ok and rejected.input_ready and not rejected.ok and red_preview and orb.phase == "" \
+			and not orb.wall_aiming and orb.get_persistent_ice().is_empty() and orb.get_stats().walls_created == counters.walls_created \
+			and orb.get_stats().walls_rejected == counters.walls_rejected + 1 and orb.get_stats().launched == counters.launched,
+			"reason": rejected.reason, "fixture_ready": fixture_ok, "red_preview": red_preview}
+		orb.tuning.nominal_liters = original_liters
+	base = await _p3_lab(1)
+	# Captura novamente o volume padrão depois da recusa por configuração fina.
+	ab.begin_water_orb()
+	ab.cancel_all()
+	var filled := _p4h_mixed_fixture(orb, base)
+	await _frames(2)
+	var mixed := orb.get_persistent_ice()
+	var walls := mixed.filter(func(b: IceBody): return b.wall_size != Vector3.ZERO).size()
+	var oldest: IceBody = mixed[0] if not mixed.is_empty() else null
+	var extra := _p4h_wall_fixture(orb, _ground_at(base + Vector3(6.5, 0, -7)))
+	var shared: bool = filled and mixed.size() == 8 and walls == 4 and extra != null \
+		and is_instance_valid(oldest) and oldest.is_queued_for_deletion() and orb.get_persistent_ice().size() == 8
+	await _frames(2)
+	var protected: IceBody = orb.get_persistent_ice()[0] if not orb.get_persistent_ice().is_empty() else null
+	if protected != null: protected.set_meta(DebrisBudget.EARTH_HELD_META, true)
+	extra = _p4g_fixture(orb, _ground_at(base + Vector3(-6.5, 0, -7)) + Vector3.UP * (orb.radius() + 0.06))
+	var guarded: bool = extra != null and protected != null and not protected.is_queued_for_deletion() and orb.get_persistent_ice().size() == 8
+	if protected != null: protected.remove_meta(DebrisBudget.EARTH_HELD_META)
+	# Guard contextual no mesmo frame do lançamento: V nunca converte um projétil em construção.
+	_p4c_rmb(true)
+	_p4f_c()
+	_p4c_rmb(false)
+	_p4h_v()
+	var flight_ignored: bool = orb.phase == "flight" and orb.is_frozen() and not orb.wall_aiming
+	ab.cancel_all()
+	_record("T74", "V alterna molde; release constrói um painel sólido com volume coerente e orçamento compartilhado",
+		contextual and first_toggle and back_to_projectile and fx_preview and physical and single and player_blocked \
+		and ray_blocked and object_blocked and stable and refusals.values().all(func(c): return c.ok) and shared and guarded and flight_ignored,
+		{"contextual": contextual, "preview_valid": first_toggle, "toggle_back": back_to_projectile, "preview_visual": fx_preview,
+		"one_release_one_wall_no_launch": single, "size_m": str(size), "volume_m3": volume, "mass_kg": volume * orb.tuning.ice_density,
+		"physical_contract": physical, "player_blocked": player_blocked, "object_blocked": object_blocked, "anchored_stable": stable,
+		"refusals": refusals, "freeze_wall_ignored_in_flight": flight_ignored,
+		"mixed_budget": {"factory_fixture": true, "eight_total_four_walls": shared, "held_skipped": guarded}})
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+func _t75_ice_wall_world() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var orb: WaterOrb = (ab.get_ability(&"water_jet") as WaterJet).orb
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var slot_ready: bool = await main.request_world_save("p4h_wall_session")
+	var point := _ground_at(base + Vector3(0.17, 0, -6))
+	var wall := _p4h_wall_fixture(orb, point)
+	if wall == null:
+		_record("T75", "Muralha funde por Fogo, perde apoio ao escavar e limpa prévia/corpos corretamente", false, {"fixture_created": false})
+		await main.request_world_reset()
+		return
+	var id := wall.get_instance_id()
+	var state := materials.state_of(wall)
+	var watch := {"melted": 0, "consumed_before_fx": false, "collider_disabled": false}
+	var melted := func(candidate: Node3D):
+		if candidate.get_instance_id() == id:
+			watch.melted += 1
+			watch.consumed_before_fx = state.consumed
+			watch.collider_disabled = (candidate as RigidBody3D).collision_layer == 0
+	materials.melted.connect(melted)
+	ab.select(2)
+	await _aim_settle(wall.global_position)
+	var hits0: int = fire.get_stats().body_hits
+	var first := _fire_press(ab, fire)
+	var hit: bool = await _wait_until(func(): return fire.get_stats().body_hits > hits0, 1.5)
+	var warmed: bool = hit and state.temperature > -20.0 and not state.consumed and is_instance_valid(wall)
+	await _wait_until(func(): return fire.get_stats().cooldown_left <= 0.0, 1.0)
+	await _aim_settle(wall.global_position)
+	var second := _fire_press(ab, fire)
+	var gone: bool = await _wait_until(func(): return instance_from_id(id) == null, 1.5)
+	materials.melted.disconnect(melted)
+	await _frames(2)
+	var fusion: bool = first >= 0 and second >= 0 and warmed and gone and watch.melted == 1 \
+		and watch.consumed_before_fx and watch.collider_disabled and not materials._states.has(id) \
+		and _p4g_props_ray(point + Vector3.UP * 0.75).is_empty()
+	wall = _p4h_wall_fixture(orb, point)
+	var support := {"edit": false, "released": false, "fell": false, "air": false}
+	var air_probes := {}
+	if wall != null:
+		var born := wall.global_position
+		var dug := svc.dig_sphere(point - Vector3.UP * 0.4, 2.0)
+		support.edit = dug.ok
+		support.released = await _wait_until(func(): return not wall.wall_anchored and not wall.freeze, 5.0)
+		await _frames(60)
+		support.fell = wall.global_position.y < born.y - 0.25
+		ab.select(3)
+		var gust: AirGust = ab.get_ability(&"air_gust")
+		await _aim_settle(wall.global_position)
+		var before_air := gust.get_stats()
+		var buried_position := wall.global_position
+		var buried_los := materials.line_of_sight(ab.hand_position(), wall)
+		var wave := _air_press(ab, gust)
+		await _frames(45)
+		air_probes["fallen_in_crater"] = {"position": str(buried_position), "line_of_sight": buried_los, "wave_id": wave,
+			"blocked": gust.get_stats().blocked - before_air.blocked, "outside_cone": gust.get_stats().outside_cone - before_air.outside_cone,
+			"bodies_pushed": gust.get_stats().bodies_pushed - before_air.bodies_pushed}
+		# Um painel já no fundo pode estar legitimamente ocluído pelo terreno. Outro painel
+		# mais próximo perde o apoio real e recebe a onda enquanto ainda está acessível.
+		var near_foot := _ground_at(base + Vector3(0, 0, -3))
+		wall = _p4h_wall_fixture(orb, near_foot)
+		if wall != null:
+			var near_dug := svc.dig_sphere(near_foot - Vector3.UP * 0.4, 1.2)
+			var dynamic: bool = await _wait_until(func(): return not wall.wall_anchored and not wall.freeze, 5.0)
+			await _aim_settle(wall.global_position)
+			var exposed_position := wall.global_position
+			var exposed_los := materials.line_of_sight(ab.hand_position(), wall)
+			before_air = gust.get_stats()
+			var observed := _air_watch(gust)
+			wave = _air_press(ab, gust)
+			await _frames(30)
+			var contact := _air_contact_for(observed, wave, wall)
+			_air_unwatch(gust, observed)
+			support.air = near_dug.ok and dynamic and wave >= 0 and not contact.is_empty() \
+				and float(contact.data.get("impulse", 0.0)) > 0.0 and gust.get_stats().bodies_pushed > before_air.bodies_pushed
+			air_probes["accessible_dynamic_panel"] = {"edit": near_dug.ok, "dynamic": dynamic, "position": str(exposed_position),
+				"line_of_sight": exposed_los, "wave_id": wave, "body_id": wall.get_instance_id(),
+				"contact": contact.get("data", {}), "bodies_pushed": gust.get_stats().bodies_pushed - before_air.bodies_pushed,
+				"blocked": gust.get_stats().blocked - before_air.blocked, "outside_cone": gust.get_stats().outside_cone - before_air.outside_cone}
+	var cancellations := {}
+	for kind: String in ["select", "escape", "input", "mouse", "save", "load", "reset"]:
+		base = await _p3_lab(1)
+		wall = _p4h_wall_fixture(orb, _ground_at(base + Vector3(3, 0, -6)))
+		var check := await _p4h_preview(_ground_at(base + Vector3(0.17, 0, -6)))
+		var before := orb.get_stats()
+		var old_capture := ab.require_captured_mouse
+		var old_mouse := Input.mouse_mode
+		var command_ok := true
+		var pose := wall.global_transform if wall != null else Transform3D.IDENTITY
+		if kind == "select": ab.select(0)
+		elif kind == "escape":
+			_p4a_key(KEY_ESCAPE, true)
+			Input.flush_buffered_events()
+			_p4a_key(KEY_ESCAPE, false)
+			Input.flush_buffered_events()
+		elif kind == "input": player.input_enabled = false
+		elif kind == "mouse":
+			ab.require_captured_mouse = true
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		elif kind == "save": command_ok = await main.request_world_save("p4h_wall_session")
+		elif kind == "load": command_ok = await main.request_world_load("p4h_wall_session")
+		else: command_ok = await main.request_world_reset()
+		await _frames(2)
+		var cleanup: bool = not is_instance_valid(wall) and orb.get_persistent_ice().is_empty() if kind in ["load", "reset"] \
+			else is_instance_valid(wall) and wall.wall_anchored and wall.freeze and wall.global_transform.is_equal_approx(pose)
+		cancellations[kind] = {"ok": check.input_ready and check.ok and command_ok and cleanup and orb.phase == "" \
+			and not orb.wall_aiming and not orb.is_frozen() and not main.fx.get_stats().wall_preview_visible \
+			and orb.get_stats().walls_created == before.walls_created and orb.get_stats().launched == before.launched}
+		ab.require_captured_mouse = old_capture
+		Input.mouse_mode = old_mouse
+		player.input_enabled = true
+		_p4c_rmb(false)
+	base = await _p3_lab(1)
+	var filled := _p4h_mixed_fixture(orb, base)
+	await _frames(30)
+	var target: IceBody
+	for body in orb.get_persistent_ice():
+		if body.wall_size != Vector3.ZERO:
+			target = body
+			break
+	ab.select(2)
+	var target_found := is_instance_valid(target)
+	if target_found: await _aim_settle(target.global_position)
+	var clock := {"last": Time.get_ticks_usec()}
+	var frame_ms := PackedFloat32Array()
+	var sample := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().process_frame.connect(sample)
+	var shots := 0
+	for i in 185:
+		if i in [0, 60]: shots += int(_fire_press(ab, fire) >= 0)
+		await _frames(1)
+	get_tree().process_frame.disconnect(sample)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	timings["physics_ticks"] = 185
+	_metrics["p4h_ice_wall_frame_ms"] = timings
+	var windowed := not _mode.begins_with("headless")
+	var perf: bool = not windowed or (frame_ms.size() >= 120 and timings.get("p95", 999.0) <= 20.0 \
+		and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	if _screens:
+		player.camera_rig.set_view(0.0, deg_to_rad(-12.0))
+		await _frames(2)
+		await _snap("p4h_ice_wall")
+	_record("T75", "Muralha funde por Fogo, perde apoio ao escavar e limpa prévia/corpos corretamente",
+		slot_ready and fusion and support.values().all(func(ok): return ok) and cancellations.values().all(func(c): return c.ok) \
+		and filled and target_found and shots == 2 and perf,
+		{"fire_melts_real_material": fusion, "temperature_at_melt": state.temperature, "melt": watch,
+		"excavated_support": support, "air_probes": air_probes, "preview_cancel_and_built_lifecycle": cancellations, "mixed_bodies_fixture": filled,
+		"benchmark_fire_shots": shots, "frame_ms": timings, "frame_gate_applied": windowed})
 	ab.cancel_all()
 	player.input_enabled = false
 	await main.request_world_reset()

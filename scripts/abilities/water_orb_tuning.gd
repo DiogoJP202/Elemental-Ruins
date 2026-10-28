@@ -35,6 +35,11 @@ extends Resource
 @export_range(-100.0, -1.0, 1.0) var ice_initial_temperature := -20.0
 @export_range(0.0, 100.0, 1.0) var ice_melt_temperature := 0.0
 @export_range(0.05, 1.0, 0.05) var ice_melt_duration_s := 0.45
+@export_group("Muralha de gelo")
+@export_range(0.5, 3.0, 0.05) var wall_width := 1.4
+@export_range(0.5, 3.0, 0.05) var wall_height := 1.5
+@export_range(0.02, 0.1, 0.005) var wall_min_thickness := 0.04
+@export_range(2.0, 15.0, 0.5) var wall_range := 10.0
 @export_group("Apresentação (sem física)")
 @export var color := Color("#80DDEDCC")
 @export_range(0.0, 0.1, 0.005) var wobble := 0.045

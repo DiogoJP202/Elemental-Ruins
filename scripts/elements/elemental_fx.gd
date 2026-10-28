@@ -56,6 +56,10 @@ var _water_orb_fragment_mesh: ArrayMesh
 var _water_orb_liquid_trail_mesh: Mesh
 var _water_orb_trail: GPUParticles3D
 var _water_orb_splashes: Array[GPUParticles3D] = []
+var _ice_wall_preview: MeshInstance3D
+var _ice_wall_preview_material: StandardMaterial3D
+var _ice_wall_preview_size := Vector3.ZERO
+var _ice_wall_preview_valid := false
 var _orb_was_flying := false
 var _ice_ghosts: Array[MeshInstance3D] = []
 var _ice_ghost_materials: Array[StandardMaterial3D] = []
@@ -111,6 +115,8 @@ func get_stats() -> Dictionary:
 	d["ice_visible"] = _water_orb_mesh != null and _water_orb_mesh.visible and _water_orb_mesh.mesh == _water_orb_ice_mesh
 	d["ice_fragments_emitting"] = _water_orb_ice_fragments.emitting if _water_orb_ice_fragments != null else false
 	d["ice_fragment_cap"] = 12
+	d["wall_preview_visible"] = _ice_wall_preview != null and _ice_wall_preview.visible
+	d["wall_preview_valid"] = _ice_wall_preview_valid
 	d["ice_ghost_pool"] = _ice_ghosts.size()
 	var live_ghosts := 0
 	for ghost in _ice_ghosts:
@@ -352,6 +358,16 @@ func _darken_if_charred(body: Node3D) -> void:
 # --- Poderes --------------------------------------------------------------------------------
 
 func _create_water_orb_visuals() -> void:
+	# Uma única malha de prévia, sem collider nem participação nas consultas de mira.
+	_ice_wall_preview = MeshInstance3D.new()
+	_ice_wall_preview.name = "IceWallPreview"
+	_ice_wall_preview_material = _unshaded(Color(0.3, 0.78, 1.0, 0.55))
+	_ice_wall_preview_material.vertex_color_use_as_albedo = true
+	_ice_wall_preview_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_ice_wall_preview.material_override = _ice_wall_preview_material
+	_ice_wall_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_ice_wall_preview.visible = false
+	add_child(_ice_wall_preview)
 	_water_orb_mesh = MeshInstance3D.new()
 	_water_orb_mesh.name = "WaterOrb"
 	var sphere := SphereMesh.new()
@@ -439,6 +455,16 @@ func _update_water_orb() -> void:
 	if not t.visual_enabled:
 		_clear_water_orb()
 		return
+	_ice_wall_preview.visible = false
+	_ice_wall_preview_valid = false
+	if orb.wall_aiming:
+		_water_orb_mesh.visible = false
+		_water_orb_glint.visible = false
+		_water_orb_trail.visible = false
+		_water_orb_trail.emitting = false
+		_orb_was_flying = false
+		_update_wall_preview(orb.wall_preview)
+		return
 	_water_orb_mesh.visible = true
 	_water_orb_mesh.global_position = orb.position
 	var frozen: bool = orb.is_frozen()
@@ -473,6 +499,21 @@ func _update_water_orb() -> void:
 		var direction: Vector3 = -orb.velocity.normalized()
 		(_water_orb_trail.process_material as ParticleProcessMaterial).direction = direction
 	_orb_was_flying = flying
+
+
+func _update_wall_preview(preview: Dictionary) -> void:
+	if not preview.has("transform") or not preview.has("size"):
+		return
+	var size: Vector3 = preview.size
+	if size.x <= 0.0 or size.y <= 0.0 or size.z <= 0.0:
+		return
+	if not size.is_equal_approx(_ice_wall_preview_size):
+		_ice_wall_preview.mesh = IceBody.wall_mesh(size)
+		_ice_wall_preview_size = size
+	_ice_wall_preview.global_transform = preview.transform
+	_ice_wall_preview_valid = bool(preview.get("ok", false))
+	_ice_wall_preview_material.albedo_color = Color(0.3, 0.78, 1.0, 0.55) if _ice_wall_preview_valid else Color(1.0, 0.24, 0.25, 0.55)
+	_ice_wall_preview.visible = true
 
 
 func _on_water_orb_event(kind: StringName, data: Dictionary) -> void:
@@ -615,6 +656,9 @@ func _ice_fragment_burst(at: Vector3, normal: Vector3, crystallize := false) -> 
 
 func _clear_water_orb(clear_splashes := true) -> void:
 	_orb_was_flying = false
+	_ice_wall_preview_valid = false
+	if _ice_wall_preview != null:
+		_ice_wall_preview.visible = false
 	if _water_orb_mesh != null:
 		_water_orb_mesh.visible = false
 	if _water_orb_trail != null:

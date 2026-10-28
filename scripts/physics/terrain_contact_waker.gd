@@ -17,12 +17,13 @@ extends Node
 @export var max_results := 64
 
 var _pending: Array[Dictionary] = []
+var _terrain_service: TerrainService
 var _stats := {"events": 0, "pulses": 0, "woken": 0, "unparked": 0}
 
 
 func _ready() -> void:
-	var svc := get_node(terrain_service_path) as TerrainService
-	svc.terrain_changed.connect(_on_terrain_changed)
+	_terrain_service = get_node(terrain_service_path) as TerrainService
+	_terrain_service.terrain_changed.connect(_on_terrain_changed)
 
 
 func get_stats() -> Dictionary:
@@ -37,7 +38,8 @@ func _on_terrain_changed(aabb: AABB, _revision: int) -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if _pending.is_empty():
+	# Não gastar as confirmações de apoio durante save/reconstrução do terreno.
+	if _pending.is_empty() or not _terrain_service.is_ready():
 		return
 	var frame := Engine.get_physics_frames()
 	var still: Array[Dictionary] = []
@@ -55,6 +57,13 @@ func _pulse(aabb: AABB) -> void:
 	var world := get_viewport().get_world_3d()
 	if world == null:
 		return
+	# O gelo tem teto próprio pequeno: não perder âncoras quando a consulta de props satura.
+	for node in get_tree().get_nodes_in_group(IceBody.GROUP):
+		var ice := node as IceBody
+		if ice != null and ice.wall_anchored:
+			var wall_box := ice.global_transform * AABB(-ice.wall_size * 0.5, ice.wall_size)
+			if aabb.intersects(wall_box):
+				ice.check_wall_support()
 	var box := BoxShape3D.new()
 	box.size = aabb.size
 	var q := PhysicsShapeQueryParameters3D.new()

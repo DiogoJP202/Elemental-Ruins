@@ -1,0 +1,728 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T16:52:25",
+  "duracao_s": 106.535,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 1228.0,
+    "p4c_pillar_frame_ms": {
+      "max": 131.71,
+      "media": 8.15,
+      "min": 0.12,
+      "n": 588,
+      "p95": 16.55,
+      "p99": 26.16
+    },
+    "p4e_orb_frame_ms": {
+      "max": 44.24,
+      "media": 7.8,
+      "min": 0.13,
+      "n": 803,
+      "p95": 16.01,
+      "p99": 16.8
+    },
+    "p4f_ice_frame_ms": {
+      "max": 18.11,
+      "media": 7.76,
+      "min": 0.14,
+      "n": 398,
+      "p95": 16.07,
+      "p99": 16.83
+    },
+    "p4g_persistent_ice_frame_ms": {
+      "max": 17.03,
+      "media": 7.78,
+      "min": 0.11,
+      "n": 395,
+      "p95": 15.96,
+      "p99": 16.55,
+      "physics_ticks": 185
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1228.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "acordados_pelo_waker": 1,
+        "comecou_a_cair": true,
+        "dormiu": true,
+        "fundo_cratera_y": -2.55384826660156,
+        "ms_ate_cair_0_3m": 271,
+        "stats_waker": {
+          "events": 1,
+          "pending": 0,
+          "pulses": 4,
+          "unparked": 0,
+          "woken": 1
+        },
+        "y_antes": 0.519997477531433,
+        "y_depois": -1.85147500038147
+      },
+      "id": "T18",
+      "status": "PASS",
+      "titulo": "Caixa dormindo sobre o solo cai quando o chão embaixo é escavado (contato atualizado)"
+    },
+    {
+      "detalhes": {
+        "forward": {
+          "arrived_on_time": true,
+          "deadline_s": 0.246693928703125,
+          "distance_m": 4.90081787109375,
+          "earliest_s": 0.130027262369792,
+          "first_contact_s": 0.166666666666667,
+          "max_packets": 32,
+          "no_early_contact": true,
+          "peak_packets": 5,
+          "pressure_on_time": true,
+          "pressure_ready_s": 0.133333333333333
+        },
+        "method": "physics ticks; distances to actual collider contact",
+        "pressed": true,
+        "turn_90_deg": {
+          "arrived_on_time": true,
+          "deadline_s": 0.246694151227132,
+          "distance_m": 4.90082454681396,
+          "earliest_s": 0.130027484893799,
+          "first_contact_s": 0.183333333333333,
+          "max_packets": 32,
+          "no_early_contact": true,
+          "peak_packets": 5,
+          "pressure_on_time": true,
+          "pressure_ready_s": 0.0
+        }
+      },
+      "id": "T46",
+      "status": "PASS",
+      "titulo": "Água transporta pacotes e pressão; virar 90° não acerta alvo distante instantaneamente"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01263570785522,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01263570785522,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99408, 0.02, 63.50566)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01261711120605,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01261711120605,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99406, 0.02, 63.50567)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01432466506958,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01432466506958,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.9952, 0.02, 63.50439)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01429510116577,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01429510116577,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99518, 0.02, 63.50441)",
+              "reason": ""
+            },
+            "ok": true
+          }
+        },
+        "slot": "p4a_lifecycle",
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T60",
+      "status": "PASS",
+      "titulo": "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais"
+    },
+    {
+      "detalhes": {
+        "collider_ms": 11.063,
+        "crate_horizontal_offset_m": 0.168292030692101,
+        "crate_speed_m_s": 0.0,
+        "crate_supported": true,
+        "crate_y_after_3s": 4.95026731491089,
+        "frame_ms": {
+          "max": 131.71,
+          "media": 8.15,
+          "min": 0.12,
+          "n": 588,
+          "p95": 16.55,
+          "p99": 26.16
+        },
+        "geometry": true,
+        "loaded": {
+          "material": [
+            0,
+            0,
+            0
+          ],
+          "sdf": [
+            -1.81585121154785,
+            -1.81585121154785,
+            -0.503555357456207
+          ]
+        },
+        "persistence": true,
+        "player_supported": true,
+        "preview_without_edit": true,
+        "saved": {
+          "material": [
+            0,
+            0,
+            0
+          ],
+          "sdf": [
+            -1.81585121154785,
+            -1.81585121154785,
+            -0.503555357456207
+          ]
+        },
+        "single_path": true,
+        "top_y": 4.4826078414917
+      },
+      "id": "T63",
+      "status": "PASS",
+      "titulo": "RMB confirma um PATH+ vertical sólido; caixa/jogador apoiam e save/reset/load preservam o pilar"
+    },
+    {
+      "detalhes": {
+        "brush_unchanged": true,
+        "continuous": true,
+        "distance_min_max_m": [
+          2.0,
+          7.0
+        ],
+        "farthest_m": 4.14398956298828,
+        "finished": true,
+        "formed": true,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 44.24,
+          "media": 7.8,
+          "min": 0.13,
+          "n": 803,
+          "p95": 16.01,
+          "p99": 16.8
+        },
+        "height_min_max_m": [
+          0.6,
+          2.76666666666667
+        ],
+        "horizontal_m": 5.07323551177979,
+        "launch_speed_m_s": 22.0001564025879,
+        "launched_without_teleport": true,
+        "max_control_step_m": 0.133337259292603,
+        "no_terrain_edit": true,
+        "nominal_liters": 150.0,
+        "opposite_keys_neutral": true,
+        "player_moved_m": 0.727771759033203,
+        "radius_m": 0.329610377550125,
+        "raised_m": 0.929862499237061,
+        "wall_blocked": true,
+        "wall_distance_m": 4.5,
+        "wheel_step_m": 0.5
+      },
+      "id": "T67",
+      "status": "PASS",
+      "titulo": "Orbe: RMB, Q/E, roda, câmera e movimento contínuo; parede bloqueia e soltar lança, com benchmark curto"
+    },
+    {
+      "detalhes": {
+        "formation_blocked_by_thin_wall": true,
+        "heavy_body": {
+          "burning_before": false,
+          "expected_delta_v": 0.9,
+          "finished": true,
+          "formed": true,
+          "fx": {
+            "burning_at_fx": false,
+            "contacts": 1,
+            "event_id": 121,
+            "temperature_at_fx": 20.0,
+            "wet_at_fx": 0.9
+          },
+          "impacts": 1,
+          "impulse_ns": 1800.0,
+          "mass_kg": 2000.0,
+          "moved_m": 0.195009261369705,
+          "ok": true,
+          "speed_m_s": 0.899999976158142,
+          "temperature_before": 20.0,
+          "visual_disabled": true,
+          "wetness": 0.891333333333333
+        },
+        "light_burning_body": {
+          "burning_before": true,
+          "expected_delta_v": 8.0,
+          "finished": true,
+          "formed": true,
+          "fx": {
+            "burning_at_fx": false,
+            "contacts": 1,
+            "event_id": 114,
+            "temperature_at_fx": 150.0,
+            "wet_at_fx": 0.9
+          },
+          "impacts": 1,
+          "impulse_ns": 160.0,
+          "mass_kg": 20.0,
+          "moved_m": 1.73335433006287,
+          "ok": true,
+          "speed_m_s": 8.0,
+          "temperature_before": 470.0,
+          "visual_disabled": true,
+          "wetness": 0.891333333333333
+        },
+        "range_without_remote_contact": {
+          "finished": true,
+          "formed": true,
+          "ok": true,
+          "range_m": 3.0,
+          "remote_speed_m_s": 0.0,
+          "remote_wetness": 0.0
+        },
+        "thin_wall_occlusion": {
+          "behind_temperature": 93.5,
+          "behind_wetness": 0.0,
+          "exposed_temperature": 30.4993162155151,
+          "exposed_wetness": 0.315003418922424,
+          "finished": true,
+          "formed": true,
+          "impacts": 1,
+          "launch_speed_m_s": 60.0,
+          "ok": true,
+          "orb_diameter_m": 0.65922075510025,
+          "step_m": 1.0,
+          "terrain_contacts": 1,
+          "wall_thickness_m": 0.001
+        },
+        "voxel_ground": {
+          "center_y": 0.351739406585693,
+          "finished": true,
+          "ground_y": 0.0199999809265137,
+          "ok": true
+        }
+      },
+      "id": "T68",
+      "status": "PASS",
+      "titulo": "Orbe varre contato único, transfere impulso/WET antes do FX, apaga chama e respeita parede e alcance"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "first_button_wins": {
+            "jet_first": true,
+            "ok": true,
+            "orb_first": true
+          },
+          "flight_escape": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_input_disabled": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_mouse_lost": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_escape": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_input_disabled": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_mouse_lost": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          }
+        },
+        "restart_defaults": true,
+        "slot_ready": true,
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T69",
+      "status": "PASS",
+      "titulo": "Orbe mantém exclusão jato/RMB e pincel; seleção/input/mouse/Esc/reset/save/load cancelam hold e voo sem resíduos"
+    },
+    {
+      "detalhes": {
+        "camera_control": true,
+        "finished_liquid": true,
+        "formed_liquid": true,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 18.11,
+          "media": 7.76,
+          "min": 0.14,
+          "n": 398,
+          "p95": 16.07,
+          "p99": 16.83
+        },
+        "freeze_ignored_in_flight": true,
+        "gravity": true,
+        "height_control": true,
+        "ice_launched": true,
+        "ignored_outside_context": true,
+        "launch_speed": 26.8569202423096,
+        "one_freeze": true,
+        "preserved_position_velocity_target_radius": true,
+        "vertical_dv_6_frames": 0.979997634887695,
+        "wall_blocked": true,
+        "wheel_context": true
+      },
+      "id": "T70",
+      "status": "PASS",
+      "titulo": "C contextual congela uma vez sem deslocar o orbe; controle e paredes mantidos, voo tem gravidade"
+    },
+    {
+      "detalhes": {
+        "body": {
+          "burning_at_impact": true,
+          "expected_impulse_ns": 240.0,
+          "expected_speed": 12.0,
+          "finished": true,
+          "formed": true,
+          "frozen": true,
+          "fx_contacts": 1,
+          "fx_frozen": true,
+          "impacts": 1,
+          "impulse_ns": 240.0,
+          "ok": true,
+          "released": true,
+          "speed": 12.0,
+          "structural": false,
+          "wetness": 0.0
+        },
+        "cancellations": {
+          "flight_escape": {
+            "ok": true
+          },
+          "flight_input": {
+            "ok": true
+          },
+          "flight_load": {
+            "ok": true
+          },
+          "flight_mouse": {
+            "ok": true
+          },
+          "flight_reset": {
+            "ok": true
+          },
+          "flight_save": {
+            "ok": true
+          },
+          "flight_select": {
+            "ok": true
+          },
+          "hold_escape": {
+            "ok": true
+          },
+          "hold_input": {
+            "ok": true
+          },
+          "hold_load": {
+            "ok": true
+          },
+          "hold_mouse": {
+            "ok": true
+          },
+          "hold_reset": {
+            "ok": true
+          },
+          "hold_save": {
+            "ok": true
+          },
+          "hold_select": {
+            "ok": true
+          }
+        },
+        "contacts": {
+          "range": {
+            "impacts": 0,
+            "ok": true
+          },
+          "thin_wall": {
+            "impacts": 1,
+            "ok": true
+          },
+          "voxel_ground": {
+            "impacts": 1,
+            "ok": true
+          }
+        },
+        "restart_liquid": true,
+        "structural_consumer": {
+          "burning_at_impact": false,
+          "expected_impulse_ns": 120.0,
+          "expected_speed": 6.0,
+          "finished": true,
+          "formed": true,
+          "frozen": true,
+          "fx_contacts": 1,
+          "fx_frozen": true,
+          "impacts": 1,
+          "impulse_ns": 120.0,
+          "ok": true,
+          "released": true,
+          "speed": 6.00000047683716,
+          "structural": true,
+          "wetness": 0.0
+        }
+      },
+      "id": "T71",
+      "status": "PASS",
+      "titulo": "Gelo aplica KINETIC único sem WET/impulso duplicado, respeita paredes/voxel/alcance e limpa estado ao cancelar"
+    },
+    {
+      "detalhes": {
+        "actual_launch": {
+          "expected_impulse_ns": 240.0,
+          "impact": {
+            "contacts": 1,
+            "frozen": true,
+            "ice_speed": 0.0,
+            "target_speed": 0.0
+          },
+          "impulse_ns": 240.0,
+          "ok": true,
+          "target_speed_after_4_ticks": 12.0
+        },
+        "air_peak_speed": 6.06013345718384,
+        "air_pushed": true,
+        "capacity": {
+          "all_held_rejected": true,
+          "factory_fixture": true,
+          "filled_eight": true,
+          "held_skipped": true,
+          "oldest_evicted": true
+        },
+        "earth_rejected": true,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 17.03,
+          "media": 7.78,
+          "min": 0.11,
+          "n": 395,
+          "p95": 15.96,
+          "p99": 16.55,
+          "physics_ticks": 185
+        },
+        "height_over_ground": 0.309610307216644,
+        "mass_kg": 137.55,
+        "natural_rest": true,
+        "physical_contract": true,
+        "player_blocked": true,
+        "solid": true
+      },
+      "id": "T72",
+      "status": "PASS",
+      "titulo": "Gelo lançado materializa corpo físico, repousa, recebe Ar e respeita orçamento"
+    },
+    {
+      "detalhes": {
+        "ambient_does_not_melt": true,
+        "collision_removed": true,
+        "initial_temperature": -20.0,
+        "material_reference_removed": true,
+        "melt": {
+          "collision_removed": true,
+          "consumed_before_fx": true,
+          "count": 1
+        },
+        "no_space_factory_fixture": true,
+        "session": {
+          "load": true,
+          "reset": true,
+          "save": true,
+          "select_escape": true
+        },
+        "signal_listener_removed": true,
+        "temperature_after_first_fire": -5.0,
+        "temperature_at_melt": 9.56666666666667,
+        "two_actual_fire_bolts": true
+      },
+      "id": "T73",
+      "status": "PASS",
+      "titulo": "Fogo funde gelo pelo estado térmico real; save preserva e reset/load limpam"
+    }
+  ],
+  "run_id": "75752156e688",
+  "testes_ids": [
+    "T1",
+    "T18",
+    "T46",
+    "T60",
+    "T63",
+    "T67",
+    "T68",
+    "T69",
+    "T70",
+    "T71",
+    "T72",
+    "T73"
+  ],
+  "testes_pass": 12,
+  "testes_total": 12,
+  "video_adapter": ""
+}

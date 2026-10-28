@@ -1,0 +1,184 @@
+{
+  "implementation": "READY_FOR_PLAYTEST",
+  "branch": "codex/p4h-ice-wall",
+  "base_branch": "codex/p4g-persistent-ice",
+  "base_commit": "1fa3c905a1052fdc92cbb3301f36fda551e446f7",
+  "p4g_human_feedback": "Initial positive feedback reported by user on 2026-10-28; no detailed per-scenario assessment or full integration approval inferred.",
+  "p4d_checkpoint": "FAIL preserved; T26 neither modified nor investigated",
+  "p4h_integration": "NOT_RUN",
+  "full_contract_count": 81,
+  "reports": {
+    "wall_headless": {
+      "report": "02_headless.json",
+      "run_id": "6c2d559d198a",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T74",
+        "T75"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "related_headless": {
+      "report": "03_related_headless.json",
+      "run_id": "75752156e688",
+      "result": "PASS",
+      "complete": true,
+      "passed": 12,
+      "total": 12,
+      "expected_ids": [
+        "T1",
+        "T18",
+        "T46",
+        "T60",
+        "T63",
+        "T67",
+        "T68",
+        "T69",
+        "T70",
+        "T71",
+        "T72",
+        "T73"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "wall_window": {
+      "report": "04_window.json",
+      "run_id": "72cc4b868af0",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T74",
+        "T75"
+      ],
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "formal_validation": "Existing Invoke-SelftestStep: process exit 0, fresh report with externally supplied run_id, complete=true, exact externally supplied IDs, typed counters, individual PASS results and zero engine diagnostics. Pinned run_ids/IDs revalidated after execution.",
+  "import_parse": "Custom editor import exit 0 in one attempt; WaterOrb and selftest check-only exit 0. Accepted logs have zero engine diagnostics.",
+  "accepted_runs_zero_engine_diagnostics": true,
+  "initial_attempts": [
+    {
+      "log": "parse_core_initial_fail.log",
+      "result": "PARSE_FAIL",
+      "note": "Type inference for controller.cast_segment result required explicit Dictionary annotation. Corrected before runtime tests; original diagnostic preserved."
+    },
+    {
+      "report": "02_headless_initial_fail.json",
+      "run_id": "8a74a149146b",
+      "result": "FAIL",
+      "passed": 2,
+      "total": 3,
+      "errors": 0,
+      "warnings": 0,
+      "note": "T74 passed; T75 failed only its Air assertion after panel fell into a crater. Recheck records line_of_sight=false and blocked=1 for that case. A separate accessible panel loses real support and receives positive impulse on its exact body_id. Only fixture/probe changed; no runtime physics or thresholds altered to conceal failure."
+    }
+  ],
+  "benchmark": {
+    "id": "T75",
+    "mode": "editor window",
+    "scenario": "Four anchored walls and four physical ice spheres initially; two FireBurst shots and melting",
+    "physics_ticks": 185,
+    "samples": 184,
+    "p95_ms": 17.64,
+    "p99_ms": 18.46,
+    "max_ms": 19.54,
+    "limits_ms": {
+      "p95": 20,
+      "max": 50,
+      "p99": 33
+    },
+    "pass": true
+  },
+  "environment": {
+    "godot": "4.7.2-stable (custom_build)",
+    "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "gpu": "Intel(R) Iris(R) Xe Graphics",
+    "renderer": "forward_plus",
+    "physics": "Jolt Physics",
+    "resolution": "1600x900",
+    "vulkan": "1.4.323",
+    "custom_release_template_available": true,
+    "methodology": "Sequential existing selftests, one Godot process at a time. Mixed budget/benchmark bodies prepared via shared factory; construction independently proved through physical RMB/C/V/release input. process_frame intervals after 30 preparation ticks, over 185 physics ticks; no screenshot readback during measurement. Historical spawn capture restored. No cross-machine performance attribution."
+  },
+  "gameplay": {
+    "nominal_liters": 150,
+    "size_m": {
+      "height": 1.5,
+      "depth": 0.0714285714285714,
+      "width": 1.4
+    },
+    "volume_m3": 0.15,
+    "mass_kg": 137.55,
+    "min_thickness_m": 0.04,
+    "range_m": 10,
+    "shared_ice_capacity": 8,
+    "wall_mesh_triangles": 48,
+    "preview": "Single mesh without collision; gameplay validation determines blue/red and HUD reason.",
+    "support": "Explicit static freeze anchor, not natural rest. Six short terrain rays within 0.12m, floor normal Y >=0.85 and solid SDF 0.6m below each foot. Conservative for shallow terrain and edges; samples do not prove continuous support. Existing TerrainContactWaker pulses release gravity definitively on support loss; ice group checked independently of the general 64-prop query limit.",
+    "melting": "Existing HEAT/MaterialState path marks consumed, removes physical collision and queues body deletion; only bounded cosmetic ghost remains for 0.45s.",
+    "lifecycle": "Save/select/Esc retain built ice; reset/load remove session bodies. Pending mold cancels on existing ability lifecycle. No dynamic prop serialization."
+  },
+  "not_run": [
+    "export",
+    "full integration suite (81 IDs, four modes)",
+    "cross-process persistence",
+    "T26",
+    "human playtest P4H"
+  ],
+  "capture": "screens/ice_wall.png",
+  "capture_is_human_playtest": false,
+  "source_hash_method": "SHA256 of tested checkout bytes",
+  "source_hashes": [
+    {
+      "path": "scripts/abilities/ability_controller.gd",
+      "sha256": "d8ad1739e34b626ea3eb96aa2c9773b542fc2ca6061f2d0bb6bae875f589b2aa"
+    },
+    {
+      "path": "scripts/abilities/water_orb.gd",
+      "sha256": "da15ddaede3c943be90b51e161769e04052482f6b93cbbb8a33ffa07bdb5eec6"
+    },
+    {
+      "path": "scripts/abilities/water_orb_tuning.gd",
+      "sha256": "6a035ae45b94b2f93a430ee51969fe76c06e1e8957bdb05213b575a2bc3105e0"
+    },
+    {
+      "path": "scripts/core/input_actions.gd",
+      "sha256": "acfee592f1cda2a6647a38ae3c9a4340146f2ceb1576cd749115512df5a54cf7"
+    },
+    {
+      "path": "scripts/dev/p36_selftest.gd",
+      "sha256": "ee03095279e07615252745199a1648fdc246694ac6a100b24f60cbb10d61a392"
+    },
+    {
+      "path": "scripts/elements/elemental_fx.gd",
+      "sha256": "cb7db0dfa0c433494863f88eeda29899e428d6f7054cb50980e543fc1ee48a0a"
+    },
+    {
+      "path": "scripts/physics/ice_body.gd",
+      "sha256": "1482c2ae7412697a60f095b0a588348f611b1123fe78c3d89a35487dedd9efdc"
+    },
+    {
+      "path": "scripts/physics/terrain_contact_waker.gd",
+      "sha256": "11e6ec5d158a66f14c8cda4e5003945b03be54e2114338c3193e0d626cad0202"
+    },
+    {
+      "path": "scripts/ui/debug_hud.gd",
+      "sha256": "e8d1041cb8f598f6c3096f81fff451133e75870f0ef181966fd623bf8253ccd6"
+    },
+    {
+      "path": "tools/lib_selftest_contract.ps1",
+      "sha256": "4fd8ecbcfc2270f7b8c723772b4c8b105e39da6eafac2fcbe7c2eb894b63b2ba"
+    }
+  ]
+}

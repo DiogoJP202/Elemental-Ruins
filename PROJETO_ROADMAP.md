@@ -1,6 +1,6 @@
 # ELEMENTAL // RUINS — Roadmap técnico
 
-**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E/P4F receberam feedback humano positivo. P4G — Gelo Persistente e Derretimento implementado em `codex/p4g-persistent-ice`, base P4F `88d71e3`, pronto para playtest; gate integral não executado.
+**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E/P4F/P4G receberam feedback humano positivo inicial. P4H — Muralha de Gelo implementada em `codex/p4h-ice-wall`, base P4G `1fa3c90`, pronta para playtest; gate integral não executado.
 
 **Checkpoint P4D em 28/10/2026: FALHOU.** Editor headless e export janela: 71/72 por timeout de preparação do T26 antes do save. Editor janela e export headless: 72/72. Persistência entre processos e benchmarks aprovados, zero erros/avisos; detalhamento abaixo. O usuário autorizou P4E apesar desse FAIL, que permanece preservado. T26 não foi investigado nesta fatia.
 
@@ -79,12 +79,19 @@ Com Água selecionada, LMB mantém o jato existente. Segurar RMB forma um único
 
 **Validação dirigida:** T1/T70/T71 3/3 headless e 3/3 janela; regressão 9/9 headless (jato, líquido, Terra/Fogo/Ar e controles). Zero erros/avisos. Benchmark: p95 18,13 / p99 18,86 / máximo 18,94 ms, dentro de 20/33/50. Evidências em `docs/evidence/p4f/`. Contrato daquela entrega: 77 IDs não executado; P4D continua FAIL e T26 não foi investigado. Feedback humano positivo informado pelo usuário em 28/10/2026, sem avaliação detalhada por cenário nem aprovação integral; evidências históricas preservadas.
 
-## P4G — Gelo Persistente e Derretimento (implementado; pronto para playtest)
+## P4G — Gelo Persistente e Derretimento (implementado; feedback humano positivo)
 O impacto congelado conserva KINETIC único e materializa um `IceBody` com colisão esférica/CCD, massa de 137,55 kg para 150 L, cristal facetado P4F e repouso natural. Reutiliza props_root/DebrisBudget, materiais e VFX. Ar/Água empurram; Terra não captura como rocha. Teto configurável de oito, removendo mais antigo elegível; se não houver espaço ou todos estiverem protegidos, mantém impacto e fragmenta sem spawn inválido.
 
 Fogo usa HEAT no mesmo MaterialResponseSystem: gelo começa a -20 °C, funde a 0 °C, sem aquecimento ambiente automático. Colisão removida ao confirmar fusão; cópia visual encolhe em 0,45 s com vapor limitado. Seleção/Esc preservam gelo do mundo; save não altera a física viva, reset/load removem a sessão. Sem serialização de corpos, poças, água física ou estruturas de gelo.
 
-**Validação dirigida:** import/parse; T1/T72/T73 3/3 headless e 3/3 janela; regressão 12/12 headless de materiais/jato/líquido/congelamento/controles/Terra/Fogo/Ar. Execuções finais sem erros/avisos. Tentativa inicial com falhas das sondas corrigidas permanece registrada. Benchmark de 185 ticks com oito corpos e orbe ativo/lançado: **17,60 / 17,96 / 18,32 ms** (p95/p99/máximo), dentro de 20/33/50. Evidências e metodologia em `docs/evidence/p4g/`. Contrato atual 79 IDs; integral/export não executados. P4D FAIL preservado; T26 não modificado/investigado. **Próximo passo: playtest humano P4G**, sem P4H automático.
+**Validação dirigida:** import/parse; T1/T72/T73 3/3 headless e 3/3 janela; regressão 12/12 headless de materiais/jato/líquido/congelamento/controles/Terra/Fogo/Ar. Execuções finais sem erros/avisos. Tentativa inicial com falhas das sondas corrigidas permanece registrada. Benchmark de 185 ticks com oito corpos e orbe ativo/lançado: **17,60 / 17,96 / 18,32 ms** (p95/p99/máximo), dentro de 20/33/50. Evidências e metodologia em `docs/evidence/p4g/`. Contrato daquela entrega: 79 IDs; integral/export não executados. P4D FAIL preservado; T26 não modificado/investigado. Feedback humano positivo inicial informado em 28/10/2026, sem avaliação detalhada ou aprovação integral; relatórios históricos preservados.
+
+## P4H — Muralha de Gelo (implementada; pronta para playtest)
+RMB/C/V alterna painel/projétil congelado; mira mostra prévia azul/vermelha sem collider. Release válido constrói uma única muralha e consome o orbe; inválido recusa sem lançar. Painel 1,40 × 1,50 m, espessura derivada do volume (150 L → 0,071429 m, massa 137,55 kg), mínimo 0,04 m; alcance 10 m. Mesmo IceBody, material/fusão, orçamento misto oito e efeitos; sem Ability/manager novo.
+
+Âncora estática enquanto seis apoios de base e SDF a 0,6 m continuam válidos; bordas/solo raso são recusados conservadoramente. Os pulsos existentes de TerrainContactWaker liberam a física ao escavar. Collider real bloqueia jogador/props; Fogo funde, Ar empurra após desancorar com visada. Seleção/Esc/save preservam muralhas prontas; reset/load removem a sessão, sem serialização de props.
+
+**Validação dirigida:** import/parse; T1/T74/T75 3/3 headless e 3/3 janela; regressão 12/12 de Waker/Terra/jato/orbes/gelo, execuções finais sem erros/avisos. Tentativas iniciais preservadas: anotação de tipo no parse e sonda de Ar ocluída no fundo da cratera; painel dinâmico acessível recebe impulso real, sem ajuste de física. Benchmark de 185 ticks, quatro muralhas/quatro esferas e duas rajadas: **17,64 / 18,46 / 19,54 ms**, dentro de 20/33/50. Evidências em `docs/evidence/p4h/`. Contrato atual 81 IDs; integral/export/persistência entre processos não executados. P4D continua FAIL; T26 intacto. Próximo passo: playtest humano P4H, sem P4I automático.
 
 ## P4 posterior — 16 habilidades, combinações e visual (futuro)
 Expandir `elemental_abilities_mvp.json`; estados de materiais, gelo, lava, eletricidade, vórtices, shaders Ilustrado/Retro, áudio/animações e modos de jogo.

@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4G)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4H)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -17,6 +17,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 
 **P4F — Congelamento e Lançamento de Gelo implementado, com feedback humano positivo:** C durante RMB transforma o mesmo orbe; voo balístico, impacto cinético próprio e cristal facetado. Feedback informado pelo usuário em 28/10/2026; gate integral não executado.
 **P4G — Gelo persistente e derretimento:** o impacto congelado deixa um corpo físico no mundo; Fogo aquece e funde pelo sistema de materiais existente. Branch `codex/p4g-persistent-ice`, base P4F `88d71e3`. O FAIL histórico P4D permanece.
+**P4H — Muralha de Gelo pronta para playtest:** V durante o controle congelado alterna um molde de painel; soltar RMB constrói somente se válido. Reutiliza IceBody e depende de apoio do terreno. Branch `codex/p4h-ice-wall`, base P4G `1fa3c90`; validação dirigida aprovada, sem gate integral. P4G recebeu feedback humano positivo inicial do usuário em 28/10/2026, sem aprovação de integração integral.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -85,6 +86,7 @@ de fluidos.
 | **F** (Terra parada; P4D) | segurar mostra a prévia; soltar abre uma fissura permanente de 6 m, raio 1 m e centro 0,35 m abaixo do piso, para longe na direção horizontal da câmera; todo o caminho deve estar a até 18 m |
 | **RMB** (Água; P4E) | segurar forma/sustenta um orbe; mouse orienta o alvo horizontal, Q/E regulam altura, roda aproxima/afasta; soltar lança. O primeiro botão mantido vence o conflito com o jato LMB; não há comando enfileirado |
 | **C** (Água; P4F) | congela uma vez o orbe suspenso durante RMB; preserva posição e controle. Ignorado fora do hold ou após congelar; soltar RMB lança gelo balístico |
+| **V** (Água; P4H) | durante RMB congelado, alterna muralha/projétil; mire chão livre e solte RMB para construir. Prévia inválida consome/cancela o molde, sem lançar |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -220,7 +222,19 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
-### P4G — Gelo persistente e derretimento
+### P4H — Muralha de Gelo
+
+**Playtest:** **2 → segure RMB → C → V**, mire chão próximo e livre. Azul indica posição válida, vermelho recusa com motivo no HUD. Solte RMB para criar uma muralha; **V novamente antes de soltar** retorna ao projétil congelado. Fora do molde, câmera/Q/E/roda e lançamento P4F/P4G são preservados. LMB continua sendo o jato exclusivo. Troca de elemento, Esc, perda de captura/input e reset/save/load cancelam somente a prévia; muralhas prontas sobrevivem à seleção/Esc/save e são removidas por reset/load.
+
+`WaterOrbTuning`: `wall_width=1.40`, `wall_height=1.50`, `wall_range=10` m, `wall_min_thickness=0.04` m. Espessura = litros × 0,001 / (largura × altura): **150 L → 0,071429 m**, massa **137,55 kg** na densidade P4G. Configuração abaixo da espessura mínima é recusada, sem inventar volume. `IceBody.ShapeKind.WALL` usa caixa nominal e painel com bordas facetadas; mesma fusão HEAT/material, cristalização e dissolução existentes. Esferas/muralhas compartilham o teto padrão de **oito** e a remoção do mais antigo elegível.
+
+Posição usa o primeiro obstáculo da mira, chão com normal Y ≥ 0,85, área carregada, seis apoios físicos próximos da base, caixa livre de terreno/jogador/props e caminho da mão desobstruído. A parede fica vertical, perpendicular à direção horizontal da câmera. **É uma âncora estrutural (`freeze` estático), não repouso natural:** seis pontos de base precisam de chão a até 0,12 m e SDF sólido 0,6 m abaixo, como a âncora conservadora das estruturas existentes (dados amostrados em voxels de 1 m). Isso recusa bordas/solo raso; não prova suporte contínuo entre amostras. TerrainContactWaker reavalia nos pulsos existentes após edição, sem omitir muralhas quando a consulta geral de 64 props satura; perder apoio libera gravidade definitivamente. A muralha ancorada resiste ao Ar; a dinâmica recebe impulso quando houver visada. Fogo funde pelo estado térmico real e remove a colisão antes do efeito final. Sem grafo novo, gelo voxel ou serialização de corpos; save mantém a sessão viva, load/reset limpam.
+
+**Validação dirigida (28/10/2026):** import/parse custom aprovados; [T1/T74/T75 headless 3/3](docs/evidence/p4h/02_headless.json), [regressão headless 12/12](docs/evidence/p4h/03_related_headless.json) (T1/T18/T46/T60/T63/T67/T68/T69/T70/T71/T72/T73), [T1/T74/T75 janela 3/3](docs/evidence/p4h/04_window.json). Execuções finais sem erros/avisos. T74 cobre V contextual/toggle/voo, prévia azul/vermelha, consumo único, volume/massa, bloqueio de jogador/caixa, estabilidade ancorada, recusas e teto misto/proteção. T75 cobre duas rajadas reais de Fogo/fusão/remoção da colisão, escavação/desancoragem/queda, Ar acessível e cancelamentos/save/load/reset. O [FAIL inicial](docs/evidence/p4h/02_headless_initial_fail.json) foi preservado: a sonda de Ar mirava o painel já no fundo da cratera. A rechecagem registra visada falsa/blocked=1 ali e contato com impulso positivo no painel dinâmico acessível. Corrigida a fixture sem alterar física nem relaxar critérios. O parse inicial exigiu anotação explícita de Dictionary; log preservado.
+
+Benchmark janela: quatro muralhas/quatro esferas inicialmente, duas rajadas de Fogo e fusão, **185 ticks / 184 intervalos**, **p95 17,64 / p99 18,46 / máximo 19,54 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; process_frame após preparação dos corpos, uma Godot por vez, captura fora da amostragem e imagem histórica restaurada. [Captura inspecionada](docs/evidence/p4h/screens/ice_wall.png), [consolidação/ambiente](docs/evidence/p4h/result.json). **Integral de 81 IDs, export, persistência entre processos e playtest humano P4H não executados.** P4D continua FAIL, T26 não investigado; próximo passo único é experimentar a muralha.
+
+### P4G — Gelo persistente e derretimento (feedback humano positivo)
 
 **Playtest:** selecione **2**, segure **RMB**, pressione **C** e solte mirando o chão ou uma caixa. O cristal permanece, cai e repousa; repita para acumular até **oito**. Selecione **4** para empurrá-lo com Ar e **3** para aquecer com Fogo: duas rajadas próximas fundem um gelo seco novo nos valores padrão. Trocar elemento/Esc preserva o gelo já materializado. Compare com RMB sem C e LMB: orbe líquido e jato mantêm impulso/WET. Reset/load removem os corpos da sessão; save preserva a física viva, mas não serializa gelo entre sessões.
 

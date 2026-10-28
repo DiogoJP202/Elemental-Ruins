@@ -1,0 +1,162 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T16:45:04",
+  "duracao_s": 30.943,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 1028.0,
+    "p4h_ice_wall_frame_ms": {
+      "max": 16.85,
+      "media": 7.77,
+      "min": 0.11,
+      "n": 396,
+      "p95": 16.07,
+      "p99": 16.67,
+      "physics_ticks": 185
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "FAIL",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1028.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "anchored_stable": true,
+        "contextual": true,
+        "freeze_wall_ignored_in_flight": true,
+        "mass_kg": 137.550003806502,
+        "mixed_budget": {
+          "eight_total_four_walls": true,
+          "factory_fixture": true,
+          "held_skipped": true
+        },
+        "object_blocked": true,
+        "one_release_one_wall_no_launch": true,
+        "physical_contract": true,
+        "player_blocked": true,
+        "preview_valid": true,
+        "preview_visual": true,
+        "refusals": {
+          "occluded": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "occupied": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "range": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "fora do alcance (máx. 10.0 m)",
+            "red_preview": true
+          },
+          "support": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "thin": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "volume insuficiente para espessura mínima",
+            "red_preview": true
+          }
+        },
+        "size_m": "(1.4, 1.5, 0.071429)",
+        "toggle_back": true,
+        "volume_m3": 0.150000004151038
+      },
+      "id": "T74",
+      "status": "PASS",
+      "titulo": "V alterna molde; release constrói um painel sólido com volume coerente e orçamento compartilhado"
+    },
+    {
+      "detalhes": {
+        "benchmark_fire_shots": 2,
+        "excavated_support": {
+          "air": false,
+          "edit": true,
+          "fell": true,
+          "released": true
+        },
+        "fire_melts_real_material": true,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 16.85,
+          "media": 7.77,
+          "min": 0.11,
+          "n": 396,
+          "p95": 16.07,
+          "p99": 16.67,
+          "physics_ticks": 185
+        },
+        "melt": {
+          "collider_disabled": true,
+          "consumed_before_fx": true,
+          "melted": 1
+        },
+        "mixed_bodies_fixture": true,
+        "preview_cancel_and_built_lifecycle": {
+          "escape": {
+            "ok": true
+          },
+          "input": {
+            "ok": true
+          },
+          "load": {
+            "ok": true
+          },
+          "mouse": {
+            "ok": true
+          },
+          "reset": {
+            "ok": true
+          },
+          "save": {
+            "ok": true
+          },
+          "select": {
+            "ok": true
+          }
+        },
+        "temperature_at_melt": 9.56666666666667
+      },
+      "id": "T75",
+      "status": "FAIL",
+      "titulo": "Muralha funde por Fogo, perde apoio ao escavar e limpa prévia/corpos corretamente"
+    }
+  ],
+  "run_id": "8a74a149146b",
+  "testes_ids": [
+    "T1",
+    "T74",
+    "T75"
+  ],
+  "testes_pass": 2,
+  "testes_total": 3,
+  "video_adapter": ""
+}

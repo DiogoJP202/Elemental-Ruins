@@ -540,3 +540,16 @@ atinge fusão a 0 °C. É uma abstração explícita de gameplay, sem ganho pass
 MaterialResponseSystem marca consumed antes do sinal melted; IceBody remove colisão/corpo,
 e ElementalFx conserva só uma cópia visual curta em pool limitado. Efeitos não decidem fusão.
 Reset/load usam a limpeza de props já existente; save preserva corpos vivos, sem serializá-los.
+
+## D57. P4H: molde de painel no mesmo orbe/corpo de gelo
+V alterna somente o hold congelado. Release revalida e consome o modo antes dos callbacks;
+alvo inválido cancela sem virar lançamento. A espessura é volume nominal/(largura×altura),
+recusando valor abaixo do mínimo físico configurado. IceBody recebe SPHERE/WALL, mantendo
+material, massa, orçamento misto, fusão e cleanup; a prévia é uma malha sem collider.
+
+Painel vertical usa âncora estática explícita. Seis raios curtos e SDF sólido a 0,6 m abaixo
+da base validam apoio na colocação e manutenção; a profundidade conserva o padrão das
+estruturas frente à amostragem SDF de 1 m. Não é grafo estrutural nem apoio contínuo provado.
+TerrainContactWaker verifica o grupo limitado de gelo nos pulsos existentes de edição,
+independentemente do teto da consulta geral. Perda de apoio torna o painel dinâmico de
+forma definitiva; aguardar terreno pronto preserva confirmações durante save/reset/load.
