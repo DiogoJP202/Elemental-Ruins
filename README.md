@@ -11,7 +11,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P4A — checkpoint fechado em 27/10/2026 e integrado à main (`9103bee`):** controle livre de uma rocha suspensa, 66/66 testes nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest dos controles com feedback positivo do usuário na mesma data ("acho que ficou bom").
 **P4B — checkpoint fechado e integrado à main (`266627d`) em 27/10/2026:** capturar e reutilizar uma rocha extraída já existente, com a mesma mola e os controles P4A. Resultado integral final: 68/68 nos quatro modos, export e persistência aprovados, zero erros/avisos; o editor em janela exigiu rechecagens de desempenho, preservadas abaixo. Playtest com feedback positivo do usuário ("está funcionando").
 **P4C — checkpoint fechado e integrado à main (`b84b4c6`, PR #4) em 27/10/2026:** Pilar de Terra por RMB, reutilizando o PATH aditivo, fila, validação e persistência do terreno. 70/70 nos quatro modos, export e persistência entre processos aprovados, zero erros/avisos. Playtest com feedback positivo do usuário ("Funcionou, testei aqui!"), sem avaliação detalhada por cenário.
-**P4D — Fissura de Terra implementada, com feedback humano positivo:** vala permanente por F (segurar prévia/soltar aplicar), reutilizando PATH subtrativo e os sistemas existentes. T65/T66 aprovados em headless e janela, com benchmark em janela dentro dos limites. As falhas e rechecagens direcionadas estão preservadas abaixo; checkpoint de integração P4D não fechado. Feedback humano positivo em 28/10/2026 sobre posição e controle, sem avaliação detalhada por cenário.
+**P4D — Fissura de Terra implementada e integrada à main (`80f2a08`, PR #5), com feedback humano positivo:** vala permanente por F (segurar prévia/soltar aplicar), reutilizando PATH subtrativo e os sistemas existentes. O checkpoint de integração é registrado abaixo, separadamente da implementação já integrada. Feedback humano positivo em 28/10/2026 sobre posição e controle, sem avaliação detalhada por cenário.
+**Checkpoint P4D na retomada de 28/10/2026: FALHOU** no preparo do T26 em dois modos; os demais testes, persistência entre processos e benchmarks passaram. P4E — Manipulação Livre de Água ainda sem autorização de implementação.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -231,7 +232,39 @@ Ambos atendem a 20/33/50 ms. [Ambiente registrado](docs/evidence/p4d/environment
 
 As capturas foram inspecionadas: a [prévia](docs/evidence/p4d/screens/03_p4d_fissure_preview.png) mostra a fita verde e a [fissura aplicada](docs/evidence/p4d/screens/04_p4d_fissure.png) mostra a vala. Os PNGs foram movidos do destino fixo do runner para `docs/evidence/p4d/screens/`; os relatórios brutos mantêm os caminhos originais. A captura histórica do P3.6 foi restaurada.
 
-Não foram executados export, persistência entre processos ou bateria completa nesta fatia. Save/reset/load de T65 ocorreram na mesma execução. **Checkpoint de integração P4D não fechado; próximo passo recomendado: esclarecer a variação de T61 antes de fechar a integração.** O usuário confirmou feedback humano positivo em 28/10/2026 ("sim, pode subir"), sem avaliação detalhada por cenário. Os campos de playtest dos relatórios automatizados preservam o estado histórico da execução. Compressão continua planejada; os resultados P4C abaixo são históricos.
+Naquela fatia não foram executados export, persistência entre processos ou bateria completa. Save/reset/load de T65 ocorreram na mesma execução; o checkpoint permaneceu aberto para investigar T61. O usuário confirmou feedback humano positivo em 28/10/2026 ("sim, pode subir"), sem avaliação detalhada por cenário. Os campos de playtest dos relatórios automatizados preservam o estado histórico da execução. Compressão continua futura.
+
+### P4D — checkpoint da retomada em 28/10/2026: FALHOU
+
+Checkout existente recuperado em `C:\Users\dsoares\Documents\Projetos\game`, inicialmente limpo; `origin/main` confirmado em `80f2a08` e `main` atualizada por fast-forward. Trabalho na branch `codex/p4d-integration`, sem clone, worktree ou instalação. Editor custom 4.7.2 `ed1daf0bf`, classes Voxel embutidas e template release compatível confirmados. [Ambiente e hashes](docs/evidence/p4d/integration/environment.json), [resultado consolidado](docs/evidence/p4d/integration/final_result.json) e [passos do runner](docs/evidence/p4d/integration/steps.json).
+
+**T61:** o relatório histórico não separava as duas condições de `one_new_impact`; não permite saber qual falhou. O teste agora registra delta de impactos, deslocamento da caixa, timeout e monitoramento, mantendo esperas e PASS intactos. Dez processos direcionados (5 headless + 5 janela) tiveram exatamente um impacto, caixa deslocada 1,35–5,69 m e zero callbacks/voos restantes. Falha física histórica **não reproduzida; causa não estabelecida**. Nove relatórios direcionados passaram; [janela 4](docs/evidence/p4d/integration/t61/window_4.json) falhou somente por p95=20,14 ms, preservado sem mudar o limite. [Checagem contextual](docs/evidence/p4d/integration/context_window.json): 6/6 PASS. T61 também passou nas quatro integrais.
+
+Reutilizado `tools/run_p361_tests.ps1`, com editor/template custom e `-EvidenceDirectory docs/evidence/p4d/integration`. Contrato vigente: **72 IDs**. Uma bateria integral por modo, sem repetir integrais:
+
+| Modo | Resultado |
+|---|---|
+| [Editor headless](docs/evidence/p4d/integration/editor_headless.json) | 71/72 — FAIL T26 |
+| [Editor em janela](docs/evidence/p4d/integration/editor_window.json) | 72/72 PASS |
+| [Export headless](docs/evidence/p4d/integration/export_headless.json) | 72/72 PASS |
+| [Export em janela](docs/evidence/p4d/integration/export_window.json) | 71/72 — FAIL T26 |
+
+**Bloqueio do gate:** nas duas falhas, T26 recusou a preparação por `natural_rest_timeout`, **antes de salvar**: não atingiu 60 ticks consecutivos de sono natural em 15 s. No editor headless, maior sequência 21 ticks; no export janela, zero, com peças ainda acordadas e P33 girando a 0,166 rad/s no snapshot final. Não é evidência de falha do save. Inspeção não encontrou alteração de `can_sleep`, parâmetros físicos vazando ou defeito comprovado do runtime. [Três rechecagens direcionadas](docs/evidence/p4d/integration/t26/steps.json), com T14 criando o slot exigido: 3/3 em cada processo (duas editor headless, uma export janela). O timeout não reapareceu; causa não isolada. Os FAILs integrais permanecem válidos e o checkpoint **não está aprovado**. Sem forçar sono, ampliar prazos, mudar física ou repetir até verde.
+
+286/288 verificações integrais aprovadas. Persistência write/read entre processos passou 2/2 em cada uma das quatro etapas editor/export. Todos os relatórios completos, com IDs do contrato; `Invoke-SelftestStep` validou run_id, frescor, contadores, resultados individuais e logs, rejeitando os três relatórios FAIL (dois integrais e um direcionado). Zero erros/avisos nos 26 logs, incluindo import/export. As 52 fontes permaneceram com os mesmos hashes durante as execuções; preset e fixture histórica de persistência intactos. Nenhuma captura ou playtest humano novo.
+
+| Cenário | Editor: p95 / p99 / máximo | Export: p95 / p99 / máximo |
+|---|---|---|
+| T27 — colapso | 18,46 / 19,42 / 19,72 ms | 19,04 / 20,02 / 21,05 ms |
+| T37 — quatro poderes | 18,93 / 21,48 / 31,53 ms | 19,09 / 21,10 / 31,78 ms |
+| T59 — controle livre | 17,90 / 18,57 / 19,22 ms | 17,51 / 18,20 / 23,42 ms |
+| T61 — recaptura | 18,57 / 20,09 / 24,34 ms | 17,45 / 18,13 / 24,14 ms |
+| T63 — pilar | 18,33 / 19,21 / 19,55 ms | 17,50 / 18,36 / 18,75 ms |
+| T65 — fissura | 18,93 / 19,76 / 20,12 ms | 17,45 / 18,04 / 18,83 ms |
+
+As duas integrais em janela atendem a 20/33/50 ms em todos esses cenários. Máquina: i5-1135G7, 16 GB RAM, Iris Xe (driver 32.0.101.7085), Vulkan 1.4.323/Forward+, Jolt; janela configurada 1600×900, display 1920×1200, plano Equilibrado. Execuções sequenciais, sem outra Godot aberta; acompanhamento por leitura do log sem criar processos shell/CIM durante medições. Intervalos reais de `process_frame` nos runners existentes. A validação direcionada anterior usou outro hardware AMD; nenhuma diferença é atribuída causalmente ao código. Caminhos locais nas novas evidências foram normalizados para publicação; medições e IDs preservados.
+
+**Único próximo passo:** isolar o timeout de preparação do T26 no contexto integral, preservando 15 s/60 ticks, antes de revalidar os modos que falharam. Não iniciar P4E. Os checkpoints abaixo são históricos.
 
 ### P4C — validação direcionada e checkpoint de integração
 

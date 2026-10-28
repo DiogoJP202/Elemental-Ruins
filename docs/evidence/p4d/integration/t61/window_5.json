@@ -1,0 +1,90 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T10:02:13",
+  "duracao_s": 8.928,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 60,
+      "media": 52.59,
+      "min": 1,
+      "n": 17,
+      "p95": 60
+    },
+    "initial_terrain_ready_ms": 1171,
+    "p4b_reuse_frame_ms": {
+      "max": 26.42,
+      "media": 16.62,
+      "min": 6.16,
+      "n": 156,
+      "p95": 18.31,
+      "p99": 20.15
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1171,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "callbacks_clean": true,
+        "capture_without_position_velocity_reset": true,
+        "contact_monitor_after_impact": false,
+        "controls": true,
+        "crate_displacement_m": 1.34647381305695,
+        "flight_speed_m_s": 23.9737243652344,
+        "frame_gate_applied": true,
+        "frame_ms": {
+          "max": 26.42,
+          "media": 16.62,
+          "min": 6.16,
+          "n": 156,
+          "p95": 18.31,
+          "p99": 20.15
+        },
+        "hit_observed_within_timeout": true,
+        "hits_delta": 1,
+        "mass_kg": 6973.17041015625,
+        "moved_m": 0.690349638462067,
+        "no_terrain_edit_or_new_body": true,
+        "one_new_impact": true,
+        "previous_flight_disconnected": true,
+        "recaptured_in_flight": true,
+        "remaining_callbacks": 0,
+        "remaining_flights": 0,
+        "reused_twice": true,
+        "same_body": true,
+        "teleport_error_m": 0.000606380286626518
+      },
+      "id": "T61",
+      "status": "PASS",
+      "titulo": "Mesma rocha e massa: captura por LMB, controles físicos, recaptura em voo e novo impacto sem callbacks duplicados"
+    }
+  ],
+  "run_id": "4c0598a2cccd",
+  "testes_ids": [
+    "T1",
+    "T61"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

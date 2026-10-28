@@ -1,0 +1,92 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T10:34:17",
+  "duracao_s": 5.198,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 539
+  },
+  "modo": "headless-export",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 539,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "diferencas_apos_salvar": [],
+        "edicoes": [
+          "OK dig_sphere OK rev=1 1.72ms soil ~169646 kg",
+          "OK dig_path OK rev=2 2.51ms soil ~195432 kg",
+          "OK dig_path OK rev=3 0.93ms soil ~195432 kg",
+          "OK dig_path OK rev=4 0.04ms stone ~201132 kg",
+          "OK dig_path OK rev=5 0.30ms stone ~338749 kg",
+          "OK dig_path OK rev=6 0.36ms stone ~338749 kg",
+          "OK dig_path OK rev=7 0.07ms soil ~116038 kg",
+          "OK add_sphere OK rev=8 0.17ms sand ~53617 kg",
+          "OK add_sphere OK rev=9 0.08ms sand ~53617 kg",
+          "OK add_sphere OK rev=10 0.03ms sand ~53617 kg",
+          "OK add_path OK rev=11 0.51ms stone ~366281 kg"
+        ],
+        "esperado_json": "<user_data>/p1_persist_expected.json",
+        "probes_alteradas": 5,
+        "salvar": {
+          "blocks_tasks": 58,
+          "bytes": 143360,
+          "copy": "OK",
+          "flush_ms": 13,
+          "io_drain": {
+            "idle": true,
+            "ms": 35,
+            "tasks": {
+              "generation": 0,
+              "gpu": 0,
+              "main_thread": 0,
+              "meshing": 0,
+              "streaming": 0
+            }
+          },
+          "ms": 54,
+          "ok": true,
+          "path": "<user_data>/saves/selftest_xproc.sqlite",
+          "publication": {
+            "error": 0,
+            "recovery_file": "",
+            "rollback": 0
+          },
+          "reason": "",
+          "save_anterior_em_voo": "nenhum",
+          "slot": "selftest_xproc",
+          "terrain_recreated": false
+        }
+      },
+      "id": "T14x-write",
+      "status": "PASS",
+      "titulo": "Fase 1: editar, salvar o slot e gravar o estado esperado"
+    }
+  ],
+  "run_id": "e9bf12cb6b55",
+  "testes_ids": [
+    "T1",
+    "T14x-write"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": ""
+}

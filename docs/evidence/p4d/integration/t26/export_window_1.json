@@ -1,0 +1,4636 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T10:36:05",
+  "duracao_s": 25.001,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 61,
+      "media": 56.54,
+      "min": 1,
+      "n": 48,
+      "p95": 60
+    },
+    "initial_terrain_ready_ms": 908
+  },
+  "modo": "window-export",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 908,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "amostras_sdf_material": 108,
+        "arquivos_de_sessao": 1,
+        "carregar_1": {
+          "bytes": 143360,
+          "copy": "OK",
+          "ms": 409,
+          "ok": true,
+          "slot": "selftest"
+        },
+        "diferencas_apos_salvar": [],
+        "diferencas_carga_1": [],
+        "diferencas_carga_2": [],
+        "diferencas_reset": [],
+        "edicoes": [
+          "OK dig_sphere OK rev=1 0.61ms soil ~169646 kg",
+          "OK dig_path OK rev=2 0.72ms soil ~195432 kg",
+          "OK dig_path OK rev=3 0.92ms soil ~195432 kg",
+          "OK dig_path OK rev=4 0.04ms stone ~201132 kg",
+          "OK dig_path OK rev=5 0.33ms stone ~338749 kg",
+          "OK dig_path OK rev=6 0.38ms stone ~338749 kg",
+          "OK dig_path OK rev=7 0.06ms soil ~116038 kg",
+          "OK add_sphere OK rev=8 0.17ms sand ~53617 kg",
+          "OK add_sphere OK rev=9 0.08ms sand ~53617 kg",
+          "OK add_sphere OK rev=10 0.04ms sand ~53617 kg",
+          "OK add_path OK rev=11 0.52ms stone ~366281 kg"
+        ],
+        "nos": {
+          "apos_salvar": 231,
+          "carga_1": 231,
+          "carga_2": 231,
+          "editado": 231
+        },
+        "probes_alteradas_pelas_edicoes": 5,
+        "reset_volta_ao_baseline": true,
+        "salvar": {
+          "blocks_tasks": 0,
+          "bytes": 143360,
+          "copy": "OK",
+          "flush_ms": 12,
+          "io_drain": {
+            "idle": true,
+            "ms": 33,
+            "tasks": {
+              "generation": 0,
+              "gpu": 0,
+              "main_thread": 0,
+              "meshing": 0,
+              "streaming": 0
+            }
+          },
+          "ms": 51,
+          "ok": true,
+          "path": "<user_data>/saves/selftest.sqlite",
+          "publication": {
+            "error": 0,
+            "recovery_file": "",
+            "rollback": 0
+          },
+          "reason": "",
+          "save_anterior_em_voo": "esperado",
+          "slot": "selftest",
+          "terrain_recreated": false
+        },
+        "save_abortado": {
+          "exercitado": true,
+          "resultado": {
+            "blocks_tasks": 58,
+            "bytes": -1,
+            "copy": "Busy",
+            "flush_ms": 1,
+            "io_drain": {
+              "idle": false,
+              "ms": 0,
+              "tasks": {}
+            },
+            "ms": 1,
+            "ok": false,
+            "path": "<user_data>/saves/selftest_abort.sqlite",
+            "publication": {
+              "error": 44,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "flush_incomplete",
+            "save_anterior_em_voo": "nenhum",
+            "slot": "selftest_abort",
+            "terrain_recreated": false
+          },
+          "save_seguinte_imediato": {
+            "blocks_tasks": 0,
+            "bytes": 143360,
+            "copy": "OK",
+            "flush_ms": 12,
+            "io_drain": {
+              "idle": true,
+              "ms": 33,
+              "tasks": {
+                "generation": 0,
+                "gpu": 0,
+                "main_thread": 0,
+                "meshing": 0,
+                "streaming": 0
+              }
+            },
+            "ms": 51,
+            "ok": true,
+            "path": "<user_data>/saves/selftest.sqlite",
+            "publication": {
+              "error": 0,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "",
+            "save_anterior_em_voo": "esperado",
+            "slot": "selftest",
+            "terrain_recreated": false
+          },
+          "terreno_pronto_sem_slot": true
+        },
+        "topo_coluna_carga_2_y": 6.5,
+        "topo_coluna_salvo_y": 6.5
+      },
+      "id": "T14",
+      "status": "PASS",
+      "titulo": "Persistência: salvar → reset (baseline) → carregar 2× devolve estado idêntico, sem duplicar"
+    },
+    {
+      "detalhes": {
+        "A_salvar_com_torre_caida": {
+          "cena_parada_antes": true,
+          "controle_fisico_2s": {
+            "duration_s": 2,
+            "endpoint_shift_m": 0,
+            "first_violation": {},
+            "last": {
+              "at_rest": true,
+              "bodies": [
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P00_pilar0",
+                  "posicao": [
+                    16.2670459747314,
+                    -0.890886783599854,
+                    10.8774557113647
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P01_pilar0",
+                  "posicao": [
+                    15.5842227935791,
+                    0.269247740507126,
+                    10.2196846008301
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P02_pilar0",
+                  "posicao": [
+                    14.3292484283447,
+                    0.713590562343597,
+                    8.66143894195557
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P03_pilar0",
+                  "posicao": [
+                    21.4861106872559,
+                    -1.173583984375,
+                    11.4808263778687
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P04_pilar0",
+                  "posicao": [
+                    21.5204925537109,
+                    0.324784904718399,
+                    11.3811140060425
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P05_pilar0",
+                  "posicao": [
+                    21.5140857696533,
+                    1.8238080739975,
+                    11.3681945800781
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P06_pilar0",
+                  "posicao": [
+                    16.4806785583496,
+                    -1.16102421283722,
+                    16.4957599639893
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P07_pilar0",
+                  "posicao": [
+                    15.2029409408569,
+                    -0.220607697963715,
+                    16.6181831359863
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P08_pilar0",
+                  "posicao": [
+                    13.4743547439575,
+                    0.538196444511414,
+                    16.476713180542
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P09_pilar0",
+                  "posicao": [
+                    22.1530857086182,
+                    -1.05233871936798,
+                    16.4987239837646
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P10_pilar0",
+                  "posicao": [
+                    23.2219562530518,
+                    -0.00918131601065397,
+                    16.5308303833008
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P11_pilar0",
+                  "posicao": [
+                    25.0864219665527,
+                    0.519977331161499,
+                    16.5908584594727
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P12_laje1",
+                  "posicao": [
+                    16.3960914611816,
+                    0.0906171500682831,
+                    11.0388383865356
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P13_laje1",
+                  "posicao": [
+                    20.1997203826904,
+                    1.00109553337097,
+                    12.4572200775146
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P14_laje1",
+                  "posicao": [
+                    15.9027833938599,
+                    0.391903102397919,
+                    15.7493143081665
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P15_laje1",
+                  "posicao": [
+                    21.8826465606689,
+                    -0.0183659214526415,
+                    16.6544132232666
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P16_pilar1",
+                  "posicao": [
+                    13.7203464508057,
+                    0.518647849559784,
+                    11.8340663909912
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P17_pilar1",
+                  "posicao": [
+                    11.466968536377,
+                    0.541544258594513,
+                    11.9861793518066
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P18_pilar1",
+                  "posicao": [
+                    17.2874641418457,
+                    1.00172996520996,
+                    11.411340713501
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P19_pilar1",
+                  "posicao": [
+                    20.0650939941406,
+                    0.533752799034119,
+                    11.0780582427979
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P20_pilar1",
+                  "posicao": [
+                    15.5421104431152,
+                    1.89728939533234,
+                    16.8421726226807
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P21_pilar1",
+                  "posicao": [
+                    11.3464956283569,
+                    0.769999504089355,
+                    15.2041711807251
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P22_pilar1",
+                  "posicao": [
+                    18.5905532836914,
+                    0.76998907327652,
+                    18.6322631835938
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P23_pilar1",
+                  "posicao": [
+                    16.1187267303467,
+                    0.519998669624329,
+                    19.4616832733154
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P24_laje2",
+                  "posicao": [
+                    16.1999359130859,
+                    1.0973459482193,
+                    13.2992610931396
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P25_laje2",
+                  "posicao": [
+                    21.0862998962402,
+                    0.805268108844757,
+                    13.1604471206665
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P26_laje2",
+                  "posicao": [
+                    17.150146484375,
+                    0.794277369976044,
+                    16.6942157745361
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P27_laje2",
+                  "posicao": [
+                    20.0108890533447,
+                    0.938364028930664,
+                    17.4068260192871
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P28_coroa",
+                  "posicao": [
+                    18.4830741882324,
+                    1.3189982175827,
+                    14.2338924407959
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P29_coroa",
+                  "posicao": [
+                    16.8377876281738,
+                    2.77209424972534,
+                    16.4725551605225
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P30_coroa",
+                  "posicao": [
+                    18.5322399139404,
+                    1.08143210411072,
+                    15.3899440765381
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P31_coroa",
+                  "posicao": [
+                    20.3005104064941,
+                    -0.364278137683868,
+                    15.8029069900513
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P32_coroa",
+                  "posicao": [
+                    19.4859943389893,
+                    0.51173985004425,
+                    14.4219093322754
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P33_coroa",
+                  "posicao": [
+                    18.2918472290039,
+                    0.309745520353317,
+                    16.2430648803711
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P34_coroa",
+                  "posicao": [
+                    17.6819305419922,
+                    0.423584520816803,
+                    12.8336400985718
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P35_coroa",
+                  "posicao": [
+                    19.878044128418,
+                    1.51162302494049,
+                    14.2585926055908
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              ],
+              "max_angular_rad_s": 0,
+              "max_linear_m_s": 0,
+              "physics_frame": 1127
+            },
+            "max_angular_rad_s": 0,
+            "max_linear_m_s": 0,
+            "ok": true,
+            "peak_shift_m": 0,
+            "physics_ticks": 120,
+            "violation_ticks": 0
+          },
+          "controle_sem_save_2s_m": 0,
+          "espera_collider": {
+            "bodies": 0,
+            "frames": 0,
+            "ms": 0,
+            "strategy": "preserve_live_colliders",
+            "timeout": false
+          },
+          "fisica_antes": {
+            "at_rest": true,
+            "bodies": [
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P00_pilar0",
+                "posicao": [
+                  16.2670459747314,
+                  -0.890886783599854,
+                  10.8774557113647
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P01_pilar0",
+                "posicao": [
+                  15.5842227935791,
+                  0.269247740507126,
+                  10.2196846008301
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P02_pilar0",
+                "posicao": [
+                  14.3292484283447,
+                  0.713590562343597,
+                  8.66143894195557
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P03_pilar0",
+                "posicao": [
+                  21.4861106872559,
+                  -1.173583984375,
+                  11.4808263778687
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P04_pilar0",
+                "posicao": [
+                  21.5204925537109,
+                  0.324784904718399,
+                  11.3811140060425
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P05_pilar0",
+                "posicao": [
+                  21.5140857696533,
+                  1.8238080739975,
+                  11.3681945800781
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P06_pilar0",
+                "posicao": [
+                  16.4806785583496,
+                  -1.16102421283722,
+                  16.4957599639893
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P07_pilar0",
+                "posicao": [
+                  15.2029409408569,
+                  -0.220607697963715,
+                  16.6181831359863
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P08_pilar0",
+                "posicao": [
+                  13.4743547439575,
+                  0.538196444511414,
+                  16.476713180542
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P09_pilar0",
+                "posicao": [
+                  22.1530857086182,
+                  -1.05233871936798,
+                  16.4987239837646
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P10_pilar0",
+                "posicao": [
+                  23.2219562530518,
+                  -0.00918131601065397,
+                  16.5308303833008
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P11_pilar0",
+                "posicao": [
+                  25.0864219665527,
+                  0.519977331161499,
+                  16.5908584594727
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P12_laje1",
+                "posicao": [
+                  16.3960914611816,
+                  0.0906171500682831,
+                  11.0388383865356
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P13_laje1",
+                "posicao": [
+                  20.1997203826904,
+                  1.00109553337097,
+                  12.4572200775146
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P14_laje1",
+                "posicao": [
+                  15.9027833938599,
+                  0.391903102397919,
+                  15.7493143081665
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P15_laje1",
+                "posicao": [
+                  21.8826465606689,
+                  -0.0183659214526415,
+                  16.6544132232666
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P16_pilar1",
+                "posicao": [
+                  13.7203464508057,
+                  0.518647849559784,
+                  11.8340663909912
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P17_pilar1",
+                "posicao": [
+                  11.466968536377,
+                  0.541544258594513,
+                  11.9861793518066
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P18_pilar1",
+                "posicao": [
+                  17.2874641418457,
+                  1.00172996520996,
+                  11.411340713501
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P19_pilar1",
+                "posicao": [
+                  20.0650939941406,
+                  0.533752799034119,
+                  11.0780582427979
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P20_pilar1",
+                "posicao": [
+                  15.5421104431152,
+                  1.89728939533234,
+                  16.8421726226807
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P21_pilar1",
+                "posicao": [
+                  11.3464956283569,
+                  0.769999504089355,
+                  15.2041711807251
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P22_pilar1",
+                "posicao": [
+                  18.5905532836914,
+                  0.76998907327652,
+                  18.6322631835938
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P23_pilar1",
+                "posicao": [
+                  16.1187267303467,
+                  0.519998669624329,
+                  19.4616832733154
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P24_laje2",
+                "posicao": [
+                  16.1999359130859,
+                  1.0973459482193,
+                  13.2992610931396
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P25_laje2",
+                "posicao": [
+                  21.0862998962402,
+                  0.805268108844757,
+                  13.1604471206665
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P26_laje2",
+                "posicao": [
+                  17.150146484375,
+                  0.794277369976044,
+                  16.6942157745361
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P27_laje2",
+                "posicao": [
+                  20.0108890533447,
+                  0.938364028930664,
+                  17.4068260192871
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P28_coroa",
+                "posicao": [
+                  18.4830741882324,
+                  1.3189982175827,
+                  14.2338924407959
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P29_coroa",
+                "posicao": [
+                  16.8377876281738,
+                  2.77209424972534,
+                  16.4725551605225
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P30_coroa",
+                "posicao": [
+                  18.5322399139404,
+                  1.08143210411072,
+                  15.3899440765381
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P31_coroa",
+                "posicao": [
+                  20.3005104064941,
+                  -0.364278137683868,
+                  15.8029069900513
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P32_coroa",
+                "posicao": [
+                  19.4859943389893,
+                  0.51173985004425,
+                  14.4219093322754
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P33_coroa",
+                "posicao": [
+                  18.2918472290039,
+                  0.309745520353317,
+                  16.2430648803711
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P34_coroa",
+                "posicao": [
+                  17.6819305419922,
+                  0.423584520816803,
+                  12.8336400985718
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P35_coroa",
+                "posicao": [
+                  19.878044128418,
+                  1.51162302494049,
+                  14.2585926055908
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "max_angular_rad_s": 0,
+            "max_linear_m_s": 0,
+            "physics_frame": 1127
+          },
+          "fisica_depois_1_5s": {
+            "at_rest": true,
+            "bodies": [
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P00_pilar0",
+                "posicao": [
+                  16.2670459747314,
+                  -0.890886783599854,
+                  10.8774557113647
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P01_pilar0",
+                "posicao": [
+                  15.5842227935791,
+                  0.269247740507126,
+                  10.2196846008301
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P02_pilar0",
+                "posicao": [
+                  14.3292484283447,
+                  0.713590562343597,
+                  8.66143894195557
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P03_pilar0",
+                "posicao": [
+                  21.4861106872559,
+                  -1.173583984375,
+                  11.4808263778687
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P04_pilar0",
+                "posicao": [
+                  21.5204925537109,
+                  0.324784904718399,
+                  11.3811140060425
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P05_pilar0",
+                "posicao": [
+                  21.5140857696533,
+                  1.8238080739975,
+                  11.3681945800781
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P06_pilar0",
+                "posicao": [
+                  16.4806785583496,
+                  -1.16102421283722,
+                  16.4957599639893
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P07_pilar0",
+                "posicao": [
+                  15.2029409408569,
+                  -0.220607697963715,
+                  16.6181831359863
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P08_pilar0",
+                "posicao": [
+                  13.4743547439575,
+                  0.538196444511414,
+                  16.476713180542
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P09_pilar0",
+                "posicao": [
+                  22.1530857086182,
+                  -1.05233871936798,
+                  16.4987239837646
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P10_pilar0",
+                "posicao": [
+                  23.2219562530518,
+                  -0.00918131601065397,
+                  16.5308303833008
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P11_pilar0",
+                "posicao": [
+                  25.0864219665527,
+                  0.519977331161499,
+                  16.5908584594727
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P12_laje1",
+                "posicao": [
+                  16.3960914611816,
+                  0.0906171500682831,
+                  11.0388383865356
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P13_laje1",
+                "posicao": [
+                  20.1997203826904,
+                  1.00109553337097,
+                  12.4572200775146
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P14_laje1",
+                "posicao": [
+                  15.9027833938599,
+                  0.391903102397919,
+                  15.7493143081665
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P15_laje1",
+                "posicao": [
+                  21.8826465606689,
+                  -0.0183659214526415,
+                  16.6544132232666
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P16_pilar1",
+                "posicao": [
+                  13.7203464508057,
+                  0.518647849559784,
+                  11.8340663909912
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P17_pilar1",
+                "posicao": [
+                  11.466968536377,
+                  0.541544258594513,
+                  11.9861793518066
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P18_pilar1",
+                "posicao": [
+                  17.2874641418457,
+                  1.00172996520996,
+                  11.411340713501
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P19_pilar1",
+                "posicao": [
+                  20.0650939941406,
+                  0.533752799034119,
+                  11.0780582427979
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P20_pilar1",
+                "posicao": [
+                  15.5421104431152,
+                  1.89728939533234,
+                  16.8421726226807
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P21_pilar1",
+                "posicao": [
+                  11.3464956283569,
+                  0.769999504089355,
+                  15.2041711807251
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P22_pilar1",
+                "posicao": [
+                  18.5905532836914,
+                  0.76998907327652,
+                  18.6322631835938
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P23_pilar1",
+                "posicao": [
+                  16.1187267303467,
+                  0.519998669624329,
+                  19.4616832733154
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P24_laje2",
+                "posicao": [
+                  16.1999359130859,
+                  1.0973459482193,
+                  13.2992610931396
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P25_laje2",
+                "posicao": [
+                  21.0862998962402,
+                  0.805268108844757,
+                  13.1604471206665
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P26_laje2",
+                "posicao": [
+                  17.150146484375,
+                  0.794277369976044,
+                  16.6942157745361
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P27_laje2",
+                "posicao": [
+                  20.0108890533447,
+                  0.938364028930664,
+                  17.4068260192871
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P28_coroa",
+                "posicao": [
+                  18.4830741882324,
+                  1.3189982175827,
+                  14.2338924407959
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P29_coroa",
+                "posicao": [
+                  16.8377876281738,
+                  2.77209424972534,
+                  16.4725551605225
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P30_coroa",
+                "posicao": [
+                  18.5322399139404,
+                  1.08143210411072,
+                  15.3899440765381
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P31_coroa",
+                "posicao": [
+                  20.3005104064941,
+                  -0.364278137683868,
+                  15.8029069900513
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P32_coroa",
+                "posicao": [
+                  19.4859943389893,
+                  0.51173985004425,
+                  14.4219093322754
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P33_coroa",
+                "posicao": [
+                  18.2918472290039,
+                  0.309745520353317,
+                  16.2430648803711
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P34_coroa",
+                "posicao": [
+                  17.6819305419922,
+                  0.423584520816803,
+                  12.8336400985718
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P35_coroa",
+                "posicao": [
+                  19.878044128418,
+                  1.51162302494049,
+                  14.2585926055908
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "max_angular_rad_s": 0,
+            "max_linear_m_s": 0,
+            "physics_frame": 1220
+          },
+          "fisica_logo_apos_save": {
+            "at_rest": true,
+            "bodies": [
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P00_pilar0",
+                "posicao": [
+                  16.2670459747314,
+                  -0.890886783599854,
+                  10.8774557113647
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P01_pilar0",
+                "posicao": [
+                  15.5842227935791,
+                  0.269247740507126,
+                  10.2196846008301
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P02_pilar0",
+                "posicao": [
+                  14.3292484283447,
+                  0.713590562343597,
+                  8.66143894195557
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P03_pilar0",
+                "posicao": [
+                  21.4861106872559,
+                  -1.173583984375,
+                  11.4808263778687
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P04_pilar0",
+                "posicao": [
+                  21.5204925537109,
+                  0.324784904718399,
+                  11.3811140060425
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P05_pilar0",
+                "posicao": [
+                  21.5140857696533,
+                  1.8238080739975,
+                  11.3681945800781
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P06_pilar0",
+                "posicao": [
+                  16.4806785583496,
+                  -1.16102421283722,
+                  16.4957599639893
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P07_pilar0",
+                "posicao": [
+                  15.2029409408569,
+                  -0.220607697963715,
+                  16.6181831359863
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P08_pilar0",
+                "posicao": [
+                  13.4743547439575,
+                  0.538196444511414,
+                  16.476713180542
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P09_pilar0",
+                "posicao": [
+                  22.1530857086182,
+                  -1.05233871936798,
+                  16.4987239837646
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P10_pilar0",
+                "posicao": [
+                  23.2219562530518,
+                  -0.00918131601065397,
+                  16.5308303833008
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P11_pilar0",
+                "posicao": [
+                  25.0864219665527,
+                  0.519977331161499,
+                  16.5908584594727
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P12_laje1",
+                "posicao": [
+                  16.3960914611816,
+                  0.0906171500682831,
+                  11.0388383865356
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P13_laje1",
+                "posicao": [
+                  20.1997203826904,
+                  1.00109553337097,
+                  12.4572200775146
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P14_laje1",
+                "posicao": [
+                  15.9027833938599,
+                  0.391903102397919,
+                  15.7493143081665
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P15_laje1",
+                "posicao": [
+                  21.8826465606689,
+                  -0.0183659214526415,
+                  16.6544132232666
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P16_pilar1",
+                "posicao": [
+                  13.7203464508057,
+                  0.518647849559784,
+                  11.8340663909912
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P17_pilar1",
+                "posicao": [
+                  11.466968536377,
+                  0.541544258594513,
+                  11.9861793518066
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P18_pilar1",
+                "posicao": [
+                  17.2874641418457,
+                  1.00172996520996,
+                  11.411340713501
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P19_pilar1",
+                "posicao": [
+                  20.0650939941406,
+                  0.533752799034119,
+                  11.0780582427979
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P20_pilar1",
+                "posicao": [
+                  15.5421104431152,
+                  1.89728939533234,
+                  16.8421726226807
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P21_pilar1",
+                "posicao": [
+                  11.3464956283569,
+                  0.769999504089355,
+                  15.2041711807251
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P22_pilar1",
+                "posicao": [
+                  18.5905532836914,
+                  0.76998907327652,
+                  18.6322631835938
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P23_pilar1",
+                "posicao": [
+                  16.1187267303467,
+                  0.519998669624329,
+                  19.4616832733154
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P24_laje2",
+                "posicao": [
+                  16.1999359130859,
+                  1.0973459482193,
+                  13.2992610931396
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P25_laje2",
+                "posicao": [
+                  21.0862998962402,
+                  0.805268108844757,
+                  13.1604471206665
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P26_laje2",
+                "posicao": [
+                  17.150146484375,
+                  0.794277369976044,
+                  16.6942157745361
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P27_laje2",
+                "posicao": [
+                  20.0108890533447,
+                  0.938364028930664,
+                  17.4068260192871
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P28_coroa",
+                "posicao": [
+                  18.4830741882324,
+                  1.3189982175827,
+                  14.2338924407959
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P29_coroa",
+                "posicao": [
+                  16.8377876281738,
+                  2.77209424972534,
+                  16.4725551605225
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P30_coroa",
+                "posicao": [
+                  18.5322399139404,
+                  1.08143210411072,
+                  15.3899440765381
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P31_coroa",
+                "posicao": [
+                  20.3005104064941,
+                  -0.364278137683868,
+                  15.8029069900513
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P32_coroa",
+                "posicao": [
+                  19.4859943389893,
+                  0.51173985004425,
+                  14.4219093322754
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P33_coroa",
+                "posicao": [
+                  18.2918472290039,
+                  0.309745520353317,
+                  16.2430648803711
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P34_coroa",
+                "posicao": [
+                  17.6819305419922,
+                  0.423584520816803,
+                  12.8336400985718
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "freeze": false,
+                "parked": "",
+                "peca": "P35_coroa",
+                "posicao": [
+                  19.878044128418,
+                  1.51162302494049,
+                  14.2585926055908
+                ],
+                "released": true,
+                "sleeping": true,
+                "speed_m_s": 0,
+                "spin_rad_s": 0,
+                "velocidade": [
+                  0,
+                  0,
+                  0
+                ],
+                "velocidade_angular": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "max_angular_rad_s": 0,
+            "max_linear_m_s": 0,
+            "physics_frame": 1130
+          },
+          "maior_deslocamento_m": 0,
+          "ok": true,
+          "pecas_ainda_congeladas_pelo_save": 0,
+          "pior_peca": {},
+          "repouso_natural": {
+            "consecutive_ticks": 60,
+            "last": {
+              "at_rest": true,
+              "bodies": [
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P00_pilar0",
+                  "posicao": [
+                    16.2670459747314,
+                    -0.890886783599854,
+                    10.8774557113647
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P01_pilar0",
+                  "posicao": [
+                    15.5842227935791,
+                    0.269247740507126,
+                    10.2196846008301
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P02_pilar0",
+                  "posicao": [
+                    14.3292484283447,
+                    0.713590562343597,
+                    8.66143894195557
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P03_pilar0",
+                  "posicao": [
+                    21.4861106872559,
+                    -1.173583984375,
+                    11.4808263778687
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P04_pilar0",
+                  "posicao": [
+                    21.5204925537109,
+                    0.324784904718399,
+                    11.3811140060425
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P05_pilar0",
+                  "posicao": [
+                    21.5140857696533,
+                    1.8238080739975,
+                    11.3681945800781
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P06_pilar0",
+                  "posicao": [
+                    16.4806785583496,
+                    -1.16102421283722,
+                    16.4957599639893
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P07_pilar0",
+                  "posicao": [
+                    15.2029409408569,
+                    -0.220607697963715,
+                    16.6181831359863
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P08_pilar0",
+                  "posicao": [
+                    13.4743547439575,
+                    0.538196444511414,
+                    16.476713180542
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P09_pilar0",
+                  "posicao": [
+                    22.1530857086182,
+                    -1.05233871936798,
+                    16.4987239837646
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P10_pilar0",
+                  "posicao": [
+                    23.2219562530518,
+                    -0.00918131601065397,
+                    16.5308303833008
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P11_pilar0",
+                  "posicao": [
+                    25.0864219665527,
+                    0.519977331161499,
+                    16.5908584594727
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P12_laje1",
+                  "posicao": [
+                    16.3960914611816,
+                    0.0906171500682831,
+                    11.0388383865356
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P13_laje1",
+                  "posicao": [
+                    20.1997203826904,
+                    1.00109553337097,
+                    12.4572200775146
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P14_laje1",
+                  "posicao": [
+                    15.9027833938599,
+                    0.391903102397919,
+                    15.7493143081665
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P15_laje1",
+                  "posicao": [
+                    21.8826465606689,
+                    -0.0183659214526415,
+                    16.6544132232666
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P16_pilar1",
+                  "posicao": [
+                    13.7203464508057,
+                    0.518647849559784,
+                    11.8340663909912
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P17_pilar1",
+                  "posicao": [
+                    11.466968536377,
+                    0.541544258594513,
+                    11.9861793518066
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P18_pilar1",
+                  "posicao": [
+                    17.2874641418457,
+                    1.00172996520996,
+                    11.411340713501
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P19_pilar1",
+                  "posicao": [
+                    20.0650939941406,
+                    0.533752799034119,
+                    11.0780582427979
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P20_pilar1",
+                  "posicao": [
+                    15.5421104431152,
+                    1.89728939533234,
+                    16.8421726226807
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P21_pilar1",
+                  "posicao": [
+                    11.3464956283569,
+                    0.769999504089355,
+                    15.2041711807251
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P22_pilar1",
+                  "posicao": [
+                    18.5905532836914,
+                    0.76998907327652,
+                    18.6322631835938
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P23_pilar1",
+                  "posicao": [
+                    16.1187267303467,
+                    0.519998669624329,
+                    19.4616832733154
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P24_laje2",
+                  "posicao": [
+                    16.1999359130859,
+                    1.0973459482193,
+                    13.2992610931396
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P25_laje2",
+                  "posicao": [
+                    21.0862998962402,
+                    0.805268108844757,
+                    13.1604471206665
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P26_laje2",
+                  "posicao": [
+                    17.150146484375,
+                    0.794277369976044,
+                    16.6942157745361
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P27_laje2",
+                  "posicao": [
+                    20.0108890533447,
+                    0.938364028930664,
+                    17.4068260192871
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P28_coroa",
+                  "posicao": [
+                    18.4830741882324,
+                    1.3189982175827,
+                    14.2338924407959
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P29_coroa",
+                  "posicao": [
+                    16.8377876281738,
+                    2.77209424972534,
+                    16.4725551605225
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P30_coroa",
+                  "posicao": [
+                    18.5322399139404,
+                    1.08143210411072,
+                    15.3899440765381
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P31_coroa",
+                  "posicao": [
+                    20.3005104064941,
+                    -0.364278137683868,
+                    15.8029069900513
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P32_coroa",
+                  "posicao": [
+                    19.4859943389893,
+                    0.51173985004425,
+                    14.4219093322754
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P33_coroa",
+                  "posicao": [
+                    18.2918472290039,
+                    0.309745520353317,
+                    16.2430648803711
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P34_coroa",
+                  "posicao": [
+                    17.6819305419922,
+                    0.423584520816803,
+                    12.8336400985718
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "freeze": false,
+                  "parked": "",
+                  "peca": "P35_coroa",
+                  "posicao": [
+                    19.878044128418,
+                    1.51162302494049,
+                    14.2585926055908
+                  ],
+                  "released": true,
+                  "sleeping": true,
+                  "speed_m_s": 0,
+                  "spin_rad_s": 0,
+                  "velocidade": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "velocidade_angular": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              ],
+              "max_angular_rad_s": 0,
+              "max_linear_m_s": 0,
+              "physics_frame": 1007
+            },
+            "ms": 2900,
+            "ok": true,
+            "required_ticks": 60,
+            "timeout_s": 15
+          },
+          "salvar": {
+            "blocks_tasks": 14,
+            "bytes": 61440,
+            "copy": "OK",
+            "flush_ms": 13,
+            "io_drain": {
+              "idle": true,
+              "ms": 34,
+              "tasks": {
+                "generation": 0,
+                "gpu": 0,
+                "main_thread": 0,
+                "meshing": 0,
+                "streaming": 0
+              }
+            },
+            "ms": 55,
+            "ok": true,
+            "path": "<user_data>/saves/selftest_p2.sqlite",
+            "publication": {
+              "error": 0,
+              "recovery_file": "",
+              "rollback": 0
+            },
+            "reason": "",
+            "save_anterior_em_voo": "nenhum",
+            "slot": "selftest_p2",
+            "terrain_recreated": false
+          },
+          "salvo": true,
+          "soltas": 36
+        },
+        "B_carregar_slot_escavado": {
+          "carregado": true,
+          "intacta_apos_reset": true,
+          "ms_ate_36_soltas": 99,
+          "ok": true,
+          "soltas": 36
+        },
+        "C_carregar_slot_sem_escavacao": {
+          "carregado": true,
+          "ok": true,
+          "soltas": 0,
+          "stats": {
+            "broken": 0,
+            "builds": 10,
+            "checks": 8,
+            "confirm_timeouts": 0,
+            "consumed": 0,
+            "invalid_feet": 8,
+            "last_break": "",
+            "last_check": "âncoras ok",
+            "last_confirm_ms": 0,
+            "max_released_in_frame": 6,
+            "pending_confirm": 0,
+            "pieces": 36,
+            "queued": 0,
+            "released": 72,
+            "released_now": 0
+          }
+        }
+      },
+      "id": "T26",
+      "status": "PASS",
+      "titulo": "Salvar/carregar: peças soltas sobrevivem ao save; slot com apoio escavado derruba a torre de novo; slot sem escavação não"
+    }
+  ],
+  "run_id": "843af366a4e4",
+  "testes_ids": [
+    "T1",
+    "T14",
+    "T26"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

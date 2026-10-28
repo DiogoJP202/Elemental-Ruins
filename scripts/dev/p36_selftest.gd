@@ -1846,9 +1846,14 @@ func _t61_earth_reuse() -> void:
 	await _aim_settle(MaterialResponseSystem.body_center(crate))
 	var hits0: int = earth.get_stats().hits
 	_p4b_lmb(false)
-	await _wait_until(func(): return earth.get_stats().hits > hits0, 2.0)
+	var hit_observed := await _wait_until(func(): return earth.get_stats().hits > hits0, 2.0)
 	await _frames(45)
-	var hit_once: bool = earth.get_stats().hits - hits0 == 1 and crate.global_position.distance_to(c0) > 0.5
+	var hits_delta: int = earth.get_stats().hits - hits0
+	var crate_displacement := crate.global_position.distance_to(c0)
+	var hit_once: bool = hits_delta == 1 and crate_displacement > 0.5
+	var remaining_callbacks := body.get_signal_connection_list(&"body_entered").size()
+	var contact_monitor_after := body.contact_monitor
+	var remaining_flights := earth._thrown.size()
 	get_tree().process_frame.disconnect(sample_frame)
 	if not frame_ms.is_empty(): frame_ms.remove_at(0)
 	var timings := _stats(frame_ms)
@@ -1868,6 +1873,9 @@ func _t61_earth_reuse() -> void:
 		"controls": controls, "moved_m": physical_move, "teleport_error_m": probe.teleport_m, "no_terrain_edit_or_new_body": no_edit,
 		"flight_speed_m_s": flight_speed, "recaptured_in_flight": recaptured, "previous_flight_disconnected": stale_removed,
 		"one_new_impact": hit_once, "reused_twice": reused_twice, "callbacks_clean": clean_callbacks,
+		"hit_observed_within_timeout": hit_observed, "hits_delta": hits_delta, "crate_displacement_m": crate_displacement,
+		"remaining_callbacks": remaining_callbacks, "contact_monitor_after_impact": contact_monitor_after,
+		"remaining_flights": remaining_flights,
 		"frame_ms": timings, "frame_gate_applied": windowed})
 	await main.request_world_reset()
 

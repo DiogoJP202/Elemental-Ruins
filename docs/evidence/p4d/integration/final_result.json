@@ -1,0 +1,251 @@
+{
+  "result": "FAIL",
+  "reason": "T26 natural_rest_timeout before save in editor_headless and export_window; targeted rechecks do not override failed full runs.",
+  "base_commit": "80f2a08f966b337865dbd2049a44bd35fbd93c6d",
+  "branch": "codex/p4d-integration",
+  "expected_tests_per_mode": 72,
+  "full_runs_per_mode": 1,
+  "runner_exit": 1,
+  "full_modes": {
+    "editor_headless": {
+      "report": "editor_headless.json",
+      "result": "FAIL",
+      "passed": 71,
+      "total": 72,
+      "run_id": "10b1ae486c82",
+      "failed_ids": [
+        "T26"
+      ]
+    },
+    "editor_window": {
+      "report": "editor_window.json",
+      "result": "PASS",
+      "passed": 72,
+      "total": 72,
+      "run_id": "dff57a188db9",
+      "failed_ids": []
+    },
+    "export_headless": {
+      "report": "export_headless.json",
+      "result": "PASS",
+      "passed": 72,
+      "total": 72,
+      "run_id": "1dff82155a09",
+      "failed_ids": []
+    },
+    "export_window": {
+      "report": "export_window.json",
+      "result": "FAIL",
+      "passed": 71,
+      "total": 72,
+      "run_id": "b3220ea6021b",
+      "failed_ids": [
+        "T26"
+      ]
+    }
+  },
+  "persistence": {
+    "editor_persist_write": {
+      "report": "editor_persist_write.json",
+      "result": "PASS",
+      "passed": 2,
+      "total": 2,
+      "run_id": "3aaebe1e4a87",
+      "failed_ids": []
+    },
+    "editor_persist_read": {
+      "report": "editor_persist_read.json",
+      "result": "PASS",
+      "passed": 2,
+      "total": 2,
+      "run_id": "d21f5e9a883f",
+      "failed_ids": []
+    },
+    "export_persist_write": {
+      "report": "export_persist_write.json",
+      "result": "PASS",
+      "passed": 2,
+      "total": 2,
+      "run_id": "e9bf12cb6b55",
+      "failed_ids": []
+    },
+    "export_persist_read": {
+      "report": "export_persist_read.json",
+      "result": "PASS",
+      "passed": 2,
+      "total": 2,
+      "run_id": "fdd74217161f",
+      "failed_ids": []
+    }
+  },
+  "diagnostics": {
+    "t61": {
+      "processes": 10,
+      "physical_condition_passes": 10,
+      "formal_passes": 9,
+      "physical_failure_reproduced": false,
+      "cause": "not established",
+      "failed_report": "t61/window_4.json",
+      "failure": "p95 20.14 ms exceeds 20 ms; one_new_impact true",
+      "change": "Report hits delta, crate displacement, timeout and callback/flight state; physics, waits and pass conditions unchanged."
+    },
+    "context_window": {
+      "report": "context_window.json",
+      "result": "PASS",
+      "passed": 6,
+      "total": 6
+    },
+    "t26": {
+      "rechecks": [
+        {
+          "report": "t26/editor_headless_1.json",
+          "result": "PASS",
+          "passed": 3,
+          "total": 3
+        },
+        {
+          "report": "t26/editor_headless_2.json",
+          "result": "PASS",
+          "passed": 3,
+          "total": 3
+        },
+        {
+          "report": "t26/export_window_1.json",
+          "result": "PASS",
+          "passed": 3,
+          "total": 3
+        }
+      ],
+      "cause": "not established",
+      "setup_failures": [
+        {
+          "mode": "editor_headless",
+          "error": "natural_rest_timeout",
+          "saved": false,
+          "required_ticks": 60,
+          "longest_streak_ticks": 21,
+          "wait_ms": 15001,
+          "awake_at_last_sample": 0
+        },
+        {
+          "mode": "export_window",
+          "error": "natural_rest_timeout",
+          "saved": false,
+          "required_ticks": 60,
+          "longest_streak_ticks": 0,
+          "wait_ms": 15000,
+          "awake_at_last_sample": 32
+        }
+      ]
+    }
+  },
+  "validation": {
+    "method": "Invoke-SelftestStep: fresh report, externally supplied run_id, complete flag, exact IDs, typed coherent counters, individual results and engine log checks. Failed results rejected, never accepted as PASS.",
+    "reports": 22,
+    "all_complete": true,
+    "all_ids_match_contract": true,
+    "rejected_reports": [
+      "editor_headless.json",
+      "export_window.json",
+      "t61/window_4.json"
+    ],
+    "logs": 26,
+    "all_logs_zero_errors_warnings": true,
+    "all_report_engine_counters_zero": true,
+    "source_files": 52,
+    "source_hashes_unchanged": true,
+    "preset_and_tracked_fixture_git_diff_empty": true
+  },
+  "window_benchmarks": {
+    "editor_window": [
+      {
+        "id": "T27",
+        "p95_ms": 18.46,
+        "p99_ms": 19.42,
+        "max_ms": 19.72,
+        "pass": true
+      },
+      {
+        "id": "T37",
+        "p95_ms": 18.93,
+        "p99_ms": 21.48,
+        "max_ms": 31.53,
+        "pass": true
+      },
+      {
+        "id": "T59",
+        "p95_ms": 17.9,
+        "p99_ms": 18.57,
+        "max_ms": 19.22,
+        "pass": true
+      },
+      {
+        "id": "T61",
+        "p95_ms": 18.57,
+        "p99_ms": 20.09,
+        "max_ms": 24.34,
+        "pass": true
+      },
+      {
+        "id": "T63",
+        "p95_ms": 18.33,
+        "p99_ms": 19.21,
+        "max_ms": 19.55,
+        "pass": true
+      },
+      {
+        "id": "T65",
+        "p95_ms": 18.93,
+        "p99_ms": 19.76,
+        "max_ms": 20.12,
+        "pass": true
+      }
+    ],
+    "export_window": [
+      {
+        "id": "T27",
+        "p95_ms": 19.04,
+        "p99_ms": 20.02,
+        "max_ms": 21.05,
+        "pass": true
+      },
+      {
+        "id": "T37",
+        "p95_ms": 19.09,
+        "p99_ms": 21.1,
+        "max_ms": 31.78,
+        "pass": true
+      },
+      {
+        "id": "T59",
+        "p95_ms": 17.51,
+        "p99_ms": 18.2,
+        "max_ms": 23.42,
+        "pass": true
+      },
+      {
+        "id": "T61",
+        "p95_ms": 17.45,
+        "p99_ms": 18.13,
+        "max_ms": 24.14,
+        "pass": true
+      },
+      {
+        "id": "T63",
+        "p95_ms": 17.5,
+        "p99_ms": 18.36,
+        "max_ms": 18.75,
+        "pass": true
+      },
+      {
+        "id": "T65",
+        "p95_ms": 17.45,
+        "p99_ms": 18.04,
+        "max_ms": 18.83,
+        "pass": true
+      }
+    ]
+  },
+  "human_playtest_this_session": false,
+  "next_step": "Isolate T26 setup timeout in full-suite context without relaxing 15 s / 60 ticks or forcing sleep; then revalidate failed modes. P4E not authorized."
+}
