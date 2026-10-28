@@ -493,3 +493,26 @@ Dados anteriores 59/60 e série legada interrompida 10/11 não são reclassifica
 consolida 130 casos incluindo todos os FAIL. Aprovação dos protocolos corrigidos, sem
 relaxar tolerância ou deslocar a referência/observação pós-save. Máquina nova AMD, não
 comparação causal de desempenho. Detalhes e hashes em docs/p36_t26_stabilization.md.
+
+## D54. P4D: fissura como uma edição subtrativa limitada
+F segurado/solto usa a mesma EarthLiftThrow e os cancelamentos de Terra. A mira precisa
+atingir primeiro um chão válido; o eixo horizontal da câmera define um caminho de 6 m.
+Amostras a cada no máximo 1 m seguem o piso, recusando falhas, normais inadequadas ou
+degraus maiores que 1 m. O PATH tem raio de 1 m e centro 0,35 m sob a superfície. Alcance,
+dimensões e degrau máximo ficam em EarthTuning. São amostras limitadas, não uma prova de
+continuidade/material em cada voxel nem uma técnica de fratura de corpos rígidos.
+
+O PATH passa por TerrainBrushQueue/TerrainService, com a mesma validação usada na prévia,
+sem percorrer voxels em GDScript. A habilidade exige que a operação caiba inteira pelo
+comprimento e número de pontos reais da fila, além da AABB: uma divisão criaria outros
+pedidos e perderia a identidade usada para confirmar/cancelar. can_apply_unsplit expõe a
+própria regra de divisão da fila. Enquanto pendente, o caminho fica fixo e é revalidado;
+aproximar o jogador de qualquer segmento cancela o pedido antes da aplicação. Cancelar
+remove somente o pedido da habilidade. Rocha/pilar/fissura são exclusivos.
+
+A fissura permanece nos dados SDF e usa o save/load/reset existentes. Retirar apoio pode
+fazer caixas/estruturas cair pelos consumidores de TerrainChanged; não se aplica impulso,
+teleporte ou fragmentação artificial. Mesh/collider continuam assíncronos. A fita da prévia
+mostra a largura nominal sobre o piso; não reproduz a superfície voxel final. VFX só são
+emitidos após a edição confirmada. Compressão permanece futura. Validação direcionada e
+limitações do P4D ficam no README; a bateria integral anterior é evidência do P4C.

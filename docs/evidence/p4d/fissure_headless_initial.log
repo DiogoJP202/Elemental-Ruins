@@ -1,0 +1,84 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 970 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":970.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[P36TEST] --- testes P3 ---
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] --- testes P4A (controle livre de Terra) ---
+[P36TEST] --- testes P4B (reutilizar rocha existente) ---
+[P36TEST] --- testes P4C (pilar de Terra) ---
+[P36TEST] --- testes P4D (fissura de Terra) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 276 ms
+[TerrainService] dig_path OK pontos=7 comp=6.0m rev=1 2.839ms
+[TerrainService] save p4d_fissure: ok=true { "slot": "p4d_fissure", "ok": true, "ms": 55.0, "flush_ms": 14.0, "blocks_tasks": 21, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 28672, "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p4d_fissure.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 34.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 1)
+[TerrainService] reset: geração 3 pronta=true em 267 ms
+[TerrainService] load p4d_fissure: ok=true { "slot": "p4d_fissure", "ok": true, "ms": 237.0, "copy": "OK", "bytes": 28672 }
+[P36TEST] T65 FAIL — F confirma uma fissura física única; caixa perde apoio e save/reset/load conservam SDF/colisão | {"collider_lowered":true,"crate_drop_m":1.16044628620148,"crate_supported_before":true,"floor_y_after":[-1.29541802406311,-1.25418567657471,-1.23828029632568],"floor_y_before":[0.0199999809265137,0.0199999809265137,0.0199999809265137],"frame_ms":{"max":14.97,"media":6.89,"min":0.64,"n":333,"p95":7.78,"p99":8.44},"loaded_sdf":[0.671407163143158,0.61037015914917,0.549333155155182],"persistence":false,"preview_without_edit":true,"raycasts":{"attempts":7,"hits":7,"misses":0},"saved_sdf":[0.671407163143158,0.61037015914917,0.549333155155182],"single_subtractive_path":true}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 1)
+[TerrainService] reset: geração 5 pronta=true em 259 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 1)
+[TerrainService] reset: geração 6 pronta=true em 501 ms
+[TerrainService] dig_sphere OK c=(-33.6, -0.5, 57.0) r=2.50 rev=2 2.710ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 2)
+[TerrainService] reset: geração 7 pronta=true em 259 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 62.5) r=1.20 corpos=1 rev=3 4.211ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 3)
+[TerrainService] reset: geração 8 pronta=true em 267 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 8, rev 3)
+[TerrainService] reset: geração 9 pronta=true em 252 ms
+[TerrainService] save p4d_cancel: ok=true { "slot": "p4d_cancel", "ok": true, "ms": 18.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p4d_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 13.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 9, rev 3)
+[TerrainService] reset: geração 10 pronta=true em 273 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 10, rev 3)
+[TerrainService] reset: geração 11 pronta=true em 275 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 11, rev 3)
+[TerrainService] reset: geração 12 pronta=true em 252 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 12, rev 3)
+[TerrainService] reset: geração 13 pronta=true em 265 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 13, rev 3)
+[TerrainService] reset: geração 14 pronta=true em 304 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 14, rev 3)
+[TerrainService] reset: geração 15 pronta=true em 248 ms
+[TerrainService] save p4d_cancel: ok=true { "slot": "p4d_cancel", "ok": true, "ms": 31.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p4d_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 20.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 15, rev 3)
+[TerrainService] reset: geração 16 pronta=true em 280 ms
+[TerrainService] load p4d_cancel: ok=true { "slot": "p4d_cancel", "ok": true, "ms": 236.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 17, rev 3)
+[TerrainService] reset: geração 18 pronta=true em 267 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 18, rev 3)
+[TerrainService] reset: geração 19 pronta=true em 254 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 19, rev 3)
+[TerrainService] reset: geração 20 pronta=true em 268 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 20, rev 3)
+[TerrainService] reset: geração 21 pronta=true em 305 ms
+[TerrainBrushQueue] 1 pedido(s) descartado(s): reset
+[TerrainService] reset: liberando VoxelLodTerrain (geração 21, rev 3)
+[TerrainService] reset: geração 22 pronta=true em 249 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 22, rev 3)
+[TerrainService] reset: geração 23 pronta=true em 578 ms
+[TerrainBrushQueue] 1 pedido(s) descartado(s): salvar
+[TerrainService] save p4d_cancel: ok=true { "slot": "p4d_cancel", "ok": true, "ms": 20.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "C:/Users/diogo/AppData/Roaming/Godot/app_userdata/ELEMENTAL -- RUINS/saves/p4d_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 13.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 23, rev 3)
+[TerrainService] reset: geração 24 pronta=true em 256 ms
+[TerrainBrushQueue] 1 pedido(s) descartado(s): carregar
+[TerrainService] load p4d_cancel: ok=true { "slot": "p4d_cancel", "ok": true, "ms": 239.0, "copy": "OK", "bytes": 20480 }
+[P36TEST] T66 PASS — Fissura respeita chão/alcance/material, mantém LMB/RMB e cancela prévia/pedido sem edição residual | {"discontinuous_floor":{"fixture_hole_confirmed":true,"ok":true,"raycasts":{"attempts":5,"hits":5,"misses":0},"reason":"desnível no caminho"},"invalid_radius":{"ok":true,"raycasts":{"attempts":0,"hits":0,"misses":0},"reason":"parâmetros fora dos limites"},"lmb_still_throws":{"ok":true},"minimum_range":{"ok":true,"raycasts":{"attempts":7,"hits":7,"misses":0},"reason":"caminho perto demais do jogador"},"no_ground":{"ok":true,"raycasts":{"attempts":1,"hits":0,"misses":1},"reason":"sem chão na mira"},"non_bendable_ground":{"ok":true,"raycasts":{"attempts":7,"hits":7,"misses":0},"reason":"material_not_bendable"},"other_element_1":{"ok":true},"other_element_2":{"ok":true},"other_element_3":{"ok":true},"out_of_range":{"ok":true,"raycasts":{"attempts":7,"hits":7,"misses":0},"reason":"caminho fora do alcance"},"oversized_path":{"ok":true,"raycasts":{"attempts":0,"hits":0,"misses":0},"reason":"parâmetros fora dos limites"},"pending_input_disabled":{"ok":true,"only_own_request_cancelled":true,"started":true},"pending_load":{"ok":true,"only_own_request_cancelled":true,"started":true},"pending_mouse_lost":{"ok":true,"only_own_request_cancelled":true,"started":true},"pending_reset":{"ok":true,"only_own_request_cancelled":true,"started":true},"pending_save":{"ok":true,"only_own_request_cancelled":true,"started":true},"pending_select":{"ok":true,"only_own_request_cancelled":true,"started":true},"pillar_exclusive":{"ok":true},"player_entered_pending_path":{"ok":true,"queued":true,"reason":"fissura recusada: caminho perto demais do jogador"},"preview_input_disabled":{"ok":true,"only_own_request_cancelled":true,"started":true},"preview_load":{"ok":true,"only_own_request_cancelled":true,"started":true},"preview_mouse_lost":{"ok":true,"only_own_request_cancelled":true,"started":true},"preview_reset":{"ok":true,"only_own_request_cancelled":true,"started":true},"preview_save":{"ok":true,"only_own_request_cancelled":true,"started":true},"preview_select":{"ok":true,"only_own_request_cancelled":true,"started":true},"prop_not_ground":{"ok":true,"raycasts":{"attempts":1,"hits":1,"misses":0},"reason":"mire em chão livre"},"wall_occlusion":{"ok":true,"raycasts":{"attempts":1,"hits":1,"misses":0},"reason":"mire em chão livre"}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 25, rev 3)
+[TerrainService] reset: geração 26 pronta=true em 250 ms
+[P36TEST] relatório: C:\Users\diogo\.codex\worktrees\p36-t26-stabilization\Elemental-Ruins\docs\evidence\p4d\fissure_headless_initial.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: FAIL (2/3) em 26.9 s
+
+----- RELATÓRIO INVÁLIDO (run_id cc95dd9f9a41): resultado geral não aprovado; exit do processo=1 -----

@@ -50,6 +50,8 @@ var _invalid_mat: StandardMaterial3D
 var _invalid_t := -1.0
 var _preview: MeshInstance3D
 var _pillar_preview: MeshInstance3D
+var _fissure_preview: MeshInstance3D
+var _fissure_mesh := ImmediateMesh.new()
 var _preview_mat: StandardMaterial3D
 var _dust: Array[GPUParticles3D] = []
 var _pebbles: Array[GPUParticles3D] = []
@@ -109,6 +111,13 @@ func _ready() -> void:
 	_pillar_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_pillar_preview.visible = false
 	add_child(_pillar_preview)
+	_fissure_preview = MeshInstance3D.new()
+	_fissure_preview.name = "FissurePreview"
+	_fissure_preview.mesh = _fissure_mesh
+	_fissure_preview.material_override = _preview_mat
+	_fissure_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_fissure_preview.visible = false
+	add_child(_fissure_preview)
 	for i in BURST_POOL:
 		_dust.append(_make_dust("Dust%d" % i))
 		_pebbles.append(_make_pebbles("Pebbles%d" % i, true))
@@ -125,6 +134,12 @@ func _ready() -> void:
 
 func _on_fx(kind: StringName, data: Dictionary) -> void:
 	match kind:
+		&"fissure_opened":
+			var points: PackedVector3Array = data.points
+			for i in [0, floori(points.size() * 0.5), points.size() - 1]:
+				var p := points[i] + Vector3.UP * earth.tuning.fissure_depth
+				_crack(p, 1.0, 2.4, 0.1, 0.6, 0.8)
+				_burst(_dust, "dust", p, Color(0.82, 0.74, 0.64), 0.5, 1.5, 3.0)
 		&"invalid":
 			_stats.invalid += 1
 			var p: Vector3 = data.get("point", Vector3.ZERO)
@@ -289,19 +304,34 @@ func _update_attached(delta: float) -> void:
 func _update_preview() -> void:
 	var show := false
 	var pillar := false
+	var fissure := false
 	if earth != null and abilities.current_ability() == earth and earth.phase == "" \
 			and abilities.player != null and abilities.player.input_enabled \
 			and (not abilities.require_captured_mouse or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 		pillar = earth.pillar_aiming
-		var check := earth.validate_pillar_target() if pillar else earth.validate_target()
+		fissure = earth.fissure_aiming
+		var check := earth.validate_fissure_target() if fissure else (earth.validate_pillar_target() if pillar else earth.validate_target())
 		if check.has("point"):
 			show = true
 			_preview.global_position = (check.point as Vector3) + Vector3.UP * 0.03
 			_pillar_preview.global_position = (check.point as Vector3) + Vector3.UP * earth.tuning.pillar_height * 0.5
 			_pillar_preview.scale = Vector3(earth.tuning.pillar_radius, earth.tuning.pillar_height, earth.tuning.pillar_radius)
 			_preview_mat.albedo_color = PREVIEW_OK if check.ok else PREVIEW_BAD
-	_preview.visible = show and not pillar
+		if fissure:
+			_fissure_mesh.clear_surfaces()
+			if check.has("request"):
+				var req: TerrainBrushRequest = check.request
+				_fissure_mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
+				for i in range(1, req.points.size()):
+					var a := req.points[i - 1] + Vector3.UP * (earth.tuning.fissure_depth + 0.05)
+					var b := req.points[i] + Vector3.UP * (earth.tuning.fissure_depth + 0.05)
+					var side := (b - a).cross(Vector3.UP).normalized() * earth.tuning.fissure_radius
+					for v in [a - side, b + side, a + side, a - side, b - side, b + side]:
+						_fissure_mesh.surface_add_vertex(to_local(v))
+				_fissure_mesh.surface_end()
+	_preview.visible = show and not pillar and (not fissure or _fissure_mesh.get_surface_count() == 0)
 	_pillar_preview.visible = show and pillar
+	_fissure_preview.visible = show and fissure and _fissure_mesh.get_surface_count() > 0
 
 
 # --- Peças ----------------------------------------------------------------------------------

@@ -1,0 +1,264 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "AMD Ryzen 7 5825U with Radeon Graphics",
+  "data": "2026-10-27T23:06:04",
+  "duracao_s": 26.854,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 970.0,
+    "p4d_fissure_frame_ms": {
+      "max": 14.97,
+      "media": 6.89,
+      "min": 0.64,
+      "n": 333,
+      "p95": 7.78,
+      "p99": 8.44
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "FAIL",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 970.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "collider_lowered": true,
+        "crate_drop_m": 1.16044628620148,
+        "crate_supported_before": true,
+        "floor_y_after": [
+          -1.29541802406311,
+          -1.25418567657471,
+          -1.23828029632568
+        ],
+        "floor_y_before": [
+          0.0199999809265137,
+          0.0199999809265137,
+          0.0199999809265137
+        ],
+        "frame_ms": {
+          "max": 14.97,
+          "media": 6.89,
+          "min": 0.64,
+          "n": 333,
+          "p95": 7.78,
+          "p99": 8.44
+        },
+        "loaded_sdf": [
+          0.671407163143158,
+          0.61037015914917,
+          0.549333155155182
+        ],
+        "persistence": false,
+        "preview_without_edit": true,
+        "raycasts": {
+          "attempts": 7,
+          "hits": 7,
+          "misses": 0
+        },
+        "saved_sdf": [
+          0.671407163143158,
+          0.61037015914917,
+          0.549333155155182
+        ],
+        "single_subtractive_path": true
+      },
+      "id": "T65",
+      "status": "FAIL",
+      "titulo": "F confirma uma fissura física única; caixa perde apoio e save/reset/load conservam SDF/colisão"
+    },
+    {
+      "detalhes": {
+        "discontinuous_floor": {
+          "fixture_hole_confirmed": true,
+          "ok": true,
+          "raycasts": {
+            "attempts": 5,
+            "hits": 5,
+            "misses": 0
+          },
+          "reason": "desnível no caminho"
+        },
+        "invalid_radius": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 0,
+            "hits": 0,
+            "misses": 0
+          },
+          "reason": "parâmetros fora dos limites"
+        },
+        "lmb_still_throws": {
+          "ok": true
+        },
+        "minimum_range": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho perto demais do jogador"
+        },
+        "no_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 0,
+            "misses": 1
+          },
+          "reason": "sem chão na mira"
+        },
+        "non_bendable_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "material_not_bendable"
+        },
+        "other_element_1": {
+          "ok": true
+        },
+        "other_element_2": {
+          "ok": true
+        },
+        "other_element_3": {
+          "ok": true
+        },
+        "out_of_range": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho fora do alcance"
+        },
+        "oversized_path": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 0,
+            "hits": 0,
+            "misses": 0
+          },
+          "reason": "parâmetros fora dos limites"
+        },
+        "pending_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pillar_exclusive": {
+          "ok": true
+        },
+        "player_entered_pending_path": {
+          "ok": true,
+          "queued": true,
+          "reason": "fissura recusada: caminho perto demais do jogador"
+        },
+        "preview_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "prop_not_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 1,
+            "misses": 0
+          },
+          "reason": "mire em chão livre"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 1,
+            "misses": 0
+          },
+          "reason": "mire em chão livre"
+        }
+      },
+      "id": "T66",
+      "status": "PASS",
+      "titulo": "Fissura respeita chão/alcance/material, mantém LMB/RMB e cancela prévia/pedido sem edição residual"
+    }
+  ],
+  "run_id": "cc95dd9f9a41",
+  "testes_ids": [
+    "T1",
+    "T65",
+    "T66"
+  ],
+  "testes_pass": 2,
+  "testes_total": 3,
+  "video_adapter": ""
+}

@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "project": "ELEMENTAL // RUINS",
-  "status": "design planning data, not implemented game content",
+  "status": "design catalog with implementation status; not runtime configuration",
   "defaults": {
     "creative_mode": true,
     "renderer": "Forward+",
     "profile": "ILLUSTRATED"
   },
-  "design_note": "Todas as magnitudes são placeholders de balanceamento em unidades de jogo (não grandezas físicas canônicas).",
+  "design_note": "Terra tem o estado reconciliado com P4C/P4D; a configuração de runtime vem dos Resources e scripts, não deste catálogo. Os demais itens preservam planejamento histórico e não formam um inventário do runtime: consulte README. Magnitudes futuras são provisórias em unidades de jogo. Status parcial não implica implementação de todos os comportamentos do item.",
   "abilities": [
     {
       "id": "earth_pillar",
@@ -17,14 +17,14 @@
         "te-007"
       ],
       "behavior": "raise_pillar",
-      "input_mode": "tap",
+      "input_mode": "hold_preview_release",
       "milestone": "M1",
-      "implementation_status": "planned",
+      "implementation_status": "implemented",
       "params": {
         "range_m": 18,
-        "diameter_m": 2.2,
+        "diameter_m": 4,
         "height_m": 4.5,
-        "duration_s": 8
+        "persistent": true
       }
     },
     {
@@ -37,10 +37,12 @@
       "behavior": "lift_rock",
       "input_mode": "hold_precision",
       "milestone": "M2",
-      "implementation_status": "planned",
+      "implementation_status": "implemented",
       "params": {
-        "range_m": 18,
-        "max_mass_kg": 600
+        "range_m": 7,
+        "min_extraction_range_m": 2.5,
+        "rock_radius_m": 1.2,
+        "reuse_existing_rock": true
       }
     },
     {
@@ -53,10 +55,11 @@
       "behavior": "throw_rock",
       "input_mode": "release",
       "milestone": "M2",
-      "implementation_status": "planned",
+      "implementation_status": "implemented",
       "params": {
-        "impulse_ns": 800,
-        "charge_s": 2
+        "speed_m_per_s": 24,
+        "windup_s": 0.06,
+        "buffer_early_release": true
       }
     },
     {
@@ -70,7 +73,16 @@
       "behavior": "fracture_rock",
       "input_mode": "charge",
       "milestone": "M2",
-      "implementation_status": "planned",
+      "implementation_status": "partial_implemented",
+      "implementation_note": "P4D implementou somente a fissura no terreno por F segurado/solto, com validação direcionada; playtest humano pendente e checkpoint de integração não fechado. Compressão de rochas e os parâmetros de carga abaixo continuam planejados.",
+      "fissure_slice": {
+        "input_mode": "hold_preview_release",
+        "range_m": 18,
+        "length_m": 6,
+        "radius_m": 1,
+        "center_below_floor_m": 0.35,
+        "persistent": true
+      },
       "params": {
         "radius_m": 3,
         "max_charge_s": 2

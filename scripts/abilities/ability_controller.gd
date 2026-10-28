@@ -75,7 +75,7 @@ func use_pressed() -> bool:
 	if not _can_act():
 		return false
 	var a := current_ability()
-	if a is EarthLiftThrow and (a.pillar_aiming or a.phase == "pillar_pending"):
+	if a is EarthLiftThrow and (a.pillar_aiming or a.fissure_aiming or a.phase in ["pillar_pending", "fissure_pending"]):
 		return false
 	holding = a.input_mode == "hold"
 	a.on_press()
@@ -139,16 +139,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.is_action_pressed(ElementalKeys.ACTIONS[i]):
 			select(i)
 			return
-	if event.is_action_pressed(&"earth_pillar") or event.is_action_released(&"earth_pillar"):
+	if event.is_action(&"earth_pillar") or event.is_action(&"earth_fissure"):
 		var earth := current_ability() as EarthLiftThrow
 		if earth == null or holding:
 			return
 		if not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
 			earth.cancel()
 			return
-		if event.is_action_pressed(&"earth_pillar"):
+		if event.is_action(&"earth_fissure"):
+			if event.is_action_pressed(&"earth_fissure"):
+				earth.begin_fissure()
+			elif event.is_action_released(&"earth_fissure"):
+				earth.finish_fissure()
+		elif event.is_action_pressed(&"earth_pillar"):
 			earth.begin_pillar()
-		else:
+		elif event.is_action_released(&"earth_pillar"):
 			earth.finish_pillar()
 		get_viewport().set_input_as_handled()
 		return
@@ -164,7 +169,7 @@ func _physics_process(delta: float) -> void:
 	if abilities.is_empty():
 		return
 	var earth := current_ability() as EarthLiftThrow
-	if earth != null and (earth.pillar_aiming or earth.phase == "pillar_pending") \
+	if earth != null and (earth.pillar_aiming or earth.fissure_aiming or earth.phase in ["pillar_pending", "fissure_pending"]) \
 			and (not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
 		earth.cancel()
 	if holding and (not _can_act() or not player.input_enabled):

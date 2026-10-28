@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 988 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":988.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 567 ms
+[P36TEST] T19 PASS — Torre modular intacta: 36 peças congeladas paradas 5 s; grafo de apoio como montado | {"coroa_apoiada_em_2_placas":4,"moveram":[],"pecas":36,"pes":4,"placas":8,"placas_1_embaixo_2_laterais":true,"segundos":5.023,"soltas":[],"todas_apoiadas":true}
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 11.5) r=2.00 rev=1 1.114ms
+[P36TEST] T20 PASS — Escavar sob 1 pilar solta só esse pilar (laje fica: 2 placas vizinhas a sustentam) | {"confirmacao_collider_ms":0.0,"demais_no_lugar":true,"esperadas":["P02_pilar0","P01_pilar0","P00_pilar0"],"pe":"P00_pilar0","pilar_caiu":true,"soltas":["P02_pilar0","P01_pilar0","P00_pilar0"],"soltas_no_teste":3,"timeouts_confirmacao":0,"ultima_checagem":"pés sem apoio: [&\"P00_pilar0\"]"}
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 11.5) r=2.00 rev=2 0.105ms
+[TerrainService] dig_sphere OK c=(16.5, 0.0, 16.5) r=2.00 rev=3 0.383ms
+[TerrainService] dig_sphere OK c=(21.5, 0.0, 16.5) r=2.00 rev=4 0.051ms
+[P36TEST] T21 PASS — Escavar sob os outros 3 pilares: colapso total em etapas, peças sobre o terreno | {"abaixo_do_chao":[],"ainda_em_movimento_apos_6s":0,"duracao_s":6.182,"longe_mais_de_15m":[],"max_por_quadro":6,"quadros_com_soltura":7,"quadros_entre_primeira_e_ultima":7,"soltas":33,"stats":{"broken":0,"builds":2,"checks":4,"confirm_timeouts":0,"consumed":0,"invalid_feet":4,"last_break":"","last_check":"pés sem apoio: [&\"P09_pilar0\"]","last_confirm_ms":0.0,"max_released_in_frame":6,"pending_confirm":0,"pieces":36,"queued":0,"released":36,"released_now":36},"todas_soltas":true}
+[P36TEST] --- testes P3 ---
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] --- testes P4A (controle livre de Terra) ---
+[P36TEST] --- testes P4B (reutilizar rocha existente) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 4)
+[TerrainService] reset: geração 3 pronta=true em 276 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=5 3.268ms
+[P36TEST] T61 PASS — Mesma rocha e massa: captura por LMB, controles físicos, recaptura em voo e novo impacto sem callbacks duplicados | {"callbacks_clean":true,"capture_without_position_velocity_reset":true,"controls":true,"flight_speed_m_s":23.9737243652344,"frame_gate_applied":false,"frame_ms":{"max":13.23,"media":6.9,"min":0.58,"n":379,"p95":7.73,"p99":8.96},"mass_kg":6973.17041015625,"moved_m":0.690349638462067,"no_terrain_edit_or_new_body":true,"one_new_impact":true,"previous_flight_disconnected":true,"recaptured_in_flight":true,"reused_twice":true,"same_body":true,"teleport_error_m":0.000606380286626518}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 5)
+[TerrainService] reset: geração 4 pronta=true em 308 ms
+[P36TEST] --- testes P4C (pilar de Terra) ---
+[P36TEST] --- testes P4D (fissura de Terra) ---
+[P36TEST] relatório: C:\Users\diogo\.codex\worktrees\p36-t26-stabilization\Elemental-Ruins\docs\evidence\p4d\context_headless.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (5/5) em 23.6 s
