@@ -21,6 +21,7 @@ const CHARRED_COLOR := Color("#2B2420")
 const FIRE_TUNING_PATH := "res://data/abilities/fire_tuning.tres"
 const AIR_TUNING_PATH := "res://data/abilities/air_tuning.tres"
 const DUST_POOL := 6
+const ICE_GHOST_POOL := 8
 static var _soft_texture: ImageTexture
 
 var abilities: AbilityController
@@ -56,6 +57,11 @@ var _water_orb_liquid_trail_mesh: Mesh
 var _water_orb_trail: GPUParticles3D
 var _water_orb_splashes: Array[GPUParticles3D] = []
 var _orb_was_flying := false
+var _ice_ghosts: Array[MeshInstance3D] = []
+var _ice_ghost_materials: Array[StandardMaterial3D] = []
+var _ice_ghost_slots: Array[Dictionary] = []
+var _next_ice_ghost := 0
+var _ice_steam_slots: Array[int] = []
 var _balls: Array[MeshInstance3D] = []
 var _fire_trails: Array[GPUParticles3D] = []
 var _halos: Array[MeshInstance3D] = []
@@ -66,7 +72,8 @@ var _stats := {"flames_created": 0, "flames_skipped": 0, "steam": 0, "blasts": 0
 	"fire_anticipations": 0, "fire_launches": 0, "fire_dissipations": 0, "fire_steam": 0, "fire_slots_missing": 0,
 	"fire_vfx_frames": 0, "fire_vfx_usec": 0, "fire_vfx_usec_max": 0, "air_dust_contacts": 0, "air_dust_front": 0,
 	"air_rings_missing": 0, "water_orb_impacts": 0, "water_orb_dissipations": 0,
-	"ice_crystallizations": 0, "ice_impacts": 0}
+	"ice_crystallizations": 0, "ice_impacts": 0, "persistent_materializations": 0,
+	"ice_melts": 0, "ice_limit_removals": 0}
 
 
 func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) -> void:
@@ -88,6 +95,9 @@ func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) 
 	abilities.terrain_service.world_reset_started.connect(_clear_water_orb)
 	abilities.terrain_service.world_save_started.connect(func(_slot): _clear_water_orb())
 	abilities.terrain_service.world_load_started.connect(func(_slot): _clear_water_orb())
+	# O gelo já materializado pertence ao mundo. Save/seleção não interrompem sua apresentação.
+	abilities.terrain_service.world_reset_started.connect(_clear_persistent_ice_visuals)
+	abilities.terrain_service.world_load_started.connect(func(_slot): _clear_persistent_ice_visuals())
 
 
 func get_stats() -> Dictionary:
@@ -101,6 +111,11 @@ func get_stats() -> Dictionary:
 	d["ice_visible"] = _water_orb_mesh != null and _water_orb_mesh.visible and _water_orb_mesh.mesh == _water_orb_ice_mesh
 	d["ice_fragments_emitting"] = _water_orb_ice_fragments.emitting if _water_orb_ice_fragments != null else false
 	d["ice_fragment_cap"] = 12
+	d["ice_ghost_pool"] = _ice_ghosts.size()
+	var live_ghosts := 0
+	for ghost in _ice_ghosts:
+		live_ghosts += int(ghost.visible)
+	d["ice_ghosts_live"] = live_ghosts
 	d["fire_trail_pool"] = _fire_trails.size()
 	d["fire_slots_live"] = _fire_slots.size()
 	d["air_rings_live"] = _ring_slots.size()
@@ -231,6 +246,7 @@ func _process(delta: float) -> void:
 		return
 	_update_jet(delta)
 	_update_water_orb()
+	_update_ice_ghosts(delta)
 	var t0 := Time.get_ticks_usec()
 	_update_fireballs()
 	_update_air()
@@ -393,6 +409,24 @@ func _create_water_orb_visuals() -> void:
 	for i in 2:
 		_water_orb_splashes.append(_burst_emitter("WaterOrbSplash%d" % i,
 			_process_material(Vector3.UP, 75.0, 2.0, 4.0, Vector3(0, -4.0, 0), Color("#A5E5F2")), 0.45, 0.18))
+	for i in ICE_GHOST_POOL:
+		var ghost := MeshInstance3D.new()
+		ghost.name = "IceGhost%d" % i
+		ghost.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		ghost.visible = false
+		var material := StandardMaterial3D.new()
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		material.vertex_color_use_as_albedo = true
+		material.roughness = 0.24
+		material.metallic = 0.12
+		material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		material.emission_enabled = true
+		material.emission = Color(0.06, 0.09, 0.12)
+		ghost.material_override = material
+		add_child(ghost)
+		_ice_ghosts.append(ghost)
+		_ice_ghost_materials.append(material)
+		_ice_ghost_slots.append({"elapsed": 0.0, "duration": 0.0, "basis": Basis.IDENTITY, "tint": Color.WHITE})
 
 
 func _update_water_orb() -> void:
@@ -443,6 +477,10 @@ func _update_water_orb() -> void:
 
 func _on_water_orb_event(kind: StringName, data: Dictionary) -> void:
 	match kind:
+		&"ice_body_spawned":
+			_on_ice_body_spawned(data)
+		&"ice_body_removed":
+			_on_ice_body_removed(data)
 		&"water_orb_frozen":
 			var jet := abilities.get_ability(&"water_jet") as WaterJet
 			if jet != null and jet.orb.tuning.visual_enabled:
@@ -454,7 +492,8 @@ func _on_water_orb_event(kind: StringName, data: Dictionary) -> void:
 			if jet == null or not jet.orb.tuning.visual_enabled:
 				return
 			if bool(data.get("frozen", false)):
-				_ice_fragment_burst(data.position, data.get("normal", Vector3.UP))
+				if not bool(data.get("persistent", false)):
+					_ice_fragment_burst(data.position, data.get("normal", Vector3.UP))
 				_stats.ice_impacts += 1
 				return
 			var emitter := _water_orb_splashes[_next.water_orb]
@@ -470,6 +509,92 @@ func _on_water_orb_event(kind: StringName, data: Dictionary) -> void:
 		&"water_orb_dissipate":
 			_clear_water_orb()
 			_stats.water_orb_dissipations += 1
+
+
+func _persistent_ice_visuals_enabled() -> bool:
+	var jet := abilities.get_ability(&"water_jet") as WaterJet
+	return jet != null and jet.orb.tuning.visual_enabled
+
+
+func _on_ice_body_spawned(data: Dictionary) -> void:
+	var body := data.get("body") as Node3D
+	if not is_instance_valid(body):
+		return
+	_stats.persistent_materializations += 1
+	if not _persistent_ice_visuals_enabled():
+		return
+	var crystal := body.get_node_or_null(^"Crystal") as MeshInstance3D
+	if crystal == null:
+		return
+	# Só a malha muda de tamanho; collider e RigidBody já estão na posição decidida pelo gameplay.
+	crystal.scale = Vector3.ONE * 0.85
+	crystal.create_tween().tween_property(crystal, "scale", Vector3.ONE, 0.15)
+
+
+func _on_ice_body_removed(data: Dictionary) -> void:
+	var reason := String(data.get("reason", "melt"))
+	if reason == "melt":
+		_stats.ice_melts += 1
+	else:
+		_stats.ice_limit_removals += 1
+	if not _persistent_ice_visuals_enabled():
+		return
+	var body := data.get("body") as Node3D
+	if not is_instance_valid(body):
+		return
+	var crystal := body.get_node_or_null(^"Crystal") as MeshInstance3D
+	if crystal == null or crystal.mesh == null:
+		return
+	var index := _next_ice_ghost
+	_next_ice_ghost = (_next_ice_ghost + 1) % ICE_GHOST_POOL
+	var ghost := _ice_ghosts[index]
+	ghost.mesh = crystal.mesh
+	ghost.global_transform = crystal.global_transform
+	ghost.visible = true
+	var source := crystal.material_override as StandardMaterial3D
+	if source == null:
+		source = crystal.mesh.surface_get_material(0) as StandardMaterial3D
+	var tint := source.albedo_color if source != null else Color("#C4E5F5")
+	_ice_ghost_materials[index].albedo_color = tint
+	_ice_ghost_slots[index] = {"elapsed": 0.0, "duration": maxf(float(data.get("duration", 0.45)), 0.01),
+		"basis": ghost.global_transform.basis, "tint": tint}
+	if reason == "melt":
+		var steam_slot: int = _next.steam
+		if not _ice_steam_slots.has(steam_slot):
+			_ice_steam_slots.append(steam_slot)
+		_fire_burst(_steam, "steam", data.position, Vector3.UP)
+		_stats.steam += 1
+
+
+func _update_ice_ghosts(delta: float) -> void:
+	for i in _ice_ghost_slots.size():
+		var slot: Dictionary = _ice_ghost_slots[i]
+		if float(slot.duration) <= 0.0:
+			continue
+		slot.elapsed += delta
+		var progress := clampf(float(slot.elapsed) / float(slot.duration), 0.0, 1.0)
+		var ghost := _ice_ghosts[i]
+		if progress >= 1.0:
+			ghost.visible = false
+			ghost.mesh = null
+			slot.duration = 0.0
+			continue
+		var transform := ghost.global_transform
+		transform.basis = (slot.basis as Basis).scaled(Vector3.ONE * maxf(1.0 - smoothstep(0.0, 1.0, progress), 0.01))
+		ghost.global_transform = transform
+		var tint: Color = slot.tint
+		_ice_ghost_materials[i].albedo_color = Color(tint.r, tint.g, tint.b, tint.a * (1.0 - progress))
+
+
+func _clear_persistent_ice_visuals() -> void:
+	for i in _ice_ghosts.size():
+		_ice_ghosts[i].visible = false
+		_ice_ghosts[i].mesh = null
+		_ice_ghost_slots[i].duration = 0.0
+	for i in _ice_steam_slots:
+		_steam[i].emitting = false
+		_steam[i].visible = false
+	_ice_steam_slots.clear()
 
 
 func _ice_fragment_burst(at: Vector3, normal: Vector3, crystallize := false) -> void:
@@ -506,34 +631,7 @@ func _clear_water_orb(clear_splashes := true) -> void:
 
 ## Oito triângulos com normais por face: cristal original inscrito na esfera de colisão.
 static func _ice_crystal_mesh(size: float) -> ArrayMesh:
-	var points := PackedVector3Array([Vector3(0, 1, 0), Vector3(0, -1, 0),
-		Vector3(0.9, 0, 0), Vector3(0, 0, 0.9), Vector3(-0.9, 0, 0), Vector3(0, 0, -0.9)])
-	var faces: Array[Vector3i] = [Vector3i(0, 2, 3), Vector3i(0, 3, 4), Vector3i(0, 4, 5), Vector3i(0, 5, 2),
-		Vector3i(1, 3, 2), Vector3i(1, 4, 3), Vector3i(1, 5, 4), Vector3i(1, 2, 5)]
-	var vertices := PackedVector3Array()
-	var normals := PackedVector3Array()
-	var colors := PackedColorArray()
-	for i in faces.size():
-		var face: Vector3i = faces[i]
-		var a: Vector3 = points[face.x]
-		var b: Vector3 = points[face.y]
-		var c: Vector3 = points[face.z]
-		var normal := (b - a).cross(c - a).normalized()
-		if normal.dot(a + b + c) < 0.0:
-			normal = -normal
-		var shade := 1.0 - float(i % 3) * 0.09
-		for point: Vector3 in [a, b, c]:
-			vertices.append(point * size)
-			normals.append(normal)
-			colors.append(Color(shade, shade, 1.0))
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = vertices
-	arrays[Mesh.ARRAY_NORMAL] = normals
-	arrays[Mesh.ARRAY_COLOR] = colors
-	var mesh := ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	return mesh
+	return IceBody.crystal_mesh(size)
 
 
 func _update_jet(delta := 0.0) -> void:
@@ -732,6 +830,7 @@ func _on_air_event(kind: StringName, data: Dictionary) -> void:
 
 func _fire_burst(pool: Array[GPUParticles3D], key: String, at: Vector3, dir: Vector3) -> void:
 	var e := pool[_next[key]]
+	e.visible = true
 	_next[key] = (_next[key] + 1) % pool.size()
 	var direction := dir.normalized() if not dir.is_zero_approx() else Vector3.UP
 	var up := Vector3.RIGHT if absf(direction.y) > 0.99 else Vector3.UP

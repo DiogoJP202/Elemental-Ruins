@@ -22,6 +22,7 @@ var consumed := false
 static func create(p_material: BodyMaterial) -> MaterialState:
 	var s := MaterialState.new()
 	s.material = p_material
+	s.temperature = p_material.initial_temperature
 	s.fuel = p_material.fuel_seconds
 	return s
 

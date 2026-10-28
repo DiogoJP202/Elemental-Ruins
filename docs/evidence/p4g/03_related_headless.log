@@ -1,0 +1,194 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 915 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":915.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[P36TEST] --- testes P3 ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 275 ms
+[P36TEST] T38 PASS — Estados de material: ignição, pedra só aquece, molhada resiste, água e vento apagam, queima consome, impacto solta | {"a_madeira_acende_no_limiar":{"acesa_apos_200":false,"acesa_apos_350":true,"ok":true,"temp_apos_200":220.0},"b_pedra_so_aquece":{"estado":"PEDRA • 353 °C","ok":true},"c_molhada_resiste_1a_rajada":{"apos_1a":"MADEIRA • 100 °C","apos_2a":"MADEIRA • 420 °C • EM CHAMAS 40%","ok":true},"d_agua_apaga":{"estado":"MADEIRA • 150 °C • molhada 40%","ok":true},"e_vento_apaga_fraco_aviva_forte":{"forte_intensidade":0.84,"fraco_apagou":true,"ok":true},"f_queima_ate_consumir":{"ok":true,"removida":true},"g_impacto_solta_peca_acima_do_limiar":{"ok":true,"solta_com_3":false,"solta_com_7":true,"stats":"P28_coroa (impacto)"}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 0)
+[TerrainService] reset: geração 3 pronta=true em 246 ms
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 0)
+[TerrainService] reset: geração 4 pronta=true em 260 ms
+[P36TEST] T46 PASS — Água transporta pacotes e pressão; virar 90° não acerta alvo distante instantaneamente | {"forward":{"arrived_on_time":true,"deadline_s":0.246693928703125,"distance_m":4.90081787109375,"earliest_s":0.130027262369792,"first_contact_s":0.166666666666667,"max_packets":32,"no_early_contact":true,"peak_packets":5,"pressure_on_time":true,"pressure_ready_s":0.133333333333333},"method":"physics ticks; distances to actual collider contact","pressed":true,"turn_90_deg":{"arrived_on_time":true,"deadline_s":0.246694151227132,"distance_m":4.90082454681396,"earliest_s":0.130027484893799,"first_contact_s":0.183333333333333,"max_packets":32,"no_early_contact":true,"peak_packets":5,"pressure_on_time":true,"pressure_ready_s":0.0}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 0)
+[TerrainService] reset: geração 5 pronta=true em 250 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 0)
+[TerrainService] reset: geração 6 pronta=true em 284 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 0)
+[TerrainService] reset: geração 7 pronta=true em 247 ms
+[P36TEST] T48 PASS — Água respeita parede fina e origem dentro de prop; respingo resfria e impulso depende da massa | {"heavy":{"expected_delta_v":0.0869004224836826,"impulse_Ns":173.800844967365,"mass_kg":2000.0,"ok":true,"relative_tolerance":0.12,"speed_mps":0.086900420486927},"legacy_extinction":"T33 conserva o limite de 3 s","light":{"expected_delta_v":7.69330452978611,"impulse_Ns":153.866090595722,"mass_kg":20.0,"ok":true,"relative_tolerance":0.12,"speed_mps":7.69330501556396},"origin_inside_prop":{"blocked_wetness":0.0,"body_contacts":0,"camera_sees_target_behind":true,"contact_normal":"(0.0, -0.032016, 0.999487)","contact_point":"(-34.0, 1.320201, 67.4)","hand":"(-34.0, 1.320201, 67.4)","ok":true,"origin_inside_convex_prop":true,"wall_contacts":16},"splash":{"blocked_temperature":80.5,"blocked_wetness":0.0,"exposed_temperature":58.7267183004675,"exposed_wetness":0.0648435884261737,"impact_normal":"(0.0, 0.0, 1.0)","impact_origin":"(-34.0, 1.39781, 64.0205)","los_blocked":false,"los_exposed":true,"physical_wall_contacts":40,"pressed":true,"wall_thickness_m":0.001}}
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 0)
+[TerrainService] reset: geração 8 pronta=true em 272 ms
+[P36TEST] T49 PASS — Fogo: antecipação sem calor e com mira do clique, cancelamento antes do voo, recuperação, limites e tuning | {"cancel_before_flight":{"cancelled":1,"fx_after_click":["fire_anticipation"],"heat_events":0,"launches":0,"ok":true,"pending_after_2_ticks":true,"removed_in_command":true,"switched":true},"default":{"anticipation_s":0.0833333333333333,"heat_events_before_launch":0,"heat_events_total":1,"impacts":1,"launch_dir_dot_click_dir":0.999999940395355,"launches":1,"ok":true,"raw_ticks":{"click":830,"impact":843,"launch":834},"slot_at_click":true,"temps_at_impact":[470.0,20.0,20.0],"tolerance_s":0.0166666666666667,"tuning_s":0.08},"flight_survives_switch":{"cancelled":0,"impacts":1,"kept_after_switch":true,"ok":true},"limits":{"cancelled":11,"fx_balls_visible":8,"fx_slots_after_cancel":0,"fx_slots_live":8,"fx_slots_missing":0,"limit_20_clamped":{"hard_cap":8,"live":8,"rejected":2},"limit_3":{"live":3,"rejected":2},"ok":true},"method":"ticks de física pelo contexto do evento; tolerância 1 tick","recovery":{"contract_max_s":0.3,"cooldown_s":0.14,"immediate_rejected":true,"ok":true,"recovery_s":0.15,"rejected":9},"variant":{"anticipation_s":0.2,"burning":false,"flight_time_error_s":0.00583779911200211,"heat_events":1,"ok":true,"straight_line_m":5.54990673065186,"temperature_delta":120.0,"traveled_m":5.54991068442662,"tuning_anticipation_s":0.2,"tuning_heat":120.0}}
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 8, rev 0)
+[TerrainService] reset: geração 9 pronta=true em 248 ms
+[P36TEST] T52 PASS — Ar: frente progressiva; nenhum efeito antes da casca; chegada em d/v + 2 ticks | {"contacts_in_wave":3,"crates":[{"arrival_s":0.1,"deadline_s":0.133333333333333,"distance_m":3.0,"expected_s":0.1,"first_motion_s":0.1,"ok":true},{"arrival_s":0.216666666666667,"deadline_s":0.24415184656779,"distance_m":6.32455539703369,"expected_s":0.210818513234456,"first_motion_s":0.216666666666667,"ok":true},{"arrival_s":0.316666666666667,"deadline_s":0.345601018269857,"distance_m":9.3680305480957,"expected_s":0.312267684936523,"first_motion_s":0.316666666666667,"ok":true}],"front_speed":30.0,"method":"ticks de física; distância ao centro do corpo"}
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] --- testes P4A (controle livre de Terra) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 9, rev 0)
+[TerrainService] reset: geração 10 pronta=true em 265 ms
+[TerrainService] save p4a_lifecycle: ok=true { "slot": "p4a_lifecycle", "ok": true, "ms": 25.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4a_lifecycle.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 13.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 10, rev 0)
+[TerrainService] reset: geração 11 pronta=true em 255 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=1 5.560ms
+[TerrainService] extract_rock OK c=(-37.5, -1.5, 63.5) r=1.20 corpos=1 rev=2 0.493ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 11, rev 2)
+[TerrainService] reset: geração 12 pronta=true em 268 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=3 3.724ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 12, rev 3)
+[TerrainService] reset: geração 13 pronta=true em 263 ms
+[TerrainService] extract_rock OK c=(-37.5, -1.5, 63.5) r=1.20 corpos=1 rev=4 5.122ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 13, rev 4)
+[TerrainService] reset: geração 14 pronta=true em 254 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=5 7.640ms
+[TerrainService] save p4a_lifecycle: ok=true { "slot": "p4a_lifecycle", "ok": true, "ms": 60.0, "flush_ms": 34.0, "blocks_tasks": 22, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 28672, "path": "<user_data>/saves/p4a_lifecycle.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 14.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] extract_rock OK c=(-37.5, -1.5, 63.5) r=1.20 corpos=1 rev=6 0.784ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 14, rev 6)
+[TerrainService] reset: geração 15 pronta=true em 259 ms
+[TerrainService] extract_rock OK c=(-33.5, -1.5, 63.5) r=1.20 corpos=1 rev=7 4.815ms
+[TerrainService] load p4a_lifecycle: ok=true { "slot": "p4a_lifecycle", "ok": true, "ms": 243.0, "copy": "OK", "bytes": 28672 }
+[TerrainService] extract_rock OK c=(-37.5, -1.5, 63.5) r=1.20 corpos=1 rev=8 1.371ms
+[P36TEST] T60 PASS — Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais | {"cases":{"load":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"modified_before":true,"new_distance_m":6.01263570785522,"new_height_m":2.0,"new_hold_defaults":true,"new_phase":"hold","new_result":"pronta","new_target":{"color":"(0.7216, 0.4745, 0.4078, 1.0)","dist":6.01263570785522,"normal":"(0.0, 1.0, 0.0)","ok":true,"point":"(-37.99408, 0.02, 63.50566)","reason":""},"ok":true},"reset":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"modified_before":true,"new_distance_m":6.01259803771973,"new_height_m":2.0,"new_hold_defaults":true,"new_phase":"hold","new_result":"pronta","new_target":{"color":"(0.7216, 0.4745, 0.4078, 1.0)","dist":6.01259803771973,"normal":"(0.0, 1.0, 0.0)","ok":true,"point":"(-37.99405, 0.02, 63.50568)","reason":""},"ok":true},"save":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"modified_before":true,"new_distance_m":6.01431131362915,"new_height_m":2.0,"new_hold_defaults":true,"new_phase":"hold","new_result":"pronta","new_target":{"color":"(0.7216, 0.4745, 0.4078, 1.0)","dist":6.01431131362915,"normal":"(0.0, 1.0, 0.0)","ok":true,"point":"(-37.99519, 0.02, 63.5044)","reason":""},"ok":true},"select":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"modified_before":true,"new_distance_m":6.01427602767944,"new_height_m":2.0,"new_hold_defaults":true,"new_phase":"hold","new_result":"pronta","new_target":{"color":"(0.7216, 0.4745, 0.4078, 1.0)","dist":6.01427602767944,"normal":"(0.0, 1.0, 0.0)","ok":true,"point":"(-37.99517, 0.02, 63.50443)","reason":""},"ok":true}},"slot":"p4a_lifecycle","wheel_outside_hold_by_element":[true,true,true,true]}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 16, rev 8)
+[TerrainService] reset: geração 17 pronta=true em 266 ms
+[P36TEST] --- testes P4B (reutilizar rocha existente) ---
+[P36TEST] --- testes P4C (pilar de Terra) ---
+[P36TEST] --- testes P4D (fissura de Terra) ---
+[P36TEST] --- testes P4E (orbe de Água) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 17, rev 8)
+[TerrainService] reset: geração 18 pronta=true em 251 ms
+[P36TEST] T67 PASS — Orbe: RMB, Q/E, roda, câmera e movimento contínuo; parede bloqueia e soltar lança, com benchmark curto | {"brush_unchanged":true,"continuous":true,"distance_min_max_m":[2.0,7.0],"farthest_m":4.14398956298828,"finished":true,"formed":true,"frame_gate_applied":false,"frame_ms":{"max":9.26,"media":6.9,"min":4.31,"n":909,"p95":8.16,"p99":8.46},"height_min_max_m":[0.6,2.76666666666667],"horizontal_m":5.07323551177979,"launch_speed_m_s":22.0001564025879,"launched_without_teleport":true,"max_control_step_m":0.133337259292603,"no_terrain_edit":true,"nominal_liters":150.0,"opposite_keys_neutral":true,"player_moved_m":0.727771759033203,"radius_m":0.329610377550125,"raised_m":0.929862499237061,"wall_blocked":true,"wall_distance_m":4.5,"wheel_step_m":0.5}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 18, rev 8)
+[TerrainService] reset: geração 19 pronta=true em 255 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 19, rev 8)
+[TerrainService] reset: geração 20 pronta=true em 394 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 20, rev 8)
+[TerrainService] reset: geração 21 pronta=true em 255 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 21, rev 8)
+[TerrainService] reset: geração 22 pronta=true em 258 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 22, rev 8)
+[TerrainService] reset: geração 23 pronta=true em 333 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 23, rev 8)
+[TerrainService] reset: geração 24 pronta=true em 409 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 24, rev 8)
+[TerrainService] reset: geração 25 pronta=true em 256 ms
+[P36TEST] T68 PASS — Orbe varre contato único, transfere impulso/WET antes do FX, apaga chama e respeita parede e alcance | {"formation_blocked_by_thin_wall":true,"heavy_body":{"burning_before":false,"expected_delta_v":0.9,"finished":true,"formed":true,"fx":{"burning_at_fx":false,"contacts":1,"event_id":359,"temperature_at_fx":20.0,"wet_at_fx":0.9},"impacts":1,"impulse_ns":1800.0,"mass_kg":2000.0,"moved_m":0.195009261369705,"ok":true,"speed_m_s":0.899999976158142,"temperature_before":20.0,"visual_disabled":true,"wetness":0.891333333333333},"light_burning_body":{"burning_before":true,"expected_delta_v":8.0,"finished":true,"formed":true,"fx":{"burning_at_fx":false,"contacts":1,"event_id":352,"temperature_at_fx":150.0,"wet_at_fx":0.9},"impacts":1,"impulse_ns":160.0,"mass_kg":20.0,"moved_m":1.73335433006287,"ok":true,"speed_m_s":8.0,"temperature_before":470.0,"visual_disabled":true,"wetness":0.891333333333333},"range_without_remote_contact":{"finished":true,"formed":true,"ok":true,"range_m":3.0,"remote_speed_m_s":0.0,"remote_wetness":0.0},"thin_wall_occlusion":{"behind_temperature":93.5,"behind_wetness":0.0,"exposed_temperature":30.4993162155151,"exposed_wetness":0.315003418922424,"finished":true,"formed":true,"impacts":1,"launch_speed_m_s":60.0,"ok":true,"orb_diameter_m":0.65922075510025,"step_m":1.0,"terrain_contacts":1,"wall_thickness_m":0.001},"voxel_ground":{"center_y":0.35188627243042,"finished":true,"ground_y":0.0199999809265137,"ok":true}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 25, rev 8)
+[TerrainService] reset: geração 26 pronta=true em 252 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 26, rev 8)
+[TerrainService] reset: geração 27 pronta=true em 339 ms
+[TerrainService] save p4e_orb_cancel: ok=true { "slot": "p4e_orb_cancel", "ok": true, "ms": 25.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4e_orb_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 21.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 27, rev 8)
+[TerrainService] reset: geração 28 pronta=true em 256 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 28, rev 8)
+[TerrainService] reset: geração 29 pronta=true em 272 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 29, rev 8)
+[TerrainService] reset: geração 30 pronta=true em 254 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 30, rev 8)
+[TerrainService] reset: geração 31 pronta=true em 273 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 31, rev 8)
+[TerrainService] reset: geração 32 pronta=true em 264 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 32, rev 8)
+[TerrainService] reset: geração 33 pronta=true em 273 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 33, rev 8)
+[TerrainService] reset: geração 34 pronta=true em 282 ms
+[TerrainService] save p4e_orb_cancel: ok=true { "slot": "p4e_orb_cancel", "ok": true, "ms": 27.0, "flush_ms": 1.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4e_orb_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 19.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 34, rev 8)
+[TerrainService] reset: geração 35 pronta=true em 294 ms
+[TerrainService] load p4e_orb_cancel: ok=true { "slot": "p4e_orb_cancel", "ok": true, "ms": 252.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 36, rev 8)
+[TerrainService] reset: geração 37 pronta=true em 280 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 37, rev 8)
+[TerrainService] reset: geração 38 pronta=true em 301 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 38, rev 8)
+[TerrainService] reset: geração 39 pronta=true em 358 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 39, rev 8)
+[TerrainService] reset: geração 40 pronta=true em 245 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 40, rev 8)
+[TerrainService] reset: geração 41 pronta=true em 240 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 41, rev 8)
+[TerrainService] reset: geração 42 pronta=true em 283 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 42, rev 8)
+[TerrainService] reset: geração 43 pronta=true em 344 ms
+[TerrainService] save p4e_orb_cancel: ok=true { "slot": "p4e_orb_cancel", "ok": true, "ms": 31.0, "flush_ms": 1.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4e_orb_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 19.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 43, rev 8)
+[TerrainService] reset: geração 44 pronta=true em 337 ms
+[TerrainService] load p4e_orb_cancel: ok=true { "slot": "p4e_orb_cancel", "ok": true, "ms": 287.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 45, rev 8)
+[TerrainService] reset: geração 46 pronta=true em 350 ms
+[P36TEST] T69 PASS — Orbe mantém exclusão jato/RMB e pincel; seleção/input/mouse/Esc/reset/save/load cancelam hold e voo sem resíduos | {"cases":{"first_button_wins":{"jet_first":true,"ok":true,"orb_first":true},"flight_escape":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"flight_input_disabled":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"flight_load":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"flight_mouse_lost":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"flight_reset":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"flight_save":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"flight_select":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"hold_escape":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"hold_input_disabled":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"hold_load":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"hold_mouse_lost":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"hold_reset":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"hold_save":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true},"hold_select":{"clean_after":true,"clean_at_signal":true,"command_ok":true,"ok":true,"started":true}},"restart_defaults":true,"slot_ready":true,"wheel_outside_hold_by_element":[true,true,true,true]}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 46, rev 8)
+[TerrainService] reset: geração 47 pronta=true em 261 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 47, rev 8)
+[TerrainService] reset: geração 48 pronta=true em 237 ms
+[P36TEST] T70 PASS — C contextual congela uma vez sem deslocar o orbe; controle e paredes mantidos, voo tem gravidade | {"camera_control":true,"finished_liquid":true,"formed_liquid":true,"frame_gate_applied":false,"frame_ms":{"max":8.69,"media":6.9,"min":5.25,"n":447,"p95":8.08,"p99":8.4},"freeze_ignored_in_flight":true,"gravity":true,"height_control":true,"ice_launched":true,"ignored_outside_context":true,"launch_speed":26.8569202423096,"one_freeze":true,"preserved_position_velocity_target_radius":true,"vertical_dv_6_frames":0.979997634887695,"wall_blocked":true,"wheel_context":true}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 48, rev 8)
+[TerrainService] reset: geração 49 pronta=true em 274 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 49, rev 8)
+[TerrainService] reset: geração 50 pronta=true em 253 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 50, rev 8)
+[TerrainService] reset: geração 51 pronta=true em 267 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 51, rev 8)
+[TerrainService] reset: geração 52 pronta=true em 268 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 52, rev 8)
+[TerrainService] reset: geração 53 pronta=true em 245 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 53, rev 8)
+[TerrainService] reset: geração 54 pronta=true em 278 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 54, rev 8)
+[TerrainService] reset: geração 55 pronta=true em 278 ms
+[TerrainService] save p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 23.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4f_ice_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 12.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 55, rev 8)
+[TerrainService] reset: geração 56 pronta=true em 256 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 56, rev 8)
+[TerrainService] reset: geração 57 pronta=true em 259 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 57, rev 8)
+[TerrainService] reset: geração 58 pronta=true em 269 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 58, rev 8)
+[TerrainService] reset: geração 59 pronta=true em 263 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 59, rev 8)
+[TerrainService] reset: geração 60 pronta=true em 321 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 60, rev 8)
+[TerrainService] reset: geração 61 pronta=true em 353 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 61, rev 8)
+[TerrainService] reset: geração 62 pronta=true em 408 ms
+[TerrainService] save p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 28.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4f_ice_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 20.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 62, rev 8)
+[TerrainService] reset: geração 63 pronta=true em 261 ms
+[TerrainService] load p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 241.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 64, rev 8)
+[TerrainService] reset: geração 65 pronta=true em 250 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 65, rev 8)
+[TerrainService] reset: geração 66 pronta=true em 273 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 66, rev 8)
+[TerrainService] reset: geração 67 pronta=true em 283 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 67, rev 8)
+[TerrainService] reset: geração 68 pronta=true em 255 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 68, rev 8)
+[TerrainService] reset: geração 69 pronta=true em 248 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 69, rev 8)
+[TerrainService] reset: geração 70 pronta=true em 268 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 70, rev 8)
+[TerrainService] reset: geração 71 pronta=true em 251 ms
+[TerrainService] save p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 22.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4f_ice_cancel.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 13.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 71, rev 8)
+[TerrainService] reset: geração 72 pronta=true em 270 ms
+[TerrainService] load p4f_ice_cancel: ok=true { "slot": "p4f_ice_cancel", "ok": true, "ms": 281.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 73, rev 8)
+[TerrainService] reset: geração 74 pronta=true em 250 ms
+[P36TEST] T71 PASS — Gelo aplica KINETIC único sem WET/impulso duplicado, respeita paredes/voxel/alcance e limpa estado ao cancelar | {"body":{"burning_at_impact":true,"expected_impulse_ns":240.0,"expected_speed":12.0,"finished":true,"formed":true,"frozen":true,"fx_contacts":1,"fx_frozen":true,"impacts":1,"impulse_ns":240.0,"ok":true,"released":true,"speed":12.0,"structural":false,"wetness":0.0},"cancellations":{"flight_escape":{"ok":true},"flight_input":{"ok":true},"flight_load":{"ok":true},"flight_mouse":{"ok":true},"flight_reset":{"ok":true},"flight_save":{"ok":true},"flight_select":{"ok":true},"hold_escape":{"ok":true},"hold_input":{"ok":true},"hold_load":{"ok":true},"hold_mouse":{"ok":true},"hold_reset":{"ok":true},"hold_save":{"ok":true},"hold_select":{"ok":true}},"contacts":{"range":{"impacts":0,"ok":true},"thin_wall":{"impacts":1,"ok":true},"voxel_ground":{"impacts":1,"ok":true}},"restart_liquid":true,"structural_consumer":{"burning_at_impact":false,"expected_impulse_ns":120.0,"expected_speed":6.0,"finished":true,"formed":true,"frozen":true,"fx_contacts":1,"fx_frozen":true,"impacts":1,"impulse_ns":120.0,"ok":true,"released":true,"speed":6.00000047683716,"structural":true,"wetness":0.0}}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 74, rev 8)
+[TerrainService] reset: geração 75 pronta=true em 278 ms
+[P36TEST] relatório: <checkout>\docs\evidence\p4g\03_related_headless.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (12/12) em 80.4 s

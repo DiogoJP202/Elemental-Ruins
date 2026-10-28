@@ -526,3 +526,17 @@ contínuas com esfera varrida; não se usa um corpo rígido de água nem se gene
 Os 150 L vêm de uma reserva abstrata explícita do Criativo; raio fixado por formação,
 intensidade configurável, sem conservação de fluido, captação fictícia ou poça persistente.
 P4E foi autorizado apesar do FAIL P4D/T26, que permanece histórico e fora desta tarefa.
+
+## D56. P4G: corpo de gelo da sessão e fusão pelo material existente
+Após o KINETIC P4F, a esfera varrida fornece o centro seguro para um IceBody sob props_root,
+com velocidade inicial zero: o alvo já recebeu o impulso. Consulta incluindo jogador/props/
+terreno recusa espaço ocupado; nesse caso só resta a fragmentação anterior. Massa usa litros
+nominais × densidade; esfera de colisão envolve o cristal facetado compartilhado. DebrisBudget
+cuida de repouso/distância; teto do orbe remove o mais antigo elegível, sem novo manager.
+
+MaterialState recebe temperatura inicial do BodyMaterial. Essa temperatura também é o piso
+de resfriamento/WET: demais materiais preservam 20 °C; gelo usa -20 °C e só HEAT suficiente
+atinge fusão a 0 °C. É uma abstração explícita de gameplay, sem ganho passivo de calor ambiente.
+MaterialResponseSystem marca consumed antes do sinal melted; IceBody remove colisão/corpo,
+e ElementalFx conserva só uma cópia visual curta em pool limitado. Efeitos não decidem fusão.
+Reset/load usam a limpeza de props já existente; save preserva corpos vivos, sem serializá-los.

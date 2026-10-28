@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Inicialização do Projeto (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Escaneando estrutura de arquivos...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Carregando nomes de classe globais...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verificando GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Criando scripts autoload...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Inicializando plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Iniciando escaneamento de arquivos...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registrando classes globais... (9 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | WaterJet[39m[0m
+[  10% ] [90m[1mupdate_scripts_classes[22m | WaterOrb[39m[0m
+[  20% ] [90m[1mupdate_scripts_classes[22m | WaterOrbTuning[39m[0m
+[  30% ] [90m[1mupdate_scripts_classes[22m | BodyMaterial[39m[0m
+[  40% ] [90m[1mupdate_scripts_classes[22m | BodyMaterialLibrary[39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | ElementalFx[39m[0m
+[  60% ] [90m[1mupdate_scripts_classes[22m | MaterialResponseSystem[39m[0m
+[  70% ] [90m[1mupdate_scripts_classes[22m | MaterialState[39m[0m
+[  80% ] [90m[1mupdate_scripts_classes[22m | IceBody[39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Carregando editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Carregando layout do editor...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Carregando abas...[39m[0m
+[  33% ] [90m[1mloading_editor_layout[22m | Reabrindo cenas...[39m[0m
+[  50% ] [90m[1mloading_editor_layout[22m | Carregando layout do editor central...[39m[0m
+[  66% ] [90m[1mloading_editor_layout[22m | Carregando layout da janela de plugins...[39m[0m
+[  83% ] [90m[1mloading_editor_layout[22m | Layout do editor pronto.[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m

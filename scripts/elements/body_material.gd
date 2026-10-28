@@ -15,7 +15,11 @@ extends Resource
 @export var fuel_seconds := 0.0
 ## Divide o calor recebido: pedra esquenta mais devagar que madeira.
 @export var heat_resistance := 1.0
-## °C por segundo de volta à temperatura ambiente.
+## Estado térmico inicial e piso de resfriamento passivo. Gelo não é aquecido pelo ambiente.
+@export var initial_temperature := 20.0
+## INF desativa fusão; somente HEAT pode atingir este limiar e consumir o material.
+@export var melt_temperature := INF
+## °C por segundo de volta ao piso térmico inicial do material.
 @export var cooling_per_second := 10.0
 ## Umidade (0–1) perdida por segundo ao ar.
 @export var drying_per_second := 0.03

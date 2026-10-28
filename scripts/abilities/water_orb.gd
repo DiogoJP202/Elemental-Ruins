@@ -22,7 +22,8 @@ var _shape := SphereShape3D.new()
 var _query := PhysicsShapeQueryParameters3D.new()
 var _stats := {"formed": 0, "launched": 0, "impacts": 0, "body_impacts": 0,
 	"terrain_impacts": 0, "cancelled": 0, "dissipated": 0, "blocked_motion": 0, "impulse_ns": 0.0,
-	"freezes": 0, "ice_impacts": 0}
+	"freezes": 0, "ice_impacts": 0, "ice_spawned": 0, "ice_spawn_rejected": 0, "ice_evicted": 0}
+var _last_ice_spawn_reason := ""
 
 
 func _init() -> void:
@@ -50,7 +51,68 @@ func get_stats() -> Dictionary:
 	data["phase"] = phase
 	data["traveled_m"] = _traveled
 	data["matter_state"] = "FROZEN" if is_frozen() else "LIQUID"
+	data["persistent_ice"] = get_persistent_ice().size()
+	data["last_ice_spawn_reason"] = _last_ice_spawn_reason
 	return data
+
+
+func get_persistent_ice() -> Array[IceBody]:
+	var live: Array[IceBody] = []
+	if controller != null and is_instance_valid(controller.props_root):
+		for node in controller.props_root.get_children():
+			if node is IceBody and not node.is_queued_for_deletion():
+				live.append(node)
+	return live
+
+
+func _ice_space_free(at: Vector3) -> bool:
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = _shape
+	query.transform = Transform3D(Basis.IDENTITY, at)
+	query.collision_mask = Layers.TERRAIN | Layers.PLAYER | Layers.PROPS
+	query.margin = 0.002
+	return _space().intersect_shape(query, 1).is_empty()
+
+
+func _spawn_persistent_ice(hit: Dictionary) -> IceBody:
+	# O centro seguro da própria varredura preserva também contatos de raspão.
+	var at := position
+	if not _ice_space_free(at):
+		var normal: Vector3 = hit.normal
+		var candidate: Vector3 = hit.position + normal.normalized() * (radius() + 0.02)
+		if candidate.distance_to(position) > 0.05 or not _ice_space_free(candidate):
+			_stats.ice_spawn_rejected += 1
+			_last_ice_spawn_reason = "no_space"
+			return null
+		at = candidate
+	var live := get_persistent_ice()
+	var limit := clampi(tuning.ice_max_bodies, 1, 16)
+	var required := maxi(0, live.size() - limit + 1)
+	var removable: Array[IceBody] = []
+	for body in live:
+		if body.can_retire():
+			removable.append(body)
+	if removable.size() < required:
+		_stats.ice_spawn_rejected += 1
+		_last_ice_spawn_reason = "capacity_in_use"
+		return null
+	for i in required:
+		removable[i].retire("limit")
+		_stats.ice_evicted += 1
+	var body := IceBody.new()
+	body.setup(tuning, radius(), volume_liters, controller.materials, _on_ice_body_removed)
+	controller.props_root.add_child(body)
+	body.global_position = at
+	# Não carregar novamente a velocidade de impacto: o KINETIC já foi aplicado.
+	_stats.ice_spawned += 1
+	_last_ice_spawn_reason = ""
+	emit_fx(&"ice_body_spawned", {"body": body, "position": at, "radius": radius()})
+	return body
+
+
+func _on_ice_body_removed(body: IceBody, reason: String) -> void:
+	emit_fx(&"ice_body_removed", {"body": body, "position": body.global_position, "radius": body.ice_radius,
+		"duration": body.melt_duration_s if reason == "melt" else 0.18, "reason": reason})
 
 
 func is_frozen() -> bool:
@@ -268,9 +330,15 @@ func _impact(hit: Dictionary) -> void:
 		if is_instance_valid(body):
 			wet.target = body
 		emit_event(wet)
-	last_result = "gelo em contato" if frozen else "água em contato"
+	var persistent: IceBody
+	if frozen:
+		persistent = _spawn_persistent_ice(hit)
+		last_result = "gelo físico criado" if persistent != null else "gelo em fragmentos: %s" % _last_ice_spawn_reason
+	else:
+		last_result = "água em contato"
 	if controller.session_id == session:
-		emit_fx(&"water_orb_impact", {"position": hit.position, "normal": hit.normal, "radius": radius(), "frozen": frozen})
+		emit_fx(&"water_orb_impact", {"position": hit.position, "normal": hit.normal, "radius": radius(),
+			"frozen": frozen, "persistent": persistent != null})
 	velocity = Vector3.ZERO
 
 

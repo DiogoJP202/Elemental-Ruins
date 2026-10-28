@@ -8,6 +8,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4D: T65 escava uma fissura física/persistente e T66 cobre input, limites e cancelamentos.
 ## P4E: T67 manipula/lança o orbe; T68 verifica contato/material/oclusão; T69 seu ciclo de vida.
 ## P4F: T70 congela/controla/lança gelo; T71 verifica impacto e limpeza do estado congelado.
+## P4G: T72 verifica gelo físico/orçamento; T73 cobre fusão por Fogo e limpeza da sessão.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -88,6 +89,8 @@ func _run_tests() -> bool:
 	if _should_run("T69"): await _t69_water_orb_lifecycle()
 	if _should_run("T70"): await _t70_ice_control()
 	if _should_run("T71"): await _t71_ice_contact_lifecycle()
+	if _should_run("T72"): await _t72_persistent_ice_physics()
+	if _should_run("T73"): await _t73_persistent_ice_heat_lifecycle()
 	return true
 
 
@@ -3225,4 +3228,259 @@ func _t71_ice_contact_lifecycle() -> void:
 	_record("T71", "Gelo aplica KINETIC único sem WET/impulso duplicado, respeita paredes/voxel/alcance e limpa estado ao cancelar",
 		body.ok and structural.ok and slot_ready and restart and contacts.values().all(func(c): return c.ok) and cases.values().all(func(c): return c.ok),
 		{"body": body, "structural_consumer": structural, "contacts": contacts, "cancellations": cases, "restart_liquid": restart})
+	await main.request_world_reset()
+
+
+## Fixture da mesma factory do impacto: só preenche orçamento/negativos, não prova o lançamento.
+func _p4g_fixture(orb: WaterOrb, center: Vector3) -> IceBody:
+	orb.position = center
+	return orb._spawn_persistent_ice({"position": center - Vector3.UP * (orb.radius() + 0.02), "normal": Vector3.UP})
+
+
+func _p4g_props_ray(center: Vector3) -> Dictionary:
+	var query := PhysicsRayQueryParameters3D.create(center + Vector3.UP * 1.0, center + Vector3.DOWN * 1.0, Layers.PROPS)
+	return player.get_world_3d().direct_space_state.intersect_ray(query)
+
+
+func _t72_persistent_ice_physics() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var crate := _air_crate(base + Vector3(0, 1.6, -8), 20.0)
+	var before := orb.get_stats()
+	var watch := {"contacts": 0, "target_speed": -1.0, "ice_speed": -1.0, "frozen": false}
+	var contact := func(kind: StringName, data: Dictionary):
+		if kind == &"water_orb_impact":
+			watch.contacts += 1
+			watch.frozen = data.get("frozen", false)
+			watch.target_speed = crate.linear_velocity.length()
+			var ice := orb.get_persistent_ice()
+			if ice.size() == 1: watch.ice_speed = ice[0].linear_velocity.length()
+	orb.fx_event.connect(contact)
+	_p4c_rmb(true)
+	await _frames(20)
+	var formed: bool = orb.phase == "hold" and not orb.is_frozen()
+	_p4f_c()
+	var frozen := orb.is_frozen()
+	await _aim_settle(MaterialResponseSystem.body_center(crate))
+	_p4c_rmb(false)
+	var finished: bool = await _wait_until(func(): return orb.phase == "", 2.0)
+	orb.fx_event.disconnect(contact)
+	# Medir a velocidade após a integração física; manter também o snapshot observado no callback.
+	await _frames(4)
+	var target_speed := crate.linear_velocity.length()
+	var impulse: float = orb.get_stats().impulse_ns - before.impulse_ns
+	var expected_impulse := crate.mass * orb.tuning.ice_max_target_delta_v
+	var created := orb.get_persistent_ice()
+	if created.size() != 1:
+		_record("T72", "Gelo lançado materializa corpo físico, repousa, recebe Ar e respeita orçamento", false,
+			{"formed": formed, "frozen": frozen, "finished": finished, "bodies": created.size(), "stats": orb.get_stats(), "impact": watch})
+		await main.request_world_reset()
+		return
+	var body: IceBody = created[0]
+	var born := body.global_position
+	var shape := body.get_node("IceCollision") as CollisionShape3D
+	var expected_mass := orb.volume_liters * 0.001 * orb.tuning.ice_density
+	var physical: bool = shape.shape is SphereShape3D and is_equal_approx((shape.shape as SphereShape3D).radius, orb.radius()) \
+		and is_equal_approx(body.mass, expected_mass) and body.continuous_cd and not body.freeze \
+		and body.collision_layer == Layers.PROPS and body.collision_mask == (Layers.TERRAIN | Layers.PLAYER | Layers.PROPS) \
+		and body.is_in_group(DebrisBudget.GROUP) and body.get_node("Crystal") is MeshInstance3D \
+		and BodyMaterialLibrary.of_body(body).id == BodyMaterialLibrary.ICE and not body.has_meta("volume_m3")
+	var single: bool = formed and frozen and finished and watch.contacts == 1 and watch.frozen \
+		and orb.get_stats().impacts == before.impacts + 1 and orb.get_stats().ice_spawned == before.ice_spawned + 1 \
+		and orb.get_stats().body_impacts == before.body_impacts + 1 and absf(impulse - expected_impulse) < 0.001 \
+		and absf(target_speed - orb.tuning.ice_max_target_delta_v) < 0.02 \
+		and float(watch.ice_speed) < 0.0001
+	var rested: bool = await _wait_until(func(): return body.sleeping, 5.0)
+	var ground := _ground_at(body.global_position)
+	var height := body.global_position.y - ground.y
+	var ray := _p4g_props_ray(body.global_position)
+	# O CharacterBody real consulta seu próprio volume contra o gelo, sem mover nenhum corpo.
+	var from := Transform3D(Basis.IDENTITY, Vector3(body.global_position.x, ground.y + 0.1, body.global_position.z + 2.0))
+	var player_blocked: bool = player.test_move(from, Vector3(0, 0, -3.0))
+	var solid: bool = rested and body.global_position.y < born.y - 0.2 and absf(height - body.ice_radius) < 0.08 \
+		and ray.get("collider") == body and player_blocked
+	ab.select(0)
+	await _aim_settle(body.global_position)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var not_rock: bool = not earth.validate_target().ok
+	ab.select(3)
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var start := body.global_position
+	var pushed0: int = gust.get_stats().bodies_pushed
+	await _aim_settle(body.global_position)
+	var wave := _air_press(ab, gust)
+	var peak_speed := 0.0
+	for i in 45:
+		await _frames(1)
+		peak_speed = maxf(peak_speed, body.linear_velocity.length())
+	var air: bool = wave >= 0 and gust.get_stats().bodies_pushed == pushed0 + 1 and peak_speed > 0.2 \
+		and body.global_position.distance_to(start) > 0.1
+	# O primeiro caso acima usa RMB/C e o contato real. A grade abaixo só economiza lançamentos no teste de teto.
+	base = await _p3_lab(1)
+	var filled := true
+	for z: float in [-6.0, -10.0]:
+		for x: float in [-3.0, -1.0, 1.0, 3.0]:
+			var p := _ground_at(base + Vector3(x, 0, z)) + Vector3.UP * (orb.radius() + 0.06)
+			filled = (_p4g_fixture(orb, p) != null) and filled
+	await _frames(45)
+	var cap := clampi(orb.tuning.ice_max_bodies, 1, 16)
+	filled = filled and orb.get_persistent_ice().size() == cap and cap == 8
+	# 185 ticks (~3 s a 60 Hz), oito corpos da sessão e um novo gelo controlado/lançado.
+	player.camera_rig.set_view(0.0, deg_to_rad(20.0))
+	ab.begin_water_orb()
+	ab.freeze_water_orb()
+	await _frames(20)
+	var clock := {"last": Time.get_ticks_usec()}
+	var frame_ms := PackedFloat32Array()
+	var sample := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().process_frame.connect(sample)
+	for i in 185:
+		if i == 60: ab.release_water_orb()
+		await _frames(1)
+	get_tree().process_frame.disconnect(sample)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	timings["physics_ticks"] = 185
+	_metrics["p4g_persistent_ice_frame_ms"] = timings
+	var windowed := not _mode.begins_with("headless")
+	var perf: bool = not windowed or (frame_ms.size() >= 120 and timings.get("p95", 999.0) <= 20.0 \
+		and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	ab.cancel_all()
+	var oldest: IceBody = orb.get_persistent_ice()[0] if not orb.get_persistent_ice().is_empty() else null
+	var eviction0: int = orb.get_stats().ice_evicted
+	var extra := _p4g_fixture(orb, _ground_at(base + Vector3(5, 0, -6)) + Vector3.UP * (orb.radius() + 0.06))
+	var evicted: bool = extra != null and is_instance_valid(oldest) and oldest.is_queued_for_deletion() \
+		and orb.get_stats().ice_evicted == eviction0 + 1 and orb.get_persistent_ice().size() == cap
+	await _frames(2)
+	var survivors := orb.get_persistent_ice()
+	var protected: IceBody = survivors[0] if not survivors.is_empty() else null
+	if protected != null: protected.set_meta(DebrisBudget.EARTH_HELD_META, true)
+	extra = _p4g_fixture(orb, _ground_at(base + Vector3(-5, 0, -6)) + Vector3.UP * (orb.radius() + 0.06))
+	var skipped: bool = extra != null and protected != null and not protected.is_queued_for_deletion() and not protected.can_retire()
+	for ice: IceBody in orb.get_persistent_ice(): ice.set_meta(DebrisBudget.EARTH_HELD_META, true)
+	var rejected0: int = orb.get_stats().ice_spawn_rejected
+	var denied := _p4g_fixture(orb, _ground_at(base + Vector3(5, 0, -10)) + Vector3.UP * (orb.radius() + 0.06))
+	var guarded: bool = denied == null and orb.get_persistent_ice().size() == cap \
+		and orb.get_stats().ice_spawn_rejected == rejected0 + 1 and orb.get_stats().last_ice_spawn_reason == "capacity_in_use"
+	for ice: IceBody in orb.get_persistent_ice(): ice.remove_meta(DebrisBudget.EARTH_HELD_META)
+	if _screens:
+		player.camera_rig.set_view(0.0, deg_to_rad(-12.0))
+		await _frames(2)
+		await _snap("p4g_persistent_ice")
+	_record("T72", "Gelo lançado materializa corpo físico, repousa, recebe Ar e respeita orçamento",
+		single and physical and solid and not_rock and air and filled and evicted and skipped and guarded and perf,
+		{"actual_launch": {"ok": single, "impact": watch, "target_speed_after_4_ticks": target_speed,
+			"impulse_ns": impulse, "expected_impulse_ns": expected_impulse}, "physical_contract": physical, "mass_kg": expected_mass,
+		"natural_rest": rested, "height_over_ground": height, "player_blocked": player_blocked, "solid": solid,
+		"earth_rejected": not_rock, "air_pushed": air, "air_peak_speed": peak_speed,
+		"capacity": {"factory_fixture": true, "filled_eight": filled, "oldest_evicted": evicted, "held_skipped": skipped, "all_held_rejected": guarded},
+		"frame_ms": timings, "frame_gate_applied": windowed})
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+func _t73_persistent_ice_heat_lifecycle() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(1)
+	var jet: WaterJet = ab.get_ability(&"water_jet")
+	var orb: WaterOrb = jet.orb
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var listeners0 := materials.melted.get_connections().size()
+	var center := _ground_at(base + Vector3(0, 0, -7)) + Vector3.UP * (orb.radius() + 0.06)
+	var body := _p4g_fixture(orb, center)
+	if body == null:
+		_record("T73", "Fogo funde gelo pelo estado térmico real; save preserva e reset/load limpam", false,
+			{"fixture_created": false, "stats": orb.get_stats()})
+		await main.request_world_reset()
+		return
+	var id := body.get_instance_id()
+	var state := materials.state_of(body)
+	var initial := state.temperature
+	await _seconds(1.2)
+	var ambient: bool = is_instance_valid(body) and not state.consumed and state.temperature <= initial + 0.001 \
+		and initial < state.material.melt_temperature
+	var melt_watch := {"count": 0, "consumed_before_fx": false, "collision_removed": false}
+	var melted := func(candidate: Node3D):
+		if candidate.get_instance_id() == id:
+			melt_watch.count += 1
+			melt_watch.consumed_before_fx = state.consumed
+			var rigid := candidate as RigidBody3D
+			melt_watch.collision_removed = rigid != null and rigid.collision_layer == 0 and rigid.collision_mask == 0
+	materials.melted.connect(melted)
+	ab.select(2)
+	var before_hits: int = fire.get_stats().body_hits
+	await _aim_settle(body.global_position)
+	var first := _fire_press(ab, fire)
+	var warmed: bool = await _wait_until(func(): return fire.get_stats().body_hits > before_hits, 1.5)
+	var after_first := state.temperature
+	var first_solid: bool = warmed and is_instance_valid(body) and not state.consumed \
+		and after_first > initial and after_first < state.material.melt_temperature
+	await _wait_until(func(): return fire.get_stats().cooldown_left <= 0.0, 1.0)
+	var last_center := body.global_position if is_instance_valid(body) else center
+	await _aim_settle(last_center)
+	var second := _fire_press(ab, fire)
+	var removed: bool = await _wait_until(func(): return instance_from_id(id) == null, 1.5)
+	await _frames(2)
+	var no_collision: bool = _p4g_props_ray(last_center).is_empty()
+	var no_state: bool = not materials._states.has(id)
+	materials.melted.disconnect(melted)
+	var no_listener: bool = materials.melted.get_connections().size() == listeners0
+	var fusion: bool = first >= 0 and second >= 0 and first_solid and removed and no_collision and no_state \
+		and state.temperature >= state.material.melt_temperature and state.consumed and not state.burning \
+		and melt_watch.count == 1 and melt_watch.consumed_before_fx and melt_watch.collision_removed and no_listener
+	# Salvar terreno não deve alterar o corpo vivo. Repouso vem do solver, sem freeze/sleep artificial.
+	ab.select(1)
+	body = _p4g_fixture(orb, center)
+	var lifecycle := {"save": false, "select_escape": false, "load": false, "reset": false}
+	if body != null:
+		var rested: bool = await _wait_until(func(): return body.sleeping, 5.0)
+		var transform := body.global_transform
+		var speed := body.linear_velocity
+		var frozen := body.freeze
+		var sleeping := body.sleeping
+		var saved: bool = await main.request_world_save("p4g_ice_session")
+		lifecycle.save = saved and rested and is_instance_valid(body) and body.global_transform.is_equal_approx(transform) \
+			and body.linear_velocity.is_equal_approx(speed) and body.freeze == frozen and body.sleeping == sleeping
+		ab.select(0)
+		_p4a_key(KEY_ESCAPE, true)
+		Input.flush_buffered_events()
+		_p4a_key(KEY_ESCAPE, false)
+		Input.flush_buffered_events()
+		await _frames(2)
+		lifecycle.select_escape = is_instance_valid(body) and orb.get_persistent_ice().size() == 1
+		var old_id := body.get_instance_id()
+		var loaded: bool = await main.request_world_load("p4g_ice_session")
+		await _frames(2)
+		lifecycle.load = loaded and not is_instance_valid(body) and orb.get_persistent_ice().is_empty() and not materials._states.has(old_id)
+	base = await _p3_lab(1)
+	body = _p4g_fixture(orb, _ground_at(base + Vector3(0, 0, -7)) + Vector3.UP * (orb.radius() + 0.06))
+	var spawned: bool = body != null
+	var reset_ok: bool = await main.request_world_reset()
+	await _frames(2)
+	lifecycle.reset = spawned and reset_ok and not is_instance_valid(body) and orb.get_persistent_ice().is_empty()
+	# Espaço impossível: recusa da mesma factory, mantendo a parede e sem inventar outro impacto.
+	base = await _p3_lab(1)
+	center = base + Vector3(0, 2, -6)
+	var wall := _p36_thin_wall(center, Vector3(3, 3, 3))
+	await _frames(2)
+	var wall_transform := wall.global_transform
+	var before := orb.get_stats()
+	var denied := _p4g_fixture(orb, center)
+	var no_space: bool = denied == null and orb.get_stats().ice_spawn_rejected == before.ice_spawn_rejected + 1 \
+		and orb.get_stats().last_ice_spawn_reason == "no_space" and orb.get_stats().impacts == before.impacts \
+		and orb.get_persistent_ice().is_empty() and wall.global_transform.is_equal_approx(wall_transform)
+	_record("T73", "Fogo funde gelo pelo estado térmico real; save preserva e reset/load limpam",
+		ambient and fusion and lifecycle.save and lifecycle.select_escape and lifecycle.load and lifecycle.reset and no_space,
+		{"ambient_does_not_melt": ambient, "initial_temperature": initial, "temperature_after_first_fire": after_first,
+		"temperature_at_melt": state.temperature, "two_actual_fire_bolts": fusion, "melt": melt_watch,
+		"collision_removed": no_collision, "material_reference_removed": no_state, "signal_listener_removed": no_listener, "session": lifecycle,
+		"no_space_factory_fixture": no_space})
+	ab.cancel_all()
+	player.input_enabled = false
 	await main.request_world_reset()

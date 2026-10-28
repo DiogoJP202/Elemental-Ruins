@@ -1,6 +1,6 @@
 # ELEMENTAL // RUINS — Roadmap técnico
 
-**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E recebeu feedback humano positivo. P4F — Congelamento e Lançamento de Gelo implementado em `codex/p4f-ice-orb`, base P4E `7678c12`, pronto para playtest; gate integral não executado.
+**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E/P4F receberam feedback humano positivo. P4G — Gelo Persistente e Derretimento implementado em `codex/p4g-persistent-ice`, base P4F `88d71e3`, pronto para playtest; gate integral não executado.
 
 **Checkpoint P4D em 28/10/2026: FALHOU.** Editor headless e export janela: 71/72 por timeout de preparação do T26 antes do save. Editor janela e export headless: 72/72. Persistência entre processos e benchmarks aprovados, zero erros/avisos; detalhamento abaixo. O usuário autorizou P4E apesar desse FAIL, que permanece preservado. T26 não foi investigado nesta fatia.
 
@@ -74,10 +74,17 @@ Com Água selecionada, LMB mantém o jato existente. Segurar RMB forma um único
 
 **Validação dirigida:** T1/T67/T68/T69, 4/4 headless e 4/4 em janela; regressão T1/T46/T47/T48/T60/T64/T66, 7/7 headless. Execuções aprovadas sem erros/avisos. Benchmark curto de controle/lançamento em janela: p95 18,05 ms, p99 18,76 ms, máximo 21,65 ms, dentro de 20/33/50 ms. Evidências em `docs/evidence/p4e/`. Contrato P4E: 75 IDs, **integral não executada**; checkpoint P4D permanece FAIL. Feedback humano positivo informado pelo usuário em 28/10/2026, sem avaliação detalhada por cenário; os relatórios mantêm o estado histórico anterior.
 
-## P4F — Congelamento e Lançamento de Gelo (implementado; pronto para playtest)
+## P4F — Congelamento e Lançamento de Gelo (implementado; feedback humano positivo)
 Água selecionada: C durante RMB congela uma vez o mesmo orbe, com posição/velocidade preservadas. Controle suspenso P4E mantido; soltar RMB lança gelo balístico a 26 m/s, gravidade 9,8 m/s², KINETIC mais intenso (até 3000 N·s e massa × 12 m/s), sem WET. Mesma esfera varrida, contato único e consumidor estrutural sem duplicação de impulso. Cristal facetado opaco, transição de 0,18 s e fragmentos visuais limitados a 12. Cancelar/finalizar restaura LIQUID; C fora do hold é ignorado. Resource existente, sem gelo persistente, derretimento ou estruturas de gelo.
 
-**Validação dirigida:** T1/T70/T71 3/3 headless e 3/3 janela; regressão 9/9 headless (jato, líquido, Terra/Fogo/Ar e controles). Zero erros/avisos. Benchmark: p95 18,13 / p99 18,86 / máximo 18,94 ms, dentro de 20/33/50. Evidências em `docs/evidence/p4f/`. Contrato completo 77 IDs não executado; P4D continua FAIL e T26 não foi investigado. **Próximo passo: playtest humano P4F (NÃO TESTADO)**, sem outra habilidade automática.
+**Validação dirigida:** T1/T70/T71 3/3 headless e 3/3 janela; regressão 9/9 headless (jato, líquido, Terra/Fogo/Ar e controles). Zero erros/avisos. Benchmark: p95 18,13 / p99 18,86 / máximo 18,94 ms, dentro de 20/33/50. Evidências em `docs/evidence/p4f/`. Contrato daquela entrega: 77 IDs não executado; P4D continua FAIL e T26 não foi investigado. Feedback humano positivo informado pelo usuário em 28/10/2026, sem avaliação detalhada por cenário nem aprovação integral; evidências históricas preservadas.
+
+## P4G — Gelo Persistente e Derretimento (implementado; pronto para playtest)
+O impacto congelado conserva KINETIC único e materializa um `IceBody` com colisão esférica/CCD, massa de 137,55 kg para 150 L, cristal facetado P4F e repouso natural. Reutiliza props_root/DebrisBudget, materiais e VFX. Ar/Água empurram; Terra não captura como rocha. Teto configurável de oito, removendo mais antigo elegível; se não houver espaço ou todos estiverem protegidos, mantém impacto e fragmenta sem spawn inválido.
+
+Fogo usa HEAT no mesmo MaterialResponseSystem: gelo começa a -20 °C, funde a 0 °C, sem aquecimento ambiente automático. Colisão removida ao confirmar fusão; cópia visual encolhe em 0,45 s com vapor limitado. Seleção/Esc preservam gelo do mundo; save não altera a física viva, reset/load removem a sessão. Sem serialização de corpos, poças, água física ou estruturas de gelo.
+
+**Validação dirigida:** import/parse; T1/T72/T73 3/3 headless e 3/3 janela; regressão 12/12 headless de materiais/jato/líquido/congelamento/controles/Terra/Fogo/Ar. Execuções finais sem erros/avisos. Tentativa inicial com falhas das sondas corrigidas permanece registrada. Benchmark de 185 ticks com oito corpos e orbe ativo/lançado: **17,60 / 17,96 / 18,32 ms** (p95/p99/máximo), dentro de 20/33/50. Evidências e metodologia em `docs/evidence/p4g/`. Contrato atual 79 IDs; integral/export não executados. P4D FAIL preservado; T26 não modificado/investigado. **Próximo passo: playtest humano P4G**, sem P4H automático.
 
 ## P4 posterior — 16 habilidades, combinações e visual (futuro)
 Expandir `elemental_abilities_mvp.json`; estados de materiais, gelo, lava, eletricidade, vórtices, shaders Ilustrado/Retro, áudio/animações e modos de jogo.

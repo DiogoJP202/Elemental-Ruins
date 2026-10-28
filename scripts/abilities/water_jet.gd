@@ -42,6 +42,7 @@ func get_stats() -> Dictionary:
 	return data
 
 func on_press() -> void:
+	orb.last_result = ""
 	active = true
 	pressure = 0.0
 	_elapsed = 0.0
@@ -148,4 +149,6 @@ func clear() -> void:
 func status() -> String:
 	if orb.phase != "":
 		return orb.status()
+	if not active and orb.last_result != "":
+		return orb.last_result
 	return "pressão %d%% · %d pacotes" % [roundi(pressure * 100), packets.size()] if active else last_result

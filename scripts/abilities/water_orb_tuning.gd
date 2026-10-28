@@ -29,6 +29,12 @@ extends Resource
 @export_range(0.0, 6000.0, 10.0) var ice_impulse_ns := 3000.0
 @export_range(0.0, 20.0, 0.1) var ice_max_target_delta_v := 12.0
 @export var ice_color := Color("#C4E5F5")
+@export_group("Gelo persistente")
+@export_range(100.0, 2000.0, 1.0) var ice_density := 917.0
+@export_range(1, 16, 1) var ice_max_bodies := 8
+@export_range(-100.0, -1.0, 1.0) var ice_initial_temperature := -20.0
+@export_range(0.0, 100.0, 1.0) var ice_melt_temperature := 0.0
+@export_range(0.05, 1.0, 0.05) var ice_melt_duration_s := 0.45
 @export_group("Apresentação (sem física)")
 @export var color := Color("#80DDEDCC")
 @export_range(0.0, 0.1, 0.005) var wobble := 0.045

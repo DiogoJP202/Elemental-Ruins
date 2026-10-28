@@ -1,0 +1,182 @@
+{
+  "implementation": "READY_FOR_PLAYTEST",
+  "branch": "codex/p4g-persistent-ice",
+  "base_branch": "codex/p4f-ice-orb",
+  "base_commit": "88d71e3a5cf0b3d92516a1ac3a636e7f92cc3740",
+  "p4f_human_feedback": "Positive feedback reported by user on 2026-10-28; not an automated or full integration approval.",
+  "p4d_checkpoint": "FAIL preserved; T26 neither modified nor investigated",
+  "p4g_integration": "NOT_RUN",
+  "full_contract_count": 79,
+  "reports": {
+    "persistent_headless": {
+      "report": "02_headless.json",
+      "run_id": "f66ae90b904f",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T72",
+        "T73"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "related_headless": {
+      "report": "03_related_headless.json",
+      "run_id": "84193b8ea0c8",
+      "result": "PASS",
+      "complete": true,
+      "passed": 12,
+      "total": 12,
+      "expected_ids": [
+        "T1",
+        "T38",
+        "T46",
+        "T48",
+        "T49",
+        "T52",
+        "T60",
+        "T67",
+        "T68",
+        "T69",
+        "T70",
+        "T71"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "persistent_window": {
+      "report": "04_window.json",
+      "run_id": "818d753ac6d1",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T72",
+        "T73"
+      ],
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "formal_validation": "Existing Invoke-SelftestStep: process exit 0, externally supplied fresh run_id, fresh complete reports, exact IDs, typed counters, individual PASS results and zero engine diagnostics. Pinned IDs/run_ids revalidated after execution.",
+  "import_parse": "Custom editor import exit 0 (one attempt), check-only WaterOrb and selftest exit 0; zero engine diagnostics.",
+  "accepted_runs_zero_engine_diagnostics": true,
+  "initial_attempts": [
+    {
+      "log": "02_wrong_cli_interrupted.log",
+      "result": "INVALID_INVOCATION",
+      "note": "Wrong CLI parameters did not start selftests. Process interrupted, no report, never counted as PASS."
+    },
+    {
+      "report": "02_headless_initial_fail.json",
+      "run_id": "81cff734e31f",
+      "result": "FAIL",
+      "passed": 2,
+      "total": 3,
+      "errors": 1,
+      "warnings": 0,
+      "note": "T72 read velocity inside impact callback (0 m/s); measured 12 m/s after four physics ticks in final test. T73 passed but its wait lambda captured the deleted body, producing an engine error. Corrected probes only; kept one impact, 240 N.s and 12 m/s requirements. No runtime physics changes to conceal failure."
+    }
+  ],
+  "benchmark": {
+    "id": "T72",
+    "mode": "editor window",
+    "scenario": "Eight physical ice bodies plus a held/frozen/launched orb",
+    "physics_ticks": 185,
+    "samples": 184,
+    "p95_ms": 17.6,
+    "p99_ms": 17.96,
+    "max_ms": 18.32,
+    "limits_ms": {
+      "p99": 33,
+      "p95": 20,
+      "max": 50
+    },
+    "pass": true
+  },
+  "environment": {
+    "godot": "4.7.2-stable (custom_build)",
+    "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "gpu": "Intel(R) Iris(R) Xe Graphics",
+    "renderer": "forward_plus",
+    "physics": "Jolt Physics",
+    "resolution": "1600x900",
+    "vulkan": "1.4.323",
+    "methodology": "Sequential existing selftests, one Godot process at a time. Budget bodies prepared via same impact factory; first launch independently tested through RMB/C. process_frame intervals over 185 physics ticks after preparation; no screenshot readback during sampling. Historical spawn capture restored. No cross-machine performance attribution."
+  },
+  "gameplay": {
+    "nominal_liters": 150,
+    "mass_kg": 137.55,
+    "capacity": 8,
+    "initial_temperature_c": -20,
+    "melt_temperature_c": 0,
+    "first_fire_temperature_c": -5,
+    "two_fire_bursts_melt": true,
+    "first_impact_ns": 240,
+    "target_20kg_speed_m_s": 12,
+    "spawn_velocity_m_s": 0,
+    "melting_physics": "Consumed state then immediate collider removal/body queue_free; only bounded cosmetic ghost remains for 0.45 seconds.",
+    "lifecycle": "Save preserves live session bodies; select/Esc keep materialized ice; reset/load remove it. No dynamic body serialization."
+  },
+  "not_run": [
+    "export",
+    "full integration suite (79 IDs, four modes)",
+    "cross-process persistence",
+    "T26",
+    "human playtest P4G"
+  ],
+  "capture": "screens/persistent_ice.png",
+  "capture_is_human_playtest": false,
+  "source_hashes": [
+    {
+      "path": "scripts/physics/ice_body.gd",
+      "sha256": "0e98d4343958028a0840a50bcf3fa3c22e802faf86377df5e2102e72031d77ff"
+    },
+    {
+      "path": "scripts/abilities/water_orb.gd",
+      "sha256": "ca386658c62fbc7ba97b1e79e42ef30a90b0631e6febc44fe195551a081b0f2e"
+    },
+    {
+      "path": "scripts/abilities/water_orb_tuning.gd",
+      "sha256": "6b19257a8026f230a3795cdc30349c688c12e76155922313cd062a5b69f64533"
+    },
+    {
+      "path": "scripts/abilities/water_jet.gd",
+      "sha256": "7039c963ff3d36e501350788009283fd583e4bb1cf4a03d115c3a3ae2509c639"
+    },
+    {
+      "path": "scripts/elements/body_material.gd",
+      "sha256": "2c8d187ce075186d8be8dd0a7db8ccdab9dd34455642fb759085d3dbc6721c46"
+    },
+    {
+      "path": "scripts/elements/body_material_library.gd",
+      "sha256": "e663faf2873910bbeffda7b3fa4dc485dc666d9327f14e26b69acaa8bb9f2959"
+    },
+    {
+      "path": "scripts/elements/material_state.gd",
+      "sha256": "654fba70786ae714c4a06e57b0a4ade0e807f7fc74820d757229380541efa46e"
+    },
+    {
+      "path": "scripts/elements/material_response_system.gd",
+      "sha256": "504eafe498b6bd8a22ff21caf7879e01297a9088f643b8d209179e7f8ee8231c"
+    },
+    {
+      "path": "scripts/elements/elemental_fx.gd",
+      "sha256": "826c18647acff985bd17ea89eedc197041e735817060ffca35e8f84459defcb3"
+    },
+    {
+      "path": "scripts/dev/p36_selftest.gd",
+      "sha256": "ea919231c8d57cea08f2b133db08c3ddb3c9d139c5ea2ed8cc4f8549f6741f7b"
+    },
+    {
+      "path": "tools/lib_selftest_contract.ps1",
+      "sha256": "949c5c32559171ea29180cdd81ed769a9ed7086bbd9abb0fbd69e6624c6a1e97"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "amostras_erros": [
+    "ERROR: Lambda capture at index 0 was freed. Passed \"null\" instead. (modules\\gdscript\\gdscript_lambda_callable.cpp:110 GDScriptLambdaCallable::call)"
+  ],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-28T15:43:44",
+  "duracao_s": 17.455,
+  "erros_motor": 1,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 940.0,
+    "p4g_persistent_ice_frame_ms": {
+      "max": 8.47,
+      "media": 6.9,
+      "min": 5.33,
+      "n": 446,
+      "p95": 7.92,
+      "p99": 8.15,
+      "physics_ticks": 185
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "FAIL",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 940.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "actual_launch": {
+          "impact": {
+            "contacts": 1,
+            "frozen": true,
+            "ice_speed": 0.0,
+            "target_speed": 0.0
+          },
+          "ok": false
+        },
+        "air_peak_speed": 6.06013345718384,
+        "air_pushed": true,
+        "capacity": {
+          "all_held_rejected": true,
+          "factory_fixture": true,
+          "filled_eight": true,
+          "held_skipped": true,
+          "oldest_evicted": true
+        },
+        "earth_rejected": true,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 8.47,
+          "media": 6.9,
+          "min": 5.33,
+          "n": 446,
+          "p95": 7.92,
+          "p99": 8.15,
+          "physics_ticks": 185
+        },
+        "height_over_ground": 0.309610307216644,
+        "mass_kg": 137.55,
+        "natural_rest": true,
+        "physical_contract": true,
+        "player_blocked": true,
+        "solid": true
+      },
+      "id": "T72",
+      "status": "FAIL",
+      "titulo": "Gelo lançado materializa corpo físico, repousa, recebe Ar e respeita orçamento"
+    },
+    {
+      "detalhes": {
+        "ambient_does_not_melt": true,
+        "collision_removed": true,
+        "initial_temperature": -20.0,
+        "material_reference_removed": true,
+        "melt": {
+          "collision_removed": true,
+          "consumed_before_fx": true,
+          "count": 1
+        },
+        "no_space_factory_fixture": true,
+        "session": {
+          "load": true,
+          "reset": true,
+          "save": true,
+          "select_escape": true
+        },
+        "signal_listener_removed": true,
+        "temperature_after_first_fire": -5.0,
+        "temperature_at_melt": 9.56666666666667,
+        "two_actual_fire_bolts": true
+      },
+      "id": "T73",
+      "status": "PASS",
+      "titulo": "Fogo funde gelo pelo estado térmico real; save preserva e reset/load limpam"
+    }
+  ],
+  "run_id": "81cff734e31f",
+  "testes_ids": [
+    "T1",
+    "T72",
+    "T73"
+  ],
+  "testes_pass": 2,
+  "testes_total": 3,
+  "video_adapter": ""
+}

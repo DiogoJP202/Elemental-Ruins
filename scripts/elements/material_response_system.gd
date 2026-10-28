@@ -19,6 +19,8 @@ signal ignited(body: Node3D)
 signal extinguished(body: Node3D, cause: String)
 signal burned_out(body: Node3D)
 signal kinetic_break(body: Node3D, impulse: float)
+## Material consumido pelo calor; o corpo remove a colisão e avisa os VFX.
+signal melted(body: Node3D)
 
 const TICK_S := 0.2
 const SPREAD_RADIUS := 2.2
@@ -38,6 +40,7 @@ var _states := {}  # instance_id → {"body": WeakRef, "state": MaterialState}
 var _accum := 0.0
 var _epoch := 0
 var _stats := {"events": 0, "ignitions": 0, "ignitions_skipped": 0, "extinguished": 0, "burned_out": 0,
+	"melted": 0,
 	"kinetic_breaks": 0, "spread_queries": 0, "spread_blocked": 0, "events_rejected_busy": 0,
 	"thermal_ticks": 0, "thermal_usec": 0, "thermal_usec_max": 0, "spread_usec": 0}
 
@@ -73,6 +76,12 @@ func burning_count() -> int:
 	for e in _states.values():
 		n += int(e.state.burning and not e.state.consumed)
 	return n
+
+
+## Chamado pelo corpo ao sair da árvore; manter o estado consumido até lá conserva os snapshots de HEAT/VFX.
+func forget_body(body: Node3D) -> void:
+	if is_instance_valid(body):
+		_states.erase(body.get_instance_id())
 
 
 func get_stats() -> Dictionary:
@@ -189,7 +198,7 @@ func _apply_to(event: ElementalEvent, body: Node3D, falloff: float) -> void:
 			_heat(body, s, m)
 		ElementalEvent.Kind.WET:
 			s.wetness = clampf(s.wetness + m, 0.0, 1.0)
-			s.temperature = maxf(MaterialState.AMBIENT, s.temperature - m * 200.0)
+			s.temperature = maxf(s.material.initial_temperature, s.temperature - m * 200.0)
 			if s.burning:
 				s.intensity -= m * 2.0
 				if s.intensity <= 0.0 or s.wetness > 0.3:
@@ -212,11 +221,21 @@ func _apply_to(event: ElementalEvent, body: Node3D, falloff: float) -> void:
 
 
 func _heat(body: Node3D, s: MaterialState, units: float) -> void:
+	if s.consumed:
+		return
 	var effective := units / s.material.heat_resistance
 	var dry_heat := maxf(fire_tuning.dry_heat, 0.001)
 	var to_dry := minf(effective, s.wetness * dry_heat)
 	s.wetness = maxf(0.0, s.wetness - to_dry / dry_heat)
 	s.temperature += effective - to_dry
+	if not is_inf(s.material.melt_temperature) and s.temperature >= s.material.melt_temperature:
+		# Estado primeiro, antes dos callbacks: vários HEAT no mesmo tick não repetem a fusão.
+		s.consumed = true
+		s.burning = false
+		s.intensity = 0.0
+		_stats.melted += 1
+		melted.emit(body)
+		return
 	if s.burning:
 		s.intensity = minf(1.0, s.intensity + effective / 400.0)
 	elif s.material.flammable and s.fuel > 0.0 and s.wetness < 0.05 and s.temperature >= s.material.ignition_temperature:
@@ -289,7 +308,7 @@ func _thermal_tick(dt: float) -> void:
 				if epoch != _epoch:
 					return
 		else:
-			s.temperature = maxf(MaterialState.AMBIENT, s.temperature - s.material.cooling_per_second * dt)
+			s.temperature = maxf(s.material.initial_temperature, s.temperature - s.material.cooling_per_second * dt)
 			s.wetness = maxf(0.0, s.wetness - s.material.drying_per_second * dt)
 	for id in dead:
 		_states.erase(id)

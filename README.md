@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4F)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4G)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -15,7 +15,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **Checkpoint P4D na retomada de 28/10/2026: FALHOU** no preparo do T26 em dois modos; os demais testes, persistência entre processos e benchmarks passaram. Esse FAIL está preservado; o usuário autorizou avançar para P4E sem investigar T26 nesta tarefa.
 **P4E — Orbe de Água implementado e pronto para playtest:** segurar RMB forma uma massa da reserva abstrata do Criativo; câmera, Q/E e roda controlam sua posição com atraso; soltar lança. Feedback humano positivo informado pelo usuário em 28/10/2026, sem avaliação detalhada por cenário; checkpoint integral P4E não executado.
 
-**P4F — Congelamento e Lançamento de Gelo implementado e pronto para playtest:** C durante RMB transforma o mesmo orbe; voo balístico, impacto cinético próprio e cristal facetado. Validação dirigida aprovada; playtest humano P4F e gate integral ainda não executados.
+**P4F — Congelamento e Lançamento de Gelo implementado, com feedback humano positivo:** C durante RMB transforma o mesmo orbe; voo balístico, impacto cinético próprio e cristal facetado. Feedback informado pelo usuário em 28/10/2026; gate integral não executado.
+**P4G — Gelo persistente e derretimento:** o impacto congelado deixa um corpo físico no mundo; Fogo aquece e funde pelo sistema de materiais existente. Branch `codex/p4g-persistent-ice`, base P4F `88d71e3`. O FAIL histórico P4D permanece.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -219,7 +220,19 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
-### P4F — Congelar e lançar gelo: pronto para playtest
+### P4G — Gelo persistente e derretimento
+
+**Playtest:** selecione **2**, segure **RMB**, pressione **C** e solte mirando o chão ou uma caixa. O cristal permanece, cai e repousa; repita para acumular até **oito**. Selecione **4** para empurrá-lo com Ar e **3** para aquecer com Fogo: duas rajadas próximas fundem um gelo seco novo nos valores padrão. Trocar elemento/Esc preserva o gelo já materializado. Compare com RMB sem C e LMB: orbe líquido e jato mantêm impulso/WET. Reset/load removem os corpos da sessão; save preserva a física viva, mas não serializa gelo entre sessões.
+
+`WaterOrb` conserva movimento, varredura e impacto único P4F. Após aplicar KINETIC, materializa `IceBody` (pequeno `RigidBody3D`) no centro seguro da esfera, com velocidade inicial zero para não repetir a pancada. Colisor esférico, CCD e layers existentes de terreno/jogador/props; malha facetada P4F compartilhada com ElementalFx. Sem espaço livre, mantém o impacto e fragmenta visualmente, registrando `no_space` no estado/HUD. O orçamento usa `DebrisBudget`; no teto, remove o gelo mais antigo elegível com efeito breve. Corpos com a marca de controle existente são preservados; se todos estiverem protegidos, recusa a materialização. Terra não captura gelo como rocha.
+
+Parâmetros em `WaterOrbTuning`/Resource existente: `ice_density=917` kg/m³ (**137,55 kg** para 150 L nominais), `ice_max_bodies=8`, `ice_initial_temperature=-20`, `ice_melt_temperature=0` °C e `ice_melt_duration_s=0.45`. `BodyMaterialLibrary.ICE`, `MaterialState` e `MaterialResponseSystem` recebem HEAT/WET/KINETIC pelos consumidores existentes. O piso térmico inicial é próprio por material (outros continuam em 20 °C); gelo não derrete passivamente no ambiente. HEAT suficiente marca fusão e remove imediatamente a colisão; uma cópia puramente visual encolhe/desaparece em 0,45 s, com vapor do pool existente. Não há água física resultante, poça, gelo voxel, fusão volumétrica conservativa ou salvamento novo. A esfera de colisão envolve a malha facetada, como no projétil anterior.
+
+**Validação dirigida (28/10/2026):** import/parse custom aprovados; [T1/T72/T73 headless 3/3](docs/evidence/p4g/02_headless.json), [regressão headless 12/12](docs/evidence/p4g/03_related_headless.json) (T1/T38/T46/T48/T49/T52/T60/T67/T68/T69/T70/T71) e [T1/T72/T73 janela 3/3](docs/evidence/p4g/04_window.json). Execuções finais sem erros/avisos. T72 verifica lançamento real, único impulso de 240 N·s/12 m/s na caixa de 20 kg, corpo com massa/colisão/repouso, bloqueio do jogador, Ar e teto/proteção; fixtures pela mesma factory preenchem o orçamento sem repetir oito lançamentos. T73 verifica -20 → -5 °C → fusão por duas rajadas reais de Fogo, retirada da colisão/estado/sinal, save/seleção/Esc/load/reset e recusa por espaço ocupado. A [tentativa inicial FAIL](docs/evidence/p4g/02_headless_initial_fail.json) está preservada: a sonda lia velocidade dentro do callback (0 m/s; depois de quatro ticks, 12 m/s) e outra lambda capturava o corpo após destruído. Corrigidas apenas as medições, sem relaxar critérios ou mudar a física. Uma chamada com parâmetros CLI incorretos foi interrompida sem relatório e não conta como teste.
+
+Benchmark em janela, oito corpos e controle/lançamento de outro gelo, 185 ticks / 184 intervalos: **p95 17,60 / p99 17,96 / máximo 18,32 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; process_frame após preparação dos corpos, uma Godot por vez, captura após a medição e captura histórica restaurada. [Captura inspecionada](docs/evidence/p4g/screens/persistent_ice.png) e [consolidação/ambiente](docs/evidence/p4g/result.json). **Integral de 79 IDs, export, persistência entre processos e playtest humano P4G não executados.** P4D continua FAIL; T26 não foi investigado. Implementação pronta para playtest, sem aprovação de integração integral.
+
+### P4F — Congelar e lançar gelo: feedback humano positivo
 
 Selecione **2**, segure **RMB** e pressione **C**: o mesmo orbe cristaliza sem mudar de posição ou velocidade. Câmera, Q/E e roda continuam controlando-o. Solte RMB para lançar e mire um pouco acima de alvos distantes para compensar a gravidade. Compare com uma nova formação sem C: água voa reta, molha/resfria/apaga; gelo tem queda balística e golpe maior, sem WET automático. C só age uma vez no hold válido; durante voo, jato ou outro elemento é ignorado. Cancelar ou concluir volta ao estado inicial líquido.
 
@@ -227,7 +240,7 @@ Foram estendidos `WaterOrb` e seu Resource existente, sem outra Ability/controla
 
 **Testes dirigidos (28/10/2026):** import/parse custom aprovados; [T1/T70/T71 headless 3/3](docs/evidence/p4f/ice_headless.json), [regressão headless 9/9](docs/evidence/p4f/related_headless.json) (T1/T46/T48/T49/T52/T60/T67/T68/T69) e [T1/T70/T71 janela 3/3](docs/evidence/p4f/ice_window.json). Zero erros/avisos. T70 cobre C contextual/uma vez, posição/velocidade preservadas, controle, parede e gravidade; T71 cobre contato único sem WET, peça estrutural sem impulso duplicado, parede de 1 mm a 60 m/s, terreno voxel, alcance e 14 cancelamentos em hold/voo (seleção/input/captura/Esc/reset/save/load), reiniciando líquido. Caixa de 20 kg recebeu 240 N·s e 12 m/s; a peça estrutural de 20 kg recebeu os 120 N·s/6 m/s aplicados pelo consumidor existente. A regressão líquida manteve 160 N·s/8 m/s, WET e extinção.
 
-Benchmark T70 com congelamento/controle/lançamento em janela: **p95 18,13 / p99 18,86 / máximo 18,94 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; intervalos de process_frame, execuções sequenciais sem outra Godot, captura depois de encerrar amostragem. [Consolidação e ambiente](docs/evidence/p4f/result.json). Três execuções dirigidas; **export, contrato integral de 77 IDs e playtest humano P4F não executados**. P4D permanece FAIL; T26 não foi investigado. Próximo passo: experimentar gelo/água no editor custom (F5), sem iniciar outra habilidade.
+Benchmark T70 com congelamento/controle/lançamento em janela: **p95 18,13 / p99 18,86 / máximo 18,94 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; intervalos de process_frame, execuções sequenciais sem outra Godot, captura depois de encerrar amostragem. [Consolidação e ambiente](docs/evidence/p4f/result.json). Três execuções dirigidas; **export, contrato integral de 77 IDs e playtest humano P4F não executados naquela entrega**. Posteriormente, o usuário informou feedback humano positivo em 28/10/2026; isso não substitui validação integral. P4D permanece FAIL; T26 não foi investigado. Evidências históricas preservadas.
 
 ### P4E — Orbe de Água: feedback humano positivo
 
