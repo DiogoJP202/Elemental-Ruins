@@ -567,3 +567,17 @@ a 1 Hz, ponderado por exposição/borda, preservando o domínio de magnitude/lim
 fogo fraco da rajada. Sem novo sistema térmico ou efeito material integral por frame.
 Âncoras/held não são liberados; estacionamento por orçamento só é reativado perto do
 jogador. Estacionamento por distância continua sob a política existente do DebrisBudget.
+
+## D59. P4J: dose térmica por tempo de contato no fluxo composto
+FireBurst compõe FireStream e preserva a bola LMB. Antecipação bloqueia iniciar RMB;
+fluxo bloqueia novas bolas, mas voos anteriores continuam. A frente cresce só na formação;
+origem/mira/primeiro obstáculo são recalculados a cada tick, sem fila de dano remoto.
+
+HEAT = taxa × segundos realmente expostos, incluindo chegada da frente no meio do tick.
+O relógio limita pulsos e colapsa intervalos longos numa dose, sem multiplicar calor por FPS.
+Crédito parcial é descartado ao perder/trocar contato ou cancelar; release não aplica calor
+remanescente. Nenhuma referência forte a alvo é mantida. MRS usa o lado livre do contato e
+sua própria visada/evaporação/ignição/fusão; só depois vem VFX. Temperatura já transferida
+fica no mundo. Passagem peito→mão obstruída recusa/cancela, sem emitir através da parede.
+A origem física do fluxo fica 0,8 m à direita da mão abstrata central, para a cápsula do
+jogador não encobrir toda a emissão. Colisão e VFX usam essa mesma origem; não é offset visual.

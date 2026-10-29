@@ -47,6 +47,7 @@ const MOUSE_BUTTON_ACTIONS := {
 	&"earth_pillar": [MOUSE_BUTTON_RIGHT],
 	&"water_orb": [MOUSE_BUTTON_RIGHT],
 	&"air_vortex": [MOUSE_BUTTON_RIGHT],
+	&"fire_stream": [MOUSE_BUTTON_RIGHT],
 }
 
 

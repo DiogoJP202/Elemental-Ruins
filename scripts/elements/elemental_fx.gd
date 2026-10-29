@@ -24,6 +24,8 @@ const DUST_POOL := 6
 const ICE_GHOST_POOL := 8
 const VORTEX_RIBBONS := 3
 const VORTEX_PARTICLES := 32
+const FIRE_STREAM_CELLS := 24
+const FIRE_STREAM_PARTICLES := 8
 static var _soft_texture: ImageTexture
 
 var abilities: AbilityController
@@ -46,6 +48,9 @@ var _vortex_ribbons: Array[MeshInstance3D] = []
 var _vortex_base: MeshInstance3D
 var _vortex_dust: GPUParticles3D
 var _vortex_dust_process: ParticleProcessMaterial
+var _fire_stream: MultiMeshInstance3D
+var _fire_stream_core: MeshInstance3D
+var _fire_stream_sparks: GPUParticles3D
 var _beam: MultiMeshInstance3D
 var _water_snapshot: Array = []
 var _water_tail := 0.0
@@ -95,6 +100,7 @@ func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) 
 	var fire := abilities.get_ability(&"fire_burst")
 	if fire != null:
 		fire.fx_event.connect(_on_fire_event)
+		(fire as FireBurst).stream.fx_event.connect(_on_fire_stream_event)
 	var air := abilities.get_ability(&"air_gust") as AirGust
 	if air != null:
 		air.fx_event.connect(_on_air_event)
@@ -136,6 +142,10 @@ func get_stats() -> Dictionary:
 	d["vortex_visual_nodes"] = _vortex_ribbons.size() + int(_vortex_base != null) + int(_vortex_dust != null)
 	d["vortex_particles"] = VORTEX_PARTICLES
 	d["vortex_particles_emitting"] = _vortex_dust != null and _vortex_dust.emitting
+	d["fire_stream_visible"] = _fire_stream != null and _fire_stream.visible
+	d["fire_stream_instances"] = _fire_stream.multimesh.visible_instance_count if _fire_stream != null else 0
+	d["fire_stream_particles"] = FIRE_STREAM_PARTICLES
+	d["fire_stream_particles_emitting"] = _fire_stream_sparks != null and _fire_stream_sparks.emitting
 	var visible_balls := 0
 	for ball in _balls:
 		visible_balls += int(ball.visible)
@@ -159,6 +169,7 @@ func _ready() -> void:
 	_flame_process.angular_velocity_min = -35.0
 	_flame_process.angular_velocity_max = 35.0
 	_flame_quad = _quad(maxf(fire_tuning.flame_size, 0.05), Color(1, 1, 1, 0.8))
+	_create_fire_stream_visuals(fire_tuning)
 	# Fumaça da dissipação: brasa que esfria sem clarão (não houve contato nem calor).
 	var smoke := Gradient.new()
 	smoke.offsets = PackedFloat32Array([0.0, 0.3, 1.0])
@@ -267,6 +278,7 @@ func _process(delta: float) -> void:
 	_update_ice_ghosts(delta)
 	var t0 := Time.get_ticks_usec()
 	_update_fireballs()
+	_update_fire_stream()
 	_update_air()
 	_update_vortex()
 	_char_accum += delta
@@ -775,6 +787,112 @@ func _update_fireballs() -> void:
 		_fire_trails[i].global_position = p.pos
 		(_fire_trails[i].process_material as ParticleProcessMaterial).direction = -(p.vel as Vector3).normalized()
 		_fire_trails[i].amount_ratio = 0.35 if pending else 1.0
+
+
+## Núcleo contínuo e células de chama, todos contidos no segmento decidido pelo gameplay.
+func _create_fire_stream_visuals(tuning: FireTuning) -> void:
+	_fire_stream = MultiMeshInstance3D.new()
+	_fire_stream.name = "FireStream"
+	var flame := CylinderMesh.new()
+	flame.top_radius = 0.35
+	flame.bottom_radius = 1.0
+	flame.height = 1.0
+	flame.radial_segments = 6
+	flame.rings = 1
+	var material := _unshaded(Color.WHITE)
+	material.vertex_color_use_as_albedo = true
+	flame.material = material
+	var cells := MultiMesh.new()
+	cells.transform_format = MultiMesh.TRANSFORM_3D
+	cells.use_colors = true
+	cells.mesh = flame
+	cells.instance_count = FIRE_STREAM_CELLS
+	cells.visible_instance_count = 0
+	_fire_stream.multimesh = cells
+	_fire_stream.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_fire_stream.visible = false
+	add_child(_fire_stream)
+	_fire_stream_core = MeshInstance3D.new()
+	_fire_stream_core.name = "FireStreamCore"
+	var core := CylinderMesh.new()
+	core.top_radius = 0.035
+	core.bottom_radius = 0.045
+	core.height = 1.0
+	core.radial_segments = 6
+	core.rings = 1
+	core.material = _unshaded(Color(1.0, 0.85, 0.38, 0.9))
+	_fire_stream_core.mesh = core
+	_fire_stream_core.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_fire_stream_core.visible = false
+	add_child(_fire_stream_core)
+	_fire_stream_sparks = _burst_emitter("FireStreamContact",
+		_process_material(Vector3.UP, 55.0, 0.1, 0.4, Vector3(0, 0.3, 0), tuning.ember_color), 0.12, 0.07)
+	_fire_stream_sparks.amount = FIRE_STREAM_PARTICLES
+	_fire_stream_sparks.explosiveness = 0.6
+	_fire_stream_sparks.visible = false
+
+
+func _update_fire_stream() -> void:
+	var fire := abilities.get_ability(&"fire_burst") as FireBurst
+	if fire == null or not fire.stream.active or not fire.stream.tuning.stream_visual_enabled:
+		_clear_fire_stream()
+		return
+	var stream = fire.stream
+	var from: Vector3 = stream.beam_from
+	var to: Vector3 = stream.beam_to
+	var length := from.distance_to(to)
+	if length < 0.001:
+		_clear_fire_stream()
+		return
+	var axis := (to - from) / length
+	var side := axis.cross(Vector3.UP if absf(axis.y) < 0.99 else Vector3.RIGHT).normalized()
+	var across := side.cross(axis).normalized()
+	var count := mini(FIRE_STREAM_CELLS, maxi(1, ceili(length / 0.4)))
+	var step := length / float(count)
+	_fire_stream.visible = true
+	_fire_stream.global_transform = Transform3D.IDENTITY
+	_fire_stream.multimesh.visible_instance_count = count
+	_fire_stream_core.visible = true
+	_fire_stream_core.global_transform = Transform3D(Basis(side, axis * length, across), (from + to) * 0.5)
+	for i in count:
+		var fraction := (float(i) + 0.5) / float(count)
+		var pulse := sin(float(stream.age) * 23.0 - fraction * 19.0)
+		var width := lerpf(0.07, 0.15, fraction) * (1.0 + pulse * 0.16)
+		var offset := side * pulse * width * 0.35 * sin(PI * fraction)
+		var at := from + axis * ((float(i) + 0.5) * step) + offset
+		_fire_stream.multimesh.set_instance_transform(i, Transform3D(Basis(side * width, axis * step, across * width), at))
+		var tint: Color = stream.tuning.flame_color.lerp(Color(1.0, 0.92, 0.4), 0.25 + 0.2 * pulse)
+		_fire_stream.multimesh.set_instance_color(i, tint)
+	# O pequeno contato só nasce após HEAT; ao varrer a mira, não deixar emissão no ponto antigo.
+	if not stream.has_contact or _fire_stream_sparks.global_position.distance_to(to) > 0.12:
+		_fire_stream_sparks.emitting = false
+		_fire_stream_sparks.visible = false
+
+
+func _on_fire_stream_event(kind: StringName, data: Dictionary) -> void:
+	if kind == &"stream_ended":
+		_clear_fire_stream()
+	elif kind == &"stream_contact":
+		var fire := abilities.get_ability(&"fire_burst") as FireBurst
+		if fire == null or not fire.stream.active or not fire.stream.tuning.stream_visual_enabled:
+			return
+		_fire_stream_sparks.global_position = data.get("position", fire.stream.beam_to)
+		(_fire_stream_sparks.process_material as ParticleProcessMaterial).direction = data.get("normal", fire.stream.contact_normal)
+		(_fire_stream_sparks.process_material as ParticleProcessMaterial).color = fire.stream.tuning.ember_color
+		_fire_stream_sparks.visible = true
+		_fire_stream_sparks.restart()
+		_fire_stream_sparks.emitting = true
+
+
+func _clear_fire_stream() -> void:
+	if _fire_stream != null:
+		_fire_stream.visible = false
+		_fire_stream.multimesh.visible_instance_count = 0
+	if _fire_stream_core != null:
+		_fire_stream_core.visible = false
+	if _fire_stream_sparks != null:
+		_fire_stream_sparks.emitting = false
+		_fire_stream_sparks.visible = false
 
 
 func _free_fire_slot() -> int:

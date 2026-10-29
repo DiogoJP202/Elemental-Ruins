@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4I)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4J)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -19,6 +19,7 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P4G — Gelo persistente e derretimento:** o impacto congelado deixa um corpo físico no mundo; Fogo aquece e funde pelo sistema de materiais existente. Branch `codex/p4g-persistent-ice`, base P4F `88d71e3`. O FAIL histórico P4D permanece.
 **P4H — Muralha de Gelo com feedback humano positivo:** V durante o controle congelado alterna um molde de painel; soltar RMB constrói somente se válido. Reutiliza IceBody e depende de apoio do terreno. Branch `codex/p4h-ice-wall`, base P4G `1fa3c90`; validação dirigida aprovada, sem gate integral. O usuário confirmou funcionamento no playtest em 29/10/2026, sem avaliação detalhada por cenário nem aprovação integral.
 **P4I — Vórtice de Ar pronto para playtest:** RMB cria um campo fixo de forças que atrai, faz circular e sustenta corpos físicos. Branch `codex/p4i-air-vortex`, base P4H `33719e4`; validação dirigida aprovada, sem integração integral.
+**P4J — Fluxo Contínuo de Fogo pronto para playtest:** segurar RMB emite uma corrente direcionável, com alcance crescente e aquecimento proporcional ao tempo de contato. LMB preserva a bola de fogo. Branch `codex/p4j-fire-stream`, base P4I `9f5e0f0`; validação dirigida aprovada, sem gate integral. O feedback humano específico do P4I permanece não informado, conforme esta missão.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -89,6 +90,7 @@ de fluidos.
 | **C** (Água; P4F) | congela uma vez o orbe suspenso durante RMB; preserva posição e controle. Ignorado fora do hold ou após congelar; soltar RMB lança gelo balístico |
 | **V** (Água; P4H) | durante RMB congelado, alterna muralha/projétil; mire chão livre e solte RMB para construir. Prévia inválida consome/cancela o molde, sem lançar |
 | **RMB** (Ar; P4I) | segure mirando chão livre para manter um vórtice fixo; solte para dissipar. LMB fica bloqueado durante o campo, rajadas anteriores terminam normalmente |
+| **RMB** (Fogo; P4J) | segure para fluxo contínuo que acompanha a mira; solte para parar. LMB fica bloqueado durante o fluxo; antecipação LMB bloqueia RMB, voos anteriores continuam |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -223,6 +225,20 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
    clareza de limites e recuperação. **NÃO TESTADO** por pessoas até aqui.
 
 ## Testes automatizados
+
+### P4J — Fluxo Contínuo de Fogo
+
+**Playtest:** selecione **3**, mantenha **RMB** sobre madeira e mova a câmera para varrer outros alvos. Solte para parar a emissão; a temperatura aplicada e a combustão pertencem ao mundo. Compare madeira seca/molhada e aqueça gelo físico/muralha até fundir. LMB mantém a bola existente: sua antecipação bloqueia começar o fluxo, mas projéteis já em voo podem terminar normalmente. Esc, troca de elemento, perda de captura/input e reset/save/load cancelam a corrente.
+
+`FireBurst` compõe `FireStream` sem novo slot selecionável, reutilizando Ability/controller/mira, cast_segment, HEAT/MaterialResponseSystem e ElementalFx. `FireTuning` mantém a bola intacta e acrescenta `stream_range=12` m, `stream_front_speed=25` m/s, `stream_interval_s=0.1`, `stream_heat_per_s=240`, `stream_contact_radius=0.35` m e `stream_visual_enabled`. Alcance operacional cresce no início; mira e primeiro contato são recalculados a cada tick. Dose = taxa × tempo real de contato, inclusive fração do tick posterior à chegada da frente. Pulsos limitam eventos; quadros longos são integrados em uma dose, sem explosão de callbacks. Ao mudar alvo/perder contato/cancelar, o crédito parcial não emitido é descartado, sem dano residual ou transferência ao novo alvo. Não se faz flush de calor no release.
+
+Origem do HEAT fica no lado livre do contato; área pequena usa queda/visada existentes. Passagem peito→mão obstruída recusa/cancela para não começar através de uma parede próxima. Madeira seca incendeia, umidade absorve calor pela evaporação existente e gelo funde pelo mesmo estado térmico. Pedra aquece sem combustão; terreno bloqueia sem edição SDF. Malhas leves limitadas ao segmento físico e contato com até oito partículas apenas representam a emissão; desligar o visual não interrompe calor. Sem combustão volumétrica, lava, propulsão, desvio do fluxo por Ar ou nova arquitetura térmica.
+
+**Validação dirigida (29/10/2026):** import/parse custom aprovados; [T1/T78/T79 finais headless 3/3](docs/evidence/p4j/02_headless.json), [regressão headless 9/9](docs/evidence/p4j/03_related_headless.json) (T1/T38/T49/T50/T57/T58/T60/T69/T76), [T1/T78/T79 finais janela 3/3](docs/evidence/p4j/04_window.json). Runs finais sem erros/avisos. Dosagem isolada com raycast/corpo reais e sem avanço do relógio térmico global: **508,834 HEAT** em 2,4 s lógicos, com **2,12014 s de contato**, igual a 30/60/120 atualizações por segundo. Madeira seca incendiou em **1,5 s**, molhada em **2,9 s**; pedra aqueceu sem queimar com VFX off; esfera e muralha de gelo fundiram e perderam colisão. Mira/oclusão por parede de 1 mm/voxel, release, alvo removido, exclusão com LMB e oito cancelamentos passaram.
+
+Benchmark pareado, mesmas seis caixas físicas e alvo de pedra, 185 ticks/184 intervalos por fase: baseline **17,48/18,28/19,11 ms**, fluxo ativo **17,60/18,17/18,39 ms** (p95/p99/máximo), dentro de 20/33/50. CPU média medida dentro da atualização do componente: **0,097 ms/tick**, incluindo queries, HEAT e callbacks de contato. Diferenças entre percentis incluem variação entre as duas amostras; não são comparação com o cenário P4I. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; uma Godot por vez, materiais estáveis sem nova ignição, captura fora da amostragem e imagem histórica restaurada. [Captura final inspecionada](docs/evidence/p4j/screens/fire_stream.png), [ambiente e consolidação](docs/evidence/p4j/result.json).
+
+A inspeção inicial revelou que a cápsula encobria a emissão central; a origem física agora tem deslocamento lateral local de **0,8 m**, com a mesma origem para queries/VFX e validação peito→mão. Rechecagens finais passaram; versões anteriores e diagnóstico de projeção permanecem como evidência. A primeira tentativa do diagnóstico temporário não compilou por inferência de tipo e expirou sem relatório; não conta como PASS. O ramo temporário foi removido do selftest. **Integral de 85 IDs, export, persistência entre processos e playtest humano P4J não executados.** P4D continua FAIL; T26 não investigado; P4I sem feedback humano específico informado. Próximo passo único: experimentar o fluxo.
 
 ### P4I — Vórtice de Ar
 

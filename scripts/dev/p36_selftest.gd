@@ -11,6 +11,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4G: T72 verifica gelo físico/orçamento; T73 cobre fusão por Fogo e limpeza da sessão.
 ## P4H: T74 cobre molde/construção/recusas; T75 cobre apoio, fusão e ciclo de vida da muralha.
 ## P4I: T76 cobre input/ciclo do vórtice; T77 cobre forças, exposição, materiais e orçamento.
+## P4J: T78 cobre fluxo/input/ciclo; T79 cobre dosagem térmica, materiais, oclusão e custo.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -97,6 +98,8 @@ func _run_tests() -> bool:
 	if _should_run("T75"): await _t75_ice_wall_world()
 	if _should_run("T76"): await _t76_vortex_lifecycle()
 	if _should_run("T77"): await _t77_vortex_physics()
+	if _should_run("T78"): await _t78_fire_stream_lifecycle()
+	if _should_run("T79"): await _t79_fire_stream_thermal()
 	return true
 
 
@@ -4097,5 +4100,281 @@ func _t77_vortex_physics() -> void:
 			"max_cached": max_cached, "max_forced": max_forced, "queries": queries, "material_events": material_events},
 		"frame_ms": timings, "frame_gate_applied": windowed})
 	ab.cancel_all()
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+## Fixture térmica, sem gravidade/colisões de resposta; os raycasts continuam reais.
+func _p4j_body(at: Vector3, material: StringName, size := 1.0) -> RigidBody3D:
+	var body := _air_crate(at)
+	body.set_meta("body_material", material)
+	if not is_equal_approx(size, 1.0):
+		for child in body.get_children():
+			if child is CollisionShape3D:
+				((child as CollisionShape3D).shape as BoxShape3D).size = Vector3.ONE * size
+			elif child is MeshInstance3D:
+				((child as MeshInstance3D).mesh as BoxMesh).size = Vector3.ONE * size
+	return body
+
+
+func _p4j_start(point: Vector3) -> bool:
+	await _aim_settle(point)
+	_p4c_rmb(true)
+	return (main.abilities.get_ability(&"fire_burst") as FireBurst).stream.active
+
+
+func _t78_fire_stream_lifecycle() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(2)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var stream: FireStream = fire.stream
+	var first := _p4j_body(base + Vector3(0, 1.6, -9), BodyMaterialLibrary.STONE)
+	var second := _p4j_body(base + Vector3(3, 1.6, -8), BodyMaterialLibrary.STONE)
+	var first_state := materials.state_of(first)
+	var second_state := materials.state_of(second)
+	var started := await _p4j_start(first.global_position)
+	var dt := 1.0 / float(Engine.physics_ticks_per_second)
+	await _frames(2)
+	var growing: bool = started and stream.reach > 0.0 and stream.reach <= stream.tuning.stream_front_speed * dt * 3.1 \
+		and stream.beam_from.distance_to(stream.beam_to) < 2.0 and is_equal_approx(first_state.temperature, MaterialState.AMBIENT)
+	var warmed: bool = await _wait_until(func(): return first_state.temperature > MaterialState.AMBIENT + 1.0, 1.5)
+	var visible: bool = main.fx.get_stats().fire_stream_visible and main.fx.get_stats().fire_stream_instances > 0
+	await _aim_settle(second.global_position)
+	var old_temperature := first_state.temperature
+	await _frames(14)
+	var follows: bool = stream.active and first_state.temperature <= old_temperature + 0.001 \
+		and second_state.temperature > MaterialState.AMBIENT + 1.0 and stream.beam_to.distance_to(second.global_position) < 1.0
+	var fired0: int = fire.get_stats().fired
+	var exclusive: bool = not ab.use_pressed() and fire.get_stats().fired == fired0
+	var temperature := second_state.temperature
+	_p4c_rmb(false)
+	var pulses0: int = stream.get_stats().pulses
+	await _frames(12)
+	var stopped: bool = not stream.active and stream.get_stats().pulses == pulses0 and second_state.temperature <= temperature + 0.001 \
+		and not main.fx.get_stats().fire_stream_visible and not main.fx.get_stats().fire_stream_particles_emitting
+	base = await _p3_lab(2)
+	player.camera_rig.set_view(0.0, deg_to_rad(20.0))
+	await _frames(2)
+	var pid := _fire_press(ab, fire)
+	_p4c_rmb(true)
+	var anticipation_blocks: bool = pid >= 0 and not stream.active
+	_p4c_rmb(false)
+	var launched: bool = await _wait_until(func(): return fire.projectiles.any(func(p): return p.phase == "flight"), 1.0)
+	_p4c_rmb(true)
+	var flight_allows: bool = launched and stream.active
+	var finishes: bool = await _wait_until(func(): return fire.projectiles.is_empty(), 1.5)
+	_p4c_rmb(false)
+	var slot_ready: bool = await main.request_world_save("p4j_stream_session")
+	var cancellations := {}
+	for kind: String in ["release", "select", "escape", "input", "mouse", "save", "load", "reset"]:
+		base = await _p3_lab(2)
+		var body := _p4j_body(base + Vector3(0, 1.6, -6), BodyMaterialLibrary.STONE)
+		var state := materials.state_of(body)
+		started = await _p4j_start(body.global_position)
+		await _frames(30)
+		var had_heat := state.temperature > MaterialState.AMBIENT
+		var old_capture := ab.require_captured_mouse
+		var old_mouse := Input.mouse_mode
+		var command_ok := true
+		if kind == "release": _p4c_rmb(false)
+		elif kind == "select": ab.select(0)
+		elif kind == "escape":
+			_p4a_key(KEY_ESCAPE, true)
+			Input.flush_buffered_events()
+			_p4a_key(KEY_ESCAPE, false)
+			Input.flush_buffered_events()
+		elif kind == "input": player.input_enabled = false
+		elif kind == "mouse":
+			ab.require_captured_mouse = true
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		elif kind == "save": command_ok = await main.request_world_save("p4j_stream_session")
+		elif kind == "load": command_ok = await main.request_world_load("p4j_stream_session")
+		else: command_ok = await main.request_world_reset()
+		await _frames(2)
+		var pulses: int = stream.get_stats().pulses
+		await _frames(3)
+		var preserved: bool = true if kind in ["load", "reset"] else is_instance_valid(body) and state.temperature > MaterialState.AMBIENT
+		cancellations[kind] = {"ok": started and had_heat and command_ok and preserved and not stream.active \
+			and stream.get_stats().pulses == pulses and not main.fx.get_stats().fire_stream_visible \
+			and not main.fx.get_stats().fire_stream_particles_emitting, "world_heat_preserved": preserved}
+		ab.require_captured_mouse = old_capture
+		Input.mouse_mode = old_mouse
+		player.input_enabled = true
+		_p4c_rmb(false)
+	base = await _p3_lab(2)
+	var removed := _p4j_body(base + Vector3(0, 1.6, -6), BodyMaterialLibrary.STONE)
+	started = await _p4j_start(removed.global_position)
+	await _frames(24)
+	var removed_id := removed.get_instance_id()
+	removed.queue_free()
+	await _frames(12)
+	var target_gone: bool = started and stream.active and instance_from_id(removed_id) == null
+	_p4c_rmb(false)
+	_record("T78", "RMB transporta/varre calor progressivo, mantém exclusão com LMB e limpa emissão sem apagar o estado do mundo",
+		growing and warmed and visible and follows and exclusive and stopped and anticipation_blocks and flight_allows and finishes \
+		and slot_ready and target_gone and cancellations.values().all(func(c): return c.ok),
+		{"growing_without_remote_heat": growing, "first_target_warmed": warmed, "visible_while_active": visible, "aim_sweep_no_old_heat": follows,
+		"stream_blocks_lmb": exclusive, "release_stops_heat_fx": stopped, "anticipation_blocks_stream": anticipation_blocks,
+		"prior_flight_allows_stream": flight_allows and finishes, "cancellations": cancellations, "deleted_target_safe": target_gone})
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+## Mesmo contato físico, sem avanço do relógio do mundo: só o componente varia dt.
+func _p4j_dose(hz: int) -> Dictionary:
+	var base: Vector3 = await _p3_lab(2)
+	var ab: AbilityController = main.abilities
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var body := _p4j_body(base + Vector3(0, 1.6, -8), BodyMaterialLibrary.STONE)
+	await _aim_settle(body.global_position)
+	var state := materials.state_of(body)
+	var tuning: FireTuning = fire.tuning.duplicate(true)
+	tuning.stream_contact_radius = 0.0
+	var isolated := FireStream.new()
+	isolated.configure(ab, tuning)
+	var began := isolated.begin()
+	for i in int(2.4 * hz): isolated.physics_tick(1.0 / float(hz))
+	var measured := isolated.get_stats()
+	var expected: float = tuning.stream_heat_per_s * float(measured.contact_seconds)
+	var error: float = expected - float(measured.heat_units)
+	var temperature_heat: float = (state.temperature - MaterialState.AMBIENT) * state.material.heat_resistance
+	var ok: bool = began and float(measured.heat_units) > 100.0 and error >= -0.02 \
+		and error <= tuning.stream_heat_per_s * (tuning.stream_interval_s + 1.0 / float(hz)) + 0.1 \
+		and absf(temperature_heat - float(measured.heat_units)) < 0.02
+	isolated.cancel()
+	return {"ok": ok, "hz": hz, "virtual_s": 2.4, "contact_s": measured.contact_seconds, "heat_units": measured.heat_units,
+		"unemitted_residual_heat": error, "material_heat_from_temperature": temperature_heat, "pulses": measured.pulses}
+
+
+func _p4j_wood(wet: bool) -> Dictionary:
+	var base: Vector3 = await _p3_lab(2)
+	var fire: FireBurst = main.abilities.get_ability(&"fire_burst")
+	var body := _p4j_body(base + Vector3(0, 1.6, -6), BodyMaterialLibrary.WOOD)
+	var state := materials.state_of(body)
+	if wet: _apply_direct(ElementalEvent.Kind.WET, body, 0.9)
+	var started := await _p4j_start(body.global_position)
+	var tick0 := Engine.get_physics_frames()
+	await _frames(36)
+	var early := {"temperature": state.temperature, "wetness": state.wetness, "burning": state.burning}
+	var lit: bool = await _wait_until(func(): return state.burning, 5.0)
+	var elapsed := float(Engine.get_physics_frames() - tick0) / float(Engine.physics_ticks_per_second)
+	_p4c_rmb(false)
+	return {"ok": started and lit and not early.burning and (not wet or float(early.wetness) < 0.9),
+		"wet": wet, "ignition_s": elapsed, "after_0_6s": early, "ignition_temperature": state.temperature}
+
+
+func _p4j_sample_frames(count: int) -> Dictionary:
+	var clock := {"last": Time.get_ticks_usec()}
+	var frame_ms := PackedFloat32Array()
+	var sample := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().process_frame.connect(sample)
+	await _frames(count)
+	get_tree().process_frame.disconnect(sample)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	timings["physics_ticks"] = count
+	return timings
+
+
+func _t79_fire_stream_thermal() -> void:
+	var doses: Array[Dictionary] = []
+	for hz in [30, 60, 120]: doses.append(await _p4j_dose(hz))
+	var least := INF
+	var most := 0.0
+	for dose: Dictionary in doses:
+		least = minf(least, float(dose.heat_units))
+		most = maxf(most, float(dose.heat_units))
+	var fire: FireBurst = main.abilities.get_ability(&"fire_burst")
+	var equivalent: bool = doses.all(func(d): return d.ok) \
+		and most - least <= fire.tuning.stream_heat_per_s * (fire.tuning.stream_interval_s + 1.0 / 30.0) + 0.2
+	var dry := await _p4j_wood(false)
+	var wet := await _p4j_wood(true)
+	var moisture: bool = dry.ok and wet.ok and float(wet.ignition_s) > float(dry.ignition_s) + 0.4
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(2)
+	var stone := _p4j_body(base + Vector3(0, 1.6, -6), BodyMaterialLibrary.STONE)
+	var stone_state := materials.state_of(stone)
+	var visual_before := fire.tuning.stream_visual_enabled
+	fire.tuning.stream_visual_enabled = false
+	var started := await _p4j_start(stone.global_position)
+	await _frames(66)
+	var nonflammable: bool = started and stone_state.temperature > MaterialState.AMBIENT + 10.0 and not stone_state.burning \
+		and not main.fx.get_stats().fire_stream_visible
+	_p4c_rmb(false)
+	fire.tuning.stream_visual_enabled = visual_before
+	var ice_cases := {}
+	for wall: bool in [false, true]:
+		base = await _p3_lab(2)
+		var orb: WaterOrb = (ab.get_ability(&"water_jet") as WaterJet).orb
+		var foot := _ground_at(base + Vector3(0.17, 0, -6))
+		var ice := _p4h_wall_fixture(orb, foot) if wall else _p4g_fixture(orb, foot + Vector3.UP * (orb.radius() + 0.06))
+		if ice == null:
+			ice_cases["wall" if wall else "sphere"] = {"ok": false, "fixture_created": false}
+			continue
+		var id := ice.get_instance_id()
+		var state := materials.state_of(ice)
+		var center := ice.global_position
+		started = await _p4j_start(center)
+		var melted: bool = await _wait_until(func(): return instance_from_id(id) == null, 6.0)
+		_p4c_rmb(false)
+		await _frames(2)
+		ice_cases["wall" if wall else "sphere"] = {"ok": started and melted and state.consumed \
+			and state.temperature >= state.material.melt_temperature and _p4g_props_ray(center).is_empty(),
+			"consumed": state.consumed, "temperature_at_melt": state.temperature, "physical_body_removed": melted}
+	base = await _p3_lab(2)
+	var blocker := _p36_thin_wall(base + Vector3(0, 1.6, -4), Vector3(4, 4, 0.001))
+	var behind := _p4j_body(base + Vector3(0, 1.6, -4.16), BodyMaterialLibrary.WOOD, 0.2)
+	var behind_state := materials.state_of(behind)
+	started = await _p4j_start(behind.global_position)
+	await _frames(70)
+	var wall_occlusion: bool = started and fire.stream.has_contact and absf(fire.stream.beam_to.z - blocker.global_position.z) < 0.01 \
+		and is_equal_approx(behind_state.temperature, MaterialState.AMBIENT) \
+		and not materials.line_of_sight(fire.stream.beam_to + fire.stream.contact_normal * 0.02, behind)
+	_p4c_rmb(false)
+	base = await _p3_lab(2)
+	var ground := _ground_at(base + Vector3(0.17, 0, -5))
+	var revision := svc.get_revision()
+	started = await _p4j_start(ground)
+	await _frames(45)
+	var floor_hit: Dictionary = ab.cast_segment(fire.stream.beam_from, fire.stream.beam_to + fire.stream.direction * 0.02, true)
+	var terrain: bool = started and fire.stream.has_contact and not floor_hit.is_empty() and floor_hit.collider is VoxelLodTerrain \
+		and fire.stream.beam_to.distance_to(ground) < 0.15 and svc.get_revision() == revision
+	_p4c_rmb(false)
+	# Mesmos corpos no baseline e no fluxo; pedra evita custo variável de ignição.
+	base = await _p3_lab(2)
+	stone = _p4j_body(base + Vector3(0, 1.6, -8), BodyMaterialLibrary.STONE)
+	stone_state = materials.state_of(stone)
+	for x: float in [-3.0, 3.0]:
+		for z: float in [-5.0, -8.0, -11.0]: DebugProps.spawn_crate(props, _ground_at(base + Vector3(x, 0, z)) + Vector3.UP * 0.55)
+	await _aim_settle(stone.global_position)
+	await _frames(45)
+	var baseline := await _p4j_sample_frames(185)
+	started = await _p4j_start(stone.global_position)
+	await _frames(30)
+	var temperature_before := stone_state.temperature
+	var stats0 := fire.stream.get_stats()
+	var active := await _p4j_sample_frames(185)
+	var stats1 := fire.stream.get_stats()
+	var update_ticks: int = stats1.update_ticks - stats0.update_ticks
+	var cpu_ms := float(stats1.update_usec - stats0.update_usec) / 1000.0 / maxf(float(update_ticks), 1.0)
+	var heated: bool = started and stone_state.temperature > temperature_before + 10.0 and stats1.pulses > stats0.pulses
+	_metrics["p4j_stream_baseline_frame_ms"] = baseline
+	_metrics["p4j_stream_active_frame_ms"] = active
+	_metrics["p4j_stream_cpu_mean_ms"] = cpu_ms
+	var windowed := not _mode.begins_with("headless")
+	var perf: bool = not windowed or (active.get("n", 0) >= 120 and active.get("p95", 999.0) <= 20.0 \
+		and active.p99 <= 33.0 and active.get("max", 999.0) <= 50.0)
+	if _screens: await _snap("p4j_fire_stream")
+	_p4c_rmb(false)
+	_record("T79", "Fluxo dosa HEAT por tempo, evapora/ignita pela regra existente, funde gelo e respeita obstáculos",
+		equivalent and moisture and nonflammable and ice_cases.values().all(func(c): return c.ok) and wall_occlusion and terrain and heated and perf,
+		{"dose_rates": doses, "dose_equivalent": equivalent, "dry_wood": dry, "wet_wood": wet, "wet_delays_ignition": moisture,
+		"stone_heats_vfx_off": nonflammable, "ice": ice_cases, "thin_wall_occlusion": wall_occlusion, "voxel_stops_no_edit": terrain,
+		"benchmark": {"heated": heated, "baseline_frame_ms": baseline, "active_frame_ms": active, "stream_cpu_mean_ms": cpu_ms,
+			"heat_pulses": stats1.pulses - stats0.pulses, "same_fixture": true}, "frame_gate_applied": windowed})
 	player.input_enabled = false
 	await main.request_world_reset()

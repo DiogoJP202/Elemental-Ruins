@@ -1,0 +1,222 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-29T14:33:38",
+  "duracao_s": 56.546,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 61.0,
+      "media": 58.97,
+      "min": 1.0,
+      "n": 109,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 1940.0,
+    "p4j_stream_active_frame_ms": {
+      "max": 18.39,
+      "media": 16.67,
+      "min": 14.53,
+      "n": 184,
+      "p95": 17.6,
+      "p99": 18.17,
+      "physics_ticks": 185
+    },
+    "p4j_stream_baseline_frame_ms": {
+      "max": 19.11,
+      "media": 16.67,
+      "min": 14.64,
+      "n": 184,
+      "p95": 17.48,
+      "p99": 18.28,
+      "physics_ticks": 185
+    },
+    "p4j_stream_cpu_mean_ms": 0.0968054054054054
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1940.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "aim_sweep_no_old_heat": true,
+        "anticipation_blocks_stream": true,
+        "cancellations": {
+          "escape": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "input": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "load": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "mouse": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "release": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "reset": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "save": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "select": {
+            "ok": true,
+            "world_heat_preserved": true
+          }
+        },
+        "deleted_target_safe": true,
+        "first_target_warmed": true,
+        "growing_without_remote_heat": true,
+        "prior_flight_allows_stream": true,
+        "release_stops_heat_fx": true,
+        "stream_blocks_lmb": true,
+        "visible_while_active": true
+      },
+      "id": "T78",
+      "status": "PASS",
+      "titulo": "RMB transporta/varre calor progressivo, mantém exclusão com LMB e limpa emissão sem apagar o estado do mundo"
+    },
+    {
+      "detalhes": {
+        "benchmark": {
+          "active_frame_ms": {
+            "max": 18.39,
+            "media": 16.67,
+            "min": 14.53,
+            "n": 184,
+            "p95": 17.6,
+            "p99": 18.17,
+            "physics_ticks": 185
+          },
+          "baseline_frame_ms": {
+            "max": 19.11,
+            "media": 16.67,
+            "min": 14.64,
+            "n": 184,
+            "p95": 17.48,
+            "p99": 18.28,
+            "physics_ticks": 185
+          },
+          "heat_pulses": 30,
+          "heated": true,
+          "same_fixture": true,
+          "stream_cpu_mean_ms": 0.0968054054054054
+        },
+        "dose_equivalent": true,
+        "dose_rates": [
+          {
+            "contact_s": 2.12014026641846,
+            "heat_units": 508.83366394043,
+            "hz": 30,
+            "material_heat_from_temperature": 508.83366394043,
+            "ok": true,
+            "pulses": 22,
+            "unemitted_residual_heat": 0.00000000000056843418860808,
+            "virtual_s": 2.4
+          },
+          {
+            "contact_s": 2.12014026641845,
+            "heat_units": 508.83366394043,
+            "hz": 60,
+            "material_heat_from_temperature": 508.83366394043,
+            "ok": true,
+            "pulses": 22,
+            "unemitted_residual_heat": -0.000000000000511590769747272,
+            "virtual_s": 2.4
+          },
+          {
+            "contact_s": 2.12014026641845,
+            "heat_units": 508.83366394043,
+            "hz": 120,
+            "material_heat_from_temperature": 508.83366394043,
+            "ok": true,
+            "pulses": 22,
+            "unemitted_residual_heat": -0.00000000000113686837721616,
+            "virtual_s": 2.4
+          }
+        ],
+        "dry_wood": {
+          "after_0_6s": {
+            "burning": false,
+            "temperature": 109.187347412109,
+            "wetness": 0.0
+          },
+          "ignition_s": 1.5,
+          "ignition_temperature": 312.187347412109,
+          "ok": true,
+          "wet": false
+        },
+        "frame_gate_applied": true,
+        "ice": {
+          "sphere": {
+            "consumed": true,
+            "ok": true,
+            "physical_body_removed": true,
+            "temperature_at_melt": 0.627415313720709
+          },
+          "wall": {
+            "consumed": true,
+            "ok": true,
+            "physical_body_removed": true,
+            "temperature_at_melt": 0.555390014648445
+          }
+        },
+        "stone_heats_vfx_off": true,
+        "thin_wall_occlusion": true,
+        "voxel_stops_no_edit": true,
+        "wet_delays_ignition": true,
+        "wet_wood": {
+          "after_0_6s": {
+            "burning": false,
+            "temperature": 20.0,
+            "wetness": 0.634781631469727
+          },
+          "ignition_s": 2.9,
+          "ignition_temperature": 315.75,
+          "ok": true,
+          "wet": true
+        }
+      },
+      "id": "T79",
+      "status": "PASS",
+      "titulo": "Fluxo dosa HEAT por tempo, evapora/ignita pela regra existente, funde gelo e respeita obstáculos"
+    }
+  ],
+  "run_id": "e7151fb642a0",
+  "testes_ids": [
+    "T1",
+    "T78",
+    "T79"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

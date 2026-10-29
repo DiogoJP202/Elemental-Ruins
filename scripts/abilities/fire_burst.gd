@@ -14,6 +14,7 @@ const COOLDOWN_EPSILON_S := 0.000001
 const TUNING_PATH := "res://data/abilities/fire_tuning.tres"
 
 var tuning: FireTuning
+var stream := FireStream.new()
 var projectiles: Array[Dictionary] = []
 ## Notificação visual legada, limitada; não contém calor nem decide contatos.
 var impacts: Array[Vector3] = []
@@ -33,6 +34,15 @@ func _init() -> void:
 	tuning = load(TUNING_PATH)
 
 
+func setup(p_controller) -> void:
+	super.setup(p_controller)
+	stream.configure(p_controller, tuning, _can_begin_stream)
+
+
+func _can_begin_stream() -> bool:
+	return not projectiles.any(func(p: Dictionary): return p.phase == "anticipation")
+
+
 func get_stats() -> Dictionary:
 	var data := _stats.duplicate()
 	data["impacts"] = _stats.exploded
@@ -42,6 +52,9 @@ func get_stats() -> Dictionary:
 
 
 func on_press() -> void:
+	if stream.active:
+		return
+	stream.last_result = ""
 	if _cooldown_left > COOLDOWN_EPSILON_S or projectiles.size() >= clampi(tuning.max_projectiles, 1, MAX_PROJECTILES):
 		_stats.rejected += 1
 		last_result = "recuperando" if _cooldown_left > COOLDOWN_EPSILON_S else "muitos projéteis"
@@ -66,6 +79,7 @@ func on_press() -> void:
 
 
 func physics_tick(delta: float) -> void:
+	stream.physics_tick(delta)
 	_cooldown_left = maxf(0.0, _cooldown_left - delta)
 	if projectiles.is_empty():
 		return
@@ -144,6 +158,7 @@ func _advance(delta: float) -> void:
 
 ## Troca de elemento cancela antecipações e preserva projéteis já lançados.
 func cancel() -> void:
+	stream.cancel()
 	_epoch += 1
 	var keep: Array[Dictionary] = []
 	for p in projectiles:
@@ -156,10 +171,15 @@ func cancel() -> void:
 
 ## Reset/save/load descartam também voos, notificações e recuperação.
 func clear() -> void:
+	stream.clear()
 	_epoch += 1
 	projectiles.clear()
 	impacts.clear()
 	_cooldown_left = 0.0
+
+
+func status() -> String:
+	return stream.status() if stream.active else (stream.last_result if stream.last_result != "" else last_result)
 
 
 func _context_valid(p: Dictionary) -> bool:

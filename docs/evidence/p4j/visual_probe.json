@@ -1,0 +1,111 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-29T14:29:55",
+  "duracao_s": 7.093,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 61.0,
+      "media": 50.62,
+      "min": 9.0,
+      "n": 13,
+      "p95": 61.0
+    },
+    "initial_terrain_ready_ms": 1715.0
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "FAIL",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1715.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "enabled": true,
+        "from": "(-33.2, 1.320201, 67.4)",
+        "from_screen": "(901.189, 481.631)",
+        "fx": {
+          "air_dust_contacts": 0,
+          "air_dust_front": 0,
+          "air_rings_live": 0,
+          "air_rings_missing": 0,
+          "blasts": 0,
+          "charred": 0,
+          "fire_anticipations": 0,
+          "fire_balls_visible": 0,
+          "fire_dissipations": 0,
+          "fire_launches": 0,
+          "fire_slots_live": 0,
+          "fire_slots_missing": 0,
+          "fire_steam": 0,
+          "fire_stream_instances": 18,
+          "fire_stream_particles": 8,
+          "fire_stream_particles_emitting": false,
+          "fire_stream_visible": true,
+          "fire_trail_pool": 8,
+          "fire_vfx_frames": 384,
+          "fire_vfx_usec": 16372,
+          "fire_vfx_usec_max": 738,
+          "flames_active": 0,
+          "flames_created": 0,
+          "flames_skipped": 0,
+          "gusts": 0,
+          "ice_crystallizations": 0,
+          "ice_fragment_cap": 12,
+          "ice_fragments_emitting": false,
+          "ice_ghost_pool": 8,
+          "ice_ghosts_live": 0,
+          "ice_impacts": 0,
+          "ice_limit_removals": 0,
+          "ice_melts": 0,
+          "ice_visible": false,
+          "orb_splash_pool": 2,
+          "orb_trail_emitting": false,
+          "orb_visible": false,
+          "persistent_materializations": 0,
+          "steam": 0,
+          "vortex_particles": 32,
+          "vortex_particles_emitting": false,
+          "vortex_visible": false,
+          "vortex_visual_nodes": 5,
+          "wall_preview_valid": false,
+          "wall_preview_visible": false,
+          "water_instances": 0,
+          "water_orb_dissipations": 0,
+          "water_orb_impacts": 0,
+          "water_spray": false
+        },
+        "started": true,
+        "to": "(-34.0, 2.157396, 60.5)",
+        "to_screen": "(800.0, 450.0)"
+      },
+      "id": "T79",
+      "status": "FAIL",
+      "titulo": "DIAGNOSTIC ONLY: fire stream visual"
+    }
+  ],
+  "run_id": "d4211b0d23ab",
+  "testes_ids": [
+    "T1",
+    "T79"
+  ],
+  "testes_pass": 1,
+  "testes_total": 2,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

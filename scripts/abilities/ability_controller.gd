@@ -81,6 +81,8 @@ func use_pressed() -> bool:
 		return false
 	if a is AirGust and a.vortex.active:
 		return false
+	if a is FireBurst and a.stream.active:
+		return false
 	holding = a.input_mode == "hold"
 	a.on_press()
 	ability_used.emit(a.id, "press")
@@ -193,8 +195,34 @@ func end_air_vortex() -> void:
 		air.vortex.cancel()
 
 
+func begin_fire_stream() -> bool:
+	var fire := current_ability() as FireBurst
+	if fire == null or not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
+		return false
+	var formed: bool = fire.stream.begin()
+	if not formed:
+		fire.last_result = fire.stream.last_result
+	return formed
+
+
+func end_fire_stream() -> void:
+	var fire := current_ability() as FireBurst
+	if fire != null:
+		fire.stream.cancel()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if player == null or not player.input_enabled:
+		return
+	var fire := current_ability() as FireBurst
+	if fire != null and event.is_action_pressed(&"toggle_mouse_capture"):
+		fire.stream.cancel()
+	if fire != null and event.is_action(&"fire_stream"):
+		if event.is_action_pressed(&"fire_stream"):
+			begin_fire_stream()
+		elif event.is_action_released(&"fire_stream"):
+			end_fire_stream()
+		get_viewport().set_input_as_handled()
 		return
 	var air := current_ability() as AirGust
 	if air != null and event.is_action_pressed(&"toggle_mouse_capture"):
@@ -260,6 +288,10 @@ func _physics_process(delta: float) -> void:
 	var earth := current_ability() as EarthLiftThrow
 	var water := current_ability() as WaterJet
 	var air := current_ability() as AirGust
+	var fire := current_ability() as FireBurst
+	if fire != null and fire.stream.active and (not _can_act() \
+			or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
+		fire.stream.cancel()
 	if air != null and air.vortex.active and (not _can_act() \
 			or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
 		air.vortex.cancel()

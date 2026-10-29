@@ -1,0 +1,214 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-29T14:19:33",
+  "duracao_s": 51.03,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 979.0,
+    "p4j_stream_active_frame_ms": {
+      "max": 9.35,
+      "media": 6.9,
+      "min": 4.47,
+      "n": 446,
+      "p95": 8.17,
+      "p99": 8.45,
+      "physics_ticks": 185
+    },
+    "p4j_stream_baseline_frame_ms": {
+      "max": 8.62,
+      "media": 6.9,
+      "min": 5.62,
+      "n": 446,
+      "p95": 7.81,
+      "p99": 7.97,
+      "physics_ticks": 185
+    },
+    "p4j_stream_cpu_mean_ms": 0.175989189189189
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 979.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "aim_sweep_no_old_heat": true,
+        "anticipation_blocks_stream": true,
+        "cancellations": {
+          "escape": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "input": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "load": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "mouse": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "release": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "reset": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "save": {
+            "ok": true,
+            "world_heat_preserved": true
+          },
+          "select": {
+            "ok": true,
+            "world_heat_preserved": true
+          }
+        },
+        "deleted_target_safe": true,
+        "first_target_warmed": true,
+        "growing_without_remote_heat": true,
+        "prior_flight_allows_stream": true,
+        "release_stops_heat_fx": true,
+        "stream_blocks_lmb": true
+      },
+      "id": "T78",
+      "status": "PASS",
+      "titulo": "RMB transporta/varre calor progressivo, mantém exclusão com LMB e limpa emissão sem apagar o estado do mundo"
+    },
+    {
+      "detalhes": {
+        "benchmark": {
+          "active_frame_ms": {
+            "max": 9.35,
+            "media": 6.9,
+            "min": 4.47,
+            "n": 446,
+            "p95": 8.17,
+            "p99": 8.45,
+            "physics_ticks": 185
+          },
+          "baseline_frame_ms": {
+            "max": 8.62,
+            "media": 6.9,
+            "min": 5.62,
+            "n": 446,
+            "p95": 7.81,
+            "p99": 7.97,
+            "physics_ticks": 185
+          },
+          "heat_pulses": 30,
+          "heated": true,
+          "same_fixture": true,
+          "stream_cpu_mean_ms": 0.175989189189189
+        },
+        "dose_equivalent": true,
+        "dose_rates": [
+          {
+            "contact_s": 2.12125734329224,
+            "heat_units": 509.101762390137,
+            "hz": 30,
+            "material_heat_from_temperature": 509.101762390137,
+            "ok": true,
+            "pulses": 22,
+            "unemitted_residual_heat": 0.000000000000625277607468888,
+            "virtual_s": 2.4
+          },
+          {
+            "contact_s": 2.12125734329223,
+            "heat_units": 509.101762390137,
+            "hz": 60,
+            "material_heat_from_temperature": 509.101762390137,
+            "ok": true,
+            "pulses": 22,
+            "unemitted_residual_heat": -0.000000000000511590769747272,
+            "virtual_s": 2.4
+          },
+          {
+            "contact_s": 2.12125734329223,
+            "heat_units": 509.101762390137,
+            "hz": 120,
+            "material_heat_from_temperature": 509.101762390137,
+            "ok": true,
+            "pulses": 22,
+            "unemitted_residual_heat": -0.00000000000113686837721616,
+            "virtual_s": 2.4
+          }
+        ],
+        "dry_wood": {
+          "after_0_6s": {
+            "burning": false,
+            "temperature": 109.560768127441,
+            "wetness": 0.0
+          },
+          "ignition_s": 1.5,
+          "ignition_temperature": 312.560768127441,
+          "ok": true,
+          "wet": false
+        },
+        "frame_gate_applied": false,
+        "ice": {
+          "sphere": {
+            "consumed": true,
+            "ok": true,
+            "physical_body_removed": true,
+            "temperature_at_melt": 0.639395446777352
+          },
+          "wall": {
+            "consumed": true,
+            "ok": true,
+            "physical_body_removed": true,
+            "temperature_at_melt": 0.566872406005867
+          }
+        },
+        "stone_heats_vfx_off": true,
+        "thin_wall_occlusion": true,
+        "voxel_stops_no_edit": true,
+        "wet_delays_ignition": true,
+        "wet_wood": {
+          "after_0_6s": {
+            "burning": false,
+            "temperature": 20.0,
+            "wetness": 0.633848079681397
+          },
+          "ignition_s": 2.9,
+          "ignition_temperature": 315.75,
+          "ok": true,
+          "wet": true
+        }
+      },
+      "id": "T79",
+      "status": "PASS",
+      "titulo": "Fluxo dosa HEAT por tempo, evapora/ignita pela regra existente, funde gelo e respeita obstáculos"
+    }
+  ],
+  "run_id": "aa74d59b2740",
+  "testes_ids": [
+    "T1",
+    "T78",
+    "T79"
+  ],
+  "testes_pass": 3,
+  "testes_total": 3,
+  "video_adapter": ""
+}

@@ -17,6 +17,14 @@ extends Resource
 @export_range(0.0, 2000.0, 1.0) var heat := 450.0
 @export_range(0.0, 5.0, 0.1) var splash_radius := 2.0
 
+@export_group("Fluxo contínuo")
+@export_range(1.0, 24.0, 0.5) var stream_range := 12.0
+@export_range(1.0, 100.0, 0.5) var stream_front_speed := 25.0
+@export_range(0.05, 0.5, 0.01) var stream_interval_s := 0.1
+@export_range(0.0, 1000.0, 1.0) var stream_heat_per_s := 240.0
+@export_range(0.0, 1.5, 0.05) var stream_contact_radius := 0.35
+@export var stream_visual_enabled := true
+
 @export_group("Reações térmicas compartilhadas")
 @export_range(0.05, 1.0, 0.01) var thermal_tick_s := 0.2
 @export_range(0.0, 6.0, 0.1) var spread_radius := 2.2

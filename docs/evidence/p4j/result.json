@@ -1,0 +1,252 @@
+{
+  "implementation": "READY_FOR_PLAYTEST",
+  "client_date": "2026-10-29",
+  "branch": "codex/p4j-fire-stream",
+  "base_branch": "codex/p4i-air-vortex",
+  "base_commit": "9f5e0f0becfd214e86e41cf44a1e224deeea33d2",
+  "p4i_human_feedback": "NOT_REPORTED per P4J mission; no specific human playtest or full integration approval inferred.",
+  "p4d_checkpoint": "FAIL preserved; T26 neither modified nor investigated",
+  "p4j_integration": "NOT_RUN",
+  "full_contract_count": 85,
+  "reports": {
+    "stream_headless": {
+      "report": "02_headless.json",
+      "run_id": "0b6b80e61733",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T78",
+        "T79"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "related_headless": {
+      "report": "03_related_headless.json",
+      "run_id": "280b1a454f55",
+      "result": "PASS",
+      "complete": true,
+      "passed": 9,
+      "total": 9,
+      "expected_ids": [
+        "T1",
+        "T38",
+        "T49",
+        "T50",
+        "T57",
+        "T58",
+        "T60",
+        "T69",
+        "T76"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "stream_window": {
+      "report": "04_window.json",
+      "run_id": "e7151fb642a0",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T78",
+        "T79"
+      ],
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "formal_validation": "Existing Invoke-SelftestStep: process exit 0, report fresh after invocation, externally supplied run_id, complete=true, exact externally supplied IDs, typed counters, individual PASS results and zero engine diagnostics. Pinned run_ids/IDs revalidated after execution.",
+  "import_parse": "Custom editor import exit0 in one attempt; FireStream and selftest check-only exit0. Final accepted logs have zero engine diagnostics.",
+  "accepted_runs_zero_engine_diagnostics": true,
+  "regression_scope": "Legacy paths verified before local stream-origin visibility adjustment; final stream/lifecycle/thermal tests rerun after that adjustment. Legacy fireball, materials and other-element paths were unchanged by the local origin method.",
+  "prior_iterations": [
+    {
+      "headless": "02_headless_before_visibility.json",
+      "window": "04_window_before_visibility.json",
+      "mechanical_result": "PASS",
+      "origin_side_offset_m": 0,
+      "note": "Automated contracts passed, but screenshot showed character occluding the emission. Not the final playtest candidate."
+    },
+    {
+      "headless": "02_headless_05m.json",
+      "window": "04_window_05m.json",
+      "mechanical_result": "PASS",
+      "origin_side_offset_m": 0.5,
+      "note": "Thermal/collision contracts passed; projected source still close to capsule silhouette. Final offset0.8m makes the emission readable without changing camera."
+    }
+  ],
+  "diagnostics": {
+    "reports": [
+      "visual_probe_05m.json",
+      "visual_probe.json"
+    ],
+    "purpose": "Temporary diagnostic branch intentionally recorded non-PASS rather than pretending to execute full T79. Captured visual flags and projected source/endpoint. Branch removed from final selftest.",
+    "parse_attempt": {
+      "log": "visual_probe_parse_fail.log",
+      "exit": 124,
+      "report_written": false,
+      "note": "Diagnostic-only type inference error required Dictionary annotation; process timed out without a report. Not accepted or counted as PASS."
+    },
+    "temporary_code_removed": true
+  },
+  "benchmark": {
+    "id": "T79",
+    "mode": "editor window",
+    "scenario": "Same six dynamic crates plus a stationary stone-material target; stream off baseline then active HEAT, without ignition cost change",
+    "physics_ticks_each": 185,
+    "baseline": {
+      "max": 19.11,
+      "media": 16.67,
+      "min": 14.64,
+      "n": 184,
+      "p95": 17.48,
+      "p99": 18.28,
+      "physics_ticks": 185
+    },
+    "active": {
+      "max": 18.39,
+      "media": 16.67,
+      "min": 14.53,
+      "n": 184,
+      "p95": 17.6,
+      "p99": 18.17,
+      "physics_ticks": 185
+    },
+    "stream_cpu_mean_ms": 0.0968054054054054,
+    "heat_pulses": 30,
+    "limits_ms": {
+      "p95": 20,
+      "p99": 33,
+      "max": 50
+    },
+    "pass": true,
+    "interpretation": "Component CPU timer includes collision, HEAT and contact callbacks. Frame percentile differences include sample variability. No causal comparison to the different P4I scene."
+  },
+  "environment": {
+    "godot": "4.7.2-stable (custom_build)",
+    "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "gpu": "Intel(R) Iris(R) Xe Graphics",
+    "renderer": "forward_plus",
+    "physics": "Jolt Physics",
+    "resolution": "1600x900",
+    "vulkan": "1.4.323",
+    "methodology": "Existing sequential selftests, one Godot at a time. Paired185-tick process_frame samples after warmup; same bodies and stone target avoid changing ignition workload. Screenshot readback outside timing; historical spawn capture restored. Raw execution-host timestamps preserved."
+  },
+  "gameplay": {
+    "range_m": 12,
+    "front_speed_m_s": 25,
+    "heat_units_per_s": 240,
+    "pulse_interval_s": 0.1,
+    "contact_radius_m": 0.35,
+    "hand_side_offset_m": 0.8,
+    "dose_comparison": [
+      {
+        "contact_s": 2.12014026641846,
+        "heat_units": 508.83366394043,
+        "hz": 30,
+        "material_heat_from_temperature": 508.83366394043,
+        "ok": true,
+        "pulses": 22,
+        "unemitted_residual_heat": 5.6843418860808E-13,
+        "virtual_s": 2.4
+      },
+      {
+        "contact_s": 2.12014026641845,
+        "heat_units": 508.83366394043,
+        "hz": 60,
+        "material_heat_from_temperature": 508.83366394043,
+        "ok": true,
+        "pulses": 22,
+        "unemitted_residual_heat": -5.11590769747272E-13,
+        "virtual_s": 2.4
+      },
+      {
+        "contact_s": 2.12014026641845,
+        "heat_units": 508.83366394043,
+        "hz": 120,
+        "material_heat_from_temperature": 508.83366394043,
+        "ok": true,
+        "pulses": 22,
+        "unemitted_residual_heat": -1.13686837721616E-12,
+        "virtual_s": 2.4
+      }
+    ],
+    "dry_wood_ignition_s": 1.5,
+    "wet_wood_ignition_s": 2.9,
+    "ice": {
+      "sphere": {
+        "consumed": true,
+        "ok": true,
+        "physical_body_removed": true,
+        "temperature_at_melt": 0.627415313720709
+      },
+      "wall": {
+        "consumed": true,
+        "ok": true,
+        "physical_body_removed": true,
+        "temperature_at_melt": 0.555390014648445
+      }
+    },
+    "wood_uses_existing_evaporation": true,
+    "stone_vfx_off": true,
+    "thin_wall_occlusion": true,
+    "voxel_stops_without_edit": true,
+    "dose_policy": "Accumulate actual contact seconds including partial arrival tick; limited pulses. Discard untransferred remainder on changed/lost contact or cancel. Never flush heat on release.",
+    "lifecycle": "RMB/selection/Esc/capture/input/reset/save/load cancel emission, refs and VFX. Previous heat remains in world. Pending fireball anticipation blocks stream; active stream blocks new fireballs, prior flights can finish."
+  },
+  "not_run": [
+    "export",
+    "full integration suite (85 IDs, four modes)",
+    "cross-process persistence",
+    "T26",
+    "human playtest P4J"
+  ],
+  "capture": "screens/fire_stream.png",
+  "capture_is_human_playtest": false,
+  "source_hash_method": "SHA256 of final tested checkout bytes",
+  "source_hashes": [
+    {
+      "path": "scripts/abilities/ability_controller.gd",
+      "sha256": "617222aa31c3966a2af8fa7e13f538da4b387b1eb3cf468e03042da8bf62dc73"
+    },
+    {
+      "path": "scripts/abilities/fire_burst.gd",
+      "sha256": "001bc4d361fef2d8f07a42d5a31650f1694c62d511cc679ebec5fa2d4cdffbef"
+    },
+    {
+      "path": "scripts/abilities/fire_tuning.gd",
+      "sha256": "f031da379c51a4473286c1b6a1c0539b6000aaf3e83eef9568820e31fd601c6b"
+    },
+    {
+      "path": "scripts/abilities/fire_stream.gd",
+      "sha256": "7b1a67de26c1bf197a3a4d9d926d2c6a431fecdc516267af3fbf52393ec1ecdf"
+    },
+    {
+      "path": "scripts/core/input_actions.gd",
+      "sha256": "dee0216c50b45a17c7713dcfdd6bd20ee84e18ceafafd4bc5dde2dae7f9eef8e"
+    },
+    {
+      "path": "scripts/dev/p36_selftest.gd",
+      "sha256": "2e420b54573047da6e548dd43c19eed73f4baa3a16a5103f8945743cac3f007d"
+    },
+    {
+      "path": "scripts/elements/elemental_fx.gd",
+      "sha256": "72ee28253027919dea6cf025db08b98efa3b4784d03f3b3e3f9783ff24091e09"
+    },
+    {
+      "path": "scripts/ui/debug_hud.gd",
+      "sha256": "0fd6c3d31230f19f5d9ff250347ea34f04e1c90c346ec6295b8b7d4e4fbec78f"
+    },
+    {
+      "path": "tools/lib_selftest_contract.ps1",
+      "sha256": "de25f261dd287a5af72fb7bd2b581788999e588f64b8d0989f8676fa3093f564"
+    }
+  ]
+}
