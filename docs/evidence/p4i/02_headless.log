@@ -1,0 +1,72 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=headless | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 1001 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":1001.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[P36TEST] --- testes P3 ---
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] --- testes P4A (controle livre de Terra) ---
+[P36TEST] --- testes P4B (reutilizar rocha existente) ---
+[P36TEST] --- testes P4C (pilar de Terra) ---
+[P36TEST] --- testes P4D (fissura de Terra) ---
+[P36TEST] --- testes P4E (orbe de Água) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 273 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 0)
+[TerrainService] reset: geração 3 pronta=true em 251 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 3, rev 0)
+[TerrainService] reset: geração 4 pronta=true em 262 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 0)
+[TerrainService] reset: geração 5 pronta=true em 273 ms
+[TerrainService] save p4i_vortex_session: ok=true { "slot": "p4i_vortex_session", "ok": true, "ms": 27.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4i_vortex_session.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 12.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 5, rev 0)
+[TerrainService] reset: geração 6 pronta=true em 248 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 6, rev 0)
+[TerrainService] reset: geração 7 pronta=true em 269 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 7, rev 0)
+[TerrainService] reset: geração 8 pronta=true em 246 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 8, rev 0)
+[TerrainService] reset: geração 9 pronta=true em 256 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 9, rev 0)
+[TerrainService] reset: geração 10 pronta=true em 268 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 10, rev 0)
+[TerrainService] reset: geração 11 pronta=true em 254 ms
+[TerrainService] save p4i_vortex_session: ok=true { "slot": "p4i_vortex_session", "ok": true, "ms": 28.0, "flush_ms": 0.0, "blocks_tasks": 0, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 20480, "path": "<user_data>/saves/p4i_vortex_session.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 13.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 11, rev 0)
+[TerrainService] reset: geração 12 pronta=true em 264 ms
+[TerrainService] load p4i_vortex_session: ok=true { "slot": "p4i_vortex_session", "ok": true, "ms": 241.0, "copy": "OK", "bytes": 20480 }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 13, rev 0)
+[TerrainService] reset: geração 14 pronta=true em 272 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 14, rev 0)
+[TerrainService] reset: geração 15 pronta=true em 247 ms
+[P36TEST] T76 PASS — RMB forma um vórtice fixo, respeita mira/alcance, bloqueia LMB e limpa todos os cancelamentos | {"cancellations":{"escape":{"ok":true},"input":{"ok":true},"load":{"ok":true},"mouse":{"ok":true},"release":{"ok":true},"reset":{"ok":true},"save":{"ok":true},"select":{"ok":true}},"contextual_air_only":true,"fixed_center":true,"formed_once_at_ground":true,"lmb_exclusive":true,"prior_gust_finishes":true,"refusals":{"range":{"ok":true,"reason":"fora do alcance do vórtice"},"wall":{"ok":true,"reason":"mire em chão livre"}},"release_clears":true,"visible":true}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 15, rev 0)
+[TerrainService] reset: geração 16 pronta=true em 238 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 16, rev 0)
+[TerrainService] reset: geração 17 pronta=true em 245 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 17, rev 0)
+[TerrainService] reset: geração 18 pronta=true em 235 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 18, rev 0)
+[TerrainService] reset: geração 19 pronta=true em 299 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 19, rev 0)
+[TerrainService] reset: geração 20 pronta=true em 308 ms
+[TerrainService] dig_sphere OK c=(-32.6, -0.4, 62.0) r=1.20 rev=1 4.671ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 20, rev 1)
+[TerrainService] reset: geração 21 pronta=true em 324 ms
+[TerrainService] reset: liberando VoxelLodTerrain (geração 21, rev 1)
+[TerrainService] reset: geração 22 pronta=true em 254 ms
+[P36TEST] T77 PASS — Vórtice atrai/ergue/gira corpos reais, respeita massa/oclusão/âncoras e conserva inércia ao dissipar | {"budget":{"fixture_bodies":16,"fixture_cube_size_m":0.4,"fixture_mass_kg":20.0,"fixture_real_gravity":true,"fixture_ring_radius_m":1.8,"material_events":36,"max_cached":12,"max_forced":12,"ok":true,"queries":27,"reason":"vórtice ativo","started":true},"frame_gate_applied":false,"frame_ms":{"max":11.84,"media":6.89,"min":1.93,"n":444,"p95":10.16,"p99":11.4,"physics_ticks":185},"ice_wall":{"forced_after_release":true,"released":true,"stable":true},"materials":{"fixture_mass_kg":100000.0,"fixture_offset_x_m":1.2,"ok":true,"strong_events":1,"strong_intensity":1.0,"strong_reason":"vórtice ativo","strong_started":true,"weak_events":1,"weak_extinguished":true,"weak_reason":"vórtice ativo","weak_started":true},"motion_and_mass":{"closest_radius":0.920393764972687,"force_cap_n":2500.0,"heavy_lift_m":0.0,"heavy_peak_speed":0.0000000416560759219919,"initial_radius":1.50004208087921,"light_lift_m":2.49197936058044,"light_peak_speed":4.51957368850708,"max_force_n":2500.00024414062,"ok":true,"release_preserves_inertia":true,"tangential_speed":3.43708920478821},"occlusion":{"blocked_queries":8,"blocked_still":true,"moving_wall_stops_force":true,"ok":true,"unblocked_moves":true},"parked_reactivated":true}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 22, rev 1)
+[TerrainService] reset: geração 23 pronta=true em 270 ms
+[P36TEST] relatório: <checkout>\docs\evidence\p4i\02_headless.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (3/3) em 30.6 s

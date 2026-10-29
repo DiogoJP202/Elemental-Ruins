@@ -553,3 +553,17 @@ estruturas frente à amostragem SDF de 1 m. Não é grafo estrutural nem apoio c
 TerrainContactWaker verifica o grupo limitado de gelo nos pulsos existentes de edição,
 independentemente do teto da consulta geral. Perda de apoio torna o painel dinâmico de
 forma definitiva; aguardar terreno pronto preserva confirmações durante save/reset/load.
+
+## D58. P4I: campo de forças fixo composto no Ar
+AirGust mantém a rajada e compõe AirVortex, como WaterJet/WaterOrb. O campo usa forças
+centrais limitadas por aceleração e força, com atração regularizada, tangente X→+Z,
+lift dependente da altura e amortecimento. Limite de velocidade é frenagem por força;
+não se escreve velocidade/posição nem se aplica impulso final ao cancelar.
+
+Candidatos e exposição de silhueta usam consultas existentes a cada 0,1 s, com WeakRef
+e teto de corpos. Uma visada central nova por tick impede força através de obstáculo
+que entrou no caminho; é conservadora quando só a lateral está exposta. AIRFLOW pulsa
+a 1 Hz, ponderado por exposição/borda, preservando o domínio de magnitude/limiar de
+fogo fraco da rajada. Sem novo sistema térmico ou efeito material integral por frame.
+Âncoras/held não são liberados; estacionamento por orçamento só é reativado perto do
+jogador. Estacionamento por distância continua sob a política existente do DebrisBudget.

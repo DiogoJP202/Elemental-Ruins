@@ -22,6 +22,8 @@ const FIRE_TUNING_PATH := "res://data/abilities/fire_tuning.tres"
 const AIR_TUNING_PATH := "res://data/abilities/air_tuning.tres"
 const DUST_POOL := 6
 const ICE_GHOST_POOL := 8
+const VORTEX_RIBBONS := 3
+const VORTEX_PARTICLES := 32
 static var _soft_texture: ImageTexture
 
 var abilities: AbilityController
@@ -40,6 +42,10 @@ var _dust: Array[GPUParticles3D] = []
 var _rings: Array[MeshInstance3D] = []
 var _ring_slots := {}  # wave id → índice do pool, estável durante a vida da onda
 var _ring_dust_next := {}  # wave id → próxima distância com poeira de passagem
+var _vortex_ribbons: Array[MeshInstance3D] = []
+var _vortex_base: MeshInstance3D
+var _vortex_dust: GPUParticles3D
+var _vortex_dust_process: ParticleProcessMaterial
 var _beam: MultiMeshInstance3D
 var _water_snapshot: Array = []
 var _water_tail := 0.0
@@ -89,9 +95,10 @@ func setup(p_abilities: AbilityController, p_materials: MaterialResponseSystem) 
 	var fire := abilities.get_ability(&"fire_burst")
 	if fire != null:
 		fire.fx_event.connect(_on_fire_event)
-	var air := abilities.get_ability(&"air_gust")
+	var air := abilities.get_ability(&"air_gust") as AirGust
 	if air != null:
 		air.fx_event.connect(_on_air_event)
+		air.vortex.fx_event.connect(_on_vortex_event)
 	var water := abilities.get_ability(&"water_jet") as WaterJet
 	if water != null:
 		water.orb.fx_event.connect(_on_water_orb_event)
@@ -125,6 +132,10 @@ func get_stats() -> Dictionary:
 	d["fire_trail_pool"] = _fire_trails.size()
 	d["fire_slots_live"] = _fire_slots.size()
 	d["air_rings_live"] = _ring_slots.size()
+	d["vortex_visible"] = _vortex_base != null and _vortex_base.visible
+	d["vortex_visual_nodes"] = _vortex_ribbons.size() + int(_vortex_base != null) + int(_vortex_dust != null)
+	d["vortex_particles"] = VORTEX_PARTICLES
+	d["vortex_particles_emitting"] = _vortex_dust != null and _vortex_dust.emitting
 	var visible_balls := 0
 	for ball in _balls:
 		visible_balls += int(ball.visible)
@@ -185,6 +196,7 @@ func _ready() -> void:
 		ring.visible = false
 		add_child(ring)
 		_rings.append(ring)
+	_create_vortex_visuals(air_tuning)
 	_beam = MultiMeshInstance3D.new()
 	_beam.name = "WaterStream"
 	var volume := SphereMesh.new()
@@ -256,6 +268,7 @@ func _process(delta: float) -> void:
 	var t0 := Time.get_ticks_usec()
 	_update_fireballs()
 	_update_air()
+	_update_vortex()
 	_char_accum += delta
 	if _char_accum >= CHAR_CHECK_S:
 		_char_accum = 0.0
@@ -868,6 +881,104 @@ func _on_air_event(kind: StringName, data: Dictionary) -> void:
 		&"air_contact":
 			_fire_burst(_dust, "dust", data.position, data.direction)
 			_stats.air_dust_contacts += 1
+
+
+## Três fitas helicoidais e base, sem collider: legíveis mesmo com partículas desligadas.
+func _create_vortex_visuals(tuning: AirTuning) -> void:
+	var ribbon_mesh := _vortex_ribbon_mesh()
+	var tint := tuning.front_color
+	var ribbon_material := _unshaded(Color(tint.r, tint.g, tint.b, 0.42))
+	ribbon_material.vertex_color_use_as_albedo = true
+	ribbon_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	ribbon_mesh.surface_set_material(0, ribbon_material)
+	for i in VORTEX_RIBBONS:
+		var ribbon := MeshInstance3D.new()
+		ribbon.name = "VortexRibbon%d" % i
+		ribbon.mesh = ribbon_mesh
+		ribbon.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		ribbon.visible = false
+		add_child(ribbon)
+		_vortex_ribbons.append(ribbon)
+	_vortex_base = MeshInstance3D.new()
+	_vortex_base.name = "VortexBase"
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.96
+	torus.outer_radius = 1.0
+	torus.rings = 24
+	torus.ring_segments = 6
+	torus.material = _unshaded(Color(tint.r, tint.g, tint.b, 0.45))
+	_vortex_base.mesh = torus
+	_vortex_base.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_vortex_base.visible = false
+	add_child(_vortex_base)
+	_vortex_dust_process = _process_material(Vector3.UP, 25.0, 0.5, 1.2, Vector3.ZERO, tuning.dust_color)
+	_vortex_dust = _burst_emitter("VortexDust", _vortex_dust_process, 0.7, 0.12)
+	_vortex_dust.amount = VORTEX_PARTICLES
+	_vortex_dust.one_shot = false
+	_vortex_dust.explosiveness = 0.0
+	_vortex_dust.visible = false
+
+
+static func _vortex_ribbon_mesh() -> ArrayMesh:
+	var vertices := PackedVector3Array()
+	var colors := PackedColorArray()
+	for i in 24:
+		var low := float(i) / 24.0
+		var high := float(i + 1) / 24.0
+		for corner: Vector2 in [Vector2(low, -1), Vector2(high, -1), Vector2(high, 1),
+				Vector2(low, -1), Vector2(high, 1), Vector2(low, 1)]:
+			var t := corner.x
+			var radius := lerpf(0.45, 0.95, t)
+			var angle := t * TAU * 1.2
+			vertices.append(Vector3(cos(angle) * radius, clampf(t + corner.y * 0.012, 0.0, 1.0), sin(angle) * radius))
+			colors.append(Color(1, 1, 1, 0.25 + 0.75 * sin(PI * t)))
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_COLOR] = colors
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
+
+
+func _update_vortex() -> void:
+	var air := abilities.get_ability(&"air_gust") as AirGust
+	if air == null or not air.vortex.active:
+		_clear_vortex()
+		return
+	var vortex = air.vortex
+	var radius := maxf(float(vortex.tuning.vortex_radius), 0.05)
+	var height := maxf(float(vortex.tuning.vortex_height), 0.05)
+	var angle := float(vortex.age) * 2.5
+	var was_visible := _vortex_base.visible
+	_vortex_base.visible = true
+	_vortex_base.global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3(radius, 0.3, radius)), vortex.center + Vector3.UP * 0.025)
+	for i in _vortex_ribbons.size():
+		var ribbon := _vortex_ribbons[i]
+		ribbon.visible = true
+		ribbon.global_transform = Transform3D(Basis(Vector3.UP, -angle + TAU * float(i) / VORTEX_RIBBONS)
+			.scaled(Vector3(radius, height, radius)), vortex.center)
+	_vortex_dust.global_position = vortex.center + Vector3(cos(angle), 0.03, sin(angle)) * radius * 0.6
+	_vortex_dust_process.direction = Vector3(-sin(angle), 0.7, cos(angle)).normalized()
+	_vortex_dust.visible = true
+	if not was_visible:
+		_vortex_dust.restart()
+	_vortex_dust.emitting = true
+
+
+func _on_vortex_event(kind: StringName, _data: Dictionary) -> void:
+	if kind == &"vortex_ended":
+		_clear_vortex()
+
+
+func _clear_vortex() -> void:
+	if _vortex_base != null:
+		_vortex_base.visible = false
+	for ribbon in _vortex_ribbons:
+		ribbon.visible = false
+	if _vortex_dust != null:
+		_vortex_dust.emitting = false
+		_vortex_dust.visible = false
 
 
 # --- Emissores ------------------------------------------------------------------------------

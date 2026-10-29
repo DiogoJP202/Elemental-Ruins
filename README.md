@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4H)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4I)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -17,7 +17,8 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 
 **P4F — Congelamento e Lançamento de Gelo implementado, com feedback humano positivo:** C durante RMB transforma o mesmo orbe; voo balístico, impacto cinético próprio e cristal facetado. Feedback informado pelo usuário em 28/10/2026; gate integral não executado.
 **P4G — Gelo persistente e derretimento:** o impacto congelado deixa um corpo físico no mundo; Fogo aquece e funde pelo sistema de materiais existente. Branch `codex/p4g-persistent-ice`, base P4F `88d71e3`. O FAIL histórico P4D permanece.
-**P4H — Muralha de Gelo pronta para playtest:** V durante o controle congelado alterna um molde de painel; soltar RMB constrói somente se válido. Reutiliza IceBody e depende de apoio do terreno. Branch `codex/p4h-ice-wall`, base P4G `1fa3c90`; validação dirigida aprovada, sem gate integral. P4G recebeu feedback humano positivo inicial do usuário em 28/10/2026, sem aprovação de integração integral.
+**P4H — Muralha de Gelo com feedback humano positivo:** V durante o controle congelado alterna um molde de painel; soltar RMB constrói somente se válido. Reutiliza IceBody e depende de apoio do terreno. Branch `codex/p4h-ice-wall`, base P4G `1fa3c90`; validação dirigida aprovada, sem gate integral. O usuário confirmou funcionamento no playtest em 29/10/2026, sem avaliação detalhada por cenário nem aprovação integral.
+**P4I — Vórtice de Ar pronto para playtest:** RMB cria um campo fixo de forças que atrai, faz circular e sustenta corpos físicos. Branch `codex/p4i-air-vortex`, base P4H `33719e4`; validação dirigida aprovada, sem integração integral.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -87,6 +88,7 @@ de fluidos.
 | **RMB** (Água; P4E) | segurar forma/sustenta um orbe; mouse orienta o alvo horizontal, Q/E regulam altura, roda aproxima/afasta; soltar lança. O primeiro botão mantido vence o conflito com o jato LMB; não há comando enfileirado |
 | **C** (Água; P4F) | congela uma vez o orbe suspenso durante RMB; preserva posição e controle. Ignorado fora do hold ou após congelar; soltar RMB lança gelo balístico |
 | **V** (Água; P4H) | durante RMB congelado, alterna muralha/projétil; mire chão livre e solte RMB para construir. Prévia inválida consome/cancela o molde, sem lançar |
+| **RMB** (Ar; P4I) | segure mirando chão livre para manter um vórtice fixo; solte para dissipar. LMB fica bloqueado durante o campo, rajadas anteriores terminam normalmente |
 | **G** (segurar) | escavar em traço contínuo: carimbos a cada 0,15 s × dureza do material (areia 2× mais rápido, pedra 3× mais lento), vala contínua ao varrer a mira |
 | **H** (segurar) | adicionar matéria do material atual em traço contínuo (recusa se for prender o personagem) |
 | **N** (segurar) | suavizar (SMOOTH) quinas e degraus no ponto mirado (raio até 4 m) |
@@ -222,7 +224,19 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
-### P4H — Muralha de Gelo
+### P4I — Vórtice de Ar
+
+**Playtest:** selecione **4**, mire chão livre até 10 m e segure **RMB** perto de caixas, rochas ou gelo dinâmico. O campo permanece fixo enquanto o personagem pode se mover. Soltar RMB, Esc, troca de elemento, perda de input/captura e reset/save/load param as forças e limpam o visual; objetos conservam inércia e gravidade, sem impulso final. LMB mantém a rajada existente quando o campo está inativo; frentes emitidas antes do RMB continuam.
+
+`AirVortex` compõe `AirGust`, pelo mesmo contrato de Ability/eventos usado no orbe. Reutiliza `MaterialResponseSystem.bodies_in_sphere`/visada, exposição da rajada e `DebrisBudget.unpark`. Forças centrais contínuas combinam atração regularizada, circulação X→+Z, sustentação e amortecimento; nenhuma escrita de posição/velocidade. `AirTuning` acrescenta raio **2,5 m**, altura **4 m**, alcance **10 m**, acelerações radial/tangencial/vertical **14/8/24 m/s²**, teto **2500 N**, referência suave de velocidade **10 m/s**, até **12 corpos** (limite absoluto 24) e consultas a cada **0,1 s** (0,05–0,25 s). Os valores da rajada não foram alterados. Corpos pesados podem permanecer no chão; a referência de velocidade freia por força e não limita impulsos externos.
+
+Consulta ampla limitada a 64 resultados, candidatos próximos com WeakRef e exposição de silhueta espaçada; visada central nova a cada tick suspende imediatamente força bloqueada. Essa regra é conservadora quando só a lateral está exposta. Material recebe AIRFLOW no máximo uma vez por segundo, ponderado por exposição/borda, preservando secagem e vento que apaga fogo fraco ou intensifica o forte. Âncoras/estruturas presas e corpos sob controle de Terra são preservados. Só estacionamento por orçamento é reativado pelo campo perto do jogador; estacionamento por distância permanece sob a política do DebrisBudget. Muralha que perde apoio pode reagir enquanto seu centro estiver dentro do campo e visível. O jogador é excluído. Visual tem três fitas helicoidais, anel de base e até 32 partículas, sem decidir forças. Sem centro móvel, múltiplos campos, edição de terreno, consumo automático de objetos ou simulação de fluido.
+
+**Validação dirigida (29/10/2026):** import/parse custom aprovados; [T1/T76/T77 headless 3/3](docs/evidence/p4i/02_headless.json), [regressão headless 10/10](docs/evidence/p4i/03_related_headless.json) (T1/T52/T53/T54/T56/T57/T58/T60/T69/T74), [T1/T76/T77 janela 3/3](docs/evidence/p4i/04_window.json). Execuções finais sem erros/avisos. T76 cobre formação/input real, centro fixo, exclusão LMB, frentes anteriores, recusas e oito cancelamentos. T77 mede atração, elevação de **2,49 m** e velocidade tangencial **3,44 m/s** na caixa de 20 kg; a de 2000 kg não subiu. Verifica força nominal ≤2500 N com tolerância numérica, inércia ao liberar, parede móvel bloqueando, reativação de orçamento, âncora de gelo preservada, painel liberado por escavação e AIRFLOW fraco/forte a 1 Hz. A [tentativa inicial FAIL](docs/evidence/p4i/02_headless_initial_fail.json) foi preservada: fixtures de material/benchmark ocupavam o chão da mira e não formavam o campo. Ajustados só os cenários (combustão isolada por massa de fixture; benchmark formado em chão livre antes dos corpos), sem mudar runtime ou relaxar os critérios físicos.
+
+Benchmark janela: **16 caixas físicas de 0,4 m/20 kg**, gravidade/colisões reais, até **12 recebendo força**, **185 ticks/184 intervalos**, p95 **19,62 ms**, p99 **20,65 ms**, máximo **21,75 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; process_frame após preparação, uma Godot por vez, captura fora da amostragem e imagem histórica restaurada. [Captura inspecionada](docs/evidence/p4i/screens/air_vortex.png), [consolidação/ambiente](docs/evidence/p4i/result.json). **Integral de 83 IDs, export, persistência entre processos e playtest humano P4I não executados.** P4D permanece FAIL, T26 intacto. Próximo passo: experimentar o vórtice.
+
+### P4H — Muralha de Gelo (feedback humano positivo)
 
 **Playtest:** **2 → segure RMB → C → V**, mire chão próximo e livre. Azul indica posição válida, vermelho recusa com motivo no HUD. Solte RMB para criar uma muralha; **V novamente antes de soltar** retorna ao projétil congelado. Fora do molde, câmera/Q/E/roda e lançamento P4F/P4G são preservados. LMB continua sendo o jato exclusivo. Troca de elemento, Esc, perda de captura/input e reset/save/load cancelam somente a prévia; muralhas prontas sobrevivem à seleção/Esc/save e são removidas por reset/load.
 
@@ -232,7 +246,7 @@ Posição usa o primeiro obstáculo da mira, chão com normal Y ≥ 0,85, área 
 
 **Validação dirigida (28/10/2026):** import/parse custom aprovados; [T1/T74/T75 headless 3/3](docs/evidence/p4h/02_headless.json), [regressão headless 12/12](docs/evidence/p4h/03_related_headless.json) (T1/T18/T46/T60/T63/T67/T68/T69/T70/T71/T72/T73), [T1/T74/T75 janela 3/3](docs/evidence/p4h/04_window.json). Execuções finais sem erros/avisos. T74 cobre V contextual/toggle/voo, prévia azul/vermelha, consumo único, volume/massa, bloqueio de jogador/caixa, estabilidade ancorada, recusas e teto misto/proteção. T75 cobre duas rajadas reais de Fogo/fusão/remoção da colisão, escavação/desancoragem/queda, Ar acessível e cancelamentos/save/load/reset. O [FAIL inicial](docs/evidence/p4h/02_headless_initial_fail.json) foi preservado: a sonda de Ar mirava o painel já no fundo da cratera. A rechecagem registra visada falsa/blocked=1 ali e contato com impulso positivo no painel dinâmico acessível. Corrigida a fixture sem alterar física nem relaxar critérios. O parse inicial exigiu anotação explícita de Dictionary; log preservado.
 
-Benchmark janela: quatro muralhas/quatro esferas inicialmente, duas rajadas de Fogo e fusão, **185 ticks / 184 intervalos**, **p95 17,64 / p99 18,46 / máximo 19,54 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; process_frame após preparação dos corpos, uma Godot por vez, captura fora da amostragem e imagem histórica restaurada. [Captura inspecionada](docs/evidence/p4h/screens/ice_wall.png), [consolidação/ambiente](docs/evidence/p4h/result.json). **Integral de 81 IDs, export, persistência entre processos e playtest humano P4H não executados.** P4D continua FAIL, T26 não investigado; próximo passo único é experimentar a muralha.
+Benchmark janela: quatro muralhas/quatro esferas inicialmente, duas rajadas de Fogo e fusão, **185 ticks / 184 intervalos**, **p95 17,64 / p99 18,46 / máximo 19,54 ms**, limites 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; process_frame após preparação dos corpos, uma Godot por vez, captura fora da amostragem e imagem histórica restaurada. [Captura inspecionada](docs/evidence/p4h/screens/ice_wall.png), [consolidação/ambiente](docs/evidence/p4h/result.json). **Integral de 81 IDs, export, persistência entre processos e playtest humano P4H não executados naquela entrega.** Em 29/10/2026 o usuário confirmou funcionamento no playtest; feedback inicial positivo, sem avaliação detalhada ou aprovação integral. Evidências preservadas, P4D FAIL/T26 intactos.
 
 ### P4G — Gelo persistente e derretimento (feedback humano positivo)
 

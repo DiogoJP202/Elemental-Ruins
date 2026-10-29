@@ -1,0 +1,158 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-29T08:50:39",
+  "duracao_s": 30.38,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 956.0,
+    "p4i_vortex_frame_ms": {
+      "max": 8.69,
+      "media": 6.9,
+      "min": 5.11,
+      "n": 446,
+      "p95": 8.21,
+      "p99": 8.64,
+      "physics_ticks": 185
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "FAIL",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 956.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "cancellations": {
+          "escape": {
+            "ok": true
+          },
+          "input": {
+            "ok": true
+          },
+          "load": {
+            "ok": true
+          },
+          "mouse": {
+            "ok": true
+          },
+          "release": {
+            "ok": true
+          },
+          "reset": {
+            "ok": true
+          },
+          "save": {
+            "ok": true
+          },
+          "select": {
+            "ok": true
+          }
+        },
+        "contextual_air_only": true,
+        "fixed_center": true,
+        "formed_once_at_ground": true,
+        "lmb_exclusive": true,
+        "prior_gust_finishes": true,
+        "refusals": {
+          "range": {
+            "ok": true,
+            "reason": "fora do alcance do vórtice"
+          },
+          "wall": {
+            "ok": true,
+            "reason": "mire em chão livre"
+          }
+        },
+        "release_clears": true,
+        "visible": true
+      },
+      "id": "T76",
+      "status": "PASS",
+      "titulo": "RMB forma um vórtice fixo, respeita mira/alcance, bloqueia LMB e limpa todos os cancelamentos"
+    },
+    {
+      "detalhes": {
+        "budget": {
+          "fixture_bodies": 16,
+          "material_events": 0,
+          "max_cached": 0,
+          "max_forced": 0,
+          "ok": false,
+          "queries": 0
+        },
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 8.69,
+          "media": 6.9,
+          "min": 5.11,
+          "n": 446,
+          "p95": 8.21,
+          "p99": 8.64,
+          "physics_ticks": 185
+        },
+        "ice_wall": {
+          "forced_after_release": true,
+          "released": true,
+          "stable": true
+        },
+        "materials": {
+          "ok": false,
+          "strong_events": 0,
+          "strong_intensity": 0.725,
+          "weak_events": 0,
+          "weak_extinguished": false
+        },
+        "motion_and_mass": {
+          "closest_radius": 0.920393764972687,
+          "force_cap_n": 2500.0,
+          "heavy_lift_m": 0.0,
+          "heavy_peak_speed": 0.0000000416560759219919,
+          "initial_radius": 1.50004208087921,
+          "light_lift_m": 2.49197936058044,
+          "light_peak_speed": 4.51957368850708,
+          "max_force_n": 2500.00024414062,
+          "ok": true,
+          "release_preserves_inertia": true,
+          "tangential_speed": 3.43708920478821
+        },
+        "occlusion": {
+          "blocked_queries": 8,
+          "blocked_still": true,
+          "moving_wall_stops_force": true,
+          "ok": true,
+          "unblocked_moves": true
+        },
+        "parked_reactivated": true
+      },
+      "id": "T77",
+      "status": "FAIL",
+      "titulo": "Vórtice atrai/ergue/gira corpos reais, respeita massa/oclusão/âncoras e conserva inércia ao dissipar"
+    }
+  ],
+  "run_id": "57e3c28da3ed",
+  "testes_ids": [
+    "T1",
+    "T76",
+    "T77"
+  ],
+  "testes_pass": 2,
+  "testes_total": 3,
+  "video_adapter": ""
+}

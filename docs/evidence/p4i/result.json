@@ -1,0 +1,199 @@
+{
+  "implementation": "READY_FOR_PLAYTEST",
+  "client_date": "2026-10-29",
+  "branch": "codex/p4i-air-vortex",
+  "base_branch": "codex/p4h-ice-wall",
+  "base_commit": "33719e489098aed71d99e7c34c04a1f5b7fdd322",
+  "p4h_human_feedback": "Positive playtest feedback confirmed by user on 2026-10-29; no detailed per-scenario assessment or full integration approval inferred.",
+  "p4d_checkpoint": "FAIL preserved; T26 neither modified nor investigated",
+  "p4i_integration": "NOT_RUN",
+  "full_contract_count": 83,
+  "reports": {
+    "vortex_headless": {
+      "report": "02_headless.json",
+      "run_id": "f8b3a8f390f4",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T76",
+        "T77"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "related_headless": {
+      "report": "03_related_headless.json",
+      "run_id": "de35cb90031d",
+      "result": "PASS",
+      "complete": true,
+      "passed": 10,
+      "total": 10,
+      "expected_ids": [
+        "T1",
+        "T52",
+        "T53",
+        "T54",
+        "T56",
+        "T57",
+        "T58",
+        "T60",
+        "T69",
+        "T74"
+      ],
+      "errors": 0,
+      "warnings": 0
+    },
+    "vortex_window": {
+      "report": "04_window.json",
+      "run_id": "2f8b3f4e7476",
+      "result": "PASS",
+      "complete": true,
+      "passed": 3,
+      "total": 3,
+      "expected_ids": [
+        "T1",
+        "T76",
+        "T77"
+      ],
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "formal_validation": "Existing Invoke-SelftestStep: process exit 0, fresh report with externally supplied run_id, complete=true, exact externally supplied IDs, typed counters, individual PASS results and zero engine diagnostics. Pinned run_ids/IDs revalidated after execution.",
+  "import_parse": "Custom editor import exit 0 in one attempt; AirVortex and selftest check-only exit 0. Accepted logs have zero engine diagnostics.",
+  "accepted_runs_zero_engine_diagnostics": true,
+  "initial_attempt": {
+    "report": "02_headless_initial_fail.json",
+    "run_id": "57e3c28da3ed",
+    "result": "FAIL",
+    "passed": 2,
+    "total": 3,
+    "errors": 0,
+    "warnings": 0,
+    "note": "T76 passed. T77 physics/mass/inertia/occlusion/parked/ice-anchor passed, but material and benchmark fixtures covered the ground aim so those fields never formed (0 material events/queries). Moved thermal fixture off aim and formed benchmark in clear ground before spawning smaller noninterpenetrating bodies. Added started/reason diagnostics. Only fixtures changed; runtime and physical/performance criteria were not relaxed."
+  },
+  "benchmark": {
+    "id": "T77",
+    "mode": "editor window",
+    "scenario": "16 dynamic cubes, each0.4m/20kg with gravity and collisions, initially arranged on radius1.8m; field active with up to12 receiving forces",
+    "physics_ticks": 185,
+    "samples": 184,
+    "p95_ms": 19.62,
+    "p99_ms": 20.65,
+    "max_ms": 21.75,
+    "limits_ms": {
+      "max": 50,
+      "p99": 33,
+      "p95": 20
+    },
+    "max_forced": 12,
+    "queries": 27,
+    "material_events": 36,
+    "pass": true
+  },
+  "environment": {
+    "godot": "4.7.2-stable (custom_build)",
+    "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "gpu": "Intel(R) Iris(R) Xe Graphics",
+    "renderer": "forward_plus",
+    "physics": "Jolt Physics",
+    "resolution": "1600x900",
+    "vulkan": "1.4.323",
+    "methodology": "Sequential existing selftests, one Godot process at a time. Formation uses physical RMB input. Benchmark fixture starts field on clear ground, then introduces16 cubes with real gravity/collisions. process_frame intervals after12 preparation ticks over185 physics ticks. Screenshot readback after sampling; historical spawn capture restored. Raw report timestamps follow execution host and are preserved; client-facing date above. No cross-machine performance attribution."
+  },
+  "gameplay": {
+    "radius_m": 2.5,
+    "height_m": 4,
+    "creation_range_m": 10,
+    "max_bodies": 12,
+    "hard_body_limit": 24,
+    "broadphase_limit": 64,
+    "query_interval_s": 0.1,
+    "material_interval_s": 1.0,
+    "nominal_force_cap_n": 2500,
+    "soft_speed_reference_m_s": 10,
+    "light_20kg_lift_m": 2.49197936058044,
+    "heavy_2000kg_lift_m": 0.0,
+    "light_tangential_speed_m_s": 3.43709206581116,
+    "inertia_preserved": true,
+    "occlusion": {
+      "blocked_queries": 8,
+      "blocked_still": true,
+      "moving_wall_stops_force": true,
+      "ok": true,
+      "unblocked_moves": true
+    },
+    "materials": {
+      "fixture_mass_kg": 100000.0,
+      "fixture_offset_x_m": 1.2,
+      "ok": true,
+      "strong_events": 1,
+      "strong_intensity": 1.0,
+      "strong_reason": "vórtice ativo",
+      "strong_started": true,
+      "weak_events": 1,
+      "weak_extinguished": true,
+      "weak_reason": "vórtice ativo",
+      "weak_started": true
+    },
+    "ice_wall": {
+      "forced_after_release": true,
+      "released": true,
+      "stable": true
+    },
+    "ownership": "WeakRef candidate cache; force only, never writes body position/velocity. Player/held/anchored skipped. Budget-parked can reactivate only nearby and exposed; distance-parked follows DebrisBudget.",
+    "lifecycle": "Release, select, Esc, capture/input loss and reset/save/load cancel field and references without final impulse. Previously emitted LMB gusts continue unless global clear invalidates them."
+  },
+  "not_run": [
+    "export",
+    "full integration suite (83 IDs, four modes)",
+    "cross-process persistence",
+    "T26",
+    "human playtest P4I"
+  ],
+  "capture": "screens/air_vortex.png",
+  "capture_is_human_playtest": false,
+  "source_hash_method": "SHA256 of tested checkout bytes",
+  "source_hashes": [
+    {
+      "path": "scripts/abilities/ability_controller.gd",
+      "sha256": "935602c4bb7adb8b9a198e4609cf6c040cb49d8308a019b7ef9c271888c5967d"
+    },
+    {
+      "path": "scripts/abilities/air_gust.gd",
+      "sha256": "9c9af09d660663e561d28f4a5afca292c9a6a5f886ab65bbff3783000cad8901"
+    },
+    {
+      "path": "scripts/abilities/air_tuning.gd",
+      "sha256": "7ce55d3529458431a4e324a8dbc15d033f14704211ce0fa99422717800eaf6ef"
+    },
+    {
+      "path": "scripts/abilities/air_vortex.gd",
+      "sha256": "8c4cd30c232e3c101e30e436c36a3ad32de1e95c2a97e4a83f5a95c83d8c82b1"
+    },
+    {
+      "path": "scripts/core/input_actions.gd",
+      "sha256": "c39546a1511818f12a136216b9f120b28c42e5749c2b2c75406f82a9138499c2"
+    },
+    {
+      "path": "scripts/dev/p36_selftest.gd",
+      "sha256": "1e474eeff762803adf28fd09a9f2bc2b978b1b98304ac70d80bc61df2cc8800d"
+    },
+    {
+      "path": "scripts/elements/elemental_fx.gd",
+      "sha256": "08b285190ff6901e8da9a7b9a998860b57bd163ecea5586b19596f19172f2f7d"
+    },
+    {
+      "path": "scripts/ui/debug_hud.gd",
+      "sha256": "20eb1ae633ff004b08cf2d0fcfd7d6035e12effb595e6df6c741be7cbde9dcb6"
+    },
+    {
+      "path": "tools/lib_selftest_contract.ps1",
+      "sha256": "d228811cc6a726821f0e68717e607e32cab93517601aa50d09cc6c4b2f0f9afd"
+    }
+  ]
+}

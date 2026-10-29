@@ -1,0 +1,673 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-29T08:56:33",
+  "duracao_s": 54.209,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 896.0
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 896.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "contacts_in_wave": 3,
+        "crates": [
+          {
+            "arrival_s": 0.1,
+            "deadline_s": 0.133333333333333,
+            "distance_m": 3.0,
+            "expected_s": 0.1,
+            "first_motion_s": 0.1,
+            "ok": true
+          },
+          {
+            "arrival_s": 0.216666666666667,
+            "deadline_s": 0.24415184656779,
+            "distance_m": 6.32455539703369,
+            "expected_s": 0.210818513234456,
+            "first_motion_s": 0.216666666666667,
+            "ok": true
+          },
+          {
+            "arrival_s": 0.316666666666667,
+            "deadline_s": 0.345601018269857,
+            "distance_m": 9.3680305480957,
+            "expected_s": 0.312267684936523,
+            "first_motion_s": 0.316666666666667,
+            "ok": true
+          }
+        ],
+        "front_speed": 30.0,
+        "method": "ticks de física; distância ao centro do corpo"
+      },
+      "id": "T52",
+      "status": "PASS",
+      "titulo": "Ar: frente progressiva; nenhum efeito antes da casca; chegada em d/v + 2 ticks"
+    },
+    {
+      "detalhes": {
+        "bodies": [
+          {
+            "cap_dv": 8.99999885559071,
+            "cap_impulse_Ns": 1500.0,
+            "expected_dv": 8.99999885559071,
+            "exposure": 1.0,
+            "impulse_Ns": 179.999977111814,
+            "mass_kg": 20.0,
+            "measured_dv": 8.99999904632568,
+            "ok": true,
+            "strength": 0.749999904632559
+          },
+          {
+            "cap_dv": 9.0,
+            "cap_impulse_Ns": 1500.0,
+            "expected_dv": 5.625,
+            "exposure": 1.0,
+            "impulse_Ns": 1125.0,
+            "mass_kg": 200.0,
+            "measured_dv": 5.625,
+            "ok": true,
+            "strength": 0.75
+          },
+          {
+            "cap_dv": 8.99999885559071,
+            "cap_impulse_Ns": 1500.0,
+            "expected_dv": 0.562499928474419,
+            "exposure": 1.0,
+            "impulse_Ns": 1124.99985694884,
+            "mass_kg": 2000.0,
+            "measured_dv": 0.5625,
+            "ok": true,
+            "strength": 0.749999904632559
+          }
+        ],
+        "once_per_wave": {
+          "airflow_events": 3,
+          "bodies": 3,
+          "contacts": 3,
+          "ok": true,
+          "stats_contacts": 3
+        },
+        "ratios": {
+          "light_over_mid": 1.5999998304579,
+          "mid_over_heavy": 10.0
+        }
+      },
+      "id": "T53",
+      "status": "PASS",
+      "titulo": "Ar: mesma pressão respeita teto de Δv e de impulso; resposta inversa à massa; um contato por corpo por onda"
+    },
+    {
+      "detalhes": {
+        "dust": {
+          "contact_dust_total": 2,
+          "front_dust": 11,
+          "max_front_dust": 15,
+          "ok": true,
+          "rings_live_after": 0,
+          "rings_missing": 0
+        },
+        "partial": {
+          "contacts": 2,
+          "dust_contacts": 2,
+          "ok": true,
+          "partial_dv": 5.54399967193604,
+          "partial_exposure": 0.8,
+          "ratio": 0.799999862384674,
+          "stats_partial": 1,
+          "twin_dv": 6.93000078201294,
+          "twin_exposure": 1.0
+        },
+        "raycast_note": "amostra sem falhas não prova correção universal",
+        "terrain": {
+          "airflow_events": 0,
+          "blocked": 1,
+          "mound": "add_sphere OK rev=1 4.37ms soil ~17241 kg",
+          "mound_collider": true,
+          "ok": true,
+          "velocity": 0.0
+        },
+        "thin_wall": {
+          "airflow_events": 0,
+          "blocked": 1,
+          "contacts": 0,
+          "dust_contacts": 0,
+          "exposure_rays": 5,
+          "ok": true,
+          "ray_fallback_hits": 0,
+          "velocity": 0.0
+        }
+      },
+      "id": "T54",
+      "status": "PASS",
+      "titulo": "Ar: parede de 1 mm e terreno bloqueiam; exposição parcial reduz o impulso; poeira só de contatos e passagem reais"
+    },
+    {
+      "detalhes": {
+        "events": {
+          "events": 17,
+          "fields_ok": true,
+          "increasing": true,
+          "kinds": {
+            "air_contact": 7,
+            "air_end": 5,
+            "air_launch": 5
+          },
+          "ok": true,
+          "unique": true
+        },
+        "recovery": {
+          "cooldown_s": 0.15,
+          "immediate_rejected": true,
+          "ok": true,
+          "recovery_s": 0.15
+        },
+        "variant": {
+          "arrival_s": 0.283333333333333,
+          "expected_dv": 0.818333315282104,
+          "expected_s": 0.269649982452393,
+          "far_velocity_beyond_range": 0.0,
+          "near_dv": 0.818333327770233,
+          "ok": true,
+          "range_m": 6.0
+        },
+        "wave_limit": {
+          "accepted": 2,
+          "live": 2,
+          "max_waves": 2,
+          "ok": true,
+          "rejected": 1
+        }
+      },
+      "id": "T56",
+      "status": "PASS",
+      "titulo": "Ar: AirTuning muda velocidade, alcance e teto; limite de ondas e recuperação; eventos identificáveis"
+    },
+    {
+      "detalhes": {
+        "flames": {
+          "burning": 30,
+          "cap": 24,
+          "flames_active": 24,
+          "ok": true,
+          "skipped": 6
+        },
+        "no_leak": {
+          "air_rings": 0,
+          "burning": 0,
+          "fire_slots": 0,
+          "flames_active": 0,
+          "fx_children_after": 61,
+          "fx_children_before": 61,
+          "ok": true
+        },
+        "stress": {
+          "caps": {
+            "air": 4,
+            "fire": 8,
+            "water": 24
+          },
+          "frame_ms": {
+            "max": 14.53,
+            "media": 6.72,
+            "min": 0.38,
+            "n": 30,
+            "p95": 9.82
+          },
+          "missing_slots": {
+            "air": 0,
+            "fire": 0
+          },
+          "note": "amostra informativa; o gate de quadro é o T27/T37",
+          "ok": true,
+          "peak": {
+            "air_live": 4,
+            "air_rings": 4,
+            "fire_balls": 8,
+            "fire_live": 8,
+            "fire_slots": 8,
+            "water_instances": 7
+          }
+        }
+      },
+      "id": "T58",
+      "status": "PASS",
+      "titulo": "VFX limitados sob estresse (24 chamas, 8 projéteis, 4 frentes, 24 volumes de água) e sem vazamento após reset"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "air_load_during_front": {
+            "air_contacts_after": 0,
+            "command": "load",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "air_front"
+            ],
+            "session_changed": true,
+            "wave": 17
+          },
+          "air_reset_during_front": {
+            "air_contacts_after": 0,
+            "command": "reset",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "air_front"
+            ],
+            "session_changed": true,
+            "wave": 15
+          },
+          "air_save_during_front": {
+            "air_contacts_after": 0,
+            "command": "save",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "crate_survived": true,
+            "crate_velocity": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "air_front"
+            ],
+            "session_changed": true,
+            "wave": 16
+          },
+          "fire_load_flight_and_anticipation": {
+            "air_contacts_after": 0,
+            "command": "load",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 2,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "flight",
+              "anticipation"
+            ],
+            "session_changed": true
+          },
+          "fire_reset_during_anticipation": {
+            "air_contacts_after": 0,
+            "command": "reset",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "anticipation"
+            ],
+            "session_changed": true
+          },
+          "fire_save_during_flight": {
+            "air_contacts_after": 0,
+            "command": "save",
+            "command_ok": true,
+            "cooldown_left": 0.0,
+            "dissipations_after": 0,
+            "fx_after_command": [],
+            "impacts_after": 0,
+            "launches_after": 0,
+            "live_at_signal": 0,
+            "live_before": 1,
+            "material_events_after": 0,
+            "ok": true,
+            "phases_before": [
+              "flight"
+            ],
+            "session_changed": true,
+            "target_survived": true,
+            "target_temperature": 20.0
+          }
+        },
+        "slot": "p36_lifecycle"
+      },
+      "id": "T57",
+      "status": "PASS",
+      "titulo": "Reset/save/load descartam antecipações, voos e frentes de ar no próprio comando, sem eventos ou FX tardios"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01265239715576,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01265239715576,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99409, 0.02, 63.50564)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01261711120605,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01261711120605,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99406, 0.02, 63.50567)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01432180404663,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01432180404663,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.9952, 0.02, 63.50439)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01429510116577,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01429510116577,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99518, 0.02, 63.50441)",
+              "reason": ""
+            },
+            "ok": true
+          }
+        },
+        "slot": "p4a_lifecycle",
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T60",
+      "status": "PASS",
+      "titulo": "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "first_button_wins": {
+            "jet_first": true,
+            "ok": true,
+            "orb_first": true
+          },
+          "flight_escape": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_input_disabled": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_mouse_lost": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "flight_select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_escape": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_input_disabled": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_mouse_lost": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          },
+          "hold_select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "ok": true,
+            "started": true
+          }
+        },
+        "restart_defaults": true,
+        "slot_ready": true,
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T69",
+      "status": "PASS",
+      "titulo": "Orbe mantém exclusão jato/RMB e pincel; seleção/input/mouse/Esc/reset/save/load cancelam hold e voo sem resíduos"
+    },
+    {
+      "detalhes": {
+        "anchored_stable": true,
+        "contextual": true,
+        "freeze_wall_ignored_in_flight": true,
+        "mass_kg": 137.550003806502,
+        "mixed_budget": {
+          "eight_total_four_walls": true,
+          "factory_fixture": true,
+          "held_skipped": true
+        },
+        "object_blocked": true,
+        "one_release_one_wall_no_launch": true,
+        "physical_contract": true,
+        "player_blocked": true,
+        "preview_valid": true,
+        "preview_visual": true,
+        "refusals": {
+          "occluded": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "occupied": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "range": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "fora do alcance (máx. 10.0 m)",
+            "red_preview": true
+          },
+          "support": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "mire em chão livre",
+            "red_preview": true
+          },
+          "thin": {
+            "fixture_ready": true,
+            "ok": true,
+            "reason": "volume insuficiente para espessura mínima",
+            "red_preview": true
+          }
+        },
+        "size_m": "(1.4, 1.5, 0.071429)",
+        "toggle_back": true,
+        "volume_m3": 0.150000004151038
+      },
+      "id": "T74",
+      "status": "PASS",
+      "titulo": "V alterna molde; release constrói um painel sólido com volume coerente e orçamento compartilhado"
+    }
+  ],
+  "run_id": "de35cb90031d",
+  "testes_ids": [
+    "T1",
+    "T52",
+    "T53",
+    "T54",
+    "T56",
+    "T58",
+    "T57",
+    "T60",
+    "T69",
+    "T74"
+  ],
+  "testes_pass": 10,
+  "testes_total": 10,
+  "video_adapter": ""
+}

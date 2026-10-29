@@ -24,6 +24,18 @@ extends Resource
 ## Fração da menor meia-extensão do corpo usada nos pontos laterais da silhueta.
 @export_range(0.1, 1.0, 0.05) var silhouette_fraction := 0.7
 
+@export_group("Vórtice")
+@export_range(0.5, 5.0, 0.1) var vortex_radius := 2.5
+@export_range(1.0, 8.0, 0.1) var vortex_height := 4.0
+@export_range(2.0, 15.0, 0.5) var vortex_range := 10.0
+@export_range(0.0, 40.0, 0.5) var vortex_radial_accel := 14.0
+@export_range(0.0, 40.0, 0.5) var vortex_tangential_accel := 8.0
+@export_range(0.0, 50.0, 0.5) var vortex_lift_accel := 24.0
+@export_range(0.0, 6000.0, 50.0) var vortex_max_force := 2500.0
+@export_range(1.0, 20.0, 0.5) var vortex_max_speed := 10.0
+@export_range(1, 24, 1) var vortex_max_bodies := 12
+@export_range(0.05, 0.25, 0.01) var vortex_query_interval_s := 0.1
+
 @export_group("Apresentação (sem física)")
 @export var front_color := Color("#DDE6EA")
 @export_range(0.0, 1.0, 0.01) var front_alpha := 0.35

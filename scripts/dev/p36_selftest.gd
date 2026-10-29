@@ -10,6 +10,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4F: T70 congela/controla/lança gelo; T71 verifica impacto e limpeza do estado congelado.
 ## P4G: T72 verifica gelo físico/orçamento; T73 cobre fusão por Fogo e limpeza da sessão.
 ## P4H: T74 cobre molde/construção/recusas; T75 cobre apoio, fusão e ciclo de vida da muralha.
+## P4I: T76 cobre input/ciclo do vórtice; T77 cobre forças, exposição, materiais e orçamento.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -94,6 +95,8 @@ func _run_tests() -> bool:
 	if _should_run("T73"): await _t73_persistent_ice_heat_lifecycle()
 	if _should_run("T74"): await _t74_ice_wall_build()
 	if _should_run("T75"): await _t75_ice_wall_world()
+	if _should_run("T76"): await _t76_vortex_lifecycle()
+	if _should_run("T77"): await _t77_vortex_physics()
 	return true
 
 
@@ -3812,6 +3815,287 @@ func _t75_ice_wall_world() -> void:
 		{"fire_melts_real_material": fusion, "temperature_at_melt": state.temperature, "melt": watch,
 		"excavated_support": support, "air_probes": air_probes, "preview_cancel_and_built_lifecycle": cancellations, "mixed_bodies_fixture": filled,
 		"benchmark_fire_shots": shots, "frame_ms": timings, "frame_gate_applied": windowed})
+	ab.cancel_all()
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+## A criação passa pelo mesmo RMB contextual usado pelo jogador.
+func _p4i_start(point: Vector3) -> bool:
+	await _aim_settle(point)
+	_p4c_rmb(true)
+	await _frames(2)
+	return (main.abilities.get_ability(&"air_gust") as AirGust).vortex.active
+
+
+func _t76_vortex_lifecycle() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(3)
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var vortex: AirVortex = gust.vortex
+	var point := _ground_at(base + Vector3(0.17, 0, -6))
+	await _aim_settle(point)
+	var old_wave := _air_press(ab, gust)
+	var formed0: int = vortex.get_stats().formed
+	_p4c_rmb(true)
+	await _frames(2)
+	var center := vortex.center
+	var formed: bool = vortex.active and vortex.get_stats().formed == formed0 + 1 and center.distance_to(point) < 0.1
+	var gusts0: int = gust.get_stats().gusts
+	var exclusive: bool = not ab.use_pressed() and gust.get_stats().gusts == gusts0 and not ab.begin_air_vortex()
+	player.camera_rig.set_view(0.4, deg_to_rad(-12.0))
+	await _frames(6)
+	var fixed_center: bool = vortex.active and vortex.center.is_equal_approx(center)
+	var prior_wave_finishes: bool = old_wave >= 0 and await _wait_until(func(): return gust.waves.is_empty(), 1.0)
+	var visible: bool = main.fx.get_stats().vortex_visible
+	_p4c_rmb(false)
+	await _frames(2)
+	var stopped: bool = not vortex.active and vortex.get_stats().cached_bodies == 0 and not main.fx.get_stats().vortex_visible
+	var refusals := {}
+	for kind: String in ["range", "wall"]:
+		base = await _p3_lab(3)
+		point = _ground_at(base + Vector3(0.17, 0, -14 if kind == "range" else -6))
+		if kind == "wall":
+			_p36_thin_wall(base + Vector3(0, 1.5, -3), Vector3(5, 3, 0.02))
+			await _frames(2)
+		var began := await _p4i_start(point)
+		refusals[kind] = {"ok": not began and not vortex.active, "reason": vortex.last_result}
+		_p4c_rmb(false)
+	base = await _p3_lab(3)
+	var contextual := true
+	for index in 3:
+		ab.select(index)
+		contextual = not ab.begin_air_vortex() and not vortex.active and contextual
+	ab.select(3)
+	var slot_ready: bool = await main.request_world_save("p4i_vortex_session")
+	var cancellations := {}
+	for kind: String in ["release", "select", "escape", "input", "mouse", "save", "load", "reset"]:
+		base = await _p3_lab(3)
+		point = _ground_at(base + Vector3(0.17, 0, -6))
+		_air_crate(point + Vector3(1.2, 1.0, 0))
+		var started := await _p4i_start(point)
+		await _frames(12)
+		var old_capture := ab.require_captured_mouse
+		var old_mouse := Input.mouse_mode
+		var command_ok := true
+		if kind == "release": _p4c_rmb(false)
+		elif kind == "select": ab.select(0)
+		elif kind == "escape":
+			_p4a_key(KEY_ESCAPE, true)
+			Input.flush_buffered_events()
+			_p4a_key(KEY_ESCAPE, false)
+			Input.flush_buffered_events()
+		elif kind == "input": player.input_enabled = false
+		elif kind == "mouse":
+			ab.require_captured_mouse = true
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		elif kind == "save": command_ok = await main.request_world_save("p4i_vortex_session")
+		elif kind == "load": command_ok = await main.request_world_load("p4i_vortex_session")
+		else: command_ok = await main.request_world_reset()
+		await _frames(2)
+		var ticks: int = vortex.get_stats().force_ticks
+		await _frames(3)
+		cancellations[kind] = {"ok": started and command_ok and not vortex.active and vortex.get_stats().cached_bodies == 0 \
+			and vortex.get_stats().force_ticks == ticks and not main.fx.get_stats().vortex_visible \
+			and not main.fx.get_stats().vortex_particles_emitting}
+		ab.require_captured_mouse = old_capture
+		Input.mouse_mode = old_mouse
+		player.input_enabled = true
+		_p4c_rmb(false)
+	_record("T76", "RMB forma um vórtice fixo, respeita mira/alcance, bloqueia LMB e limpa todos os cancelamentos",
+		formed and exclusive and fixed_center and prior_wave_finishes and visible and stopped and contextual and slot_ready \
+		and refusals.values().all(func(c): return c.ok) and cancellations.values().all(func(c): return c.ok),
+		{"formed_once_at_ground": formed, "fixed_center": fixed_center, "lmb_exclusive": exclusive,
+		"prior_gust_finishes": prior_wave_finishes, "visible": visible, "release_clears": stopped,
+		"contextual_air_only": contextual, "refusals": refusals, "cancellations": cancellations})
+	player.input_enabled = false
+	await main.request_world_reset()
+
+
+func _t77_vortex_physics() -> void:
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(3)
+	var gust: AirGust = ab.get_ability(&"air_gust")
+	var vortex: AirVortex = gust.vortex
+	var point := _ground_at(base + Vector3(0.17, 0, -6))
+	var light := DebugProps.spawn_crate(props, point + Vector3(1.5, 0.55, 0))
+	var heavy := DebugProps.spawn_crate(props, point + Vector3(-1.5, 0.55, 0))
+	heavy.mass = 2000.0
+	await _frames(6)
+	var start := light.global_position
+	var heavy_start := heavy.global_position
+	var player_start := player.global_position
+	var started := await _p4i_start(point)
+	var initial_radius := Vector2(start.x - vortex.center.x, start.z - vortex.center.z).length()
+	var min_radius := initial_radius
+	var max_lift := 0.0
+	var tangent_speed := 0.0
+	var heavy_lift := 0.0
+	var light_speed := 0.0
+	var heavy_speed := 0.0
+	for i in 90:
+		await _frames(1)
+		var radial := light.global_position - vortex.center
+		radial.y = 0.0
+		min_radius = minf(min_radius, radial.length())
+		max_lift = maxf(max_lift, light.global_position.y - start.y)
+		heavy_lift = maxf(heavy_lift, heavy.global_position.y - heavy_start.y)
+		if radial.length() > 0.05:
+			tangent_speed = maxf(tangent_speed, absf(light.linear_velocity.dot(Vector3.UP.cross(radial.normalized()))))
+		light_speed = maxf(light_speed, light.linear_velocity.length())
+		heavy_speed = maxf(heavy_speed, heavy.linear_velocity.length())
+	var force_bounded: bool = vortex.get_stats().max_force_applied <= vortex.tuning.vortex_max_force + 0.01
+	var motion: bool = started and min_radius < initial_radius - 0.2 and max_lift > 0.2 and tangent_speed > 0.2 \
+		and light_speed > heavy_speed + 0.2 and max_lift > heavy_lift + 0.15 and force_bounded \
+		and player.global_position.distance_to(player_start) < 0.1
+	var velocity := light.linear_velocity
+	var at_release := light.global_position
+	_p4c_rmb(false)
+	var same_velocity: bool = light.linear_velocity.is_equal_approx(velocity)
+	var ticks: int = vortex.get_stats().force_ticks
+	await _frames(6)
+	var inertia: bool = same_velocity and not light.freeze and light.gravity_scale == 1.0 \
+		and vortex.get_stats().force_ticks == ticks and light.global_position.distance_to(at_release) > 0.01
+	var movement := {"ok": motion, "initial_radius": initial_radius, "closest_radius": min_radius,
+		"light_lift_m": max_lift, "heavy_lift_m": heavy_lift, "tangential_speed": tangent_speed,
+		"light_peak_speed": light_speed, "heavy_peak_speed": heavy_speed, "max_force_n": vortex.get_stats().max_force_applied,
+		"force_cap_n": vortex.tuning.vortex_max_force, "release_preserves_inertia": inertia}
+	# Flutuante isolado: mede só força de vento; a parede móvel é fixture explícita.
+	base = await _p3_lab(3)
+	point = _ground_at(base + Vector3(0.17, 0, -6))
+	var target := _air_crate(point + Vector3(1.6, 1.4, 0))
+	var wall := _p36_thin_wall(point + Vector3(0.7, 2, 0), Vector3(0.02, 5, 6))
+	await _frames(2)
+	var blocked_start := target.global_position
+	started = await _p4i_start(point)
+	await _frames(24)
+	var blocked: bool = started and target.linear_velocity.is_zero_approx() and target.global_position.is_equal_approx(blocked_start)
+	wall.global_position += Vector3.RIGHT * 5.0
+	await _frames(12)
+	var unblocked: bool = target.linear_velocity.length() > 0.05
+	var now_center := MaterialResponseSystem.body_center(target)
+	wall.global_position = Vector3((vortex.center.x + now_center.x) * 0.5, point.y + 2.0, now_center.z)
+	await _frames(2)
+	var after_block := target.linear_velocity
+	var forced0: int = vortex.get_stats().bodies_forced
+	await _frames(3)
+	var moving_blocker: bool = target.linear_velocity.is_equal_approx(after_block) and vortex.get_stats().bodies_forced == forced0
+	var occlusion := {"ok": blocked and unblocked and moving_blocker, "blocked_still": blocked,
+		"unblocked_moves": unblocked, "moving_wall_stops_force": moving_blocker, "blocked_queries": vortex.get_stats().blocked}
+	_p4c_rmb(false)
+	# Estacionamento é reativável; âncora estrutural de gelo continua protegida.
+	base = await _p3_lab(3)
+	point = _ground_at(base + Vector3(0.17, 0, -6))
+	var parked := _air_crate(point + Vector3(1.3, 1.0, 0))
+	parked.set_meta(DebrisBudget.PARKED_META, "budget")
+	parked.freeze = true
+	started = await _p4i_start(point)
+	await _frames(14)
+	var unparked: bool = started and not parked.freeze and not parked.has_meta(DebrisBudget.PARKED_META) \
+		and parked.linear_velocity.length() > 0.05
+	_p4c_rmb(false)
+	base = await _p3_lab(3)
+	point = _ground_at(base + Vector3(0.17, 0, -6))
+	var orb: WaterOrb = (ab.get_ability(&"water_jet") as WaterJet).orb
+	var foot := _ground_at(point + Vector3(1.2, 0, 0))
+	var ice := _p4h_wall_fixture(orb, foot)
+	var anchor := {"stable": false, "released": false, "forced_after_release": false}
+	if ice != null:
+		var pose := ice.global_transform
+		started = await _p4i_start(point)
+		await _frames(20)
+		anchor.stable = started and ice.wall_anchored and ice.freeze and ice.global_transform.is_equal_approx(pose)
+		forced0 = vortex.get_stats().bodies_forced
+		var edit := svc.dig_sphere(foot - Vector3.UP * 0.4, 1.2)
+		anchor.released = edit.ok and await _wait_until(func(): return not ice.wall_anchored and not ice.freeze, 5.0)
+		await _frames(18)
+		anchor.forced_after_release = vortex.get_stats().bodies_forced > forced0
+	_p4c_rmb(false)
+	# Massa grande sem gravidade isola AIRFLOW da trajetória, sem congelar/reclassificar o corpo.
+	base = await _p3_lab(3)
+	point = _ground_at(base + Vector3(0.17, 0, -6))
+	var fuel := _air_crate(point + Vector3(1.2, 0.6, 0), 100000.0)
+	_apply_direct(ElementalEvent.Kind.HEAT, fuel, 450.0)
+	var state := materials.state_of(fuel)
+	state.intensity = 0.01
+	var events0: int = vortex.get_stats().material_events
+	started = await _p4i_start(point)
+	var weak_started := started
+	var weak_reason := vortex.last_result
+	await _frames(68)
+	var weak_extinguished: bool = started and not state.burning
+	var weak_events: int = vortex.get_stats().material_events - events0
+	_p4c_rmb(false)
+	_apply_direct(ElementalEvent.Kind.HEAT, fuel, 450.0)
+	state.intensity = 0.4
+	events0 = vortex.get_stats().material_events
+	started = await _p4i_start(point)
+	var strong_started := started
+	var strong_reason := vortex.last_result
+	await _frames(68)
+	var strong_intensity := state.intensity
+	var strong_events: int = vortex.get_stats().material_events - events0
+	var airflow: bool = started and weak_extinguished and state.burning and strong_intensity > 0.75 \
+		and weak_events >= 1 and weak_events <= 2 and strong_events >= 1 and strong_events <= 2
+	_p4c_rmb(false)
+	# Campo ativo com mais candidatos que o teto: custo de consulta e força permanecem limitados.
+	base = await _p3_lab(3)
+	point = _ground_at(base + Vector3(0.17, 0, -6))
+	# Formar em chão livre antes de introduzir candidatos, sem caixas sobre a própria mira.
+	started = await _p4i_start(point)
+	var benchmark_reason := vortex.last_result
+	for i in 16:
+		var angle := TAU * float(i) / 16.0
+		var crate := DebugProps.spawn_crate(props, point + Vector3(cos(angle) * 1.8, 0.22, sin(angle) * 1.8))
+		for child in crate.get_children():
+			if child is CollisionShape3D:
+				((child as CollisionShape3D).shape as BoxShape3D).size = Vector3.ONE * 0.4
+			elif child is MeshInstance3D:
+				((child as MeshInstance3D).mesh as BoxMesh).size = Vector3.ONE * 0.4
+	await _frames(12)
+	var queries0: int = vortex.get_stats().queries
+	events0 = vortex.get_stats().material_events
+	var max_cached := 0
+	var max_forced := 0
+	var clock := {"last": Time.get_ticks_usec()}
+	var frame_ms := PackedFloat32Array()
+	var sample := func():
+		var now := Time.get_ticks_usec()
+		frame_ms.append((now - int(clock.last)) / 1000.0)
+		clock.last = now
+	get_tree().process_frame.connect(sample)
+	for i in 185:
+		await _frames(1)
+		max_cached = maxi(max_cached, int(vortex.get_stats().cached_bodies))
+		max_forced = maxi(max_forced, int(vortex.get_stats().last_forced))
+	get_tree().process_frame.disconnect(sample)
+	if not frame_ms.is_empty(): frame_ms.remove_at(0)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	timings["physics_ticks"] = 185
+	_metrics["p4i_vortex_frame_ms"] = timings
+	var windowed := not _mode.begins_with("headless")
+	var perf: bool = not windowed or (frame_ms.size() >= 120 and timings.get("p95", 999.0) <= 20.0 \
+		and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	var queries: int = vortex.get_stats().queries - queries0
+	var material_events: int = vortex.get_stats().material_events - events0
+	var budget: bool = started and max_cached > 0 and max_forced > 1 and max_cached <= vortex.tuning.vortex_max_bodies \
+		and queries <= ceili(185.0 / (60.0 * vortex.tuning.vortex_query_interval_s)) + 2 \
+		and material_events <= vortex.tuning.vortex_max_bodies * 4
+	if _screens:
+		player.camera_rig.set_view(0.0, deg_to_rad(-12.0))
+		await _frames(2)
+		await _snap("p4i_air_vortex")
+	_record("T77", "Vórtice atrai/ergue/gira corpos reais, respeita massa/oclusão/âncoras e conserva inércia ao dissipar",
+		motion and inertia and occlusion.ok and unparked and anchor.values().all(func(ok): return ok) and airflow and budget and perf,
+		{"motion_and_mass": movement, "occlusion": occlusion, "parked_reactivated": unparked, "ice_wall": anchor,
+		"materials": {"ok": airflow, "fixture_mass_kg": 100000.0, "fixture_offset_x_m": 1.2,
+			"weak_started": weak_started, "weak_reason": weak_reason, "strong_started": strong_started, "strong_reason": strong_reason,
+			"weak_extinguished": weak_extinguished, "strong_intensity": strong_intensity, "weak_events": weak_events, "strong_events": strong_events},
+		"budget": {"ok": budget, "started": started, "reason": benchmark_reason, "fixture_bodies": 16,
+			"fixture_cube_size_m": 0.4, "fixture_ring_radius_m": 1.8, "fixture_mass_kg": 20.0, "fixture_real_gravity": true,
+			"max_cached": max_cached, "max_forced": max_forced, "queries": queries, "material_events": material_events},
+		"frame_ms": timings, "frame_gate_applied": windowed})
 	ab.cancel_all()
 	player.input_enabled = false
 	await main.request_world_reset()

@@ -10,6 +10,7 @@ const LEGEND := "WASD mover · Shift correr · Space pular · Mouse câmera · E
 	+ "RMB (Terra): segure para prévia do pilar · solte para criar · trocar elemento cancela\n" \
 	+ "Água: LMB jato · RMB orbe · C congela · V muralha/projétil · Q/E altura · roda distância · solte RMB confirma\n" \
 	+ "F (Terra): segure para prévia da fissura · solte para abrir o chão\n" \
+	+ "Ar: LMB rajada · segure RMB no chão para manter vórtice fixo · solte RMB para dissipar\n" \
 	+ "G escavar · H adicionar · N suavizar (segure) · J túnel · K rampa · M material do H · roda / [ ] raio\n" \
 	+ "R extrair rocha · T impulso de teste no corpo mirado · B caixa de teste\n" \
 	+ "Z RESET DO MUNDO · F5 salvar slot · F9 carregar slot"

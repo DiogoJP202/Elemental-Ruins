@@ -1,6 +1,6 @@
 # ELEMENTAL // RUINS — Roadmap técnico
 
-**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E/P4F/P4G receberam feedback humano positivo inicial. P4H — Muralha de Gelo implementada em `codex/p4h-ice-wall`, base P4G `1fa3c90`, pronta para playtest; gate integral não executado.
+**Estado atual:** P0–P4D integrados à main (`80f2a08`, PR #5). P4E–P4H receberam feedback humano positivo inicial. P4I — Vórtice de Ar implementado em `codex/p4i-air-vortex`, base P4H `33719e4`, pronto para playtest; gate integral não executado.
 
 **Checkpoint P4D em 28/10/2026: FALHOU.** Editor headless e export janela: 71/72 por timeout de preparação do T26 antes do save. Editor janela e export headless: 72/72. Persistência entre processos e benchmarks aprovados, zero erros/avisos; detalhamento abaixo. O usuário autorizou P4E apesar desse FAIL, que permanece preservado. T26 não foi investigado nesta fatia.
 
@@ -86,12 +86,17 @@ Fogo usa HEAT no mesmo MaterialResponseSystem: gelo começa a -20 °C, funde a 0
 
 **Validação dirigida:** import/parse; T1/T72/T73 3/3 headless e 3/3 janela; regressão 12/12 headless de materiais/jato/líquido/congelamento/controles/Terra/Fogo/Ar. Execuções finais sem erros/avisos. Tentativa inicial com falhas das sondas corrigidas permanece registrada. Benchmark de 185 ticks com oito corpos e orbe ativo/lançado: **17,60 / 17,96 / 18,32 ms** (p95/p99/máximo), dentro de 20/33/50. Evidências e metodologia em `docs/evidence/p4g/`. Contrato daquela entrega: 79 IDs; integral/export não executados. P4D FAIL preservado; T26 não modificado/investigado. Feedback humano positivo inicial informado em 28/10/2026, sem avaliação detalhada ou aprovação integral; relatórios históricos preservados.
 
-## P4H — Muralha de Gelo (implementada; pronta para playtest)
+## P4H — Muralha de Gelo (implementada; feedback humano positivo)
 RMB/C/V alterna painel/projétil congelado; mira mostra prévia azul/vermelha sem collider. Release válido constrói uma única muralha e consome o orbe; inválido recusa sem lançar. Painel 1,40 × 1,50 m, espessura derivada do volume (150 L → 0,071429 m, massa 137,55 kg), mínimo 0,04 m; alcance 10 m. Mesmo IceBody, material/fusão, orçamento misto oito e efeitos; sem Ability/manager novo.
 
 Âncora estática enquanto seis apoios de base e SDF a 0,6 m continuam válidos; bordas/solo raso são recusados conservadoramente. Os pulsos existentes de TerrainContactWaker liberam a física ao escavar. Collider real bloqueia jogador/props; Fogo funde, Ar empurra após desancorar com visada. Seleção/Esc/save preservam muralhas prontas; reset/load removem a sessão, sem serialização de props.
 
-**Validação dirigida:** import/parse; T1/T74/T75 3/3 headless e 3/3 janela; regressão 12/12 de Waker/Terra/jato/orbes/gelo, execuções finais sem erros/avisos. Tentativas iniciais preservadas: anotação de tipo no parse e sonda de Ar ocluída no fundo da cratera; painel dinâmico acessível recebe impulso real, sem ajuste de física. Benchmark de 185 ticks, quatro muralhas/quatro esferas e duas rajadas: **17,64 / 18,46 / 19,54 ms**, dentro de 20/33/50. Evidências em `docs/evidence/p4h/`. Contrato atual 81 IDs; integral/export/persistência entre processos não executados. P4D continua FAIL; T26 intacto. Próximo passo: playtest humano P4H, sem P4I automático.
+**Validação dirigida:** import/parse; T1/T74/T75 3/3 headless e 3/3 janela; regressão 12/12 de Waker/Terra/jato/orbes/gelo, execuções finais sem erros/avisos. Tentativas iniciais preservadas: anotação de tipo no parse e sonda de Ar ocluída no fundo da cratera; painel dinâmico acessível recebe impulso real, sem ajuste de física. Benchmark de 185 ticks, quatro muralhas/quatro esferas e duas rajadas: **17,64 / 18,46 / 19,54 ms**, dentro de 20/33/50. Evidências em `docs/evidence/p4h/`. Contrato daquela entrega: 81 IDs; integral/export/persistência entre processos não executados. P4D continua FAIL; T26 intacto. Feedback humano positivo confirmado em 29/10/2026, sem avaliação detalhada nem aprovação integral; evidências preservadas.
+
+## P4I — Vórtice de Ar (implementado; pronto para playtest)
+Ar selecionado: segurar RMB em chão livre até 10 m cria um campo fixo de raio 2,5 m/altura 4 m; soltar dissipa preservando inércia e gravidade. AirVortex compõe AirGust, com forças centrais de atração/circulação/sustentação, teto 2500 N e até 12 corpos. LMB continua rajada fora do campo; ondas anteriores terminam normalmente. Cache limitado/WeakRef e exposição existente, com nova visada central a cada tick. AIRFLOW a 1 Hz usa os materiais existentes. Âncoras/held/jogador não são levantados; muralha desancorada é elegível. Sem centro móvel, múltiplos campos, fluidos ou destruição automática.
+
+**Validação dirigida:** import/parse; T1/T76/T77 3/3 headless e 3/3 janela; regressão 10/10 de rajada/exposição/materiais/VFX/cancelamentos/Terra/Água/muralha. Execuções finais sem erros/avisos. Tentativa inicial preservada: duas fixtures bloqueavam a própria formação pela mira; preparação corrigida sem alterar física ou limites. Benchmark com 16 caixas de 0,4 m/20 kg, até 12 influenciadas: **19,62 / 20,65 / 21,75 ms**, p95/p99/máximo, dentro de 20/33/50. Evidências em `docs/evidence/p4i/`. Contrato atual 83 IDs; integral/export/persistência entre processos não executados. P4D continua FAIL, T26 não investigado. Próximo passo: playtest humano P4I.
 
 ## P4 posterior — 16 habilidades, combinações e visual (futuro)
 Expandir `elemental_abilities_mvp.json`; estados de materiais, gelo, lava, eletricidade, vórtices, shaders Ilustrado/Retro, áudio/animações e modos de jogo.

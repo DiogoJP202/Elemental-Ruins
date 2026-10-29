@@ -79,6 +79,8 @@ func use_pressed() -> bool:
 		return false
 	if a is WaterJet and a.orb.phase != "":
 		return false
+	if a is AirGust and a.vortex.active:
+		return false
 	holding = a.input_mode == "hold"
 	a.on_press()
 	ability_used.emit(a.id, "press")
@@ -175,8 +177,34 @@ func toggle_water_wall() -> bool:
 	return can_manipulate_water() and water.orb.toggle_wall()
 
 
+func begin_air_vortex() -> bool:
+	var air := current_ability() as AirGust
+	if air == null or not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
+		return false
+	var formed: bool = air.vortex.begin()
+	if not formed:
+		air.last_result = air.vortex.last_result
+	return formed
+
+
+func end_air_vortex() -> void:
+	var air := current_ability() as AirGust
+	if air != null:
+		air.vortex.cancel()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if player == null or not player.input_enabled:
+		return
+	var air := current_ability() as AirGust
+	if air != null and event.is_action_pressed(&"toggle_mouse_capture"):
+		air.vortex.cancel()
+	if air != null and event.is_action(&"air_vortex"):
+		if event.is_action_pressed(&"air_vortex"):
+			begin_air_vortex()
+		elif event.is_action_released(&"air_vortex"):
+			end_air_vortex()
+		get_viewport().set_input_as_handled()
 		return
 	var water := current_ability() as WaterJet
 	if water != null and event.is_action_pressed(&"water_wall"):
@@ -231,6 +259,10 @@ func _physics_process(delta: float) -> void:
 		return
 	var earth := current_ability() as EarthLiftThrow
 	var water := current_ability() as WaterJet
+	var air := current_ability() as AirGust
+	if air != null and air.vortex.active and (not _can_act() \
+			or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
+		air.vortex.cancel()
 	if water != null and water.orb.phase != "" and (not _can_act() \
 			or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
 		water.orb.cancel()

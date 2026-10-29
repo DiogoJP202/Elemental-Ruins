@@ -18,6 +18,7 @@ const TUNING_PATH := "res://data/abilities/air_tuning.tres"
 const MAX_WAVES := 4
 
 var tuning: AirTuning
+var vortex := AirVortex.new()
 var waves: Array[Dictionary] = []
 ## Última rajada (VFX legado e testes): {origin, dir, hit, blocked, partial, at_ms, wave_id}.
 ## `hit` cresce conforme a frente alcança os corpos.
@@ -38,6 +39,11 @@ func _init() -> void:
 	tuning = load(TUNING_PATH)
 
 
+func setup(p_controller) -> void:
+	super.setup(p_controller)
+	vortex.configure(p_controller, tuning, _exposure)
+
+
 func get_stats() -> Dictionary:
 	var data := _stats.duplicate()
 	data["live_waves"] = waves.size()
@@ -46,6 +52,8 @@ func get_stats() -> Dictionary:
 
 
 func on_press() -> void:
+	if vortex.active:
+		return
 	if _cooldown_left > COOLDOWN_EPSILON_S or waves.size() >= clampi(tuning.max_waves, 1, MAX_WAVES):
 		_stats.rejected += 1
 		last_result = "recuperando" if _cooldown_left > COOLDOWN_EPSILON_S else "muitas rajadas"
@@ -72,6 +80,7 @@ func on_press() -> void:
 
 
 func physics_tick(delta: float) -> void:
+	vortex.physics_tick(delta)
 	_cooldown_left = maxf(0.0, _cooldown_left - delta)
 	if waves.is_empty():
 		return
@@ -111,10 +120,19 @@ func _advance(delta: float) -> void:
 
 ## Reset/save/load descartam frentes e recuperação. A troca de elemento não cancela: a frente
 ## já emitida segue, como um projétil de fogo lançado.
+func cancel() -> void:
+	vortex.cancel()
+
+
 func clear() -> void:
+	vortex.clear()
 	_epoch += 1
 	waves.clear()
 	_cooldown_left = 0.0
+
+
+func status() -> String:
+	return vortex.status() if vortex.active else last_result
 
 
 func _context_valid(w: Dictionary) -> bool:
@@ -192,6 +210,8 @@ func _sync_last(w: Dictionary) -> void:
 ## Fração de raios livres da origem até o centro e, com 5 amostras, até quatro pontos da silhueta
 ## perpendicular à frente. Máscara TERRAIN|PROPS, alvo excluído; testemunhas de ±1 mm só em falha.
 func _exposure(origin: Vector3, body: Node3D, center: Vector3) -> float:
+	if origin.distance_squared_to(center) < 0.000001:
+		return 1.0 # Corpo no próprio eixo: não lançar raios de comprimento zero.
 	var points: Array[Vector3] = [center]
 	if tuning.exposure_samples >= 5:
 		var axis := (center - origin).normalized()
