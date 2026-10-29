@@ -31,6 +31,18 @@ extends Resource
 @export_range(0.0, 0.75, 0.05) var fissure_depth := 0.35
 @export_range(0.1, 1.0, 0.1) var fissure_max_step_height := 1.0
 
+@export_group("Espinhos")
+@export_range(1, 3, 1) var spike_count := 3
+@export_range(1.0, 3.0, 0.1) var spike_spacing := 1.8
+@export_range(2.5, 4.0, 0.1) var spike_height := 3.0
+@export_range(0.5, 1.2, 0.1) var spike_base_radius := 0.9
+## 0,75 m evita perder a parte superior entre quatro vértices da grade SDF de 1 m.
+## 0,5 m continua legal em PATH, mas pode ser subamostrado; 3 m nominais mediram 2,3–2,8 m físicos.
+@export_range(0.5, 0.8, 0.05) var spike_tip_radius := 0.75
+@export_range(6.0, 20.0, 0.5) var spike_range := 14.0
+@export_range(0.10, 0.18, 0.01) var spike_interval_s := 0.14
+@export_range(0.1, 1.0, 0.1) var spike_max_step_height := 0.75
+
 @export_group("Antecipação")
 @export var anticipation_s := 0.10
 

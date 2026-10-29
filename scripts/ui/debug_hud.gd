@@ -10,6 +10,7 @@ const LEGEND := "WASD mover · Shift correr · Space pular · Mouse câmera · E
 	+ "RMB (Terra): segure para prévia do pilar · solte para criar · trocar elemento cancela\n" \
 	+ "Água: LMB jato · RMB orbe · C congela · V muralha/projétil · Q/E altura · roda distância · solte RMB confirma\n" \
 	+ "F (Terra): segure para prévia da fissura · solte para abrir o chão\n" \
+	+ "X (Terra): segure para prévia de três espinhos · solte para criar\n" \
 	+ "Ar: LMB rajada · segure RMB no chão para manter vórtice fixo · solte RMB para dissipar\n" \
 	+ "Fogo: LMB bola · segure RMB para fluxo contínuo · solte RMB para parar\n" \
 	+ "G escavar · H adicionar · N suavizar (segure) · J túnel · K rampa · M material do H · roda / [ ] raio\n" \
@@ -198,7 +199,8 @@ func _ability_text() -> String:
 	if abilities == null or abilities.abilities.is_empty():
 		return "Poder: —"
 	var a := abilities.current_ability()
-	var text := "Poder: %s  |  %s" % [abilities.element_label(), a.status() if a.status() != "" else "pronto"]
+	var ability_status := a.status()
+	var text := "Poder: %s  |  %s" % [abilities.element_label(), ability_status if ability_status != "" else "pronto"]
 	if materials != null:
 		var body := abilities.aimed_body()
 		var s := materials.state_of(body) if body != null else null

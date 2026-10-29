@@ -1,4 +1,4 @@
-# ELEMENTAL // RUINS — protótipo técnico (P0–P4J)
+# ELEMENTAL // RUINS — protótipo técnico (P0–P4K)
 
 Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools 1.7 (SDF + Transvoxel).
 
@@ -19,7 +19,9 @@ Laboratório de **terreno volumétrico escavável** em Godot 4.7.2 + Voxel Tools
 **P4G — Gelo persistente e derretimento:** o impacto congelado deixa um corpo físico no mundo; Fogo aquece e funde pelo sistema de materiais existente. Branch `codex/p4g-persistent-ice`, base P4F `88d71e3`. O FAIL histórico P4D permanece.
 **P4H — Muralha de Gelo com feedback humano positivo:** V durante o controle congelado alterna um molde de painel; soltar RMB constrói somente se válido. Reutiliza IceBody e depende de apoio do terreno. Branch `codex/p4h-ice-wall`, base P4G `1fa3c90`; validação dirigida aprovada, sem gate integral. O usuário confirmou funcionamento no playtest em 29/10/2026, sem avaliação detalhada por cenário nem aprovação integral.
 **P4I — Vórtice de Ar pronto para playtest:** RMB cria um campo fixo de forças que atrai, faz circular e sustenta corpos físicos. Branch `codex/p4i-air-vortex`, base P4H `33719e4`; validação dirigida aprovada, sem integração integral.
-**P4J — Fluxo Contínuo de Fogo pronto para playtest:** segurar RMB emite uma corrente direcionável, com alcance crescente e aquecimento proporcional ao tempo de contato. LMB preserva a bola de fogo. Branch `codex/p4j-fire-stream`, base P4I `9f5e0f0`; validação dirigida aprovada, sem gate integral. O feedback humano específico do P4I permanece não informado, conforme esta missão.
+**P4J — Fluxo Contínuo de Fogo com feedback humano positivo inicial:** segurar RMB emite corrente direcionável, com alcance crescente e aquecimento proporcional ao contato. LMB preserva a bola. Feedback informado na missão P4K em 29/10/2026, sem aprovação integral. O feedback humano específico do P4I permanece não informado.
+
+**P4K — Espinhos de Terra prontos para playtest:** branch `codex/p4k-earth-spikes`, base P4J `0334cc9`; X prepara uma sequência de três formações voxel reais. Esc/troca de elemento cancelam apenas o que ainda não foi aplicado. Validação dirigida abaixo; sem integração integral.
 
 P0: personagem em terceira pessoa, colina voxel com colisão, escavar e adicionar matéria pela mira, túnel real sob
 teto sólido e reset de verdade do mundo. P1: fila de brushes contínuos (REMOVE/ADD/PATH/SMOOTH), materiais
@@ -86,6 +88,7 @@ de fluidos.
 | **LMB mirando uma rocha solta** (Terra; P4B) | capturar o mesmo corpo físico, preservando massa e velocidade, até 7 m do jogador ao centro da rocha; Q/E, roda e lançamento iguais ao P4A |
 | **RMB** (Terra parada; P4C) | segurar mostra a prévia; soltar cria um pilar permanente. Altura 4,5 m, raio 2 m; chão entre 2,5 m horizontais e 18 m em 3D. Trocar elemento ou Esc cancela |
 | **F** (Terra parada; P4D) | segurar mostra a prévia; soltar abre uma fissura permanente de 6 m, raio 1 m e centro 0,35 m abaixo do piso, para longe na direção horizontal da câmera; todo o caminho deve estar a até 18 m |
+| **X** (Terra parada; P4K) | segurar mostra três espinhos; soltar confirma a formação válida. Cada PATH é revalidado e aguarda collider antes do próximo; Esc/troca de elemento cancelam o restante |
 | **RMB** (Água; P4E) | segurar forma/sustenta um orbe; mouse orienta o alvo horizontal, Q/E regulam altura, roda aproxima/afasta; soltar lança. O primeiro botão mantido vence o conflito com o jato LMB; não há comando enfileirado |
 | **C** (Água; P4F) | congela uma vez o orbe suspenso durante RMB; preserva posição e controle. Ignorado fora do hold ou após congelar; soltar RMB lança gelo balístico |
 | **V** (Água; P4H) | durante RMB congelado, alterna muralha/projétil; mire chão livre e solte RMB para construir. Prévia inválida consome/cancela o molde, sem lançar |
@@ -226,6 +229,20 @@ Parâmetros em `data/abilities/water_tuning.tres`, `fire_tuning.tres` e `air_tun
 
 ## Testes automatizados
 
+### P4K — Espinhos de Terra
+
+Selecione **1**, mire chão livre, **segure X** para a prévia verde/vermelha e **solte X** para confirmar. A formação segue a direção horizontal da câmera e fica capturada no release. Um espinho por pedido: retorno SDF real → confirmação do collider no próprio volume → intervalo → próximo. Uma falha interrompe a sequência, conserva o que já foi aplicado e mostra o resultado parcial. LMB/RMB/F ficam exclusivos durante preparo e execução; os controles anteriores permanecem.
+
+`EarthLiftThrow`, `EarthTuning` e `EarthFx` foram estendidos, reutilizando PATH, TerrainBrushQueue/epochs, TerrainService, materiais, TerrainContactWaker e save/load voxel. Nenhuma nova classe ou collider permanente auxiliar. Cada volume é validado contra jogador/props, terreno/teto, apoio e dados SDF ainda sem collider atualizado. Esc, seleção, perda de captura/input e reset/save/load cancelam o restante; edições prontas permanecem até escavação/reset/load.
+
+Parâmetros no Resource existente: **3 espinhos**, espaçamento **1,8 m**, altura nominal **3 m**, raios **0,9 → 0,825 → 0,75 m**, alcance **14 m**, intervalo **0,14 s** após confirmação física e desnível máximo **0,75 m**. O topo físico depende da grade voxel de 1 m: nesta fixture mediu **2,27–2,81 m**, com afunilamento e colisão observáveis. O raio 0,5 m continua permitido pelo terreno, mas perdeu partes superiores entre amostras; o padrão local 0,75 m evita essa perda. A prévia representa o PATH nominal, sem ponta cosmética permanente. Construção discreta em três operações, sem dano, impulso de emergência ou rollback.
+
+**Validação dirigida (29/10/2026):** import/parse custom aprovados; [T1/T80/T81 headless 3/3](docs/evidence/p4k/02_headless.json), [regressão Terra 7/7](docs/evidence/p4k/03_related_headless.json) (T1/T59/T60/T63/T64/T65/T66). Em janela, [T1/T80 2/2](docs/evidence/p4k/05_window_probe.json) e [T1/T81 final 2/2](docs/evidence/p4k/10_guards_window.json); T81 final também [2/2 headless](docs/evidence/p4k/09_guards_headless.json). Runs aceitos completos e sem erros/avisos, validados pelo runner existente com IDs/run_ids externos. Cobrem volume/colisão/afunilamento, bloqueio de jogador/caixa/Fogo, save/reset/load, recusa/revalidação SDF e resultado parcial/cancelamentos.
+
+Benchmark em janela desde antes do release até as três edições/confirmações, mais 185 ticks, sem excluir amostras: **17,55/17,82/19,03 ms**, p95/p99/máximo (227 intervalos). Edições **1,872/0,107/0,101 ms**; collider após **29/34/32 ms**, separadamente. Rechecagem com captura fora da medição: **19,97/26,15/27,20 ms**; ambas dentro de 20/33/50. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900, uma Godot por vez, sem processos shell/CIM durante amostragem. Captura opcional tem 12 ticks de preparo antes da ativação; criação/reconstrução ficam integralmente medidas. [Ambiente, fontes e tentativas](docs/evidence/p4k/result.json).
+
+FAILs preservados: ponta inicial perdeu altura; Esc dependia da captura; revisão encontrou confirmação ausente no último espinho e fortaleceu o teste antes de aceitar o candidato. As sondas temporais da prévia agora esperam estado real; cancelar notifica o VFX imediatamente. O primeiro benchmark atingiu **81,96 ms de máximo**, sem causa isolada; as rechecagens não apagam essa ocorrência nem demonstram otimização causal. **Integral de 87 IDs, export, persistência entre processos e playtest humano P4K não executados. P4D continua FAIL; T26 não investigado.** Próximo passo: experimentar os espinhos.
+
 ### P4J — Fluxo Contínuo de Fogo
 
 **Playtest:** selecione **3**, mantenha **RMB** sobre madeira e mova a câmera para varrer outros alvos. Solte para parar a emissão; a temperatura aplicada e a combustão pertencem ao mundo. Compare madeira seca/molhada e aqueça gelo físico/muralha até fundir. LMB mantém a bola existente: sua antecipação bloqueia começar o fluxo, mas projéteis já em voo podem terminar normalmente. Esc, troca de elemento, perda de captura/input e reset/save/load cancelam a corrente.
@@ -238,7 +255,7 @@ Origem do HEAT fica no lado livre do contato; área pequena usa queda/visada exi
 
 Benchmark pareado, mesmas seis caixas físicas e alvo de pedra, 185 ticks/184 intervalos por fase: baseline **17,48/18,28/19,11 ms**, fluxo ativo **17,60/18,17/18,39 ms** (p95/p99/máximo), dentro de 20/33/50. CPU média medida dentro da atualização do componente: **0,097 ms/tick**, incluindo queries, HEAT e callbacks de contato. Diferenças entre percentis incluem variação entre as duas amostras; não são comparação com o cenário P4I. i5-1135G7/Iris Xe, Forward+/Vulkan 1.4.323, Jolt, 1600×900; uma Godot por vez, materiais estáveis sem nova ignição, captura fora da amostragem e imagem histórica restaurada. [Captura final inspecionada](docs/evidence/p4j/screens/fire_stream.png), [ambiente e consolidação](docs/evidence/p4j/result.json).
 
-A inspeção inicial revelou que a cápsula encobria a emissão central; a origem física agora tem deslocamento lateral local de **0,8 m**, com a mesma origem para queries/VFX e validação peito→mão. Rechecagens finais passaram; versões anteriores e diagnóstico de projeção permanecem como evidência. A primeira tentativa do diagnóstico temporário não compilou por inferência de tipo e expirou sem relatório; não conta como PASS. O ramo temporário foi removido do selftest. **Integral de 85 IDs, export, persistência entre processos e playtest humano P4J não executados.** P4D continua FAIL; T26 não investigado; P4I sem feedback humano específico informado. Próximo passo único: experimentar o fluxo.
+A inspeção inicial revelou que a cápsula encobria a emissão central; a origem física agora tem deslocamento lateral local de **0,8 m**, com a mesma origem para queries/VFX e validação peito→mão. Rechecagens finais passaram; versões anteriores e diagnóstico de projeção permanecem como evidência. A primeira tentativa do diagnóstico temporário não compilou por inferência de tipo e expirou sem relatório; não conta como PASS. O ramo temporário foi removido do selftest. **Naquela sessão, integral de 85 IDs, export, persistência entre processos e playtest humano P4J não executados.** Feedback humano positivo inicial foi informado posteriormente, na missão P4K. P4D continua FAIL; T26 não investigado; P4I sem feedback humano específico informado. P4J preservado como base do P4K, sem aprovação integral.
 
 ### P4I — Vórtice de Ar
 
@@ -652,4 +669,3 @@ P3.6.1: save preserva o mundo físico e o T26 confirma repouso natural antes da 
 30/30 repetições prospectivas (pico 0 m), bateria 64/64 nos quatro modos, zero erros/avisos
 e limites de desempenho preservados. Diagnóstico, falhas exploratórias mantidas e comandos
 em [`docs/p36_t26_stabilization.md`](docs/p36_t26_stabilization.md).
-

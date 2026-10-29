@@ -1,0 +1,37 @@
+Godot Engine v4.7.2.stable.custom_build.ed1daf0bf (2026-08-17 01:18:38 UTC) - https://godotengine.org
+Vulkan 1.4.323 - Forward+ - Using Device #0: Intel - Intel(R) Iris(R) Xe Graphics
+
+[Main] Godot 4.7.2-stable (custom_build) | física 3D: Jolt Physics | renderer: forward_plus
+[P36TEST] início | modo=window | screenshots=false | Godot 4.7.2-stable (custom_build)
+[TerrainService] terreno inicial pronto=true em 1788 ms
+[P36TEST] T1 PASS — Terreno pronto; jogador para no chão voxel e não atravessa | {"on_floor":true,"pronto_ms":1788.0,"y_apos_2s":0.0203826446086168,"y_apos_3_5s":0.0203826446086168}
+[P36TEST] baseline: 14 probes, sem chão em []
+[P36TEST] --- testes P1 ---
+[P36TEST] --- testes P2 ---
+[P36TEST] --- testes P3 ---
+[P36TEST] --- testes P3.5 (Terra) ---
+[P36TEST] --- testes P3.6 M1 (Água) ---
+[P36TEST] --- testes P3.6 M2 (Fogo) ---
+[P36TEST] --- testes P3.6 M3 (Ar) ---
+[P36TEST] --- testes P3.6 M4 (integração) ---
+[P36TEST] --- testes P3.6 ciclo de vida ---
+[P36TEST] --- testes P4A (controle livre de Terra) ---
+[P36TEST] --- testes P4B (reutilizar rocha existente) ---
+[P36TEST] --- testes P4C (pilar de Terra) ---
+[P36TEST] --- testes P4D (fissura de Terra) ---
+[P36TEST] --- testes P4E (orbe de Água) ---
+[TerrainService] reset: liberando VoxelLodTerrain (geração 1, rev 0)
+[TerrainService] reset: geração 2 pronta=true em 444 ms
+[TerrainService] add_path OK pontos=3 comp=2.5m mat=soil rev=1 1.872ms
+[TerrainService] add_path OK pontos=3 comp=2.5m mat=soil rev=2 0.107ms
+[TerrainService] add_path OK pontos=3 comp=2.5m mat=soil rev=3 0.101ms
+[TerrainService] save p4k_spikes: ok=true { "slot": "p4k_spikes", "ok": true, "ms": 56.0, "flush_ms": 15.0, "blocks_tasks": 22, "save_anterior_em_voo": "nenhum", "copy": "OK", "bytes": 28672, "path": "<user_data>/saves/p4k_spikes.sqlite", "terrain_recreated": false, "publication": { "error": 0, "rollback": 0, "recovery_file": "" }, "io_drain": { "idle": true, "ms": 34.0, "tasks": { "streaming": 0, "generation": 0, "meshing": 0, "main_thread": 0, "gpu": 0 } }, "reason": "" }
+[TerrainService] reset: liberando VoxelLodTerrain (geração 2, rev 3)
+[TerrainService] reset: geração 3 pronta=true em 419 ms
+[TerrainService] load p4k_spikes: ok=true { "slot": "p4k_spikes", "ok": true, "ms": 411.0, "copy": "OK", "bytes": 28672 }
+[P36TEST] T80 PASS — X forma três PATHs afunilados, aguarda collider entre pedidos e persiste terreno com obstrução real | {"benchmark_method":"optional preview readback then 12 preparation ticks; process_frame from before X release through all edits/collider confirmations plus 185 physics ticks; all samples retained, no readback during sampling","collider_before_next_path":true,"cross_sections":[{"lower":{"height_m":0.8,"ok":true,"width_m":1.89048743247986},"upper":{"height_m":2.1,"ok":true,"width_m":1.29757797718048}},{"lower":{"height_m":0.8,"ok":true,"width_m":1.58188736438751},"upper":{"height_m":2.1,"ok":true,"width_m":0.941991686820984}},{"lower":{"height_m":0.8,"ok":true,"width_m":1.34495723247528},"upper":{"height_m":2.1,"ok":true,"width_m":0.681957840919495}}],"fire_occluded":true,"formation_completed":true,"frame_gate_applied":true,"frame_ms":{"max":19.03,"media":16.6,"min":6.67,"n":227,"p95":17.55,"p99":17.82},"frame_peaks_above_25ms":[],"loaded_sdf":[-0.6561478972435,-0.518814623355865,-0.320444315671921],"persistence":true,"physical_tops":true,"player_blocked":true,"preview_without_edit_exclusive":true,"prop_blocked":true,"relative_heights_m":[2.81031608581543,2.47957134246826,2.26753330230713],"save_checks":{"load":true,"reset":true,"reset_empty":true,"restored":true,"save":true,"unchanged":true},"saved_sdf":[-0.6561478972435,-0.518814623355865,-0.320444315671921],"sequence":[{"applied_frame":333,"collider_ms":29,"confirmed_frame":335,"edit_ms":1.872,"index":0},{"applied_frame":343,"collider_ms":34,"confirmed_frame":345,"edit_ms":0.107,"index":1},{"applied_frame":353,"collider_ms":32,"confirmed_frame":355,"edit_ms":0.101,"index":2}],"taper_observed":true,"three_captured_paths":true,"tops_y":[2.83031606674194,2.49957132339478,2.28753328323364]}
+[TerrainService] reset: liberando VoxelLodTerrain (geração 4, rev 3)
+[TerrainService] reset: geração 5 pronta=true em 396 ms
+[P36TEST] relatório: <checkout>\docs\evidence\p4k\05_window_probe.json
+[P36TEST] erros do motor durante o teste: 0 | avisos: 0
+[P36TEST] RESULTADO GERAL: PASS (2/2) em 12.9 s

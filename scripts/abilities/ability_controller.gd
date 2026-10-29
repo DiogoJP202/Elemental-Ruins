@@ -75,7 +75,8 @@ func use_pressed() -> bool:
 	if not _can_act():
 		return false
 	var a := current_ability()
-	if a is EarthLiftThrow and (a.pillar_aiming or a.fissure_aiming or a.phase in ["pillar_pending", "fissure_pending"]):
+	if a is EarthLiftThrow and (a.pillar_aiming or a.fissure_aiming or a.spikes_aiming \
+			or a.phase in ["pillar_pending", "fissure_pending", "spikes_pending", "spikes_confirming"]):
 		return false
 	if a is WaterJet and a.orb.phase != "":
 		return false
@@ -214,6 +215,10 @@ func end_fire_stream() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if player == null or not player.input_enabled:
 		return
+	if event.is_action_pressed(&"toggle_mouse_capture"):
+		var earth := current_ability() as EarthLiftThrow
+		if earth != null:
+			earth.cancel()
 	var fire := current_ability() as FireBurst
 	if fire != null and event.is_action_pressed(&"toggle_mouse_capture"):
 		fire.stream.cancel()
@@ -256,14 +261,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.is_action_pressed(ElementalKeys.ACTIONS[i]):
 			select(i)
 			return
-	if event.is_action(&"earth_pillar") or event.is_action(&"earth_fissure"):
+	if event.is_action(&"earth_pillar") or event.is_action(&"earth_fissure") or event.is_action(&"earth_spikes"):
 		var earth := current_ability() as EarthLiftThrow
 		if earth == null or holding:
 			return
 		if not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED):
 			earth.cancel()
 			return
-		if event.is_action(&"earth_fissure"):
+		if event.is_action(&"earth_spikes"):
+			if event.is_action_pressed(&"earth_spikes"):
+				earth.begin_spikes()
+			elif event.is_action_released(&"earth_spikes"):
+				earth.finish_spikes()
+		elif event.is_action(&"earth_fissure"):
 			if event.is_action_pressed(&"earth_fissure"):
 				earth.begin_fissure()
 			elif event.is_action_released(&"earth_fissure"):
@@ -298,7 +308,8 @@ func _physics_process(delta: float) -> void:
 	if water != null and water.orb.phase != "" and (not _can_act() \
 			or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
 		water.orb.cancel()
-	if earth != null and (earth.pillar_aiming or earth.fissure_aiming or earth.phase in ["pillar_pending", "fissure_pending"]) \
+	if earth != null and (earth.pillar_aiming or earth.fissure_aiming or earth.spikes_aiming \
+			or earth.phase in ["pillar_pending", "fissure_pending", "spikes_pending", "spikes_confirming"]) \
 			and (not _can_act() or (require_captured_mouse and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)):
 		earth.cancel()
 	if holding and (not _can_act() or not player.input_enabled):

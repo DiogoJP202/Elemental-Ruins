@@ -1,0 +1,652 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-29T15:08:29",
+  "duracao_s": 77.628,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "initial_terrain_ready_ms": 1450.0,
+    "p4a_hold_frame_ms": {
+      "max": 19.52,
+      "media": 7.76,
+      "min": 0.15,
+      "n": 1011,
+      "p95": 15.99,
+      "p99": 16.66
+    },
+    "p4c_pillar_frame_ms": {
+      "max": 23.62,
+      "media": 7.76,
+      "min": 0.15,
+      "n": 617,
+      "p95": 15.87,
+      "p99": 16.67
+    },
+    "p4d_fissure_frame_ms": {
+      "max": 21.03,
+      "media": 7.81,
+      "min": 0.15,
+      "n": 294,
+      "p95": 16.04,
+      "p99": 18.04
+    }
+  },
+  "modo": "headless",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1450.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "brush_unchanged": true,
+        "distance_min_max_m": [
+          3.0,
+          6.5
+        ],
+        "farthest_rock_m": 3.65039825439453,
+        "frame_gate_applied": false,
+        "frame_ms": {
+          "max": 19.52,
+          "media": 7.76,
+          "min": 0.15,
+          "n": 1011,
+          "p95": 15.99,
+          "p99": 16.66
+        },
+        "height_min_max_m": [
+          1.8,
+          3.8
+        ],
+        "horizontal_m": 6.9930682182312,
+        "launches": [
+          {
+            "origin_error_m": 0.0,
+            "speed": 23.4251270294189
+          }
+        ],
+        "lowered_m": 1.92217874526978,
+        "opposite_keys_neutral": true,
+        "raised_m": 1.72631549835205,
+        "release_without_teleport": true,
+        "teleport_error_m": 0.000248043652391061,
+        "wall_blocked": true,
+        "wall_distance_m": 5.0,
+        "wheel_step_m": 0.75
+      },
+      "id": "T59",
+      "status": "PASS",
+      "titulo": "Q/E e roda reposicionam uma rocha por física, respeitam Resource e obstáculo e mantêm o arremesso"
+    },
+    {
+      "detalhes": {
+        "cases": {
+          "load": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01263570785522,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01263570785522,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99408, 0.02, 63.50566)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "reset": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01261711120605,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01261711120605,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99406, 0.02, 63.50567)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "save": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01432466506958,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01432466506958,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.9952, 0.02, 63.50439)",
+              "reason": ""
+            },
+            "ok": true
+          },
+          "select": {
+            "clean_after": true,
+            "clean_at_signal": true,
+            "command_ok": true,
+            "modified_before": true,
+            "new_distance_m": 6.01429510116577,
+            "new_height_m": 2.0,
+            "new_hold_defaults": true,
+            "new_phase": "hold",
+            "new_result": "pronta",
+            "new_target": {
+              "color": "(0.7216, 0.4745, 0.4078, 1.0)",
+              "dist": 6.01429510116577,
+              "normal": "(0.0, 1.0, 0.0)",
+              "ok": true,
+              "point": "(-37.99518, 0.02, 63.50441)",
+              "reason": ""
+            },
+            "ok": true
+          }
+        },
+        "slot": "p4a_lifecycle",
+        "wheel_outside_hold_by_element": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "id": "T60",
+      "status": "PASS",
+      "titulo": "Roda preserva pincel fora do hold; seleção/reset/save/load limpam manipulação sem comandos residuais"
+    },
+    {
+      "detalhes": {
+        "collider_ms": 20.28,
+        "crate_horizontal_offset_m": 0.163895130157471,
+        "crate_speed_m_s": 0.0,
+        "crate_supported": true,
+        "crate_y_after_3s": 4.95265197753906,
+        "frame_ms": {
+          "max": 23.62,
+          "media": 7.76,
+          "min": 0.15,
+          "n": 617,
+          "p95": 15.87,
+          "p99": 16.67
+        },
+        "geometry": true,
+        "loaded": {
+          "material": [
+            0,
+            0,
+            0
+          ],
+          "sdf": [
+            -1.81585121154785,
+            -1.81585121154785,
+            -0.503555357456207
+          ]
+        },
+        "persistence": true,
+        "player_supported": true,
+        "preview_without_edit": true,
+        "saved": {
+          "material": [
+            0,
+            0,
+            0
+          ],
+          "sdf": [
+            -1.81585121154785,
+            -1.81585121154785,
+            -0.503555357456207
+          ]
+        },
+        "single_path": true,
+        "top_y": 4.48260927200317
+      },
+      "id": "T63",
+      "status": "PASS",
+      "titulo": "RMB confirma um PATH+ vertical sólido; caixa/jogador apoiam e save/reset/load preservam o pilar"
+    },
+    {
+      "detalhes": {
+        "body_entered_pending_volume": {
+          "ok": true,
+          "queued": true,
+          "result": ""
+        },
+        "future_volume_blocked": {
+          "ok": true,
+          "reason": "há um corpo no espaço do pilar"
+        },
+        "lmb_still_throws": {
+          "ok": true
+        },
+        "minimum_range": {
+          "ok": true,
+          "reason": "perto demais (mín. 2.5 m)"
+        },
+        "no_ground": {
+          "ok": true,
+          "reason": "sem chão na mira"
+        },
+        "other_element_1": {
+          "ok": true
+        },
+        "other_element_2": {
+          "ok": true
+        },
+        "other_element_3": {
+          "ok": true
+        },
+        "out_of_range": {
+          "ok": true,
+          "reason": "fora do alcance (máx. 18.0 m)"
+        },
+        "pending_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "prop_not_ground": {
+          "ok": true,
+          "reason": "mire em chão livre"
+        },
+        "protected_player": {
+          "ok": true,
+          "reason": "overlaps_player"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "reason": "mire em chão livre"
+        }
+      },
+      "id": "T64",
+      "status": "PASS",
+      "titulo": "Pilar recusa alvos inseguros, mantém LMB/outros elementos e cancela preview/fila sem edição residual"
+    },
+    {
+      "detalhes": {
+        "after_save_sdf": [
+          0.350962847471237,
+          0.305185079574585,
+          0.274666577577591
+        ],
+        "collider_lowered": true,
+        "crate_drop_m": 1.16094422340393,
+        "crate_supported_before": true,
+        "floor_y_after": [
+          -1.29543542861938,
+          -1.25418519973755,
+          -1.23827934265137
+        ],
+        "floor_y_before": [
+          0.0199999809265137,
+          0.0199999809265137,
+          0.0199999809265137
+        ],
+        "frame_ms": {
+          "max": 21.03,
+          "media": 7.81,
+          "min": 0.15,
+          "n": 294,
+          "p95": 16.04,
+          "p99": 18.04
+        },
+        "loaded_rays": [
+          {
+            "ms": 20.165,
+            "ok": true,
+            "y": -1.29543542861938
+          },
+          {
+            "ms": 9.983,
+            "ok": true,
+            "y": -1.25418519973755
+          },
+          {
+            "ms": 10.23,
+            "ok": true,
+            "y": -1.23827934265137
+          }
+        ],
+        "loaded_sdf": [
+          0.350962847471237,
+          0.305185079574585,
+          0.274666577577591
+        ],
+        "original_sdf": [
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "persistence": true,
+        "persistence_checks": {
+          "load": true,
+          "loaded_floor_and_sdf": true,
+          "reset": true,
+          "reset_floor_and_sdf": true,
+          "save": true,
+          "save_unchanged": true
+        },
+        "preview_without_edit": true,
+        "raycasts": {
+          "attempts": 7,
+          "hits": 7,
+          "misses": 0
+        },
+        "reset_rays": [
+          {
+            "ms": 10.579,
+            "ok": true,
+            "y": 0.0199999809265137
+          },
+          {
+            "ms": 19.186,
+            "ok": true,
+            "y": 0.0199999809265137
+          },
+          {
+            "ms": 9.847,
+            "ok": true,
+            "y": 0.0199999809265137
+          }
+        ],
+        "reset_sdf": [
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "saved_sdf": [
+          0.350962847471237,
+          0.305185079574585,
+          0.274666577577591
+        ],
+        "single_subtractive_path": true
+      },
+      "id": "T65",
+      "status": "PASS",
+      "titulo": "F confirma uma fissura física única; caixa perde apoio e save/reset/load conservam SDF/colisão"
+    },
+    {
+      "detalhes": {
+        "discontinuous_floor": {
+          "fixture_hole_confirmed": true,
+          "ok": true,
+          "raycasts": {
+            "attempts": 5,
+            "hits": 5,
+            "misses": 0
+          },
+          "reason": "desnível no caminho"
+        },
+        "invalid_radius": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 0,
+            "hits": 0,
+            "misses": 0
+          },
+          "reason": "parâmetros fora dos limites"
+        },
+        "lmb_still_throws": {
+          "ok": true
+        },
+        "minimum_range": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho perto demais do jogador"
+        },
+        "no_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 0,
+            "misses": 1
+          },
+          "reason": "sem chão na mira"
+        },
+        "non_bendable_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "material_not_bendable"
+        },
+        "other_element_1": {
+          "ok": true
+        },
+        "other_element_2": {
+          "ok": true
+        },
+        "other_element_3": {
+          "ok": true
+        },
+        "out_of_range": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho fora do alcance"
+        },
+        "oversized_path": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 0,
+            "hits": 0,
+            "misses": 0
+          },
+          "reason": "parâmetros fora dos limites"
+        },
+        "path_would_split": {
+          "aabb_extent_m": 6.24339294433594,
+          "ok": true,
+          "path_length_m": 5.99999976158142,
+          "queue_extent_m": 7.5,
+          "raycasts": {
+            "attempts": 7,
+            "hits": 7,
+            "misses": 0
+          },
+          "reason": "caminho excede o limite de operação única"
+        },
+        "pending_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pending_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "pillar_exclusive": {
+          "ok": true
+        },
+        "player_entered_pending_path": {
+          "ok": true,
+          "queued": true,
+          "reason": "fissura recusada: caminho perto demais do jogador"
+        },
+        "preview_input_disabled": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_load": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_mouse_lost": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_reset": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_save": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "preview_select": {
+          "ok": true,
+          "only_own_request_cancelled": true,
+          "started": true
+        },
+        "prop_not_ground": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 1,
+            "misses": 0
+          },
+          "reason": "mire em chão livre"
+        },
+        "wall_occlusion": {
+          "ok": true,
+          "raycasts": {
+            "attempts": 1,
+            "hits": 1,
+            "misses": 0
+          },
+          "reason": "mire em chão livre"
+        }
+      },
+      "id": "T66",
+      "status": "PASS",
+      "titulo": "Fissura respeita chão/alcance/material, mantém LMB/RMB e cancela prévia/pedido sem edição residual"
+    }
+  ],
+  "run_id": "8ee87929eb6c",
+  "testes_ids": [
+    "T1",
+    "T59",
+    "T60",
+    "T63",
+    "T64",
+    "T65",
+    "T66"
+  ],
+  "testes_pass": 7,
+  "testes_total": 7,
+  "video_adapter": ""
+}

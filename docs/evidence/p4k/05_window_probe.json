@@ -1,0 +1,172 @@
+{
+  "amostras_erros": [],
+  "avisos_motor": 0,
+  "completo": true,
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "data": "2026-10-29T15:12:23",
+  "duracao_s": 12.855,
+  "erros_motor": 0,
+  "fisica_3d": "Jolt Physics",
+  "godot": "4.7.2-stable (custom_build)",
+  "godot_hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "metricas": {
+    "baseline_probes": 14,
+    "fps_janela": {
+      "max": 60.0,
+      "media": 55.32,
+      "min": 1.0,
+      "n": 25,
+      "p95": 60.0
+    },
+    "initial_terrain_ready_ms": 1788.0,
+    "p4k_spikes_creation_rebuild_frame_ms": {
+      "max": 19.03,
+      "media": 16.6,
+      "min": 6.67,
+      "n": 227,
+      "p95": 17.55,
+      "p99": 17.82
+    }
+  },
+  "modo": "window",
+  "renderer": "forward_plus",
+  "resultado_geral": "PASS",
+  "resultados": [
+    {
+      "detalhes": {
+        "on_floor": true,
+        "pronto_ms": 1788.0,
+        "y_apos_2s": 0.0203826446086168,
+        "y_apos_3_5s": 0.0203826446086168
+      },
+      "id": "T1",
+      "status": "PASS",
+      "titulo": "Terreno pronto; jogador para no chão voxel e não atravessa"
+    },
+    {
+      "detalhes": {
+        "benchmark_method": "optional preview readback then 12 preparation ticks; process_frame from before X release through all edits/collider confirmations plus 185 physics ticks; all samples retained, no readback during sampling",
+        "collider_before_next_path": true,
+        "cross_sections": [
+          {
+            "lower": {
+              "height_m": 0.8,
+              "ok": true,
+              "width_m": 1.89048743247986
+            },
+            "upper": {
+              "height_m": 2.1,
+              "ok": true,
+              "width_m": 1.29757797718048
+            }
+          },
+          {
+            "lower": {
+              "height_m": 0.8,
+              "ok": true,
+              "width_m": 1.58188736438751
+            },
+            "upper": {
+              "height_m": 2.1,
+              "ok": true,
+              "width_m": 0.941991686820984
+            }
+          },
+          {
+            "lower": {
+              "height_m": 0.8,
+              "ok": true,
+              "width_m": 1.34495723247528
+            },
+            "upper": {
+              "height_m": 2.1,
+              "ok": true,
+              "width_m": 0.681957840919495
+            }
+          }
+        ],
+        "fire_occluded": true,
+        "formation_completed": true,
+        "frame_gate_applied": true,
+        "frame_ms": {
+          "max": 19.03,
+          "media": 16.6,
+          "min": 6.67,
+          "n": 227,
+          "p95": 17.55,
+          "p99": 17.82
+        },
+        "frame_peaks_above_25ms": [],
+        "loaded_sdf": [
+          -0.6561478972435,
+          -0.518814623355865,
+          -0.320444315671921
+        ],
+        "persistence": true,
+        "physical_tops": true,
+        "player_blocked": true,
+        "preview_without_edit_exclusive": true,
+        "prop_blocked": true,
+        "relative_heights_m": [
+          2.81031608581543,
+          2.47957134246826,
+          2.26753330230713
+        ],
+        "save_checks": {
+          "load": true,
+          "reset": true,
+          "reset_empty": true,
+          "restored": true,
+          "save": true,
+          "unchanged": true
+        },
+        "saved_sdf": [
+          -0.6561478972435,
+          -0.518814623355865,
+          -0.320444315671921
+        ],
+        "sequence": [
+          {
+            "applied_frame": 333,
+            "collider_ms": 29,
+            "confirmed_frame": 335,
+            "edit_ms": 1.872,
+            "index": 0
+          },
+          {
+            "applied_frame": 343,
+            "collider_ms": 34,
+            "confirmed_frame": 345,
+            "edit_ms": 0.107,
+            "index": 1
+          },
+          {
+            "applied_frame": 353,
+            "collider_ms": 32,
+            "confirmed_frame": 355,
+            "edit_ms": 0.101,
+            "index": 2
+          }
+        ],
+        "taper_observed": true,
+        "three_captured_paths": true,
+        "tops_y": [
+          2.83031606674194,
+          2.49957132339478,
+          2.28753328323364
+        ]
+      },
+      "id": "T80",
+      "status": "PASS",
+      "titulo": "X forma três PATHs afunilados, aguarda collider entre pedidos e persiste terreno com obstrução real"
+    }
+  ],
+  "run_id": "6eaed01a5686",
+  "testes_ids": [
+    "T1",
+    "T80"
+  ],
+  "testes_pass": 2,
+  "testes_total": 2,
+  "video_adapter": "Intel(R) Iris(R) Xe Graphics"
+}

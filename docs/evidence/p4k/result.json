@@ -1,0 +1,277 @@
+{
+  "checkpoint": "P4K implementation for playtest; integral NOT EXECUTED",
+  "client_date": "2026-10-29",
+  "branch": "codex/p4k-earth-spikes",
+  "base": "0334cc9fa0dc243d66cd778322c1b3503ee6419b",
+  "contract_ids": 87,
+  "accepted_runs": [
+    {
+      "expected_ids": [
+        "T1",
+        "T80",
+        "T81"
+      ],
+      "report": "02_headless.json",
+      "engine_errors": 0,
+      "complete": true,
+      "result": "PASS",
+      "run_id": "43bf70f2a5bb",
+      "engine_warnings": 0
+    },
+    {
+      "expected_ids": [
+        "T1",
+        "T59",
+        "T60",
+        "T63",
+        "T64",
+        "T65",
+        "T66"
+      ],
+      "report": "03_related_headless.json",
+      "engine_errors": 0,
+      "complete": true,
+      "result": "PASS",
+      "run_id": "8ee87929eb6c",
+      "engine_warnings": 0
+    },
+    {
+      "expected_ids": [
+        "T1",
+        "T80"
+      ],
+      "report": "05_window_probe.json",
+      "engine_errors": 0,
+      "complete": true,
+      "result": "PASS",
+      "run_id": "6eaed01a5686",
+      "engine_warnings": 0
+    },
+    {
+      "expected_ids": [
+        "T1",
+        "T81"
+      ],
+      "report": "09_guards_headless.json",
+      "engine_errors": 0,
+      "complete": true,
+      "result": "PASS",
+      "run_id": "cffb81a8925d",
+      "engine_warnings": 0
+    },
+    {
+      "expected_ids": [
+        "T1",
+        "T81"
+      ],
+      "report": "10_guards_window.json",
+      "engine_errors": 0,
+      "complete": true,
+      "result": "PASS",
+      "run_id": "4021b03972e4",
+      "engine_warnings": 0
+    }
+  ],
+  "formal_validation": "Existing Invoke-SelftestStep verifies process exit, fresh report, externally generated run_id, complete=true, exact expected IDs, typed counters, all individual PASS and zero engine diagnostics. Accepted reports revalidated with externally pinned IDs/run_ids. Creation/regression ran before the final cancellation-only FX notification; final T81 in both modes covers that notification.",
+  "environment": {
+    "engine": "Godot 4.7.2 stable custom ed1daf0bf + Voxel Tools 1.7 module",
+    "cpu": "Intel Core i5-1135G7",
+    "driver": "32.0.101.7085",
+    "custom_editor_and_release_template": "available; existing installation; no dependencies installed",
+    "gpu": "Intel Iris Xe",
+    "resolution": "1600x900",
+    "renderer": "Forward+ / Vulkan 1.4.323",
+    "physics": "Jolt",
+    "ram_bytes_os": 16885276672
+  },
+  "benchmark": {
+    "mode": "editor window",
+    "method": "process_frame intervals; retain first partial interval and all samples; no readback or host/CIM processes during sampling; optional screenshot followed by 12 preparation ticks before activation",
+    "screenshot_recheck_timings": [
+      {
+        "applied_frame": 404,
+        "collider_ms": 35,
+        "confirmed_frame": 406,
+        "edit_ms": 4.337,
+        "index": 0
+      },
+      {
+        "applied_frame": 414,
+        "collider_ms": 32,
+        "confirmed_frame": 416,
+        "edit_ms": 0.28,
+        "index": 1
+      },
+      {
+        "applied_frame": 424,
+        "collider_ms": 32,
+        "confirmed_frame": 426,
+        "edit_ms": 0.299,
+        "index": 2
+      }
+    ],
+    "scenario": "T80: release X, all three additive edits and collider confirmations, followed by 185 physics ticks",
+    "limits_ms": {
+      "max": 50,
+      "p99": 33,
+      "p95": 20
+    },
+    "recheck_report": "04_window_preview_fixture.json: T80 PASS; report overall FAIL from T81 preview fixture",
+    "screenshot_recheck": {
+      "max": 27.2,
+      "media": 16.54,
+      "min": 8.04,
+      "n": 228,
+      "p95": 19.97,
+      "p99": 26.15
+    },
+    "isolated_without_capture": {
+      "max": 19.03,
+      "media": 16.6,
+      "min": 6.67,
+      "n": 227,
+      "p95": 17.55,
+      "p99": 17.82
+    },
+    "initial_failure": "04_window_initial.json: p95 18.01 / p99 21.25 / max81.96 ms. Preserved FAIL. Cause not isolated; subsequent directed samples within unchanged limits. No runtime performance optimization claimed.",
+    "edit_and_collider_timings": [
+      {
+        "applied_frame": 333,
+        "collider_ms": 29,
+        "confirmed_frame": 335,
+        "edit_ms": 1.872,
+        "index": 0
+      },
+      {
+        "applied_frame": 343,
+        "collider_ms": 34,
+        "confirmed_frame": 345,
+        "edit_ms": 0.107,
+        "index": 1
+      },
+      {
+        "applied_frame": 353,
+        "collider_ms": 32,
+        "confirmed_frame": 355,
+        "edit_ms": 0.101,
+        "index": 2
+      }
+    ]
+  },
+  "geometry": {
+    "limitation": "1m voxel grid rounds tips and changes physical height by grid phase. Radius0.5 legal but upper section undersampled; local default0.75 keeps real taper. No cosmetic permanent tips or substitute colliders.",
+    "spacing_m": 1.8,
+    "taper_cross_sections": [
+      {
+        "lower": {
+          "height_m": 0.8,
+          "ok": true,
+          "width_m": 1.89048743247986
+        },
+        "upper": {
+          "height_m": 2.1,
+          "ok": true,
+          "width_m": 1.29757797718048
+        }
+      },
+      {
+        "lower": {
+          "height_m": 0.8,
+          "ok": true,
+          "width_m": 1.58188736438751
+        },
+        "upper": {
+          "height_m": 2.1,
+          "ok": true,
+          "width_m": 0.941991686820984
+        }
+      },
+      {
+        "lower": {
+          "height_m": 0.8,
+          "ok": true,
+          "width_m": 1.34495723247528
+        },
+        "upper": {
+          "height_m": 2.1,
+          "ok": true,
+          "width_m": 0.681957840919495
+        }
+      }
+    ],
+    "tip_radius_m": 0.75,
+    "nominal_height_m": 3,
+    "measured_relative_height_m": [
+      2.81031608581543,
+      2.47957134246826,
+      2.26753330230713
+    ],
+    "base_radius_m": 0.9
+  },
+  "prior_iterations": [
+    {
+      "file": "01_parse_tests_initial.log",
+      "reason": "New test needed explicit bool annotation; corrected before execution.",
+      "result": "FAIL"
+    },
+    {
+      "file": "02_headless_initial.json",
+      "reason": "Thin tip lost upper geometry; Earth Esc depended on mouse capture. Corrected local radius and explicit cancellation.",
+      "result": "FAIL"
+    },
+    {
+      "file": "02_headless_before_confirmation_review.json",
+      "reason": "Review found last collider confirmation absent despite report PASS. Replaced neighbor-crossing confirmation with own vertical ray; tightened test to require all confirmations and formation counter.",
+      "result": "PASS in original report; not accepted candidate"
+    },
+    {
+      "file": "04_window_initial.json",
+      "reason": "Initial max81.96ms; preserved, not isolated.",
+      "result": "FAIL"
+    },
+    {
+      "file": "04_window_preview_fixture.json",
+      "reason": "T80 mechanics/performance PASS; T81 observed red preview after only2 physics ticks although FX updates every3 process frames. Test now waits actual red predicate with same PASS requirement.",
+      "result": "FAIL"
+    },
+    {
+      "file": "06_guards_headless.json",
+      "reason": "Intermediate directed guard run.",
+      "result": "PASS"
+    },
+    {
+      "file": "07_guards_window.json",
+      "reason": "First cancellation fixture did not begin hold/pending request. Added input diagnostics and separated hold/release by an actual process frame; precondition remains required.",
+      "result": "FAIL"
+    },
+    {
+      "file": "08_guards_window.json",
+      "reason": "Cancel-preview invariant failed. Explicit FX cancel notification now hides preview synchronously; final T81 runs PASS.",
+      "result": "FAIL"
+    }
+  ],
+  "omitted": [
+    "87-ID integral suite",
+    "export",
+    "cross-process persistence",
+    "human playtest P4K",
+    "T26 investigation"
+  ],
+  "historical_status": {
+    "P4I_human_playtest": "NOT_REPORTED",
+    "P4D": "FAIL preserved; T26 not modified or investigated",
+    "P4J_human_playtest": "Positive initial feedback explicitly reported in P4K mission; not integral approval"
+  },
+  "source_sha256": {
+    "scripts/abilities/ability_controller.gd": "81396845d5ad194f8463a02fb7a17cb61dacc1683ec513864e1bfdb89ceda5ee",
+    "scripts/elements/earth_fx.gd": "bd785e4131140b25c00d57f2d3820e84ca08abec1df2b073b073e0baa58cf4c8",
+    "scripts/core/input_actions.gd": "7d8748698207d7e0351dfffc83d51f8de317fb27ed3c9ec79a63405dda951ff0",
+    "scripts/abilities/earth_tuning.gd": "7860b8c80aa773d88b04d632a887d6412550e9ed0d31a912417589cbb262c02c",
+    "scripts/abilities/earth_lift_throw.gd": "a1c384eed26aa15fff1eaa6cc6dff9c067be036c29120a4b1d73c6602d9d8d8e",
+    "scripts/dev/p36_selftest.gd": "fd864c9ebe4a9c4ab00d237bc01256b87f0dbdc72442bddb885846a119a66e04",
+    "scripts/ui/debug_hud.gd": "ddd415baafeddab6eb00615256b51e9c7959297823c8c3e56c676dfb11f2b38d",
+    "tools/lib_selftest_contract.ps1": "e1d398a68394081780b0a8f2d59fd8b3e6973d01a446bdcadd8975a32546a354"
+  },
+  "publication_normalization": "Only new P4K evidence: local paths replaced by <checkout>/<user_data>/<profile>; UTF-8 LF and trailing whitespace normalized; measurements, timestamps, run_ids and historical reports preserved.",
+  "source_sha256_format": "UTF-8 LF source bytes, corresponding to tracked blobs; original PowerShell BOM preserved; checkout EOL settings may differ."
+}

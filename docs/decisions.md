@@ -581,3 +581,20 @@ sua própria visada/evaporação/ignição/fusão; só depois vem VFX. Temperatu
 fica no mundo. Passagem peito→mão obstruída recusa/cancela, sem emitir através da parede.
 A origem física do fluxo fica 0,8 m à direita da mão abstrata central, para a cápsula do
 jogador não encobrir toda a emissão. Colisão e VFX usam essa mesma origem; não é offset visual.
+
+## D60. P4K: espinhos PATH sequenciais, dados e colisão confirmados separadamente
+EarthLiftThrow captura três PATHs aditivos de três centros/raios ao soltar X. Reutiliza
+TerrainBrushQueue, seu processamento posterior aos controladores e epochs; somente um
+pedido fica pendente. Revalida apoio/material/volume/ocupação antes de enfileirar e antes
+da aplicação. Consultas físicas conservadoras cobrem o perfil afunilado; poucas amostras
+SDF inteiras detectam apoio removido ou matéria nova antes da reconstrução do collider.
+
+Resultado ok confirma dados, não física: um raio vertical no próprio espinho e SDF sólido
+confirmam collider, seguidos por 0,14 s antes do próximo pedido. Timeout de 3 s interrompe
+com resultado parcial; cancelamento descarta só pedidos ainda não aplicados. Sem rollback,
+collider substituto, dano ou impulso artificial. As edições prontas seguem save/load voxel.
+
+Na grade de 1 m, raio de ponta 0,5 m pode perder o alto entre amostras. O padrão local de
+0,75 m conserva afunilamento real; o mínimo global continua 0,5 m. Altura nominal 3 m não
+promete uma ponta exata: o perfil reconstruído é arredondado e depende da posição na grade.
+A prévia mostra o PATH nominal, não uma geometria permanente mais pontuda que a colisão.

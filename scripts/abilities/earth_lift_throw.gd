@@ -25,13 +25,25 @@ const MAX_ACCEL := 40.0
 const PHASE_LOG_MAX := 32
 const PHASE_NAMES := {"anticipation": "antecipação", "detach": "desprendendo", "rise": "erguendo",
 	"hold": "pronta: solte para arremessar", "windup": "lançando", "recovery": "recuperando",
-	"pillar_pending": "pilar na fila de terreno", "fissure_pending": "fissura na fila de terreno"}
+	"pillar_pending": "pilar na fila de terreno", "fissure_pending": "fissura na fila de terreno",
+	"spikes_pending": "espinho na fila de terreno", "spikes_confirming": "espinho: confirmando colisão"}
 
 var tuning: EarthTuning
 var rock: RigidBody3D
 var phase := ""
 var pillar_aiming := false
 var fissure_aiming := false
+var spikes_aiming := false
+var _spike_requests: Array[TerrainBrushRequest] = []
+var _spike_request: TerrainBrushRequest
+var _spike_index := 0
+var _spike_confirmed := false
+var _spike_applied_ms := 0
+var _spike_gap := 0.0
+var _spike_shape := ConvexPolygonShape3D.new()
+var _spike_air_shape := ConvexPolygonShape3D.new()
+var _spike_shape_key := ""
+var _spike_results: Array[Dictionary] = []
 var _pillar_request: TerrainBrushRequest
 var _fissure_request: TerrainBrushRequest
 var _pillar_shape := CapsuleShape3D.new()
@@ -55,7 +67,8 @@ var _thrown := []
 var _stats := {"extracted": 0, "thrown": 0, "hits": 0, "max_impulse": 0.0, "invalid": 0, "failed": 0,
 	"ground_impacts": 0, "craters": 0, "craters_rejected": 0, "buffered_throws": 0, "cancelled": 0,
 	"last_ready_ms": -1, "last_cavity_wait_frames": -1, "reused": 0, "pillars": 0, "pillars_rejected": 0,
-	"fissures": 0, "fissures_rejected": 0}
+	"fissures": 0, "fissures_rejected": 0, "spikes_created": 0, "spike_formations": 0,
+	"spikes_rejected": 0, "spike_confirmations": 0}
 
 
 func _init() -> void:
@@ -74,11 +87,13 @@ func setup(p_controller) -> void:
 	if controller.brush_queue != null:
 		controller.brush_queue.brush_applied.connect(_on_pillar_applied)
 		controller.brush_queue.brush_applied.connect(_on_fissure_applied)
+		controller.brush_queue.brush_applied.connect(_on_spike_applied)
 
 
 func get_stats() -> Dictionary:
 	var d := _stats.duplicate()
 	d["phase"] = phase
+	d["spike_results"] = _spike_results.duplicate(true)
 	return d
 
 
@@ -88,7 +103,7 @@ func is_ready() -> bool:
 
 ## Em ação (fases ou rocha em voo): o HUD/FX esconde o marcador do pincel para não cobrir o poder.
 func is_busy() -> bool:
-	return pillar_aiming or fissure_aiming or phase != "" or not _thrown.is_empty()
+	return pillar_aiming or fissure_aiming or spikes_aiming or phase != "" or not _thrown.is_empty()
 
 
 ## 0 → 1 do clique até a rocha pronta (anel do HUD).
@@ -114,6 +129,12 @@ func move_speed_scale() -> float:
 
 
 func status() -> String:
+	if spikes_aiming:
+		var check := validate_spikes_target()
+		return "X: solte para formar %d espinhos · %s" % [tuning.spike_count,
+			"alvo válido" if check.ok else check.reason]
+	if phase in ["spikes_pending", "spikes_confirming"]:
+		return "espinhos %d/%d confirmados · %s" % [_spike_index, _spike_requests.size(), PHASE_NAMES[phase]]
 	if fissure_aiming:
 		var check := validate_fissure_target()
 		return "F: solte para abrir fissura %.1f m × Ø %.1f m · %s" % [tuning.fissure_length,
@@ -136,7 +157,7 @@ func status() -> String:
 # --- Entrada ----------------------------------------------------------------------------------
 
 func begin_pillar() -> bool:
-	if phase != "" or _button or fissure_aiming or controller.brush_queue == null:
+	if phase != "" or _button or fissure_aiming or spikes_aiming or controller.brush_queue == null:
 		return false
 	pillar_aiming = true
 	return true
@@ -226,7 +247,7 @@ func _on_pillar_applied(request: TerrainBrushRequest, result: TerrainEditResult)
 
 
 func begin_fissure() -> bool:
-	if phase != "" or _button or pillar_aiming or controller.brush_queue == null:
+	if phase != "" or _button or pillar_aiming or spikes_aiming or controller.brush_queue == null:
 		return false
 	fissure_aiming = true
 	return true
@@ -364,7 +385,279 @@ func _on_fissure_applied(request: TerrainBrushRequest, result: TerrainEditResult
 	_set_phase("recovery", {})
 
 
+func begin_spikes() -> bool:
+	if phase != "" or _button or pillar_aiming or fissure_aiming or controller.brush_queue == null:
+		return false
+	spikes_aiming = true
+	return true
+
+
+func finish_spikes() -> bool:
+	if not spikes_aiming:
+		return false
+	spikes_aiming = false
+	var check := validate_spikes_target()
+	if not check.ok:
+		_stats.spikes_rejected += 1
+		last_result = "espinhos recusados: %s" % check.reason
+		emit_fx(&"invalid", {"point": check.get("point", Vector3.ZERO), "reason": check.reason})
+		return false
+	_spike_requests.assign(check.requests)
+	_spike_results.clear()
+	_spike_index = 0
+	return _enqueue_next_spike()
+
+
+func make_spike_request(base: Vector3, material_id: StringName) -> TerrainBrushRequest:
+	# Enterrar só a base une a formação ao chão. O último raio define o topo arredondado.
+	var bottom := base - Vector3.UP * 0.25
+	var top := base + Vector3.UP * (tuning.spike_height - tuning.spike_tip_radius)
+	var req := TerrainBrushRequest.path(PackedVector3Array([bottom, bottom.lerp(top, 0.5), top]),
+		PackedFloat32Array([tuning.spike_base_radius,
+			(tuning.spike_base_radius + tuning.spike_tip_radius) * 0.5, tuning.spike_tip_radius]), true, material_id)
+	req.source = "ability:earth_spikes"
+	return req
+
+
+func validate_spikes_target() -> Dictionary:
+	var out := {"ok": false, "reason": "", "bases": PackedVector3Array(), "requests": []}
+	for v in [tuning.spike_spacing, tuning.spike_height, tuning.spike_base_radius,
+			tuning.spike_tip_radius, tuning.spike_range, tuning.spike_interval_s, tuning.spike_max_step_height]:
+		if not is_finite(v):
+			out.reason = "parâmetros inválidos"
+			return out
+	if tuning.spike_count < 1 or tuning.spike_count > 3 or tuning.spike_base_radius < 0.5 \
+			or tuning.spike_base_radius > 1.2 or tuning.spike_tip_radius < 0.5 \
+			or tuning.spike_tip_radius > tuning.spike_base_radius or tuning.spike_height < 2.5 \
+			or tuning.spike_height > 4.0 or tuning.spike_spacing < tuning.spike_base_radius * 2.0 \
+			or tuning.spike_spacing > 3.0 or tuning.spike_range < 6.0 or tuning.spike_range > 20.0 \
+			or tuning.spike_max_step_height < 0.1 or tuning.spike_max_step_height > 1.0 \
+			or tuning.spike_interval_s < 0.10 or tuning.spike_interval_s > 0.18:
+		out.reason = "parâmetros fora dos limites"
+		return out
+	var ray: Array = controller.aim_ray()
+	var hit: Dictionary = controller.cast_segment(ray[0], ray[0] + ray[1] * (tuning.spike_range + 15.0), true)
+	if hit.is_empty():
+		out.reason = "sem chão na mira"
+		return out
+	var start: Vector3 = hit.position
+	out.point = start
+	if not hit.collider is VoxelLodTerrain or hit.normal.y < tuning.min_floor_normal_y:
+		out.reason = "mire em chão livre"
+		return out
+	var direction: Vector3 = ray[1]
+	direction.y = 0.0
+	if direction.length() < 0.01:
+		out.reason = "mire adiante no chão"
+		return out
+	direction = direction.normalized()
+	out.direction = direction
+	var previous := start
+	# Gera também os volumes vermelhos quando a área está ocupada, mantendo a prévia legível.
+	for i in tuning.spike_count:
+		var base := start + direction * (i * tuning.spike_spacing)
+		base.y = previous.y
+		var floor_hit: Dictionary = controller.terrain_service.raycast_terrain(
+			base + Vector3.UP * 1.5, base + Vector3.DOWN * 2.0)
+		if floor_hit.is_empty():
+			out.reason = "formação sem chão contínuo"
+			return out
+		base = floor_hit.position
+		var mat: TerrainMaterial = controller.terrain_service.get_material_at(base - floor_hit.normal * 0.5)
+		out.bases.append(base)
+		out.requests.append(make_spike_request(base, mat.id if mat != null else &""))
+		if floor_hit.normal.y < tuning.min_floor_normal_y \
+				or absf(base.y - previous.y) > tuning.spike_max_step_height:
+			out.reason = "desnível na formação"
+			return out
+		if i > 0:
+			var obstacle: Dictionary = controller.cast_segment(previous + Vector3.UP * 1.2, base + Vector3.UP * 1.2, true)
+			if not obstacle.is_empty():
+				out.reason = "obstáculo entre os espinhos"
+				return out
+		previous = base
+	for req: TerrainBrushRequest in out.requests:
+		out.reason = _spike_path_reason(req)
+		if out.reason != "":
+			return out
+	out.ok = true
+	return out
+
+
+## Revalidação dos volumes fixos antes de enfileirar e em cada passo anterior à fila
+## (priority 100). A mira não participa depois da confirmação.
+func _spike_path_reason(req: TerrainBrushRequest) -> String:
+	var reason: String = controller.terrain_service.can_add_path(req.points, req.radii, req.material_id)
+	if reason != "":
+		return reason
+	if not controller.brush_queue.can_apply_unsplit(req):
+		return "espinho excede o limite de operação única"
+	var base: Vector3 = req.points[0] + Vector3.UP * 0.25
+	# Dados primeiro: colliders podem continuar no estado anterior de uma edição externa.
+	var support: float = controller.terrain_service.sample_sdf(base - Vector3.UP * 0.75)
+	if not is_finite(support) or support >= 0.0:
+		return "apoio SDF mudou ou está ausente"
+	var box := req.world_aabb()
+	for x in range(ceili(box.position.x), floori(box.end.x) + 1):
+		for y in range(ceili(base.y + 0.65), floori(box.end.y) + 1):
+			for z in range(ceili(box.position.z), floori(box.end.z) + 1):
+				var sample := Vector3(x, y, z)
+				var inside := false
+				for i in range(1, req.points.size()):
+					var a := req.points[i - 1]
+					var span := req.points[i] - a
+					var t := clampf((sample - a).dot(span) / span.length_squared(), 0.0, 1.0)
+					if sample.distance_to(a + span * t) <= lerpf(req.radii[i - 1], req.radii[i], t) + 0.1:
+						inside = true
+						break
+				if inside:
+					var sdf: float = controller.terrain_service.sample_sdf(sample)
+					if not is_finite(sdf) or sdf < 0.0:
+						return "há terreno SDF no volume livre dos espinhos"
+	var relative: Vector3 = base - controller.player.global_position
+	if relative.length() > tuning.spike_range:
+		return "formação fora do alcance"
+	if Vector2(relative.x, relative.z).length() < tuning.min_range:
+		return "formação perto demais do jogador"
+	var floor_hit: Dictionary = controller.terrain_service.raycast_terrain(base + Vector3.UP * 0.6, base + Vector3.DOWN * 1.2)
+	if floor_hit.is_empty() or floor_hit.normal.y < tuning.min_floor_normal_y \
+			or absf(floor_hit.position.y - base.y) > 0.2:
+		return "apoio mudou ou está ausente"
+	var mat: TerrainMaterial = controller.terrain_service.get_material_at(base - Vector3.UP * 0.5)
+	reason = TerrainBrushQueue.material_policy(req.op, mat)
+	if reason != "":
+		return reason
+	# Um único hull conservador do tubo afunilado cobre o espaço entre os três centros.
+	var key := "%s/%s" % [req.points[2].y - req.points[0].y, req.radii]
+	if key != _spike_shape_key:
+		var vertices := PackedVector3Array()
+		for i in req.points.size():
+			var center := req.points[i] - req.points[0]
+			for latitude in 9:
+				var angle := PI * latitude / 8.0
+				for longitude in 12:
+					var yaw := TAU * longitude / 12.0
+					vertices.append(center + Vector3(sin(angle) * cos(yaw), cos(angle), sin(angle) * sin(yaw))
+						* (req.radii[i] + 0.07))
+		_spike_shape.points = vertices
+		var air_vertices := PackedVector3Array()
+		for vertex in vertices:
+			if vertex.y >= 0.9:
+				air_vertices.append(vertex)
+		for longitude in 12:
+			var yaw := TAU * longitude / 12.0
+			air_vertices.append(Vector3(cos(yaw) * (req.radii[0] + 0.07), 0.9,
+				sin(yaw) * (req.radii[0] + 0.07)))
+		_spike_air_shape.points = air_vertices
+		_spike_shape_key = key
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = _spike_shape
+	query.transform.origin = req.points[0]
+	query.collision_mask = Layers.PROPS | Layers.PLAYER
+	if not controller.player.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
+		return "há um corpo no espaço dos espinhos"
+	query.shape = _spike_air_shape
+	query.collision_mask = Layers.TERRAIN
+	if not controller.player.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
+		return "há terreno no volume livre dos espinhos"
+	# Raios verticais da base ao topo recusam teto/paredes. Só a união rasa com o piso
+	# é aceita: os pontos laterais também precisam acompanhar o mesmo chão.
+	for offset in [Vector3.ZERO, Vector3.RIGHT * req.radii[0] * 0.75,
+			Vector3.LEFT * req.radii[0] * 0.75, Vector3.FORWARD * req.radii[0] * 0.75,
+			Vector3.BACK * req.radii[0] * 0.75]:
+		var top: Vector3 = base + offset + Vector3.UP * (tuning.spike_height + 0.25)
+		var obstruction: Dictionary = controller.terrain_service.raycast_terrain(top, base + offset - Vector3.UP * 1.0)
+		if obstruction.is_empty() or obstruction.position.y > base.y + 0.65 \
+				or obstruction.position.y < base.y - tuning.spike_max_step_height:
+			return "volume sem chão livre ou apoio contínuo"
+	return ""
+
+
+func _enqueue_next_spike() -> bool:
+	var req := _spike_requests[_spike_index]
+	var reason := _spike_path_reason(req)
+	if reason == "" and not controller.brush_queue.enqueue(req):
+		reason = "fila indisponível"
+	if reason != "":
+		_stop_spikes(reason)
+		return false
+	_spike_request = req
+	_set_phase("spikes_pending", {})
+	return true
+
+
+func _on_spike_applied(request: TerrainBrushRequest, result: TerrainEditResult) -> void:
+	if request != _spike_request:
+		return
+	_spike_request = null
+	if not result.ok:
+		_stop_spikes(result.reason)
+		return
+	_stats.spikes_created += 1
+	_spike_applied_ms = Time.get_ticks_msec()
+	_spike_confirmed = false
+	_spike_gap = 0.0
+	_spike_results.append({"index": _spike_index, "edit_ms": result.duration_usec / 1000.0,
+		"collider_ms": -1.0, "applied_frame": Engine.get_physics_frames(), "confirmed_frame": -1})
+	_set_phase("spikes_confirming", {})
+	var base: Vector3 = request.points[0] + Vector3.UP * 0.25
+	var mat := TerrainMaterialLibrary.get_by_id(request.material_id)
+	emit_fx(&"spike_created", {"point": base, "color": mat.surface_color if mat != null else Color.GRAY,
+		"index": _spike_index, "count": _spike_requests.size(), "height": tuning.spike_height,
+		"base_radius": request.radii[0], "tip_radius": request.radii[-1]})
+
+
+func _tick_spikes(delta: float) -> void:
+	if phase == "spikes_pending" and _spike_request != null:
+		var reason := _spike_path_reason(_spike_request)
+		if reason != "":
+			_stop_spikes(reason)
+	elif phase == "spikes_confirming":
+		_phase_t += delta
+		var req := _spike_requests[_spike_index]
+		if not _spike_confirmed:
+			var base: Vector3 = req.points[0] + Vector3.UP * 0.25
+			# Descer pelo próprio eixo não cruza o vizinho já construído (os raios
+			# horizontais poderiam começar dentro dele e confirmar o collider errado).
+			var hit: Dictionary = controller.terrain_service.raycast_terrain(
+				base + Vector3.UP * (tuning.spike_height + 1.0), base + Vector3.UP * 0.8)
+			var solid: float = controller.terrain_service.sample_sdf(base + Vector3.UP * 1.2)
+			if not hit.is_empty() and hit.position.y > base.y + 1.0 \
+					and hit.position.y <= req.points[-1].y + req.radii[-1] + 0.1 \
+					and is_finite(solid) and solid < 0.0:
+				_spike_confirmed = true
+				_stats.spike_confirmations += 1
+				_spike_results[-1].collider_ms = Time.get_ticks_msec() - _spike_applied_ms
+				_spike_results[-1].confirmed_frame = Engine.get_physics_frames()
+			elif _phase_t >= 3.0:
+				_stop_spikes("colisão não confirmada em 3 s")
+				return
+		if _spike_confirmed:
+			_spike_gap += delta
+			if _spike_gap + 0.0001 >= tuning.spike_interval_s:
+				_spike_index += 1
+				if _spike_index == _spike_requests.size():
+					_stats.spike_formations += 1
+					last_result = "%d espinhos criados · colisão confirmada" % _spike_index
+					_spike_requests.clear()
+					_set_phase("recovery", {})
+				else:
+					_enqueue_next_spike()
+
+
+func _stop_spikes(reason: String) -> void:
+	if _spike_request != null:
+		controller.brush_queue.cancel_request(_spike_request)
+		_spike_request = null
+	_stats.spikes_rejected += 1
+	last_result = "espinhos: %d/%d aplicados · %s" % [_spike_results.size(), _spike_requests.size(), reason]
+	_spike_requests.clear()
+	_set_phase("recovery", {})
+
+
 func on_press() -> void:
+	if pillar_aiming or fissure_aiming or spikes_aiming:
+		return
 	_button = true
 	if phase != "":
 		return  # já em curso ou em recuperação
@@ -485,8 +778,19 @@ func validate_target() -> Dictionary:
 
 
 func cancel() -> void:
+	var cancel_spikes := spikes_aiming or phase in ["spikes_pending", "spikes_confirming"]
 	pillar_aiming = false
 	fissure_aiming = false
+	spikes_aiming = false
+	if cancel_spikes:
+		emit_fx(&"cancel", {"reason": "espinhos cancelados"})
+	if phase in ["spikes_pending", "spikes_confirming"]:
+		if _spike_request != null:
+			controller.brush_queue.cancel_request(_spike_request)
+			_spike_request = null
+		last_result = "espinhos: %d/%d aplicados · cancelado" % [_spike_results.size(), _spike_requests.size()]
+		_spike_requests.clear()
+		_end_quietly()
 	if _fissure_request != null:
 		controller.brush_queue.cancel_request(_fissure_request)
 		_fissure_request = null
@@ -517,6 +821,7 @@ func clear() -> void:
 
 func physics_tick(delta: float) -> void:
 	_tick_thrown()
+	_tick_spikes(delta)
 	if _fissure_request != null:
 		var reason := _fissure_path_reason(_fissure_request)
 		if reason != "":

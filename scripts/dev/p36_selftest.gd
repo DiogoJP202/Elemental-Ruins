@@ -12,6 +12,7 @@ extends "res://scripts/dev/p35_selftest.gd"
 ## P4H: T74 cobre molde/construção/recusas; T75 cobre apoio, fusão e ciclo de vida da muralha.
 ## P4I: T76 cobre input/ciclo do vórtice; T77 cobre forças, exposição, materiais e orçamento.
 ## P4J: T78 cobre fluxo/input/ciclo; T79 cobre dosagem térmica, materiais, oclusão e custo.
+## P4K: T80 cobre PATHs afunilados/colisão/persistência; T81 cobre recusas e sequência cancelável.
 ## T1 e baseline continuam obrigatórios. Capturas não equivalem a playtest humano.
 
 
@@ -100,6 +101,8 @@ func _run_tests() -> bool:
 	if _should_run("T77"): await _t77_vortex_physics()
 	if _should_run("T78"): await _t78_fire_stream_lifecycle()
 	if _should_run("T79"): await _t79_fire_stream_thermal()
+	if _should_run("T80"): await _t80_earth_spikes_world()
+	if _should_run("T81"): await _t81_earth_spikes_guards()
 	return true
 
 
@@ -4377,4 +4380,368 @@ func _t79_fire_stream_thermal() -> void:
 		"benchmark": {"heated": heated, "baseline_frame_ms": baseline, "active_frame_ms": active, "stream_cpu_mean_ms": cpu_ms,
 			"heat_pulses": stats1.pulses - stats0.pulses, "same_fixture": true}, "frame_gate_applied": windowed})
 	player.input_enabled = false
+	await main.request_world_reset()
+
+
+# --- P4K: três edições reais, sem confundir SDF aprovado com collider reconstruído -----------
+
+func _p4k_x(pressed: bool) -> void:
+	_p4a_key(KEY_X, pressed)
+	Input.flush_buffered_events()
+
+
+## Mede a seção física em ambos os lados, longe dos espinhos vizinhos.
+func _p4k_width(base: Vector3, side: Vector3, height: float) -> Dictionary:
+	var center := base + Vector3.UP * height
+	var left := svc.raycast_terrain(center + side * 2.0, center - side * 0.05)
+	var right := svc.raycast_terrain(center - side * 2.0, center + side * 0.05)
+	return {"ok": not left.is_empty() and not right.is_empty(), "height_m": height,
+		"width_m": (left.position as Vector3).distance_to(right.position) if not left.is_empty() and not right.is_empty() else -1.0}
+
+
+func _t80_earth_spikes_world() -> void:
+	const SLOT := "p4k_spikes"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	await _aim_settle(_ground_at(base + Vector3(0.17, 0, -5.0)))
+	var check := earth.validate_spikes_target()
+	if not check.ok:
+		player.input_enabled = false
+		_record("T80", "Espinhos SDF físicos, afunilados e persistentes", false, {"target": str(check)})
+		return
+	var bases: PackedVector3Array = check.bases
+	var planned: Array = check.requests
+	var side: Vector3 = (check.direction as Vector3).cross(Vector3.UP).normalized()
+	var edits: Array[Dictionary] = []
+	var cb := func(req: TerrainBrushRequest, result: TerrainEditResult):
+		if req.source == "ability:earth_spikes":
+			edits.append({"request": req, "ok": result.ok, "reason": result.reason,
+				"edit_ms": result.duration_usec / 1000.0, "frame": Engine.get_physics_frames()})
+	queue.brush_applied.connect(cb)
+	var revision := svc.get_revision()
+	var extracted: int = earth.get_stats().extracted
+	var formations0: int = earth.get_stats().spike_formations
+	_p4k_x(true)
+	await _frames(8)
+	_p4b_lmb(true)
+	_p4b_lmb(false)
+	_p4c_rmb(true)
+	_p4c_rmb(false)
+	_p4d_f(true)
+	_p4d_f(false)
+	var preview: bool = earth.spikes_aiming and not earth.pillar_aiming and not earth.fissure_aiming \
+		and earth.rock == null and earth.get_stats().extracted == extracted and queue.pending_count() == 0 \
+		and edits.is_empty() and svc.get_revision() == revision and main.earth_fx._spikes_preview.visible \
+		and main.earth_fx._preview_mat.albedo_color == EarthFx.PREVIEW_OK
+	if _screens: await _snap("p4k_earth_spikes_preview")
+	# Readback opcional fica antes do preparo final; a medição começa antes do release,
+	# mantendo todos os quadros da edição/reconstrução dentro do contrato.
+	await _frames(12)
+	var frame_ms := PackedFloat32Array()
+	var frame_peaks: Array[Dictionary] = []
+	var clock := {"last": Time.get_ticks_usec(), "phase": earth.phase}
+	var sample_frame := func():
+		var now := Time.get_ticks_usec()
+		var elapsed_ms := (now - int(clock.last)) / 1000.0
+		frame_ms.append(elapsed_ms)
+		if elapsed_ms > 25.0:
+			frame_peaks.append({"ms": elapsed_ms, "phase": earth.phase, "interval_start_phase": clock.phase,
+				"physics_frame": Engine.get_physics_frames(), "edits_count": edits.size(), "process_frames": frame_ms.size()})
+		clock.last = now
+		clock.phase = earth.phase
+	get_tree().process_frame.connect(sample_frame)
+	_p4k_x(false)
+	# A mira muda DEPOIS da confirmação: os pedidos capturados não podem segui-la.
+	player.camera_rig.set_view(0.5, deg_to_rad(-15.0))
+	var complete: bool = await _wait_until(func(): return earth.phase == "" and edits.size() == 3 \
+		and earth.get_stats().spike_formations == formations0 + 1, 8.0)
+	_p4k_x(false)
+	await _frames(185)
+	get_tree().process_frame.disconnect(sample_frame)
+	queue.brush_applied.disconnect(cb)
+	var timings := _stats(frame_ms)
+	timings["p99"] = _percentile(frame_ms, 0.99)
+	_metrics["p4k_spikes_creation_rebuild_frame_ms"] = timings
+	var sequence := earth.get_stats()
+	var geometry: bool = complete and edits.size() == bases.size() and bases.size() == 3 and svc.get_revision() == revision + 3
+	var tops := []
+	var relative_heights := []
+	var widths := []
+	var saved_sdf := []
+	var colliders := true
+	var taper := true
+	for i in bases.size():
+		var point := bases[i]
+		var top := svc.raycast_terrain(point + Vector3.UP * 5.0, point + Vector3.UP * 0.3)
+		tops.append(_hit_y(top))
+		relative_heights.append(top.position.y - point.y if not top.is_empty() else -1.0)
+		colliders = colliders and not top.is_empty() and top.position.y > point.y + 2.0
+		var low := _p4k_width(point, side, 0.8)
+		var high := _p4k_width(point, side, 2.1)
+		widths.append({"lower": low, "upper": high})
+		taper = taper and low.ok and high.ok and float(low.width_m) > float(high.width_m) + 0.1
+		saved_sdf.append(svc.sample_sdf(point + Vector3.UP * 1.2))
+		if i < edits.size():
+			var req: TerrainBrushRequest = edits[i].request
+			geometry = geometry and edits[i].ok and req.is_path() and req.additive \
+				and req.points.size() == 3 and req.radii.size() == 3 and req.radii[0] > req.radii[1] \
+				and req.radii[1] > req.radii[2] and req.radii[2] >= 0.5
+			for j in req.points.size():
+				geometry = geometry and req.points[j].distance_to((planned[i] as TerrainBrushRequest).points[j]) < 0.01
+	var serial: bool = sequence.spike_results.size() == 3
+	for result: Dictionary in sequence.spike_results:
+		serial = serial and int(result.confirmed_frame) >= int(result.applied_frame) and float(result.collider_ms) >= 0.0
+	for i in range(1, sequence.spike_results.size()):
+		serial = serial and int(sequence.spike_results[i].applied_frame) > int(sequence.spike_results[i - 1].confirmed_frame)
+	var first := bases[0]
+	var from := Transform3D(Basis.IDENTITY, first + side * 2.5 + Vector3.UP * 0.1)
+	var player_blocked: bool = player.test_move(from, -side * 4.0)
+	var crate := _air_crate(first + side * 2.5 + Vector3.UP * 1.2)
+	crate.collision_mask = Layers.TERRAIN
+	crate.linear_velocity = -side * 4.0
+	await _frames(60)
+	var prop_blocked: bool = (crate.global_position - first).dot(side) > 0.2
+	crate.queue_free()
+	await _frames(2)
+	# Um consumidor real deve parar no novo collider, não aquecer o alvo atrás dele.
+	player.teleport_to(first + side * 4.0 + Vector3.UP * 0.05)
+	ab.select(2)
+	var behind := _p4j_body(first - side * 2.0 + Vector3.UP * 1.2, BodyMaterialLibrary.STONE, 0.25)
+	var state := materials.state_of(behind)
+	var started := await _p4j_start(behind.global_position)
+	await _frames(65)
+	var fire: FireBurst = ab.get_ability(&"fire_burst")
+	var hit: Dictionary = ab.cast_segment(fire.stream.beam_from, fire.stream.beam_to + fire.stream.direction * 0.02, true)
+	var occlusion: bool = started and fire.stream.has_contact and not hit.is_empty() and hit.collider is VoxelLodTerrain \
+		and is_equal_approx(state.temperature, MaterialState.AMBIENT)
+	_p4c_rmb(false)
+	behind.queue_free()
+	await _frames(2)
+	var save_ok: bool = await main.request_world_save(SLOT)
+	var unchanged := true
+	for i in bases.size(): unchanged = unchanged and is_equal_approx(saved_sdf[i], svc.sample_sdf(bases[i] + Vector3.UP * 1.2))
+	var reset_ok: bool = await main.request_world_reset()
+	await _prepare_area(base, AABB(base + Vector3(-6, -4, -13), Vector3(12, 12, 14)))
+	var reset_empty := true
+	for point: Vector3 in bases: reset_empty = reset_empty and svc.sample_sdf(point + Vector3.UP * 1.2) > 0.0
+	var load_ok: bool = await main.request_world_load(SLOT)
+	await _prepare_area(base, AABB(base + Vector3(-6, -4, -13), Vector3(12, 12, 14)))
+	var restored := true
+	var loaded_sdf := []
+	for i in bases.size():
+		var point := bases[i]
+		var ray := await _wait_ray(point + Vector3.UP * 5.0, point + Vector3.UP * 0.3,
+			func(h): return not h.is_empty() and absf(h.position.y - float(tops[i])) < PROBE_TOLERANCE, 5.0)
+		var value := svc.sample_sdf(point + Vector3.UP * 1.2)
+		loaded_sdf.append(value)
+		restored = restored and ray.ok and float(saved_sdf[i]) < 0.0 and absf(value - float(saved_sdf[i])) < SDF_TOLERANCE
+	var persistence: bool = save_ok and unchanged and reset_ok and reset_empty and load_ok and restored
+	var windowed := not _mode.begins_with("headless")
+	var perf: bool = not windowed or (timings.get("n", 0) >= 120 and timings.get("p95", 999.0) <= 20.0 \
+		and timings.p99 <= 33.0 and timings.get("max", 999.0) <= 50.0)
+	if _screens:
+		player.teleport_to(base + Vector3(5, 0, 0))
+		await _aim_settle(bases[1] + Vector3.UP * 4.0)
+		await _snap("p4k_earth_spikes")
+	player.input_enabled = false
+	_record("T80", "X forma três PATHs afunilados, aguarda collider entre pedidos e persiste terreno com obstrução real",
+		preview and geometry and serial and colliders and taper and player_blocked and prop_blocked and occlusion and persistence and perf,
+		{"preview_without_edit_exclusive": preview, "three_captured_paths": geometry, "formation_completed": complete,
+		"collider_before_next_path": serial, "physical_tops": colliders, "tops_y": tops, "relative_heights_m": relative_heights,
+		"taper_observed": taper, "cross_sections": widths,
+		"player_blocked": player_blocked, "prop_blocked": prop_blocked, "fire_occluded": occlusion,
+		"saved_sdf": saved_sdf, "loaded_sdf": loaded_sdf, "persistence": persistence,
+		"save_checks": {"save": save_ok, "unchanged": unchanged, "reset": reset_ok, "reset_empty": reset_empty, "load": load_ok, "restored": restored},
+		"sequence": sequence.spike_results, "frame_ms": timings, "frame_peaks_above_25ms": frame_peaks, "frame_gate_applied": windowed,
+		"benchmark_method": "optional preview readback then 12 preparation ticks; process_frame from before X release through all edits/collider confirmations plus 185 physics ticks; all samples retained, no readback during sampling"})
+	await main.request_world_reset()
+
+
+func _t81_earth_spikes_guards() -> void:
+	const SLOT := "p4k_cancel"
+	var ab: AbilityController = main.abilities
+	var base: Vector3 = await _p3_lab(0)
+	var earth: EarthLiftThrow = ab.get_ability(&"earth_lift_throw")
+	var original := earth.tuning
+	var point := _ground_at(base + Vector3(0.17, 0, -5.0))
+	var cases := {}
+	var reject := func(name: String):
+		var check := earth.validate_spikes_target()
+		var rev := svc.get_revision()
+		var n := _brush_log.size()
+		_p4k_x(true)
+		await _frames(2)
+		var red_preview: bool = main.earth_fx._spikes_preview.visible and main.earth_fx._preview_mat.albedo_color == EarthFx.PREVIEW_BAD
+		if name == "second_volume_occupied":
+			# EarthFx atualiza a cada três quadros de PROCESSO, não de física.
+			red_preview = await _wait_until(func(): return main.earth_fx._spikes_preview.visible \
+				and main.earth_fx._preview_mat.albedo_color == EarthFx.PREVIEW_BAD, 0.5)
+		_p4k_x(false)
+		await _frames(3)
+		cases[name] = {"reason": check.reason, "red_preview": red_preview, "ok": not check.ok and svc.get_revision() == rev \
+			and _brush_log.size() == n and queue.pending_count() == 0 and not earth.spikes_aiming and earth.phase == "" \
+			and (name != "second_volume_occupied" or red_preview)}
+	player.camera_rig.set_view(0.0, deg_to_rad(45.0))
+	await _frames(3)
+	await reject.call("no_ground")
+	await _aim_settle(_ground_at(base + Vector3(0, 0, -earth.tuning.spike_range - 3.0)))
+	await reject.call("out_of_range")
+	await _aim_settle(point)
+	var clear := earth.validate_spikes_target()
+	if clear.ok:
+		var occupied: Vector3 = clear.bases[1] + Vector3.UP * 1.4
+		var crate := DebugProps.spawn_crate(props, occupied)
+		crate.freeze = true
+		await _frames(2)
+		await reject.call("second_volume_occupied")
+		crate.queue_free()
+		await _frames(2)
+	else: cases["second_volume_occupied"] = {"ok": false, "fixture": str(clear)}
+	var wall := _p36_thin_wall(base + Vector3(0, 2, -2), Vector3(6, 5, 0.2))
+	await _frames(2)
+	await _aim_settle(point)
+	await reject.call("wall_blocks_aim")
+	wall.queue_free()
+	await _frames(2)
+	await _aim_settle(point)
+	earth.tuning = original.duplicate()
+	earth.tuning.spike_tip_radius = 0.49
+	await reject.call("radius_below_path_minimum")
+	earth.tuning = original
+	# Mudança de ocupação entre release e aplicação: nenhum voxel pode ser acrescido.
+	queue.set_physics_process(false)
+	clear = earth.validate_spikes_target()
+	var rev := svc.get_revision()
+	var n := _brush_log.size()
+	_p4k_x(true)
+	_p4k_x(false)
+	var pending: bool = earth.phase == "spikes_pending" and queue.pending_count() == 1
+	var intruder := DebugProps.spawn_crate(props, clear.bases[0] + Vector3.UP * 1.4) if clear.ok else null
+	if intruder != null: intruder.freeze = true
+	await _frames(3)
+	queue.set_physics_process(true)
+	await _frames(4)
+	cases["body_entered_pending_volume"] = {"reason": earth.last_result,
+		"ok": pending and queue.pending_count() == 0 and svc.get_revision() == rev and _brush_log.size() == n}
+	if intruder != null: intruder.queue_free()
+	ab.cancel_all()
+	# Depois do primeiro resultado, ocupar o segundo interrompe sem desfazer o primeiro.
+	base = await _p3_lab(0)
+	await _aim_settle(_ground_at(base + Vector3(0.17, 0, -5.0)))
+	clear = earth.validate_spikes_target()
+	rev = svc.get_revision()
+	var created0: int = earth.get_stats().spikes_created
+	_p4k_x(true)
+	_p4k_x(false)
+	var first_applied: bool = await _wait_until(func(): return earth.get_stats().spikes_created == created0 + 1, 3.0)
+	var obstruction := DebugProps.spawn_crate(props, clear.bases[1] + Vector3.UP * 1.4) if clear.ok else null
+	if obstruction != null: obstruction.freeze = true
+	var stopped: bool = await _wait_until(func(): return earth.phase == "", 5.0)
+	var retained: bool = clear.ok and svc.sample_sdf(clear.bases[0] + Vector3.UP * 1.2) < 0.0
+	cases["intermediate_failure_keeps_first"] = {"reason": earth.last_result,
+		"ok": first_applied and stopped and retained and svc.get_revision() == rev + 1 and earth.get_stats().spikes_created == created0 + 1}
+	if obstruction != null: obstruction.queue_free()
+	# DADOS mudam antes do collider: validar só o raio antigo permitiria uma operação inválida.
+	for added: bool in [false, true]:
+		base = await _p3_lab(0)
+		await _aim_settle(_ground_at(base + Vector3(0.17, 0, -5.0)))
+		clear = earth.validate_spikes_target()
+		if not clear.ok:
+			cases["stale_collider_%s" % ("occupied" if added else "support")] = {"ok": false, "fixture": str(clear)}
+			continue
+		var foot: Vector3 = clear.bases[0]
+		queue.set_physics_process(false)
+		_p4k_x(true)
+		_p4k_x(false)
+		pending = earth.phase == "spikes_pending" and queue.pending_count() == 1
+		var changed: TerrainEditResult = svc.add_sphere(foot + Vector3.UP * 1.5, 0.8) if added else svc.dig_sphere(foot - Vector3.UP * 0.5, 2.0)
+		var stale_ray := svc.raycast_terrain(foot + Vector3.UP * 3.5, foot - Vector3.UP * 3.0)
+		var collider_stale: bool = not stale_ray.is_empty() and absf(stale_ray.position.y - foot.y) < 0.2
+		var reason: String = earth._spike_path_reason(clear.requests[0])
+		rev = svc.get_revision()
+		n = _brush_log.size()
+		await _frames(3)
+		queue.set_physics_process(true)
+		await _frames(4)
+		cases["stale_collider_%s" % ("occupied" if added else "support")] = {"reason": reason, "collider_still_old": collider_stale,
+			"ok": pending and changed.ok and collider_stale and reason != "" and queue.pending_count() == 0 \
+			and svc.get_revision() == rev and _brush_log.size() == n}
+		ab.cancel_all()
+	base = await _p3_lab(0)
+	var slot_ready: bool = await main.request_world_save(SLOT)
+	await _aim_settle(_ground_at(base + Vector3(0.17, 0, -5.0)))
+	rev = svc.get_revision()
+	n = _brush_log.size()
+	_p4k_x(true)
+	await _frames(2)
+	var preview_started: bool = earth.spikes_aiming
+	ab.select(1)
+	_p4k_x(false)
+	await _frames(2)
+	cases["cancel_preview_no_edit"] = {"ok": preview_started and not earth.spikes_aiming and earth.phase == "" \
+		and queue.pending_count() == 0 and _brush_log.size() == n and svc.get_revision() == rev and not main.earth_fx._spikes_preview.visible}
+	var old_capture := ab.require_captured_mouse
+	var old_mouse := Input.mouse_mode
+	var input_snapshot := func():
+		return {"current": String(ab.current_ability().id), "index": ab.current, "phase": earth.phase,
+			"earth_button": earth._button, "pillar_aiming": earth.pillar_aiming, "fissure_aiming": earth.fissure_aiming,
+			"spikes_aiming": earth.spikes_aiming, "holding": ab.holding, "can_act": ab._can_act(),
+			"input_enabled": player.input_enabled, "mouse_mode": Input.mouse_mode, "require_capture": ab.require_captured_mouse,
+			"x_action_pressed": Input.is_action_pressed(&"earth_spikes")}
+	for kind: String in ["escape", "select", "input", "mouse", "save", "load", "reset"]:
+		base = await _p3_lab(0)
+		await _aim_settle(_ground_at(base + Vector3(0.17, 0, -5.0)))
+		queue.set_physics_process(false)
+		rev = svc.get_revision()
+		n = _brush_log.size()
+		var before_input: Dictionary = input_snapshot.call()
+		_p4k_x(true)
+		var after_input: Dictionary = input_snapshot.call()
+		# Hold e release são eventos de quadros distintos, como no teclado durante o jogo.
+		await get_tree().process_frame
+		var after_process: Dictionary = input_snapshot.call()
+		var preview: bool = earth.spikes_aiming
+		_p4k_x(false)
+		pending = earth.phase == "spikes_pending" and queue.pending_count() == 1
+		var unrelated: TerrainBrushRequest
+		if kind == "select":
+			unrelated = TerrainBrushRequest.sphere(TerrainBrushRequest.Op.ADD, base + Vector3(5, 0, -5), 0.5)
+			unrelated.source = "selftest:P4K-unrelated"
+			queue.enqueue(unrelated)
+		var command_ok := true
+		if kind == "escape":
+			_p4a_key(KEY_ESCAPE, true)
+			Input.flush_buffered_events()
+			_p4a_key(KEY_ESCAPE, false)
+			Input.flush_buffered_events()
+		elif kind == "select": ab.select(1)
+		elif kind == "input": player.input_enabled = false
+		elif kind == "mouse":
+			ab.require_captured_mouse = true
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		elif kind == "save": command_ok = await main.request_world_save(SLOT)
+		elif kind == "load": command_ok = await main.request_world_load(SLOT)
+		else: command_ok = await main.request_world_reset()
+		await _frames(3)
+		var only_own: bool = queue.pending_count() == (1 if unrelated != null else 0)
+		if unrelated != null: queue.cancel_request(unrelated)
+		queue.set_physics_process(true)
+		await _frames(4)
+		cases["cancel_pending_%s" % kind] = {"preview_started": preview, "queued": pending,
+			"input_before": before_input, "input_after_press": after_input, "input_after_process": after_process,
+			"command_ok": command_ok, "only_own_request_cancelled": only_own, "phase": earth.phase,
+			"queue_remaining": queue.pending_count(), "revision_before": rev, "revision_after": svc.get_revision(),
+			"brushes_before": n, "brushes_after": _brush_log.size(), "preview_after": earth.spikes_aiming,
+			"ok": preview and pending and command_ok and only_own and not earth.spikes_aiming and earth.phase == "" \
+			and queue.pending_count() == 0 and _brush_log.size() == n and (kind in ["load", "reset"] or svc.get_revision() == rev)}
+		ab.require_captured_mouse = old_capture
+		Input.mouse_mode = old_mouse
+		player.input_enabled = true
+		_p4k_x(false)
+		ab.cancel_all()
+	earth.tuning = original
+	player.input_enabled = false
+	_record("T81", "Espinhos recusam espaço/alcance inválidos, revalidam cada pedido e cancelam sem edições residuais",
+		slot_ready and cases.values().all(func(c): return c.ok), cases)
 	await main.request_world_reset()

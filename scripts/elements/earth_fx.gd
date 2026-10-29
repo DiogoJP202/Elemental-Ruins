@@ -52,6 +52,8 @@ var _preview: MeshInstance3D
 var _pillar_preview: MeshInstance3D
 var _fissure_preview: MeshInstance3D
 var _fissure_mesh := ImmediateMesh.new()
+var _spikes_preview: MeshInstance3D
+var _spikes_mesh := ImmediateMesh.new()
 var _preview_mat: StandardMaterial3D
 var _dust: Array[GPUParticles3D] = []
 var _pebbles: Array[GPUParticles3D] = []
@@ -60,7 +62,7 @@ var _shake := {}
 var _attached := []  # [{emitter, rock, t, max_t, trail}]
 var _frame := 0
 var _stats := {"cracks": 0, "telegraphs": 0, "dust": 0, "pebbles": 0, "mesh_shakes": 0, "rock_pebbles": 0,
-	"trails": 0, "impacts": 0, "invalid": 0, "trauma_events": 0}
+	"trails": 0, "impacts": 0, "invalid": 0, "trauma_events": 0, "spikes_created": 0}
 
 
 func setup(p_abilities: AbilityController, p_camera: ThirdPersonCamera, p_edit: TerrainEditController = null) -> void:
@@ -118,6 +120,13 @@ func _ready() -> void:
 	_fissure_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_fissure_preview.visible = false
 	add_child(_fissure_preview)
+	_spikes_preview = MeshInstance3D.new()
+	_spikes_preview.name = "SpikesPreview"
+	_spikes_preview.mesh = _spikes_mesh
+	_spikes_preview.material_override = _preview_mat
+	_spikes_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_spikes_preview.visible = false
+	add_child(_spikes_preview)
 	for i in BURST_POOL:
 		_dust.append(_make_dust("Dust%d" % i))
 		_pebbles.append(_make_pebbles("Pebbles%d" % i, true))
@@ -134,6 +143,13 @@ func _ready() -> void:
 
 func _on_fx(kind: StringName, data: Dictionary) -> void:
 	match kind:
+		&"spike_created":
+			var p: Vector3 = data.point
+			var col: Color = data.get("color", Color(0.52, 0.43, 0.32))
+			_stats.spikes_created += 1
+			_crack(p, 0.8, 2.4, 0.1, 0.6, 0.85)
+			_burst(_dust, "dust", p, col.lightened(0.3), 0.5, 1.5, 3.0)
+			_burst(_pebbles, "pebbles", p, col.darkened(0.2), 0.35, 1.5, 3.5)
 		&"fissure_opened":
 			var points: PackedVector3Array = data.points
 			for i in [0, floori(points.size() * 0.5), points.size() - 1]:
@@ -201,6 +217,7 @@ func _on_fx(kind: StringName, data: Dictionary) -> void:
 		&"cancel":
 			_ring.visible = false
 			_ring_t = -1.0
+			_spikes_preview.visible = false
 			_end_shake()
 
 
@@ -305,12 +322,14 @@ func _update_preview() -> void:
 	var show := false
 	var pillar := false
 	var fissure := false
+	var spikes := false
 	if earth != null and abilities.current_ability() == earth and earth.phase == "" \
 			and abilities.player != null and abilities.player.input_enabled \
 			and (not abilities.require_captured_mouse or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 		pillar = earth.pillar_aiming
 		fissure = earth.fissure_aiming
-		var check := earth.validate_fissure_target() if fissure else (earth.validate_pillar_target() if pillar else earth.validate_target())
+		spikes = earth.spikes_aiming
+		var check := earth.validate_spikes_target() if spikes else (earth.validate_fissure_target() if fissure else (earth.validate_pillar_target() if pillar else earth.validate_target()))
 		if check.has("point"):
 			show = true
 			_preview.global_position = (check.point as Vector3) + Vector3.UP * 0.03
@@ -329,9 +348,62 @@ func _update_preview() -> void:
 					for v in [a - side, b + side, a + side, a - side, b - side, b + side]:
 						_fissure_mesh.surface_add_vertex(to_local(v))
 				_fissure_mesh.surface_end()
-	_preview.visible = show and not pillar and (not fissure or _fissure_mesh.get_surface_count() == 0)
+		if spikes:
+			var requests: Array = check.get("requests", []).duplicate()
+			if requests.is_empty() and check.has("point"):
+				# Uma parede pode impedir a primeira amostra. Ainda mostrar o molde vermelho,
+				# sem enfileirar nada nem decidir a construção.
+				var direction: Vector3 = abilities.aim_direction()
+				direction.y = 0.0
+				direction = direction.normalized() if direction.length() > 0.01 else Vector3.FORWARD
+				for i in earth.tuning.spike_count:
+					requests.append(earth.make_spike_request(check.point + direction * earth.tuning.spike_spacing * i, &""))
+			_update_spikes_mesh(requests)
+	_preview.visible = show and not pillar and not spikes and (not fissure or _fissure_mesh.get_surface_count() == 0)
 	_pillar_preview.visible = show and pillar
 	_fissure_preview.visible = show and fissure and _fissure_mesh.get_surface_count() > 0
+	_spikes_preview.visible = show and spikes and _spikes_mesh.get_surface_count() > 0
+
+
+## Somente prévia: perfil afunilado e pontas arredondadas acompanham os raios do PATH real.
+## A malha desaparece ao confirmar; a geometria permanente pertence exclusivamente ao terreno.
+func _update_spikes_mesh(requests: Array) -> void:
+	_spikes_mesh.clear_surfaces()
+	if requests.is_empty():
+		return
+	_spikes_mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
+	for request in requests:
+		var req := request as TerrainBrushRequest
+		if req == null or req.points.size() < 2:
+			continue
+		var centers := PackedVector3Array()
+		var radii := PackedFloat32Array()
+		# Dois anéis por hemisfério bastam para a prévia leve de três volumes.
+		for i in 3:
+			var angle := -PI * 0.5 + float(i) * PI * 0.25
+			centers.append(req.points[0] + Vector3.UP * sin(angle) * req.radii[0])
+			radii.append(cos(angle) * req.radii[0])
+		for i in range(1, req.points.size()):
+			centers.append(req.points[i])
+			radii.append(req.radii[i])
+		var last := req.points.size() - 1
+		for i in range(1, 3):
+			var angle := float(i) * PI * 0.25
+			centers.append(req.points[last] + Vector3.UP * sin(angle) * req.radii[last])
+			radii.append(cos(angle) * req.radii[last])
+		for ring in range(1, centers.size()):
+			for side in 12:
+				var a := TAU * float(side) / 12.0
+				var b := TAU * float(side + 1) / 12.0
+				var radial_a := Vector3(cos(a), 0, sin(a))
+				var radial_b := Vector3(cos(b), 0, sin(b))
+				var p0 := centers[ring - 1] + radial_a * radii[ring - 1]
+				var p1 := centers[ring - 1] + radial_b * radii[ring - 1]
+				var p2 := centers[ring] + radial_a * radii[ring]
+				var p3 := centers[ring] + radial_b * radii[ring]
+				for p in [p0, p1, p2, p1, p3, p2]:
+					_spikes_mesh.surface_add_vertex(to_local(p))
+	_spikes_mesh.surface_end()
 
 
 # --- Peças ----------------------------------------------------------------------------------
